@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AidaCamp — IT-лагерь в Подмосковье</title>
 <meta name="description" content="AidaCamp — IT-лагерь для детей 7–14 лет: AI-проекты, бассейн, спорт, внутренняя экономика и бронирование смен.">
+<meta name="ac-tech-version" content="2026.03.16-01">
 <!-- FILE 0 — ac-styles.html -->
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap');
@@ -1158,8 +1159,24 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
   .ac-site-section__head{flex-direction:column;align-items:flex-start;}
 }
 
+.ac-tech-version-badge{
+  position:fixed;
+  top:10px;
+  right:10px;
+  z-index:99999;
+  padding:6px 10px;
+  border-radius:8px;
+  background:rgba(17,24,39,0.88);
+  color:#fff;
+  font:600 12px/1.2 "Comfortaa",system-ui,sans-serif;
+  letter-spacing:0.02em;
+  box-shadow:0 6px 18px rgba(0,0,0,0.25);
+  pointer-events:none;
+}
+
 </style>
 <body class="ac-page ac-compact-mode">
+<div class="ac-tech-version-badge">TECH v2026.03.16-01</div>
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
   <defs>
     <symbol id="acLogoSvgSymbol" viewBox="0 0 500 500">
