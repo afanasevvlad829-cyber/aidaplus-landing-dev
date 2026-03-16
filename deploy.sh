@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 cd /var/www/aidaplus-dev
 
-echo "==> Git status before deploy"
-git status --short || true
+echo "==> Build"
+bash build.sh
 
-echo "==> Pull latest changes"
-git pull origin main
+echo "==> Publish dist/index.html -> index.html"
+cp dist/index.html index.html
 
-echo "==> Done"
+echo "==> Reload nginx"
+if command -v systemctl >/dev/null 2>&1; then
+  if command -v sudo >/dev/null 2>&1; then
+    sudo systemctl reload nginx || systemctl reload nginx || true
+  else
+    systemctl reload nginx || true
+  fi
+fi
+
+echo "==> Deploy done"

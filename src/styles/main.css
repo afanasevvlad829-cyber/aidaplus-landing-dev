@@ -1,0 +1,275 @@
+/* AidaPlus modular overrides (build-injected) */
+
+/* 1) Logo: static (no blink animation for now) */
+.ac-card-logo-side {
+  overflow: visible;
+}
+
+.ac-card-logo-side__robot {
+  width: 88px !important;
+  height: 88px !important;
+  display: block;
+  margin: 0 auto 4px !important;
+  overflow: visible !important;
+}
+
+.ac-card-logo-side__eye {
+  transform-origin: center center;
+  transform-box: fill-box;
+  animation: none !important;
+  transform: scaleY(1) !important;
+}
+
+.ac-card-logo-side.is-blink .ac-card-logo-side__eye {
+  animation: none !important;
+}
+
+/* 2) Gallery media robustness */
+.ac-left-photo-item img,
+.ac-left-photo-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+
+.ac-left-photo-item video {
+  background: #0f172a;
+}
+
+.ac-left-photo-item {
+  cursor: zoom-in;
+}
+
+.ac-left-video-section {
+  margin-top: 10px;
+}
+
+.ac-left-video-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.ac-left-video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.ac-left-video-item {
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.ac-left-video-item video {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+  background: #0f172a;
+}
+
+/* Keep videos strictly in the dedicated "Видео" tab. */
+#acLtPhoto .ac-left-video-section,
+#acLtPhoto .ac-left-video-title,
+#acLtPhoto .ac-left-video-grid,
+#acLtPhoto .ac-left-video-item,
+#acLtPhoto .ac-left-video-ph {
+  display: none !important;
+}
+
+.ac-media-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100100;
+  background: rgba(2, 6, 23, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 56px;
+}
+
+.ac-media-lightbox.is-open {
+  display: flex;
+}
+
+.ac-media-lightbox__stage {
+  width: min(100%, 1024px);
+  max-height: min(85vh, 760px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ac-media-lightbox__media {
+  max-width: 100%;
+  max-height: 85vh;
+  border-radius: 12px;
+  display: block;
+}
+
+.ac-media-lightbox__close,
+.ac-media-lightbox__nav {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+}
+
+.ac-media-lightbox__close {
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.ac-media-lightbox__nav {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.ac-media-lightbox__nav--prev { left: 12px; }
+.ac-media-lightbox__nav--next { right: 12px; }
+
+/* 3) Shifts: hide price until explicit action */
+.ac-shift .ac-shift__right {
+  display: none !important;
+}
+
+.ac-shift.is-selected.has-price-visible .ac-shift__right {
+  display: flex !important;
+}
+
+.ac-show-price-btn {
+  display: none !important;
+}
+
+/* 5) Increase icons and badges */
+.ac-shift__promo-btn,
+.ac-shift__calendar-link,
+.ac-shift__badge,
+.ac-shift__best-label {
+  font-size: 13px !important;
+}
+
+.ac-shift__calendar-link svg,
+.ac-shift__promo-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.ac-shift__badge,
+.ac-shift__best-label {
+  padding: 4px 10px !important;
+}
+
+/* 6) Lower heading "Ближайшие смены" */
+.ac-shifts__title {
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+/* Shift step: slider-like scroll when many cards are visible */
+#acStep3 {
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 66px !important;
+  padding-bottom: 86px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+}
+
+#acStep3 .ac-shifts__title,
+#acStep3 .ac-shifts__hint,
+#acStep3 #acBookBtn {
+  flex-shrink: 0;
+}
+
+#acStep3 .ac-shifts__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none !important;
+  overflow-y: auto;
+  padding-right: 4px;
+  padding-top: 0;
+  scroll-padding-top: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+#acStep3 .ac-shifts__list > .ac-shift:first-child {
+  margin-top: 0 !important;
+}
+
+#acStep3 #acBookBtn {
+  margin-top: 4px;
+}
+
+#acStep3 .ac-shifts__list::-webkit-scrollbar {
+  width: 6px;
+}
+#acStep3 .ac-shifts__list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.28);
+  border-radius: 999px;
+}
+
+@media (max-height: 760px) {
+  #acStep3 {
+    padding-top: 56px !important;
+    padding-bottom: 74px !important;
+  }
+}
+
+/* Calendar UX: hide old controls, use compact icon near dates */
+.ac-shift__calendar-link {
+  display: none !important;
+}
+
+.ac-shift__cal-icon {
+  margin-left: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.2);
+}
+
+.ac-shift__cal-icon svg {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
+
+.ac-shift__cal-icon:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.ac-shift__actions:empty {
+  display: none !important;
+}
+

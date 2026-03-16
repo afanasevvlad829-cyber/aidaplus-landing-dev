@@ -1,46 +1,49 @@
 # AidaPlus Landing — AI Context
 
 ## Goal
-Одностраничный лендинг для AidaCamp / AidaPlus.
-В разработке проект модульный.
-В проде требуется один итоговый HTML-файл для Tilda.
+Одностраничный лендинг AidaCamp/AidaPlus с модульной разработкой и single-file результатом для деплоя.
 
-## Dev root
-/var/www/aidaplus-dev
+## Project root
+`/var/www/aidaplus-dev`
 
-## Baseline
-Исходный файл: index-aidacamp-final-v8.html
+## Current source of truth
+- Основная исполняемая страница: `index.html`
+- Исторический baseline (не удалять): `index-aidacamp-final-v8.html`
+- Модульные патчи:
+  - `src/styles/main.css`
+  - `src/scripts/main.js`
 
-## Architecture
-src/partials/ — HTML-блоки  
-src/styles/ — CSS  
-src/js/modules/ — JS-модули  
-build/ — сборка  
-dist/ — финальный HTML  
+## Build and deploy
+- Сборка: `build.sh` -> `dist/index.html`
+- Деплой: `deploy.sh` (build -> copy в root `index.html` -> reload nginx)
+- В `index.html` используются build markers для инъекции CSS/JS.
 
-## Business rules
-- Цена в карточках смен НЕ показывается по умолчанию
-- Цена показывается только после клика на смену
-- При выборе другой смены показывается только её цена
-- Возраст можно фиксировать и потом менять
+## Structure (actual)
+- `src/partials/` - вынесенные HTML-секции из монолита (partialization artifacts)
+- `src/components/` - секционные контракты/заглушки компонентов
+- `src/styles/` - модульные стили
+- `src/scripts/` - модульная JS-логика
+- `tests/` - сервисные проверки (smoke/media)
+- `dist/` - итоговый артефакт сборки
 
-## Popup logic
-- popup AI: через 12 секунд
-- popup return: после просмотра смен
-- popup urgency: через 40 секунд
+## Active business/UX rules
+- Цена смены не видна по умолчанию.
+- После выбора смены цена показывается только у выбранной карточки.
+- Календарь открывается по клику на компактную иконку в карточке смены.
+- Возраст сохраняется между визитами (`localStorage`).
+- Кнопка «Выбрать возраст заново» сбрасывает возраст и возвращает к шагу выбора.
+- До выбора возраста взаимодействие с остальными элементами страницы блокируется.
 
-## Media
-Фото берутся из https://aidacamp.ru/media
+## Media model
+- Источник: `https://aidacamp.ru/media`
+- Приоритет: build-time manifest, fallback: runtime parsing.
+- Фото раскладываются по вкладкам:
+  - `all`, `food`, `sport`, `pool`, `study`
+- Видео рендерятся в отдельной секции.
+- Клик по фото/видео открывает lightbox с навигацией.
+- `hero`-метки используются для ротации фоновых изображений.
 
-Категории alt:
-all = эмоции + всё  
-sport + pool = спорт  
-study = учёба  
-food = еда  
-
-Видео пока отключены.
-
-## Known issues
-- Кривой логотип
-- Галерея пока не подгружается
-- Попапы появляются не всегда предсказуемо
+## Runtime notes
+- Проект содержит legacy inline скрипты в `index.html`.
+- `src/scripts/main.js` работает как patch layer и повторно применяет критичную логику после legacy-инициализаций.
+- Для стабильности используются защитные механизмы (debounce/guards) вокруг динамических обновлений.
