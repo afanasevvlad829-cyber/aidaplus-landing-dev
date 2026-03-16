@@ -1,0 +1,20 @@
+{
+  "routing": [
+    {
+      "task": "refactor",
+      "model": "anthropic/claude-3.5-sonnet"
+    },
+    {
+      "task": "code_generation",
+      "model": "deepseek/deepseek-coder"
+    },
+    {
+      "task": "architecture",
+      "model": "openai/gpt-4o"
+    },
+    {
+      "task": "small_edits",
+      "model": "mistralai/mistral-large"
+    }
+  ]
+}
