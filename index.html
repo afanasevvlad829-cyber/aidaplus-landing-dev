@@ -6,7 +6,7 @@
 <title>AidaCamp — IT-лагерь в Подмосковье</title>
 <meta name="description" content="AidaCamp — IT-лагерь для детей 7–14 лет: AI-проекты, бассейн, спорт, внутренняя экономика и бронирование смен.">
 <link rel="icon" type="image/png" href="/assets/aida-logo-small.png">
-<meta name="ac-tech-version" content="2026.03.17-02">
+<meta name="ac-tech-version" content="2026.03.17-04">
 <script>
 window.AC_POPUPS_ENABLED = false;
 if (window.AC_POPUPS_ENABLED === false) {
@@ -1193,7 +1193,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 
 </style>
 <body class="ac-page ac-compact-mode">
-<div class="ac-tech-version-badge">TECH v2026.03.17-02</div>
+<div class="ac-tech-version-badge">TECH v2026.03.17-04</div>
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
   <defs>
     <symbol id="acLogoSvgSymbol" viewBox="0 0 500 500">
@@ -4746,7 +4746,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     }
     wrap.style.cssText = "margin-top:10px;text-align:center;";
     wrap.innerHTML =
-      '<button type="button" id="acBookInfoOpen" style="font-size:12px;color:#4b5563;text-decoration:underline;background:none;border:none;padding:0;cursor:pointer;">Учебник по программированию</button>';
+      '<button type="button" id="acBookInfoOpen" style="font-family:\'Comfortaa\',sans-serif;font-size:12px;color:#4b5563;text-decoration:underline;background:none;border:none;padding:0;cursor:pointer;">Учебник по программированию</button>';
     var card = ensureBookInfoCard(host);
     var openBtn = $("#acBookInfoOpen", wrap);
     if (openBtn) {
@@ -7602,6 +7602,11 @@ html body #acStep3 .ac-shifts__hint {
   padding: 16px;
   background: rgba(15, 23, 42, 0.38);
   backdrop-filter: blur(4px);
+  font-family: "Comfortaa", sans-serif;
+}
+
+#acTeamSourceLinkWrap #acBookInfoOpen {
+  font-family: "Comfortaa", sans-serif !important;
 }
 
 .ac-book-card__dialog {

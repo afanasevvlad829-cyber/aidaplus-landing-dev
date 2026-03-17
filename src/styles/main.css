@@ -837,6 +837,11 @@ html body #acStep3 .ac-shifts__hint {
   padding: 16px;
   background: rgba(15, 23, 42, 0.38);
   backdrop-filter: blur(4px);
+  font-family: "Comfortaa", sans-serif;
+}
+
+#acTeamSourceLinkWrap #acBookInfoOpen {
+  font-family: "Comfortaa", sans-serif !important;
 }
 
 .ac-book-card__dialog {

@@ -246,7 +246,7 @@
     }
     wrap.style.cssText = "margin-top:10px;text-align:center;";
     wrap.innerHTML =
-      '<button type="button" id="acBookInfoOpen" style="font-size:12px;color:#4b5563;text-decoration:underline;background:none;border:none;padding:0;cursor:pointer;">Учебник по программированию</button>';
+      '<button type="button" id="acBookInfoOpen" style="font-family:\'Comfortaa\',sans-serif;font-size:12px;color:#4b5563;text-decoration:underline;background:none;border:none;padding:0;cursor:pointer;">Учебник по программированию</button>';
     var card = ensureBookInfoCard(host);
     var openBtn = $("#acBookInfoOpen", wrap);
     if (openBtn) {
