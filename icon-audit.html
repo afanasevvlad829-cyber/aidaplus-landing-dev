@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Icon Audit - AiDaCamp</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --brand:#ff7700;
+      --ok:#16a34a;
+      --warn:#b45309;
+      --bad:#b91c1c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.35;
+    }
+    .wrap{max-width:1220px;margin:0 auto;padding:20px 16px 28px}
+    .head{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px 18px;
+      margin-bottom:12px;
+    }
+    h1{font-size:22px;margin:0 0 8px}
+    .sub{font-size:13px;color:var(--muted)}
+    .badge{
+      display:inline-block;
+      margin-top:10px;
+      border-radius:999px;
+      border:1px solid #ffd9b0;
+      background:#fff6ec;
+      color:#9a3412;
+      padding:6px 10px;
+      font-size:12px;
+      font-weight:600;
+    }
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+    }
+    th,td{
+      border-bottom:1px solid var(--line);
+      padding:10px 10px;
+      vertical-align:top;
+      font-size:12px;
+    }
+    th{
+      background:#f8fafc;
+      text-align:left;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      color:#475569;
+    }
+    tr:last-child td{border-bottom:none}
+    .ico-old,.ico-new{
+      width:38px;height:38px;border-radius:10px;
+      display:grid;place-items:center;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:19px;
+    }
+    .ico-new{
+      background:#fff8ef;
+      border-color:#ffd9b0;
+      color:var(--brand);
+      font-weight:700;
+    }
+    .path{font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:11px; color:#334155}
+    .block{font-weight:600}
+    .status{
+      display:inline-block;
+      border-radius:999px;
+      padding:4px 8px;
+      font-size:11px;
+      font-weight:700;
+      border:1px solid transparent;
+      white-space:nowrap;
+    }
+    .s-ok{background:#ecfdf5;color:var(--ok);border-color:#bbf7d0}
+    .s-mid{background:#fffbeb;color:var(--warn);border-color:#fde68a}
+    .s-bad{background:#fef2f2;color:var(--bad);border-color:#fecaca}
+    .legend{
+      margin-top:12px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .legend span{display:inline-flex;align-items:center;gap:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <h1>Аудит иконок</h1>
+      <div class="sub">
+        Список собран из текущей версии лендинга. Для каждой позиции: текущая иконка, предлагаемая новая иконка,
+        где находится и что именно нужно унифицировать.
+      </div>
+      <div class="badge">Версия аудита: 2026.03.17-02</div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Текущая</th>
+          <th>Новая</th>
+          <th>Статус</th>
+          <th>Блок</th>
+          <th>Где находится</th>
+          <th>Комментарий</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="ico-old">✕</div></td>
+          <td><div class="ico-new">×</div></td>
+          <td><span class="status s-mid">частично</span></td>
+          <td class="block">Кнопки закрытия модалок</td>
+          <td class="path">index.html, src/scripts/main.js</td>
+          <td>Унифицировать в один SVG-крестик (толщина/центр сейчас плавают).</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">←</div></td>
+          <td><div class="ico-new">←</div></td>
+          <td><span class="status s-mid">частично</span></td>
+          <td class="block">Стрелки каруселей</td>
+          <td class="path">.ac-reviews-ya__arrow, .ac-team-slider__arrow, .ac-left-video-carousel__arrow</td>
+          <td>Кнопки норм, но символы лучше заменить на единый SVG-пак.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">▶</div></td>
+          <td><div class="ico-new">▶</div></td>
+          <td><span class="status s-mid">частично</span></td>
+          <td class="block">Видео-карточки</td>
+          <td class="path">.ac-left-video-item__play</td>
+          <td>Цвет уже брендовый, но символ still text; лучше SVG triangle.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">🏊</div></td>
+          <td><div class="ico-new">◈</div></td>
+          <td><span class="status s-bad">выбивается</span></td>
+          <td class="block">Списки преимуществ/включено</td>
+          <td class="path">index.html (иконки в контент-данных)</td>
+          <td>Emoji ломают стиль и выглядят по-разному на разных ОС.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">🍽️</div></td>
+          <td><div class="ico-new">◈</div></td>
+          <td><span class="status s-bad">выбивается</span></td>
+          <td class="block">Списки преимуществ/включено</td>
+          <td class="path">index.html</td>
+          <td>Нужен SVG food-icon в общем наборе.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">🏥</div></td>
+          <td><div class="ico-new">◈</div></td>
+          <td><span class="status s-bad">выбивается</span></td>
+          <td class="block">Списки преимуществ/безопасность</td>
+          <td class="path">index.html</td>
+          <td>Emoji медицины заменить на outline SVG.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">🤖</div></td>
+          <td><div class="ico-new">◈</div></td>
+          <td><span class="status s-bad">выбивается</span></td>
+          <td class="block">AI-блоки и тексты</td>
+          <td class="path">index.html (AI badge, program data)</td>
+          <td>В UI уже есть robot-SVG, лучше переиспользовать его стиль.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">👆</div></td>
+          <td><div class="ico-new">◈</div></td>
+          <td><span class="status s-bad">выбивается</span></td>
+          <td class="block">Подсказки</td>
+          <td class="path">#acShiftsHint, placeholders</td>
+          <td>Подсказки лучше сделать чисто текстовыми или с SVG hint-icon.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">🔒</div></td>
+          <td><div class="ico-new">◈</div></td>
+          <td><span class="status s-bad">выбивается</span></td>
+          <td class="block">Fix/Exit/Revisit попапы</td>
+          <td class="path">index.html (emoji в CTA и заголовках)</td>
+          <td>Критично к унификации: сейчас смешаны emoji + SVG.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">✅</div></td>
+          <td><div class="ico-new">◈</div></td>
+          <td><span class="status s-bad">выбивается</span></td>
+          <td class="block">Статусы копирования/успеха</td>
+          <td class="path">index.html</td>
+          <td>Сделать единый success-SVG.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old">📊</div></td>
+          <td><div class="ico-new">◈</div></td>
+          <td><span class="status s-bad">выбивается</span></td>
+          <td class="block">Card info / программа</td>
+          <td class="path">index.html (object icon fields)</td>
+          <td>Пакет иконок для контентных пунктов в едином outline-стиле.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 6V3.7" stroke="currentColor" stroke-width="2"/><rect x="3" y="8.6" width="18" height="10.7" rx="3.7" stroke="currentColor" stroke-width="2"/></svg></div></td>
+          <td><div class="ico-new"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 6V3.7" stroke="currentColor" stroke-width="2"/><rect x="3" y="8.6" width="18" height="10.7" rx="3.7" stroke="currentColor" stroke-width="2"/></svg></div></td>
+          <td><span class="status s-ok">в стиле</span></td>
+          <td class="block">Левые табы</td>
+          <td class="path">index.html (.ac-left-tab)</td>
+          <td>Это текущий эталон набора по толщине/ритму.</td>
+        </tr>
+        <tr>
+          <td><div class="ico-old"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M3 9.5h18" stroke="currentColor" stroke-width="1.8"/></svg></div></td>
+          <td><div class="ico-new"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M3 9.5h18" stroke="currentColor" stroke-width="1.8"/></svg></div></td>
+          <td><span class="status s-ok">в стиле</span></td>
+          <td class="block">Календарь смен</td>
+          <td class="path">src/scripts/main.js + src/styles/main.css</td>
+          <td>Хороший пример аккуратной action-иконки в брендовой теме.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="legend">
+      <span><i class="status s-ok">в стиле</i> совпадает с текущим направлением</span>
+      <span><i class="status s-mid">частично</i> рабочее, но требует унификации</span>
+      <span><i class="status s-bad">выбивается</i> заметно ломает общий визуал</span>
+    </div>
+  </div>
+</body>
+</html>

@@ -2,6 +2,24 @@
   function $(s, r) { return (r || document).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
 
+  // DEV switches. Disable before shipping final static production version.
+  var AC_DEV_REMOTE_TEAM_REFRESH_ENABLED = true;
+  var AC_DEV_RUTUBE_VIDEO_FEED_ENABLED = true;
+  var AC_DEV_RUTUBE_VIDEOS = [
+    {
+      url: "https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/",
+      title: "За неделю в лагере ребёнок меняется больше, чем за год дома"
+    },
+    {
+      url: "https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/",
+      title: "Зачем детям копить деньги в лагере? Узнай ответ!"
+    },
+    {
+      url: "https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/",
+      title: "Ребенок сам откажется от телефона за 3 дня?! лагерь АйДаКемп"
+    }
+  ];
+
   function ensureLogoStatic() {
     var wrap = $("#acCardLogo");
     if (!wrap) return;
@@ -54,6 +72,13 @@
         avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80",
         text: "Очень понравился баланс между технологиями, спортом и отдыхом. Организация чёткая, питание хорошее, а главное - ребёнок всё время был вовлечён и доволен.",
         stars: 5
+      },
+      {
+        name: "Екатерина Л.",
+        sub: "мама участника, 10 лет",
+        avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=300&q=80",
+        text: "Спасибо команде лагеря за внимание к детям и понятную обратную связь для родителей. Ребёнок приехал с идеями для собственных проектов и впервые сам попросил записать его на следующую смену.",
+        stars: 5
       }
     ];
 
@@ -63,12 +88,12 @@
       '    <div class="ac-reviews-modern__track" id="acReviewsTrackMod"></div>' +
       "  </div>" +
       '  <div class="ac-reviews-modern__nav">' +
-      '    <button class="ac-reviews-ya__arrow" id="acReviewsPrevMod" type="button" aria-label="Назад">←</button>' +
-      '    <div class="ac-reviews-ya__dots" id="acReviewsDotsMod"></div>' +
-      '    <button class="ac-reviews-ya__arrow" id="acReviewsNextMod" type="button" aria-label="Вперёд">→</button>' +
-      "  </div>" +
-      '  <div style="margin-top:10px;text-align:center;">' +
-      '    <a href="https://yandex.ru/maps/org/aydakemp/35558479035/reviews/?ll=38.874756%2C55.531232&z=7" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:#4b5563;text-decoration:underline;">Смотреть отзывы на Яндекс Картах</a>' +
+      '    <div class="ac-reviews-modern__nav-main">' +
+      '      <button class="ac-reviews-ya__arrow" id="acReviewsPrevMod" type="button" aria-label="Назад">←</button>' +
+      '      <div class="ac-reviews-ya__dots" id="acReviewsDotsMod"></div>' +
+      '      <button class="ac-reviews-ya__arrow" id="acReviewsNextMod" type="button" aria-label="Вперёд">→</button>' +
+      '    </div>' +
+      '    <a class="ac-reviews-modern__source-link" href="https://yandex.ru/maps/org/aydakemp/35558479035/reviews/?ll=38.874756%2C55.531232&z=7" target="_blank" rel="noopener noreferrer">Смотреть на Яндекс Картах</a>' +
       "  </div>" +
       "</div>";
 
@@ -108,10 +133,14 @@
         group.forEach(function (r) {
           var card = document.createElement("div");
           card.className = "ac-review-modern-card";
+          var quoteClass = "ac-review-modern-card__quote";
+          var len = (r.text || "").length;
+          if (len > 210) quoteClass += " is-xl";
+          else if (len > 165) quoteClass += " is-lg";
           var stars = "★★★★★";
           card.innerHTML =
             '<img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '">' +
-            '<div class="ac-review-modern-card__quote">“ ' + r.text + ' ”</div>' +
+            '<div class="' + quoteClass + '">“ ' + r.text + ' ”</div>' +
             '<div class="ac-review-modern-card__divider"></div>' +
             '<div class="ac-review-modern-card__name">' + r.name + '</div>' +
             '<div class="ac-review-modern-card__sub">' + r.sub + '</div>' +
@@ -148,6 +177,64 @@
     }
   }
 
+  var AC_BOOK_INFO = {
+    title: "Python для детей. Играем, чтобы программировать",
+    subtitle: "Книга команды #АйДаКодить на основе реального опыта обучения детей программированию.",
+    cover: "https://thb.tildacdn.com/tild6365-6534-4638-b239-383931316134/-/resize/504x/noroot.png",
+    pageUrl: "https://www.codims.ru/python-book",
+    ozonUrl: "https://www.ozon.ru/product/python-dlya-detey-igraem-chtoby-programmirovat-afanasev-vladimir-vladimirovich-3487599843/?utm_campaign=vendor_org_107021_bomboraru&utm_medium=r5&utm_source=bomboraru",
+    litresUrl: "https://www.litres.ru/search/?q=Python%20%D0%B4%D0%BB%D1%8F%20%D0%B4%D0%B5%D1%82%D0%B5%D0%B9%20%D0%98%D0%B3%D1%80%D0%B0%D0%B5%D0%BC%2C%20%D1%87%D1%82%D0%BE%D0%B1%D1%8B%20%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C",
+    facts: [
+      "Для детей, которые хотят начать изучать Python и сделать первую игру.",
+      "Тираж: 2000 экземпляров.",
+      "Формат: печатная и электронная версия."
+    ],
+    authors: [
+      "Владимир Афанасьев",
+      "Никита Брагин",
+      "Александр Ташкин",
+      "Мухаммет Идрисов"
+    ]
+  };
+
+  function ensureBookInfoCard(host) {
+    var card = $("#acBookInfoCard", host);
+    if (card) return card;
+    card = document.createElement("div");
+    card.id = "acBookInfoCard";
+    card.className = "ac-book-card";
+    card.style.display = "none";
+    card.innerHTML =
+      '<div class="ac-book-card__dialog">' +
+      '  <button type="button" class="ac-book-card__close" id="acBookInfoClose" aria-label="Закрыть карточку книги">✕</button>' +
+      '  <div class="ac-book-card__media">' +
+      '    <img class="ac-book-card__cover" src="' + AC_BOOK_INFO.cover + '" alt="' + AC_BOOK_INFO.title + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' +
+      "  </div>" +
+      '  <div class="ac-book-card__body">' +
+      '    <div class="ac-book-card__eyebrow">Учебник по программированию</div>' +
+      '    <div class="ac-book-card__title">' + AC_BOOK_INFO.title + "</div>" +
+      '    <div class="ac-book-card__text">' + AC_BOOK_INFO.subtitle + "</div>" +
+      '    <ul class="ac-book-card__facts">' +
+      AC_BOOK_INFO.facts.map(function (fact) { return '<li>' + fact + "</li>"; }).join("") +
+      "    </ul>" +
+      '    <div class="ac-book-card__authors-title">Авторы</div>' +
+      '    <div class="ac-book-card__authors">' + AC_BOOK_INFO.authors.join(" · ") + "</div>" +
+      '    <div class="ac-book-card__actions">' +
+      '      <a class="ac-book-card__btn is-primary" href="' + AC_BOOK_INFO.ozonUrl + '" target="_blank" rel="noopener noreferrer">Купить на Ozon</a>' +
+      '      <a class="ac-book-card__btn" href="' + AC_BOOK_INFO.litresUrl + '" target="_blank" rel="noopener noreferrer">Искать на ЛитРес</a>' +
+      '      <a class="ac-book-card__btn" href="' + AC_BOOK_INFO.pageUrl + '" target="_blank" rel="noopener noreferrer">Подробнее</a>' +
+      "    </div>" +
+      "  </div>" +
+      "</div>";
+    host.appendChild(card);
+    card.addEventListener("click", function (e) {
+      if (e.target === card) card.style.display = "none";
+    });
+    var closeBtn = $("#acBookInfoClose", card);
+    if (closeBtn) closeBtn.onclick = function () { card.style.display = "none"; };
+    return card;
+  }
+
   function ensureTeamTabLink() {
     var host = $("#acLtTeam");
     if (!host) return;
@@ -159,25 +246,318 @@
     }
     wrap.style.cssText = "margin-top:10px;text-align:center;";
     wrap.innerHTML =
-      '<a href="https://aidacamp.ru/media#teams" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:#4b5563;text-decoration:underline;">Смотреть команду на сайте</a>';
+      '<button type="button" id="acBookInfoOpen" style="font-size:12px;color:#4b5563;text-decoration:underline;background:none;border:none;padding:0;cursor:pointer;">Учебник по программированию</button>';
+    var card = ensureBookInfoCard(host);
+    var openBtn = $("#acBookInfoOpen", wrap);
+    if (openBtn) {
+      openBtn.onclick = function () {
+        if (card) card.style.display = "flex";
+      };
+    }
+  }
+
+  function getSectionFromAnchor(doc, names) {
+    var all = Array.prototype.slice.call(doc.querySelectorAll("[id], a[name]"));
+    return all.find(function (el) {
+      var key = ((el.id || "") + " " + (el.getAttribute("name") || "") + " " + (el.textContent || "")).toLowerCase();
+      return names.some(function (n) { return key.indexOf(n) !== -1; });
+    });
+  }
+
+  function extractTextBits(el) {
+    if (!el || !el.querySelectorAll) return [];
+    var bits = Array.prototype.slice.call(el.querySelectorAll("h1,h2,h3,h4,h5,strong,b,p,div,span")).map(function (n) {
+      return (n.textContent || "").replace(/\s+/g, " ").trim();
+    }).filter(function (t) {
+      return t && t.length > 1 && t.length < 120 && !/^all$|^food$|^sport$|^study$|^pool$|^hero$/i.test(t);
+    });
+    return Array.from(new Set(bits));
+  }
+
+  function loadTeamFromManifest() {
+    var el = document.getElementById("ac-build-team-manifest");
+    if (!el) return false;
+    try {
+      var entries = JSON.parse(el.textContent || "[]");
+      if (!Array.isArray(entries) || !entries.length) return false;
+      window.__acTeamCards = entries.filter(function (item) {
+        return item && (item.name || item.role || item.img);
+      }).map(function (item) {
+        return {
+          img: item.img || "",
+          name: (item.name || "").trim(),
+          role: (item.role || "").trim()
+        };
+      }).filter(function (item) {
+        return item.name;
+      });
+      if (!window.__acTeamCards.length) return false;
+      window.__acTeamSignature = teamCardsSignature(window.__acTeamCards);
+      return true;
+    } catch (e) {
+      console.warn("Team manifest parse failed:", e);
+      return false;
+    }
+  }
+
+  function parseTeamCardsFromDoc(doc, baseUrl) {
+    var root = getSectionFromAnchor(doc, ["team", "teams", "команда"]);
+    var seen = new Set();
+    var cards = [];
+    if (!root) return cards;
+
+    var scopeNodes = [];
+    var current = (root.closest("div,section") || root);
+    for (var i = 0; i < 6 && current; i++) {
+      scopeNodes.push(current);
+      current = current.nextElementSibling;
+      if (current) {
+        var stopKey = ((current.id || "") + " " + (current.getAttribute("name") || "") + " " + (current.textContent || "").slice(0, 60)).toLowerCase();
+        if (/(photo|фото|video|видео|review|отзыв|faq|вопрос)/.test(stopKey)) break;
+      }
+    }
+
+    var candidates = [];
+    scopeNodes.forEach(function (node) {
+      if (!node || !node.querySelectorAll) return;
+      candidates = candidates.concat(Array.prototype.slice.call(node.querySelectorAll(
+        ".t524__itemwrapper, .ac-team-live__card, li, article"
+      )));
+    });
+
+    candidates.forEach(function (card) {
+      if (!card || cards.length >= 12) return;
+      var imgEl = card.querySelector("img[src]");
+      var metaImg = card.querySelector('meta[itemprop="image"][content]');
+      var bgImg = card.querySelector("[data-original]");
+      var rawSrc = "";
+      if (imgEl) rawSrc = imgEl.getAttribute("src") || "";
+      else if (metaImg) rawSrc = metaImg.getAttribute("content") || "";
+      else if (bgImg) rawSrc = bgImg.getAttribute("data-original") || "";
+
+      var nameEl = card.querySelector(".t524__persname, .ac-team-live__name, [field*='persname']");
+      var roleEl = card.querySelector(".t524__persdescr, .ac-team-live__role, [field*='persdescr']");
+      var bits = extractTextBits(card);
+      var name = nameEl ? (nameEl.textContent || "").replace(/\s+/g, " ").trim() : "";
+      var role = roleEl ? (roleEl.textContent || "").replace(/\s+/g, " ").trim() : "";
+      if (!name) {
+        name = bits.find(function (t) {
+          return /^[A-ZА-ЯЁ][A-Za-zА-Яа-яЁё\-]+(?:\s+[A-ZА-ЯЁ][A-Za-zА-Яа-яЁё\-]+){0,2}$/.test(t);
+        }) || bits[0] || "";
+      }
+      if (!role) {
+        role = bits.find(function (t) { return t !== name; }) || "Преподаватель / вожатый";
+      }
+      if (!name) return;
+
+      var src = rawSrc ? toAbs(baseUrl, rawSrc) : "";
+      var key = (name + "|" + role + "|" + src).toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      cards.push({
+        img: src,
+        name: name,
+        role: role
+      });
+    });
+    return cards;
+  }
+
+  function teamCardsSignature(cards) {
+    return (cards || []).map(function (x) {
+      return [x.img || "", x.name || "", x.role || ""].join("|");
+    }).join("||");
+  }
+
+  function getTeamCardInitials(name) {
+    var parts = String(name || "").trim().split(/\s+/).filter(Boolean).slice(0, 2);
+    if (!parts.length) return "AI";
+    return parts.map(function (part) { return part.charAt(0).toUpperCase(); }).join("");
+  }
+
+  function rutubeVideoId(url) {
+    var m = String(url || "").match(/\/shorts\/([a-z0-9]+)\//i) || String(url || "").match(/\/video\/([a-z0-9]+)\//i);
+    return m ? m[1] : "";
+  }
+
+  function rutubeEmbedUrl(url) {
+    var id = rutubeVideoId(url);
+    return id ? ("https://rutube.ru/play/embed/" + id) : "";
+  }
+
+  function rutubeThumbnailUrl(url) {
+    var id = rutubeVideoId(url);
+    return id ? ("https://rutube.ru/api/video/" + id + "/thumbnail/?redirect=1") : "";
+  }
+
+  function openRutubeVideoLightbox(items, startIndex) {
+    if (!items || !items.length) return;
+    var lb = ensureMediaLightbox();
+    var stage = $(".ac-media-lightbox__stage", lb);
+    var closeBtn = $(".ac-media-lightbox__close", lb);
+    var prevBtn = $(".ac-media-lightbox__nav--prev", lb);
+    var nextBtn = $(".ac-media-lightbox__nav--next", lb);
+    var idx = Math.max(0, Math.min(startIndex || 0, items.length - 1));
+
+    function render() {
+      var item = items[idx];
+      if (!item) return;
+      var embed = rutubeEmbedUrl(item.url);
+      if (!embed) return;
+      stage.innerHTML =
+        '<div class="ac-media-lightbox__rutube-wrap">' +
+        '  <iframe class="ac-media-lightbox__rutube" src="' + embed + '" title="' + (item.title || "Rutube video") + '" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>' +
+        (item.title ? '<div class="ac-media-lightbox__caption">' + item.title + "</div>" : "") +
+        "</div>";
+      var hideNav = items.length < 2;
+      prevBtn.style.display = hideNav ? "none" : "";
+      nextBtn.style.display = hideNav ? "none" : "";
+    }
+
+    function go(step) {
+      idx = (idx + step + items.length) % items.length;
+      render();
+    }
+
+    lb.classList.add("is-open");
+    render();
+    lb.onclick = function (e) {
+      if (e.target === lb) lb.classList.remove("is-open");
+    };
+    closeBtn.onclick = function () { lb.classList.remove("is-open"); };
+    prevBtn.onclick = function () { go(-1); };
+    nextBtn.onclick = function () { go(1); };
+    document.onkeydown = function (e) {
+      if (!lb.classList.contains("is-open")) return;
+      if (e.key === "Escape") lb.classList.remove("is-open");
+      if (e.key === "ArrowLeft") go(-1);
+      if (e.key === "ArrowRight") go(1);
+    };
+  }
+
+  function renderRutubeVideos() {
+    if (!AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) return false;
+    var videoHost = $("#acLtVideo");
+    if (!videoHost) return false;
+    var videoGrid = $(".ac-left-video-grid", videoHost);
+    if (!videoGrid) {
+      videoGrid = document.createElement("div");
+      videoGrid.className = "ac-left-video-grid";
+      videoHost.appendChild(videoGrid);
+    }
+    var items = AC_DEV_RUTUBE_VIDEOS.filter(function (item) { return rutubeEmbedUrl(item.url); });
+    var slides = [];
+    for (var i = 0; i < items.length; i += 2) slides.push(items.slice(i, i + 2));
+
+    videoGrid.innerHTML =
+      '<div class="ac-left-video-carousel">' +
+      '  <div class="ac-left-video-carousel__viewport">' +
+      '    <div class="ac-left-video-carousel__track" id="acRutubeTrack"></div>' +
+      "  </div>" +
+      '  <div class="ac-left-video-carousel__nav">' +
+      '    <button class="ac-left-video-carousel__arrow" id="acRutubePrev" type="button" aria-label="Назад">←</button>' +
+      '    <div class="ac-left-video-carousel__dots" id="acRutubeDots"></div>' +
+      '    <button class="ac-left-video-carousel__arrow" id="acRutubeNext" type="button" aria-label="Вперёд">→</button>' +
+      "  </div>" +
+      "</div>";
+
+    var track = $("#acRutubeTrack", videoGrid);
+    var dots = $("#acRutubeDots", videoGrid);
+    var prev = $("#acRutubePrev", videoGrid);
+    var next = $("#acRutubeNext", videoGrid);
+    if (!track || !dots || !prev || !next) return false;
+
+    track.innerHTML = "";
+    dots.innerHTML = "";
+    slides.forEach(function (group, slideIdx) {
+      var slide = document.createElement("div");
+      slide.className = "ac-left-video-carousel__slide";
+      group.forEach(function (item) {
+        var card = document.createElement("button");
+        card.type = "button";
+        card.className = "ac-left-video-item ac-left-video-item--rutube";
+        card.setAttribute("data-rutube-url", item.url);
+        var poster = rutubeThumbnailUrl(item.url);
+        card.innerHTML =
+          '<div class="ac-left-video-item__poster">' +
+          (poster ? '  <img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' : "") +
+          '  <div class="ac-left-video-item__poster-shade"></div>' +
+          '  <div class="ac-left-video-item__play">▶</div>' +
+          '  <div class="ac-left-video-item__caption">' + (item.title || "Видео") + "</div>" +
+          "</div>" +
+          "";
+        card.addEventListener("click", function () {
+          openRutubeVideoLightbox(items, items.indexOf(item));
+        });
+        slide.appendChild(card);
+      });
+      track.appendChild(slide);
+
+      var dot = document.createElement("span");
+      dot.className = "ac-reviews-ya__dot" + (slideIdx === 0 ? " is-active" : "");
+      dots.appendChild(dot);
+    });
+
+    var index = 0;
+    var allDots = $$(".ac-reviews-ya__dot", dots);
+    function update() {
+      track.style.transform = "translateX(" + (-100 * index) + "%)";
+      allDots.forEach(function (d, i) { d.classList.toggle("is-active", i === index); });
+    }
+    prev.onclick = function () { index = (index - 1 + slides.length) % slides.length; update(); };
+    next.onclick = function () { index = (index + 1) % slides.length; update(); };
+    update();
+    videoHost.style.display = "";
+    return true;
+  }
+
+  async function refreshTeamFromRemote(force) {
+    if (!AC_DEV_REMOTE_TEAM_REFRESH_ENABLED) return;
+    if (window.__acTeamRefreshInFlight) return;
+    window.__acTeamRefreshInFlight = true;
+    var url = "https://aidacamp.ru/media";
+    try {
+      var res = await fetch(url, { credentials: "omit", cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      var html = await res.text();
+      var doc = new DOMParser().parseFromString(html, "text/html");
+      var cards = parseTeamCardsFromDoc(doc, url);
+      if (!cards.length) return;
+      var sig = teamCardsSignature(cards);
+      if (!force && sig === window.__acTeamSignature) return;
+      window.__acTeamSignature = sig;
+      window.__acTeamCards = cards;
+      ensureTeamCarousel();
+    } catch (e) {
+      console.warn("Team refresh failed:", e);
+    } finally {
+      window.__acTeamRefreshInFlight = false;
+    }
   }
 
   function ensureTeamCarousel() {
     var host = $("#acLtTeam");
     if (!host) return;
 
-    var cards = $$(".ac-team-live__card", host).map(function (card) {
-      var img = $("img", card);
-      var nameEl = $(".ac-team-live__name", card);
-      var roleEl = $(".ac-team-live__role", card);
-      return {
-        img: img ? (img.getAttribute("src") || "") : "",
-        name: nameEl ? (nameEl.textContent || "").trim() : "",
-        role: roleEl ? (roleEl.textContent || "").trim() : ""
-      };
-    }).filter(function (x) {
-      return x.img && x.name;
-    });
+    var cards = [];
+    if (Array.isArray(window.__acTeamCards) && window.__acTeamCards.length) {
+      cards = window.__acTeamCards.slice();
+    } else if (loadTeamFromManifest() && Array.isArray(window.__acTeamCards) && window.__acTeamCards.length) {
+      cards = window.__acTeamCards.slice();
+    } else {
+      cards = $$(".ac-team-live__card", host).map(function (card) {
+        var img = $("img", card);
+        var nameEl = $(".ac-team-live__name", card);
+        var roleEl = $(".ac-team-live__role", card);
+        return {
+          img: img ? (img.getAttribute("src") || "") : "",
+          name: nameEl ? (nameEl.textContent || "").trim() : "",
+          role: roleEl ? (roleEl.textContent || "").trim() : ""
+        };
+      }).filter(function (x) {
+        return x.name;
+      });
+    }
 
     if (!cards.length) {
       cards = [
@@ -231,8 +611,11 @@
         group.forEach(function (p) {
           var card = document.createElement("article");
           card.className = "ac-team-slider__card";
+          var mediaHtml = p.img
+            ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '">'
+            : '<div class="ac-team-slider__img ac-team-slider__img--placeholder">' + getTeamCardInitials(p.name) + "</div>";
           card.innerHTML =
-            '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '">' +
+            mediaHtml +
             '<div class="ac-team-slider__name">' + (p.name || "Команда AidaCamp") + "</div>" +
             '<div class="ac-team-slider__role">' + (p.role || "Преподаватель") + "</div>";
           slide.appendChild(card);
@@ -547,20 +930,24 @@
 
     var videos = mediaMap.videos || [];
     if (videoGrid) {
-      videoGrid.innerHTML = videos.map(function (item, i) {
-        return (
-          '<div class="ac-left-video-item" data-video-index="' + i + '">' +
-          '<video src="' + item.src + '" muted loop playsinline preload="metadata" controls aria-label="Видео: ' + (item.caption || "AidaCamp") + '"></video>' +
-          "</div>"
-        );
-      }).join("");
+      if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
+        renderRutubeVideos();
+      } else {
+        videoGrid.innerHTML = videos.map(function (item, i) {
+          return (
+            '<div class="ac-left-video-item" data-video-index="' + i + '">' +
+            '<video src="' + item.src + '" muted loop playsinline preload="metadata" controls aria-label="Видео: ' + (item.caption || "AidaCamp") + '"></video>' +
+            "</div>"
+          );
+        }).join("");
 
-      videoGrid.onclick = function (e) {
-        var item = e.target.closest(".ac-left-video-item");
-        if (!item) return;
-        var i = Number(item.getAttribute("data-video-index") || "0");
-        openMediaLightbox(videos, i);
-      };
+        videoGrid.onclick = function (e) {
+          var item = e.target.closest(".ac-left-video-item");
+          if (!item) return;
+          var i = Number(item.getAttribute("data-video-index") || "0");
+          openMediaLightbox(videos, i);
+        };
+      }
     }
 
     // Force videos to stay only inside #acLtVideo.
@@ -575,7 +962,9 @@
       videoHost.style.display = videos.length ? "" : "none";
     }
 
-    if (!videoGrid && videoHost) {
+    if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
+      renderRutubeVideos();
+    } else if (!videoGrid && videoHost) {
       videoHost.innerHTML = '<h3 style="margin:0 0 8px;font-size:14px">🎬 Видео из лагеря</h3><div style="font-size:12px;color:#9ca3af">Видео скоро появятся</div>';
     } else if (videoGrid && !videos.length) {
       videoGrid.innerHTML =
@@ -704,6 +1093,30 @@
     };
   }
 
+  function normalizeShiftDateLabel(label) {
+    var txt = (label || "").split("•")[0].replace(/\s+/g, " ").trim();
+    var monthMap = {
+      "ЯНВ": "января",
+      "ФЕВ": "февраля",
+      "МАР": "марта",
+      "АПР": "апреля",
+      "МАЙ": "мая",
+      "ИЮН": "июня",
+      "ИЮЛ": "июля",
+      "АВГ": "августа",
+      "СЕН": "сентября",
+      "ОКТ": "октября",
+      "НОЯ": "ноября",
+      "ДЕК": "декабря"
+    };
+    return txt.replace(/\b(ЯНВ|ФЕВ|МАР|АПР|МАЙ|ИЮН|ИЮЛ|АВГ|СЕН|ОКТ|НОЯ|ДЕК)\b/gi, function (m) {
+      var key = (m || "").toUpperCase();
+      return monthMap[key] || m.toLowerCase();
+    });
+  }
+
+  window.normalizeShiftDateLabel = normalizeShiftDateLabel;
+
   function ensureFallbackCalendarModal() {
     if ($("#acModCalendar")) return;
     var root = document.createElement("div");
@@ -768,6 +1181,244 @@
     $("#acModCalendar").style.display = "flex";
   }
 
+  function getCurrentShiftsData() {
+    if (!window.AC || !AC.allShifts || !AC.state) return [];
+    return AC.allShifts[AC.state.currentAge] || AC.allShifts[0] || [];
+  }
+
+  function ensureShiftsCalendarView() {
+    var step3 = $("#acStep3");
+    if (!step3) return null;
+    var view = $("#acShiftsCalendarView", step3);
+    if (view) return view;
+    view = document.createElement("div");
+    view.id = "acShiftsCalendarView";
+    view.className = "ac-shifts-calendar";
+    view.style.display = "none";
+    var bookBtn = $("#acBookBtn", step3);
+    if (bookBtn && bookBtn.parentNode === step3) step3.insertBefore(view, bookBtn);
+    else step3.appendChild(view);
+    return view;
+  }
+
+  function syncShiftsCalendarMode() {
+    var list = $("#acShiftsList");
+    var view = ensureShiftsCalendarView();
+    var bookBtn = $("#acBookBtn");
+    var titleBtn = $("#acShiftsCalendarToggle");
+    var titleHint = $("#acShiftsCalendarHint");
+    var isCalendar = window.__acShiftsMode === "calendar";
+    if (list) list.style.display = isCalendar ? "none" : "";
+    if (view) view.style.display = isCalendar ? "flex" : "none";
+    if (bookBtn) bookBtn.style.display = isCalendar ? "none" : "";
+    if (titleBtn) {
+      titleBtn.classList.toggle("is-active", isCalendar);
+      titleBtn.setAttribute("aria-pressed", isCalendar ? "true" : "false");
+      titleBtn.setAttribute("aria-label", isCalendar ? "Показать карточки смен" : "Показать календарь смен");
+    }
+    if (titleHint && isCalendar) titleHint.classList.remove("is-show");
+    if (isCalendar) renderShiftsCalendarView();
+  }
+
+  function closeShiftsCalendarMode() {
+    window.__acShiftsMode = "list";
+    syncShiftsCalendarMode();
+  }
+
+  function selectShiftCardByIndex(idx) {
+    var list = $("#acShiftsList");
+    var bookBtn = $("#acBookBtn");
+    if (!list) return false;
+    var card = $('.ac-shift[data-shift-idx="' + idx + '"]', list);
+    if (!card) return false;
+    if (window.AC && AC.state) AC.state.selectedIdx = idx;
+    $$(".ac-shift", list).forEach(function (el) {
+      el.classList.remove("is-selected");
+      el.classList.remove("has-price-visible");
+    });
+    card.classList.add("is-selected");
+    card.classList.add("has-price-visible");
+    if (bookBtn) bookBtn.classList.add("is-visible");
+    if (typeof card.scrollIntoView === "function") {
+      card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    setTimeout(function () {
+      card.classList.add("is-selected");
+      card.classList.add("has-price-visible");
+    }, 40);
+    return true;
+  }
+
+  function openShiftFromCalendar(idx) {
+    closeShiftsCalendarMode();
+    if (!window.AC || typeof AC.renderShifts !== "function") return;
+    AC.renderShifts();
+    setTimeout(function () {
+      enhanceShifts();
+      selectShiftCardByIndex(idx);
+      scheduleShiftsHardLock("calendar-select");
+    }, 70);
+  }
+
+  function renderShiftsCalendarView() {
+    var view = ensureShiftsCalendarView();
+    if (!view) return;
+    var shifts = getCurrentShiftsData();
+    if (!shifts.length) {
+      view.innerHTML = '<div class="ac-shifts-calendar__empty">Календарь смен скоро появится</div>';
+      return;
+    }
+
+    var items = shifts.map(function (shift, idx) {
+      var range = parseRangeFromShiftText(shift.bookingOptionLabel || "");
+      if (!range) return null;
+      return { idx: idx, shift: shift, range: range };
+    }).filter(Boolean);
+    if (!items.length) {
+      view.innerHTML = '<div class="ac-shifts-calendar__empty">Не удалось построить календарь смен</div>';
+      return;
+    }
+
+    items.sort(function (a, b) { return a.range.start - b.range.start; });
+    var monthKeys = [];
+    items.forEach(function (item) {
+      var key = item.range.start.getFullYear() + "-" + item.range.start.getMonth();
+      if (monthKeys.indexOf(key) === -1) monthKeys.push(key);
+    });
+
+    var monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+    view.innerHTML =
+      '<div class="ac-shifts-calendar__toolbar">' +
+      '  <div class="ac-shifts-calendar__toolbar-title">Календарь смен</div>' +
+      '  <button type="button" class="ac-shifts-calendar__close" id="acShiftsCalendarClose" aria-label="Вернуться к карточкам смен">✕</button>' +
+      "</div>";
+    var closeBtn = $("#acShiftsCalendarClose", view);
+    if (closeBtn) {
+      closeBtn.onclick = function () {
+        closeShiftsCalendarMode();
+      };
+    }
+    monthKeys.forEach(function (key) {
+      var parts = key.split("-");
+      var year = Number(parts[0]);
+      var month = Number(parts[1]);
+      var daysInMonth = new Date(year, month + 1, 0).getDate();
+      var firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7;
+      var monthItems = items.filter(function (item) {
+        return item.range.start.getFullYear() === year && item.range.start.getMonth() === month;
+      });
+
+      var card = document.createElement("section");
+      card.className = "ac-shifts-calendar__month";
+      card.innerHTML =
+        '<div class="ac-shifts-calendar__month-title">' + monthNames[month] + " " + year + "</div>" +
+        '<div class="ac-shifts-calendar__weekdays"></div>' +
+        '<div class="ac-shifts-calendar__grid"></div>' +
+        '<div class="ac-shifts-calendar__legend"></div>';
+      view.appendChild(card);
+
+      var weekdays = $(".ac-shifts-calendar__weekdays", card);
+      var grid = $(".ac-shifts-calendar__grid", card);
+      var legend = $(".ac-shifts-calendar__legend", card);
+      ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].forEach(function (d) {
+        var el = document.createElement("div");
+        el.className = "ac-shifts-calendar__weekday";
+        el.textContent = d;
+        weekdays.appendChild(el);
+      });
+
+      for (var i = 0; i < firstWeekday; i++) {
+        var blank = document.createElement("div");
+        blank.className = "ac-shifts-calendar__cell is-empty";
+        grid.appendChild(blank);
+      }
+
+      for (var day = 1; day <= daysInMonth; day++) {
+        var date = new Date(year, month, day);
+        var match = monthItems.find(function (item) {
+          return date >= item.range.start && date <= item.range.end;
+        });
+        var cell = document.createElement(match ? "button" : "div");
+        cell.className = "ac-shifts-calendar__cell" + (match ? " is-shift" : "");
+        cell.textContent = String(day);
+        if (match) {
+          cell.type = "button";
+          cell.classList.add("is-range");
+          if (date.getTime() === match.range.start.getTime()) cell.classList.add("is-start");
+          else if (date.getTime() === match.range.end.getTime()) cell.classList.add("is-end");
+          else cell.classList.add("is-middle");
+          cell.setAttribute("aria-label", (match.shift.name || "Смена") + ": " + normalizeShiftDateLabel(match.shift.bookingOptionLabel || ""));
+          cell.addEventListener("click", function (shiftIdx) {
+            return function () { openShiftFromCalendar(shiftIdx); };
+          }(match.idx));
+        }
+        grid.appendChild(cell);
+      }
+
+      monthItems.forEach(function (item) {
+        var chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "ac-shifts-calendar__legend-item";
+        chip.innerHTML =
+          '<span class="ac-shifts-calendar__legend-dot"></span>' +
+          '<span class="ac-shifts-calendar__legend-text">' + normalizeShiftDateLabel(item.shift.bookingOptionLabel || "") + "</span>";
+        chip.addEventListener("click", function () {
+          openShiftFromCalendar(item.idx);
+        });
+        legend.appendChild(chip);
+      });
+    });
+  }
+
+  function ensureShiftsTitleCalendarToggle() {
+    var title = $("#acShiftsTitle");
+    if (!title) return;
+    var text = (title.textContent || "").trim();
+    var textSpan = $(".ac-shifts__title-text", title);
+    if (!textSpan) {
+      title.textContent = "";
+      textSpan = document.createElement("span");
+      textSpan.className = "ac-shifts__title-text";
+      textSpan.textContent = text || "Смены";
+      title.appendChild(textSpan);
+    }
+    var btn = $("#acShiftsCalendarToggle", title);
+    if (!btn) {
+      btn = document.createElement("button");
+      btn.type = "button";
+      btn.id = "acShiftsCalendarToggle";
+      btn.className = "ac-shifts__title-cal-btn";
+      btn.setAttribute("aria-label", "Показать календарь смен");
+      btn.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<rect x="3" y="5" width="18" height="16" rx="4" stroke="currentColor" stroke-width="1.8"/>' +
+        '<path d="M3 9.5h18" stroke="currentColor" stroke-width="1.8"/>' +
+        '<path d="M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+        "</svg>";
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.__acShiftsMode = window.__acShiftsMode === "calendar" ? "list" : "calendar";
+        syncShiftsCalendarMode();
+      });
+      title.appendChild(btn);
+    }
+    var hint = $("#acShiftsCalendarHint", title);
+    if (!hint) {
+      hint = document.createElement("div");
+      hint.id = "acShiftsCalendarHint";
+      hint.className = "ac-shifts__title-cal-hint";
+      hint.textContent = "Посмотреть в виде календаря";
+      title.appendChild(hint);
+    }
+    if (!window.__acShiftsCalendarHintShown && window.__acShiftsMode !== "calendar") {
+      window.__acShiftsCalendarHintShown = true;
+      setTimeout(function () { hint.classList.add("is-show"); }, 900);
+      setTimeout(function () { hint.classList.remove("is-show"); }, 3700);
+    }
+    syncShiftsCalendarMode();
+  }
+
   function enforceShiftsFrameHard() {
     var step3 = $("#acStep3");
     var title = $("#acShiftsTitle");
@@ -778,6 +1429,8 @@
     // Lock stable geometry so legacy CSS cannot collapse/shift block.
     step3.style.display = "grid";
     step3.style.gridTemplateRows = "auto 1fr auto";
+    step3.style.setProperty("justify-items", "stretch", "important");
+    step3.style.setProperty("align-items", "stretch", "important");
     step3.style.height = "100%";
     step3.style.minHeight = "0";
     step3.style.overflow = "hidden";
@@ -798,9 +1451,25 @@
     if (hint) hint.style.display = "none";
     if (bookBtn) bookBtn.style.marginTop = "6px";
 
-    list.style.setProperty("width", "100%", "important");
-    list.style.setProperty("min-width", "100%", "important");
-    list.style.setProperty("max-width", "none", "important");
+    var st = window.getComputedStyle(step3);
+    var padL = parseFloat(st.paddingLeft || "0") || 0;
+    var padR = parseFloat(st.paddingRight || "0") || 0;
+    // Use visual width (rect) instead of clientWidth to avoid browser zoom/scale inconsistencies.
+    var stepRect = step3.getBoundingClientRect ? step3.getBoundingClientRect() : null;
+    var stepRectW = stepRect ? stepRect.width : 0;
+    var frameW = Math.max(0, Math.round(stepRectW - padL - padR));
+    var listW = frameW > 220 ? frameW : 0;
+    var shiftW = frameW > 220 ? Math.max(0, frameW - 6) : 0; // account for list right padding/scrollbar
+
+    if (listW > 0) {
+      list.style.setProperty("width", listW + "px", "important");
+      list.style.setProperty("min-width", listW + "px", "important");
+      list.style.setProperty("max-width", listW + "px", "important");
+    } else {
+      list.style.setProperty("width", "100%", "important");
+      list.style.setProperty("min-width", "100%", "important");
+      list.style.setProperty("max-width", "none", "important");
+    }
     list.style.setProperty("justify-self", "stretch", "important");
     list.style.setProperty("align-self", "stretch", "important");
     list.style.minHeight = "0";
@@ -817,20 +1486,27 @@
     list.style.justifyContent = "flex-start";
 
     $$(".ac-shift", list).forEach(function (shift) {
-      shift.style.setProperty("width", "100%", "important");
-      shift.style.setProperty("min-width", "100%", "important");
-      shift.style.setProperty("max-width", "none", "important");
+      if (shiftW > 0) {
+        shift.style.setProperty("width", shiftW + "px", "important");
+        shift.style.setProperty("min-width", shiftW + "px", "important");
+        shift.style.setProperty("max-width", shiftW + "px", "important");
+      } else {
+        shift.style.setProperty("width", "100%", "important");
+        shift.style.setProperty("min-width", "100%", "important");
+        shift.style.setProperty("max-width", "none", "important");
+      }
       shift.style.marginLeft = "0";
       shift.style.marginRight = "0";
       shift.style.boxSizing = "border-box";
       shift.style.setProperty("align-self", "stretch", "important");
+      shift.style.setProperty("flex", "0 0 auto", "important");
 
       var right = $(".ac-shift__right", shift);
       if (right) {
-        // Neutralize legacy 136/150/182 px rules that visually squeeze cards.
-        right.style.setProperty("min-width", "96px", "important");
-        right.style.setProperty("width", "96px", "important");
-        right.style.setProperty("max-width", "96px", "important");
+        // Stable right column width avoids text overlap and "jumping" price block.
+        right.style.setProperty("min-width", "220px", "important");
+        right.style.setProperty("width", "220px", "important");
+        right.style.setProperty("max-width", "220px", "important");
       }
     });
   }
@@ -896,6 +1572,7 @@
 
       // Remove legacy calendar controls/buttons in shift cards.
       $$(".ac-shift__calendar-link", shift).forEach(function (el) { el.remove(); });
+      $$(".ac-shift__promo-logo-icon", shift).forEach(function (el) { el.remove(); });
       $$("button,a", shift).forEach(function (el) {
         if (/календар/i.test((el.textContent || "").trim())) el.remove();
       });
@@ -929,6 +1606,8 @@
         });
       }
 
+      // Keep legacy CTA icon inside button text.
+
       // Remove empty leftovers in action area.
       $$(".ac-shift__actions", shift).forEach(function (row) {
         var hasVisibleControl = Array.prototype.some.call(row.children, function (c) {
@@ -939,9 +1618,31 @@
     });
 
     syncPriceVisibility();
+    if (typeof window.__acApplyShiftOccupancy === "function") {
+      window.__acApplyShiftOccupancy();
+    }
+    ensureShiftsTitleCalendarToggle();
+    syncShiftsCalendarMode();
     enforceShiftsFrameHard();
     scheduleShiftsHardLock("enhanceShifts");
     list._enhanceInProgress = false;
+  }
+
+  function recoverEmptyShifts(reason) {
+    var step3 = $("#acStep3");
+    var list = $("#acShiftsList");
+    if (!step3 || !list || !window.AC || typeof window.AC.renderShifts !== "function") return false;
+    if (!step3.classList.contains("is-active")) return false;
+    if ($$(".ac-shift", list).length) return false;
+    try {
+      window.AC.renderShifts();
+      enhanceShifts();
+      scheduleShiftsHardLock(reason || "recover-empty-shifts");
+      return true;
+    } catch (e) {
+      console.warn("Empty shifts recovery failed:", e);
+      return false;
+    }
   }
 
   function setupAgePersistenceAndReset() {
@@ -1112,6 +1813,93 @@
     } else {
       syncAgeInteractionGate();
     }
+  }
+
+  function bindSearchResultToShiftCard() {
+    if (window.__acSearchToCardBound) return;
+    window.__acSearchToCardBound = true;
+    var OCC_KEY = "acShiftOccupancyV2";
+
+    function saveState(state) {
+      window.__acShiftOccupancy = state || null;
+      try {
+        if (state) localStorage.setItem(OCC_KEY, JSON.stringify(state));
+        else localStorage.removeItem(OCC_KEY);
+      } catch (e) {}
+    }
+
+    function readState() {
+      if (window.__acShiftOccupancy) return window.__acShiftOccupancy;
+      try {
+        var raw = localStorage.getItem(OCC_KEY);
+        if (!raw) return null;
+        var parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return null;
+        window.__acShiftOccupancy = parsed;
+        return parsed;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function applyStateToSelectedShift() {
+      var state = readState();
+      if (!state) return;
+      var shift = $(".ac-shift.is-selected");
+      if (!shift) return;
+      var sc = $(".ac-shift__seats-check", shift);
+      var sp = $(".ac-shift__seats-prog", shift);
+      var spl = $(".ac-shift__seats-prog-lbl", shift);
+      var spf = $(".ac-shift__seats-prog-fill", shift);
+      if (!sc || !sp || !spl || !spf) return;
+      sc.textContent = state.title || "Смена заполнена";
+      spl.innerHTML = state.html || state.label || "";
+      sc.classList.add("is-vis");
+      sp.classList.add("is-vis");
+      var num = Number(state.pct || 0) || 0;
+      spf.style.width = Math.max(0, Math.min(100, num)) + "%";
+    }
+
+    window.__acApplyShiftOccupancy = applyStateToSelectedShift;
+
+    document.addEventListener("click", function (e) {
+      var ok = e.target.closest("#acSearchOk");
+      if (!ok) return;
+
+      // Wait until legacy handler closes modal and runs drum.
+      setTimeout(function () {
+        var shift = $(".ac-shift.is-selected");
+        if (!shift) return;
+
+        var pctEl = $("#acSearchPct");
+        var seatsEl = $("#acSearchSeats");
+        var pct = pctEl ? (pctEl.textContent || "").trim() : "";
+        if (!pct) return;
+
+        var sc = $(".ac-shift__seats-check", shift);
+        var sp = $(".ac-shift__seats-prog", shift);
+        var spl = $(".ac-shift__seats-prog-lbl", shift);
+        var spf = $(".ac-shift__seats-prog-fill", shift);
+        if (!sc || !sp || !spl || !spf) return;
+
+        var seatsText = seatsEl ? (seatsEl.textContent || "").replace(/\s+/g, " ").trim() : "";
+        var seatsMatch = seatsText.match(/(\d+)\s+из\s+(\d+)\s+мест/i);
+        var seatsLine = seatsMatch ? (seatsMatch[1] + " из " + seatsMatch[2] + " мест") : seatsText;
+        sc.textContent = "Смена заполнена";
+        spl.innerHTML = '<span class="ac-shift__seats-prog-main">' + pct + '</span> • забронировано' +
+          (seatsLine ? ('<br><span class="ac-shift__seats-prog-sub">' + seatsLine + "</span>") : "");
+        sc.classList.add("is-vis");
+        sp.classList.add("is-vis");
+        var num = Number(String(pct).replace(/[^\d]/g, "")) || 0;
+        spf.style.width = Math.max(0, Math.min(100, num)) + "%";
+        saveState({
+          title: "Смена заполнена",
+          html: spl.innerHTML,
+          pct: num,
+          ts: Date.now()
+        });
+      }, 30);
+    }, true);
   }
 
   function startShiftsDiagnostics() {
@@ -1326,14 +2114,18 @@
   function init() {
     ensureLogoStatic();
     setupAgePersistenceAndReset();
-    startShiftsDiagnostics();
+    bindSearchResultToShiftCard();
+    loadTeamFromManifest();
+    // startShiftsDiagnostics();
     ensureYandexReviewsTab();
     ensureTeamCarousel();
+    refreshTeamFromRemote(true);
     ensureLeftTabsRouting();
     ensureGalleryAltAndVideo();
     // Prefer build-time manifest; fallback to runtime parser.
     if (!loadMediaFromManifest()) loadMediaByCaption();
     enhanceShifts();
+    recoverEmptyShifts("init");
     scheduleShiftsHardLock("init");
 
     var shiftsList = $("#acShiftsList");
@@ -1362,12 +2154,14 @@
     }, 3600);
     setTimeout(function () {
       enhanceShifts();
+      recoverEmptyShifts("t+800");
     }, 800);
     // Legacy patch scripts apply delayed !important rules; re-assert for a few seconds.
     [1400, 2200, 3200, 4600, 6200].forEach(function (ms) {
       setTimeout(function () {
         enforceShiftsFrameHard();
         enhanceShifts();
+        recoverEmptyShifts("reapply-" + ms);
       }, ms);
     });
 
@@ -1380,6 +2174,7 @@
       window.AC.renderShifts = function () {
         var out = oldRender.apply(this, arguments);
         scheduleShiftsHardLock("AC.renderShifts");
+        setTimeout(function () { recoverEmptyShifts("after-render"); }, 40);
         return out;
       };
       window.AC._acFinalShiftsLockWrapped = true;
@@ -1391,7 +2186,20 @@
     setTimeout(ensureYandexReviewsTab, 2200);
     setTimeout(ensureTeamCarousel, 1000);
     setTimeout(ensureTeamCarousel, 2400);
+    if (AC_DEV_REMOTE_TEAM_REFRESH_ENABLED) {
+      setTimeout(function () { refreshTeamFromRemote(true); }, 1500);
+      setTimeout(function () { refreshTeamFromRemote(true); }, 5000);
+      setTimeout(function () { refreshTeamFromRemote(true); }, 12000);
+      setInterval(function () { refreshTeamFromRemote(false); }, 60000);
+    }
+    if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
+      setTimeout(renderRutubeVideos, 400);
+      setTimeout(renderRutubeVideos, 1600);
+    }
     setTimeout(ensureLeftTabsRouting, 500);
+    setTimeout(function () { recoverEmptyShifts("t+500"); }, 500);
+    setTimeout(function () { recoverEmptyShifts("t+1600"); }, 1600);
+    setTimeout(function () { recoverEmptyShifts("t+3600"); }, 3600);
 
     // Force category tabs to use current renderer, even if legacy scripts overwrite onclick.
     if (!window.__acCatDelegatedBound) {
@@ -1424,11 +2232,20 @@
       var t = $("#acShiftsTitle");
       if (!t) return;
       var age = resolveAgeLabel();
-      t.textContent = age ? ("Смены для " + age + " лет") : "Смены";
+      var text = age ? ("Смены для " + age + " лет") : "Смены";
+      var textSpan = $(".ac-shifts__title-text", t);
+      if (textSpan) textSpan.textContent = text;
+      else t.textContent = text;
+      ensureShiftsTitleCalendarToggle();
     }
 
     updateShiftTitleByAge();
     setInterval(updateShiftTitleByAge, 1200);
+    window.addEventListener("resize", function () {
+      enforceShiftsFrameHard();
+      scheduleShiftsHardLock("resize");
+      recoverEmptyShifts("resize");
+    });
   }
 
   if (document.readyState === "loading") {
