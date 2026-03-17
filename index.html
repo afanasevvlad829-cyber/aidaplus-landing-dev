@@ -1265,7 +1265,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 
       <!-- ИНФО-ПАНЕЛЬ (поверх карточки) -->
       <div class="ac-card-info" id="acCardInfo">
-        <button class="ac-card-info__close" id="acCardInfoClose">✕</button>
+        <button class="ac-card-info__close" id="acCardInfoClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
         <span class="ac-card-info__badge" id="acCiBadge">Смена</span>
         <div class="ac-card-info__title" id="acCiTitle"></div>
         <div class="ac-card-info__date" id="acCiDate"></div>
@@ -1284,7 +1284,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
           <span class="ac-card-info__price-label">Цена смены</span>
           <span class="ac-card-info__price-val" id="acCiPrice"></span>
         </div>
-        <button class="ac-card-info__btn" id="acCiSelectBtn">Выбрать эту смену →</button>
+        <button class="ac-card-info__btn" id="acCiSelectBtn">Выбрать эту смену <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
       </div>
     </div>
 
@@ -1305,7 +1305,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
       <button class="ac-badge" id="acAiBadgeBtn" onclick="acOpenAiTab()">🤖 AI‑программы июнь</button>
 
       <!-- Кнопка закрыть шаг 4 -->
-      <button class="ac-step4-close" id="acStep4Close">✕</button>
+      <button class="ac-step4-close" id="acStep4Close"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
 
       <!-- ШАГ 1 -->
       <div class="ac-step is-active" id="acStep1" style="display:flex;align-items:center;justify-content:center;">
@@ -1313,7 +1313,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
           <div style="font-size:36px;margin-bottom:10px;">👦👧</div>
           <div style="font-family:'Comfortaa',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;">Выберите возраст ребёнка</div>
           <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5;">Передвиньте слайдер на карточке слева — покажем подходящую программу и смены</div>
-          <div style="margin-top:16px;font-size:22px;animation:acBounceX 1.5s ease-in-out infinite;">←</div>
+          <div style="margin-top:16px;font-size:22px;animation:acBounceX 1.5s ease-in-out infinite;"><img class="ac-icon ac-icon--lg" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></div>
         </div>
       </div>
 
@@ -1326,19 +1326,19 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
         </div>
         <div class="ac-safety__grid">
           <div class="ac-safety__item">
-            <span class="ac-safety__icon">🏥</span>
+            <span class="ac-safety__icon"><img class="ac-icon" src="/assets/icons/med.svg" alt="" aria-hidden="true"></span>
             <div class="ac-safety__text"><b>Медик 24/7</b>Врач на территории всю смену</div>
           </div>
           <div class="ac-safety__item">
-            <span class="ac-safety__icon">🔒</span>
+            <span class="ac-safety__icon"><img class="ac-icon" src="/assets/icons/lock.svg" alt="" aria-hidden="true"></span>
             <div class="ac-safety__text"><b>Охрана</b>Закрытая территория, КПП</div>
           </div>
           <div class="ac-safety__item">
-            <span class="ac-safety__icon">🍽️</span>
+            <span class="ac-safety__icon"><img class="ac-icon" src="/assets/icons/food.svg" alt="" aria-hidden="true"></span>
             <div class="ac-safety__text"><b>5-разовое питание</b>Горячее каждый день</div>
           </div>
           <div class="ac-safety__item">
-            <span class="ac-safety__icon">🏊</span>
+            <span class="ac-safety__icon"><img class="ac-icon" src="/assets/icons/pool.svg" alt="" aria-hidden="true"></span>
             <div class="ac-safety__text"><b>Бассейн</b>Каждый день, тренер рядом</div>
           </div>
         </div>
@@ -1349,7 +1349,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
         <div class="ac-shifts__title" id="acShiftsTitle">Все смены</div>
         <div class="ac-shifts__hint" id="acShiftsHint">👆 Нажмите на смену, чтобы выбрать</div>
         <div class="ac-shifts__list" id="acShiftsList"></div>
-        <button class="ac-book-btn" id="acBookBtn">Перейти к бронированию →</button>
+        <button class="ac-book-btn" id="acBookBtn">Перейти к бронированию <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
       </div>
 
       <!-- ШАГ 4 -->
@@ -1392,7 +1392,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 
       <!-- Баннер возврата -->
       <div class="ac-return-banner" id="acReturnBanner">
-        <button class="ac-return-banner__close" id="acRbClose">✕</button>
+        <button class="ac-return-banner__close" id="acRbClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
         <div class="ac-return-banner__icon" id="acRbIcon"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 2v3"/><path d="M22 12h-3"/><path d="M12 22v-3"/><path d="M2 12h3"/></svg></div>
         <div class="ac-return-banner__title" id="acRbTitle"></div>
         <div class="ac-return-banner__sub" id="acRbSub"></div>
@@ -1404,13 +1404,13 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 
       <!-- Навигация -->
       <div class="ac-nav">
-        <button class="ac-nav__btn" id="acPrev">←</button>
+        <button class="ac-nav__btn" id="acPrev"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>
         <span class="ac-nav__label" id="acNavLabel">Шаг 1 из 4</span>
-        <button class="ac-nav__btn" id="acNext">→</button>
+        <button class="ac-nav__btn" id="acNext"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
       </div>
 
       <!-- CTA кнопка шаг 2 -->
-      <button class="ac-cta-next" id="acCtaNext">Смотреть смены и цены →</button>
+      <button class="ac-cta-next" id="acCtaNext">Смотреть смены и цены <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
     </div>
 
   </div>
@@ -1419,9 +1419,9 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 <!-- МОДАЛКА ФИКСАЦИИ -->
 <div class="ac-fix-backdrop" id="acFixBackdrop">
   <div class="ac-fix-modal">
-    <button class="ac-fix-modal__close" id="acFixClose">✕</button>
+    <button class="ac-fix-modal__close" id="acFixClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
     <div class="ac-fix-modal__top">
-      <div class="ac-fix-modal__emoji">🔒</div>
+      <div class="ac-fix-modal__emoji"><img class="ac-icon ac-icon--lg" src="/assets/icons/lock.svg" alt="" aria-hidden="true"></div>
       <div class="ac-fix-modal__title">Подробнее о смене</div>
       <div class="ac-fix-modal__code" id="acFixCode"></div>
       <div class="ac-fix-modal__price" id="acFixPrice"></div>
@@ -1432,16 +1432,16 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
       <div id="acFixForm">
         <input class="ac-fix-modal__input" id="acFixPhone" autocomplete="tel" type="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel">
         <div class="ac-fix-modal__hint">Мы не передаём номер третьим лицам</div>
-        <button class="ac-fix-modal__btn" id="acFixSubmit">🔒 Зафиксировать мою цену</button>
+        <button class="ac-fix-modal__btn" id="acFixSubmit"><img class="ac-icon ac-icon--sm" src="/assets/icons/lock.svg" alt="" aria-hidden="true"> Зафиксировать мою цену</button>
         <button class="ac-fix-modal__btn ac-fix-modal__btn--ghost" id="acFixLater">Позже</button>
       
       </div>
       <div class="ac-fix-modal__success" id="acFixSuccess">
-        <div class="ac-fix-modal__success-icon">✅</div>
+        <div class="ac-fix-modal__success-icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/check.svg" alt="" aria-hidden="true"></div>
         <div class="ac-fix-modal__success-title">Цена зафиксирована!</div>
         <div class="ac-fix-modal__success-text" id="acFixSuccessText"></div>
         <div class="ac-fix-modal__success-timer" id="acFixModalTimer"></div>
-        <button class="ac-fix-modal__btn" id="acFixGoBook">Перейти к бронированию →</button>
+        <button class="ac-fix-modal__btn" id="acFixGoBook">Перейти к бронированию <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
         <button class="ac-fix-modal__btn ac-fix-modal__btn--secondary" id="acFixClose2">Закрыть</button>
         <div class="ac-share" id="acShare">
           <div class="ac-share__title">Поделитесь с друзьями 🙌</div>
@@ -1465,7 +1465,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
   </div>
   <div class="ac-bar__btns">
     <button class="ac-bar__btn ac-bar__btn--primary" id="acBarAction"></button>
-    <button class="ac-bar__btn ac-bar__btn--secondary" id="acBarClose">✕</button>
+    <button class="ac-bar__btn ac-bar__btn--secondary" id="acBarClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
   </div>
 </div>
 
@@ -1477,7 +1477,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
       <span>Показываем в момент интереса, а не сразу на первом экране.</span>
     </div>
     <button class="ac-nudge__action" id="acNudgeProjectBtn" type="button">AI-программы</button>
-    <button class="ac-nudge__close" id="acNudgeProjectClose" type="button" aria-label="Закрыть">✕</button>
+    <button class="ac-nudge__close" id="acNudgeProjectClose" type="button" aria-label="Закрыть"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
   </div>
   <div class="ac-nudge" id="acNudgeGuarantee" hidden>
     <div class="ac-nudge__icon ac-nudge__icon--safe"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
@@ -1486,19 +1486,19 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
       <span>Показываем после просмотра цен и клика по смене — когда может появиться сомнение.</span>
     </div>
     <button class="ac-nudge__action" id="acNudgeGuaranteeBtn" type="button">К бронированию</button>
-    <button class="ac-nudge__close" id="acNudgeGuaranteeClose" type="button" aria-label="Закрыть">✕</button>
+    <button class="ac-nudge__close" id="acNudgeGuaranteeClose" type="button" aria-label="Закрыть"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
   </div>
 </div>
 
 <!-- EXIT INTENT -->
 <div class="ac-exit-backdrop" id="acExitBackdrop">
   <div class="ac-exit-modal">
-    <button class="ac-exit-modal__close" id="acExitClose">✕</button>
+    <button class="ac-exit-modal__close" id="acExitClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
     <div class="ac-exit-modal__emoji">⏳</div>
     <div class="ac-exit-modal__title">Подождите! Ваша цена пропадёт</div>
     <div class="ac-exit-modal__text" id="acExitText"></div>
     <div class="ac-exit-modal__price" id="acExitPrice"></div>
-    <button class="ac-exit-modal__btn" id="acExitFix">🔒 Зафиксировать цену</button>
+    <button class="ac-exit-modal__btn" id="acExitFix"><img class="ac-icon ac-icon--sm" src="/assets/icons/lock.svg" alt="" aria-hidden="true"> Зафиксировать цену</button>
     <button class="ac-exit-modal__btn--secondary" id="acExitDismiss">Всё равно уйти</button>
   </div>
 </div>
@@ -1506,12 +1506,12 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 <!-- REVISIT -->
 <div class="ac-revisit-backdrop" id="acRevisitBackdrop">
   <div class="ac-revisit-modal">
-    <button class="ac-revisit-modal__close" id="acRevisitClose">✕</button>
+    <button class="ac-revisit-modal__close" id="acRevisitClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
     <div class="ac-revisit-modal__emoji">👋</div>
     <div class="ac-revisit-modal__title">С возвращением!</div>
     <div class="ac-revisit-modal__text" id="acRevisitText"></div>
     <div class="ac-revisit-modal__price" id="acRevisitPrice"></div>
-    <button class="ac-revisit-modal__btn" id="acRevisitFix">🔒 Зафиксировать цену</button>
+    <button class="ac-revisit-modal__btn" id="acRevisitFix"><img class="ac-icon ac-icon--sm" src="/assets/icons/lock.svg" alt="" aria-hidden="true"> Зафиксировать цену</button>
     <button class="ac-revisit-modal__btn--ghost" id="acRevisitDismiss">Посмотреть другие смены</button>
   </div>
 </div>
@@ -1573,7 +1573,7 @@ document.getElementById('acCardContent').innerHTML = `
   </div>
   <div class="ac-age" id="acAge">
     <div class="ac-age__label">Выберите возраст</div>
-    <div class="ac-age__hint" id="acAgeHint">← передвиньте слайдер</div>
+    <div class="ac-age__hint" id="acAgeHint"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"> передвиньте слайдер</div>
     <input id="acSlider" type="range" min="0" max="3" step="1" value="0">
     <div class="ac-age__marks">
       <span style="opacity:0">—</span>
@@ -1662,7 +1662,7 @@ document.getElementById('acCardContent').innerHTML = `
       <div class="ac-left-fact">🚗 60 км по Киевскому шоссе</div>
       <div class="ac-left-fact">🚌 Трансфер от м. Юго-Западная</div>
       <div class="ac-left-fact">🌳 Закрытая территория 14 га</div>
-      <div class="ac-left-fact">🏊 Бассейн, спорт, лес</div>
+      <div class="ac-left-fact"><img class="ac-icon ac-icon--sm" src="/assets/icons/pool.svg" alt="" aria-hidden="true"> Бассейн, спорт, лес</div>
     </div>
   </div>
 
@@ -1671,8 +1671,8 @@ document.getElementById('acCardContent').innerHTML = `
       <button class="ac-left-photo-cat is-active" data-lcat="all">Все</button>
       <button class="ac-left-photo-cat" data-lcat="housing">🏠 Жильё</button>
       <button class="ac-left-photo-cat" data-lcat="study">💻 Учёба</button>
-      <button class="ac-left-photo-cat" data-lcat="food">🍽 Еда</button>
-      <button class="ac-left-photo-cat" data-lcat="pool">🏊 Бассейн</button>
+      <button class="ac-left-photo-cat" data-lcat="food"><img class="ac-icon ac-icon--sm" src="/assets/icons/food.svg" alt="" aria-hidden="true"> Еда</button>
+      <button class="ac-left-photo-cat" data-lcat="pool"><img class="ac-icon ac-icon--sm" src="/assets/icons/pool.svg" alt="" aria-hidden="true"> Бассейн</button>
     </div>
     <div class="ac-left-photo-grid">
       <div class="ac-left-photo-item" data-lcat="study"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=300&q=70" alt="IT"></div>

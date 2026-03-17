@@ -89,9 +89,9 @@
       "  </div>" +
       '  <div class="ac-reviews-modern__nav">' +
       '    <div class="ac-reviews-modern__nav-main">' +
-      '      <button class="ac-reviews-ya__arrow" id="acReviewsPrevMod" type="button" aria-label="Назад">←</button>' +
+      '      <button class="ac-reviews-ya__arrow" id="acReviewsPrevMod" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
       '      <div class="ac-reviews-ya__dots" id="acReviewsDotsMod"></div>' +
-      '      <button class="ac-reviews-ya__arrow" id="acReviewsNextMod" type="button" aria-label="Вперёд">→</button>' +
+      '      <button class="ac-reviews-ya__arrow" id="acReviewsNextMod" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
       '    </div>' +
       '    <a class="ac-reviews-modern__source-link" href="https://yandex.ru/maps/org/aydakemp/35558479035/reviews/?ll=38.874756%2C55.531232&z=7" target="_blank" rel="noopener noreferrer">Смотреть на Яндекс Картах</a>' +
       "  </div>" +
@@ -206,7 +206,7 @@
     card.style.display = "none";
     card.innerHTML =
       '<div class="ac-book-card__dialog">' +
-      '  <button type="button" class="ac-book-card__close" id="acBookInfoClose" aria-label="Закрыть карточку книги">✕</button>' +
+      '  <button type="button" class="ac-book-card__close" id="acBookInfoClose" aria-label="Закрыть карточку книги"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>' +
       '  <div class="ac-book-card__media">' +
       '    <img class="ac-book-card__cover" src="' + AC_BOOK_INFO.cover + '" alt="' + AC_BOOK_INFO.title + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' +
       "  </div>" +
@@ -455,9 +455,9 @@
       '    <div class="ac-left-video-carousel__track" id="acRutubeTrack"></div>' +
       "  </div>" +
       '  <div class="ac-left-video-carousel__nav">' +
-      '    <button class="ac-left-video-carousel__arrow" id="acRutubePrev" type="button" aria-label="Назад">←</button>' +
+      '    <button class="ac-left-video-carousel__arrow" id="acRutubePrev" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
       '    <div class="ac-left-video-carousel__dots" id="acRutubeDots"></div>' +
-      '    <button class="ac-left-video-carousel__arrow" id="acRutubeNext" type="button" aria-label="Вперёд">→</button>' +
+      '    <button class="ac-left-video-carousel__arrow" id="acRutubeNext" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
       "  </div>" +
       "</div>";
 
@@ -482,7 +482,7 @@
           '<div class="ac-left-video-item__poster">' +
           (poster ? '  <img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' : "") +
           '  <div class="ac-left-video-item__poster-shade"></div>' +
-          '  <div class="ac-left-video-item__play">▶</div>' +
+          '  <div class="ac-left-video-item__play"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div>' +
           '  <div class="ac-left-video-item__caption">' + (item.title || "Видео") + "</div>" +
           "</div>" +
           "";
@@ -573,8 +573,8 @@
       '    <div class="ac-team-slider__track" id="acTeamTrackMod"></div>' +
       "  </div>" +
       '  <div class="ac-team-slider__nav">' +
-      '    <button class="ac-team-slider__arrow" id="acTeamPrevMod" type="button" aria-label="Назад">←</button>' +
-      '    <button class="ac-team-slider__arrow" id="acTeamNextMod" type="button" aria-label="Вперёд">→</button>' +
+      '    <button class="ac-team-slider__arrow" id="acTeamPrevMod" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '    <button class="ac-team-slider__arrow" id="acTeamNextMod" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
       "  </div>" +
       "</div>";
 
@@ -814,10 +814,10 @@
     el.id = "acMediaLightbox";
     el.className = "ac-media-lightbox";
     el.innerHTML =
-      '<button class="ac-media-lightbox__close" aria-label="Закрыть">✕</button>' +
-      '<button class="ac-media-lightbox__nav ac-media-lightbox__nav--prev" aria-label="Назад">←</button>' +
+      '<button class="ac-media-lightbox__close" aria-label="Закрыть"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>' +
+      '<button class="ac-media-lightbox__nav ac-media-lightbox__nav--prev" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
       '<div class="ac-media-lightbox__stage"></div>' +
-      '<button class="ac-media-lightbox__nav ac-media-lightbox__nav--next" aria-label="Вперед">→</button>';
+      '<button class="ac-media-lightbox__nav ac-media-lightbox__nav--next" aria-label="Вперед"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>';
     document.body.appendChild(el);
     return el;
   }
@@ -968,8 +968,8 @@
       videoHost.innerHTML = '<h3 style="margin:0 0 8px;font-size:14px">🎬 Видео из лагеря</h3><div style="font-size:12px;color:#9ca3af">Видео скоро появятся</div>';
     } else if (videoGrid && !videos.length) {
       videoGrid.innerHTML =
-        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon">▶</div><div class="ac-left-video-ph__text">Скоро</div></div>' +
-        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon">▶</div><div class="ac-left-video-ph__text">Скоро</div></div>' +
+        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div><div class="ac-left-video-ph__text">Скоро</div></div>' +
+        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div><div class="ac-left-video-ph__text">Скоро</div></div>' +
         '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon">▶</div><div class="ac-left-video-ph__text">Скоро</div></div>';
     }
 
@@ -1290,7 +1290,7 @@
     view.innerHTML =
       '<div class="ac-shifts-calendar__toolbar">' +
       '  <div class="ac-shifts-calendar__toolbar-title">Календарь смен</div>' +
-      '  <button type="button" class="ac-shifts-calendar__close" id="acShiftsCalendarClose" aria-label="Вернуться к карточкам смен">✕</button>' +
+      '  <button type="button" class="ac-shifts-calendar__close" id="acShiftsCalendarClose" aria-label="Вернуться к карточкам смен"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>' +
       "</div>";
     var closeBtn = $("#acShiftsCalendarClose", view);
     if (closeBtn) {
