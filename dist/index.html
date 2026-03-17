@@ -3024,12 +3024,10 @@ AC.metrika = function(goal, params){
   var body=document.body;
   var key='acViewModeV1';
   var btn=document.getElementById('acViewToggle');
-  var lbl=document.getElementById('acViewToggleLabel');
   function applyMode(mode){
     var compact = mode!=='full';
     body.classList.toggle('ac-compact-mode', compact);
     if(btn) btn.setAttribute('aria-pressed', String(!compact));
-    if(lbl) lbl.textContent = compact ? 'Полный сайт' : 'Компактный режим';
     try{ localStorage.setItem(key, compact ? 'compact' : 'full'); }catch(e){}
   }
   var saved='compact';
@@ -3072,12 +3070,6 @@ AC.metrika = function(goal, params){
 (function(){
   var body=document.body;
   var btn=document.getElementById('acViewToggle');
-  var lbl=document.getElementById('acViewToggleLabel');
-  function syncModeLabel(){
-    if(!lbl) return;
-    lbl.textContent = body.classList.contains('ac-compact-mode') ? 'Полный' : 'Полный';
-  }
-  syncModeLabel();
 
   // duplicate AI entry points
   function openAi(){
@@ -4495,8 +4487,8 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
 
 <!-- AC_BUILD_SCRIPT_START -->
 <script id="ac-build-components" type="application/json">[{"name": "gallery.html", "size": 230}, {"name": "hero.html", "size": 232}, {"name": "reviews.html", "size": 224}, {"name": "shifts.html", "size": 276}, {"name": "team.html", "size": 163}]</script>
-<script id="ac-build-media-manifest" type="application/json">[{"src": "https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg", "type": "image", "caption": "all", "tags": ["all"]}, {"src": "https://static.tildacdn.com/tild6436-6337-4466-b637-623363613935/photo.jpg", "type": "image", "caption": "all", "tags": ["all"]}, {"src": "https://static.tildacdn.com/tild6666-3333-4534-a639-386666343634/photo_2025-06-14_08-.jpg", "type": "image", "caption": "all", "tags": ["all"]}, {"src": "https://static.tildacdn.com/tild6336-6536-4238-a436-303937666565/photo_2025-06-17_13-.jpg", "type": "image", "caption": "all", "tags": ["all"]}, {"src": "https://static.tildacdn.com/tild3263-3537-4961-b536-363837386238/IMG_1543.JPG", "type": "image", "caption": "study", "tags": ["study"]}, {"src": "https://static.tildacdn.com/tild6330-6330-4664-b762-666363643137/photo_2025-06-14_08-.jpg", "type": "image", "caption": "food", "tags": ["food"]}, {"src": "https://static.tildacdn.com/tild3864-3738-4763-b633-303434303665/photo_2025-06-14_08-.jpg", "type": "image", "caption": "food", "tags": ["food"]}, {"src": "https://static.tildacdn.com/tild3134-3366-4638-b331-366662396639/photo.jpg", "type": "image", "caption": "food", "tags": ["food"]}, {"src": "https://static.tildacdn.com/tild3066-3464-4137-a537-626336356335/photo_2025-06-14_08-.jpg", "type": "image", "caption": "study", "tags": ["study"]}, {"src": "https://static.tildacdn.com/tild3637-6139-4636-b261-386434323832/photo_2025-06-14_08-.jpg", "type": "image", "caption": "study", "tags": ["study"]}, {"src": "https://static.tildacdn.com/tild6266-6134-4235-b166-393766376531/photo_2025-06-14_08-.jpg", "type": "image", "caption": "study", "tags": ["study"]}, {"src": "https://static.tildacdn.com/tild3238-6633-4862-a535-373731303734/photo_2025-06-14_08-.jpg", "type": "image", "caption": "study", "tags": ["study"]}, {"src": "https://static.tildacdn.com/tild6135-3464-4332-b565-386630323830/photo_2025-06-14_08-.jpg", "type": "image", "caption": "pool", "tags": ["pool"]}, {"src": "https://static.tildacdn.com/tild3932-3632-4530-b038-613561623337/photo_2025-06-14_08-.jpg", "type": "image", "caption": "pool", "tags": ["pool"]}, {"src": "https://static.tildacdn.com/tild3639-3532-4334-b035-316562666439/photo.jpg", "type": "image", "caption": "sport", "tags": ["sport"]}, {"src": "https://static.tildacdn.com/tild3963-3938-4335-b335-656531616265/photo_2025-06-14_07-.jpg", "type": "image", "caption": "sport", "tags": ["sport"]}, {"src": "https://static.tildacdn.com/tild6538-6438-4432-b737-313138346237/photo_2025-06-14_08-.jpg", "type": "image", "caption": "sport", "tags": ["sport"]}, {"src": "https://static.tildacdn.com/tild3130-3234-4630-b533-343030653636/photo_2024-02-04_171.jpeg", "type": "image", "caption": "hero", "tags": ["hero"]}, {"src": "https://static.tildacdn.com/tild3031-3662-4930-b463-353632336564/img_DZVzy7hiSoR0c1MR.png", "type": "image", "caption": "hero", "tags": ["hero"]}, {"src": "https://static.tildacdn.com/tild3865-3066-4131-b036-323163393864/photo_2024-02-04_161.jpeg", "type": "image", "caption": "hero", "tags": ["hero"]}, {"src": "https://video.tilda.cc/tilda.cc/tpl_1035-thumb.mp4", "type": "video", "caption": "all", "tags": ["all"]}, {"src": "https://video.tilda.cc/tilda.cc/tpl_1035-main.mp4", "type": "video", "caption": "all", "tags": ["all"]}]</script>
-<script id="ac-build-team-manifest" type="application/json">[{"img": "https://static.tildacdn.com/tild3633-3838-4462-a338-336166376565/photo.png", "name": "Дарья Афанасьева", "role": "основатель и вдохновитель АйДаКемп, предприниматель в сфере детского IT-образования и мама подростка, которая строит лагерь таким, каким сама хотела бы видеть обучение своего ребёнка."}, {"img": "https://static.tildacdn.com/tild3830-6337-4038-b634-333236613738/photo.png", "name": "Никита Брагин", "role": "преподаватель Scratch, Minecraft и Python, автор учебника по разработке игр; специализируется на геймдеве и помогает детям создавать собственные игровые миры."}, {"img": "https://static.tildacdn.com/tild3639-3337-4636-a233-306337633035/photo.png", "name": "Александр Ташкин", "role": "преподаватель Scratch, Minecraft и Python, соавтор учебника по разработке игр; умеет зажигать интерес к программированию через практические задачи и командные проекты."}, {"img": "https://static.tildacdn.com/tild3737-3334-4538-a139-656430373836/photo.png", "name": "Омар Алхамви", "role": "преподаватель Python и нейросетей; работает со старшими и продвинутыми группами, часть занятий ведёт на английском и показывает, как применять AI в реальных проектах."}, {"img": "", "name": "Даша", "role": "преподаватель Python и Scratch; помогает детям легко войти в программирование через игры, логику и первые самостоятельные программы."}]</script>
+<script id="ac-build-media-manifest" type="application/json">[]</script>
+<script id="ac-build-team-manifest" type="application/json">[]</script>
 <script id="ac-build-main-js">
 (function () {
   function $(s, r) { return (r || document).querySelector(s); }

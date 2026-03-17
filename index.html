@@ -3024,12 +3024,10 @@ AC.metrika = function(goal, params){
   var body=document.body;
   var key='acViewModeV1';
   var btn=document.getElementById('acViewToggle');
-  var lbl=document.getElementById('acViewToggleLabel');
   function applyMode(mode){
     var compact = mode!=='full';
     body.classList.toggle('ac-compact-mode', compact);
     if(btn) btn.setAttribute('aria-pressed', String(!compact));
-    if(lbl) lbl.textContent = compact ? 'Полный сайт' : 'Компактный режим';
     try{ localStorage.setItem(key, compact ? 'compact' : 'full'); }catch(e){}
   }
   var saved='compact';
@@ -3072,12 +3070,6 @@ AC.metrika = function(goal, params){
 (function(){
   var body=document.body;
   var btn=document.getElementById('acViewToggle');
-  var lbl=document.getElementById('acViewToggleLabel');
-  function syncModeLabel(){
-    if(!lbl) return;
-    lbl.textContent = body.classList.contains('ac-compact-mode') ? 'Полный' : 'Полный';
-  }
-  syncModeLabel();
 
   // duplicate AI entry points
   function openAi(){
