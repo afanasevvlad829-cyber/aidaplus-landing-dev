@@ -1,46 +1,54 @@
-# AidaPlus Landing — AI Context
+# AidaPlus / AidaCamp project context
 
-## Goal
-Одностраничный лендинг для AidaCamp / AidaPlus.
-В разработке проект модульный.
-В проде требуется один итоговый HTML-файл для Tilda.
+## Project type
+Static landing page with modular JS/CSS.
 
-## Dev root
-/var/www/aidaplus-dev
+## Main files
+- index.html — main page
+- src/scripts/main.js — runtime UI logic
+- src/styles/main.css — main overrides and UI styles
 
-## Baseline
-Исходный файл: index-aidacamp-final-v8.html
+## Current task focus
+Icon migration to unified SVG system.
 
-## Architecture
-src/partials/ — HTML-блоки  
-src/styles/ — CSS  
-src/js/modules/ — JS-модули  
-build/ — сборка  
-dist/ — финальный HTML  
+## Icon source
+All new icons are stored in:
+- /assets/icons/
 
-## Business rules
-- Цена в карточках смен НЕ показывается по умолчанию
-- Цена показывается только после клика на смену
-- При выборе другой смены показывается только её цена
-- Возраст можно фиксировать и потом менять
+## Files allowed for current task
+- index.html
+- src/scripts/main.js
+- src/styles/main.css
 
-## Popup logic
-- popup AI: через 12 секунд
-- popup return: после просмотра смен
-- popup urgency: через 40 секунд
+Do not scan the whole repository unless explicitly requested.
 
-## Media
-Фото берутся из https://aidacamp.ru/media
+## Known runtime icon locations in main.js
+- acReviewsPrevMod
+- acReviewsNextMod
+- acBookInfoClose
+- .ac-left-video-item__play
 
-Категории alt:
-all = эмоции + всё  
-sport + pool = спорт  
-study = учёба  
-food = еда  
+## Replacement rules
+Replace UI symbols only:
+- ✕ -> close.svg
+- ← -> chevron-left.svg
+- → -> chevron-right.svg
+- ▶ -> play.svg
+- 🤖 -> robot.svg
+- 🏊 -> pool.svg
+- 🍽 -> food.svg
+- 🏥 -> med.svg
+- 🔍 -> search.svg
+- 📋 -> clipboard.svg
+- 🔄 -> refresh.svg
+- 🔥 -> fire-hit.svg
+- ✨ -> sparkle.svg
+- 💰 -> money.svg
+- 🔒 -> lock.svg
+- ✅ -> check.svg
 
-Видео пока отключены.
-
-## Known issues
-- Кривой логотип
-- Галерея пока не подгружается
-- Попапы появляются не всегда предсказуемо
+## Output expectations
+- minimal targeted edits
+- no full file rewrites
+- no infrastructure changes
+- preserve existing business logic
