@@ -970,7 +970,7 @@
       videoGrid.innerHTML =
         '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div><div class="ac-left-video-ph__text">Скоро</div></div>' +
         '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div><div class="ac-left-video-ph__text">Скоро</div></div>' +
-        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon">▶</div><div class="ac-left-video-ph__text">Скоро</div></div>';
+        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div><div class="ac-left-video-ph__text">Скоро</div></div>';
     }
 
     applyHeroBackgroundRotation(mediaMap.hero || []);
@@ -1126,7 +1126,7 @@
       '<div style="width:min(100%,380px);background:#fff;border-radius:16px;padding:16px;box-shadow:0 20px 40px rgba(0,0,0,.28)">' +
       '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
       '    <strong id="acModCalTitle">Календарь смены</strong>' +
-      '    <button id="acModCalClose" style="border:none;background:#f3f4f6;border-radius:8px;padding:4px 8px;cursor:pointer">✕</button>' +
+      '    <button id="acModCalClose" style="border:none;background:#f3f4f6;border-radius:8px;padding:4px 8px;cursor:pointer"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>' +
       "  </div>" +
       '  <div id="acModCalMonth" style="font-size:12px;color:#ff7700;font-weight:700;margin-bottom:8px"></div>' +
       '  <div id="acModCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px"></div>' +
