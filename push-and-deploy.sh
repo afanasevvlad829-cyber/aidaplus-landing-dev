@@ -3,7 +3,7 @@
 set -Eeuo pipefail
 
 PROJECT_DIR="/Users/vladimirafanasev/aidaplus-dev"
-SERVER_HOST="kv145@compute-vm-2-1-10-ssd-1773314966758"
+SERVER_HOST="kv145@dev.aidaplus.ru"
 SERVER_DIR="/var/www/aidaplus-dev"
 BRANCH="main"
 SITE_URL="https://dev.aidaplus.ru"
