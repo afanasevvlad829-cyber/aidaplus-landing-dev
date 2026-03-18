@@ -2088,6 +2088,13 @@ body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__inner {
   margin-right: auto;
 }
 
+body:not(.ac-compact-mode) .ac-site-section--extended .container .ac-site-section__head,
+body:not(.ac-compact-mode) .ac-site-section--extended .container .ac-site-section__inner {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
 body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head {
   margin-bottom: 28px;
 }

@@ -380,14 +380,14 @@
       { key: "study", label: "Учёба" }
     ];
     cats.innerHTML = catList.map(function (c, i) {
-      return '<button class="media-chip ac-left-photo-cat' + (i === 0 ? " is-active" : "") + '" data-lcat="' + c.key + '">' + c.label + "</button>";
+      return '<button class="media-chip ac-full-photo-cat' + (i === 0 ? " is-active" : "") + '" data-lcat="' + c.key + '">' + c.label + "</button>";
     }).join("");
     function render(cat) {
       var list = mediaMap.photos[cat] || [];
       grid.innerHTML = list.map(function (item, i) {
         return '<div class="ac-left-photo-item" data-photo-index="' + i + '"><img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '" loading="lazy" decoding="async" width="800" height="800"></div>';
       }).join("");
-      $$(".ac-left-photo-cat", cats).forEach(function (btn) { btn.classList.toggle("is-active", btn.dataset.lcat === cat); });
+      $$(".ac-full-photo-cat", cats).forEach(function (btn) { btn.classList.toggle("is-active", btn.dataset.lcat === cat); });
       grid.onclick = function (e) {
         var item = e.target.closest(".ac-left-photo-item");
         if (!item) return;
@@ -396,7 +396,7 @@
       };
     }
     cats.onclick = function (e) {
-      var btn = e.target.closest(".ac-left-photo-cat");
+      var btn = e.target.closest(".ac-full-photo-cat");
       if (!btn) return;
       render(btn.getAttribute("data-lcat") || "all");
     };
@@ -406,9 +406,11 @@
   function renderFullModeVideoSection() {
     var host = document.getElementById("acFullVideo");
     if (!host) return;
-    var items = AC_DEV_RUTUBE_VIDEO_FEED_ENABLED
+    var rutubeItems = AC_DEV_RUTUBE_VIDEO_FEED_ENABLED
       ? AC_DEV_RUTUBE_VIDEOS.filter(function (item) { return rutubeEmbedUrl(item.url); })
-      : (window.__acMediaMap && window.__acMediaMap.videos ? window.__acMediaMap.videos.slice() : []);
+      : [];
+    var mediaVideos = (window.__acMediaMap && window.__acMediaMap.videos) ? window.__acMediaMap.videos.slice() : [];
+    var items = rutubeItems.length ? rutubeItems : mediaVideos;
     if (!items.length) return;
 
     host.innerHTML =
@@ -416,7 +418,7 @@
     var grid = $(".ac-full-video-grid", host);
     if (!grid) return;
 
-    if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
+    if (rutubeItems.length) {
       grid.innerHTML = items.slice(0, 4).map(function (item, i) {
         var poster = rutubeThumbnailUrl(item.url);
         return '' +

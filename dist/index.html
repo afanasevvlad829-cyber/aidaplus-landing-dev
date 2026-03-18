@@ -2927,7 +2927,6 @@ AC.metrika = function(goal, params){
   <div class="container">
   <div class="ac-site-section__head">
     <h2>Программа по возрастам</h2>
-    <p>Секции ниже собраны из действующего контента страницы: без придуманного маркетингового текста, только то, что уже используется в лендинге.</p>
   </div>
   <div class="ac-site-section__inner">
     <div class="ac-info-grid">
@@ -2948,9 +2947,9 @@ AC.metrika = function(goal, params){
   </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="format">
+  <div class="container">
   <div class="ac-site-section__head">
     <h2>Формат и условия</h2>
-    <p>Ключевые условия вынесены в отдельный блок, чтобы их можно было быстро найти и на десктопе, и на телефоне.</p>
   </div>
   <div class="ac-site-section__inner">
     <div class="ac-info-grid">
@@ -2978,42 +2977,44 @@ AC.metrika = function(goal, params){
       </article>
     </div>
   </div>
+  </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="ai">
   <div class="container">
   <div class="ac-site-section__head">
     <h2>AI-программы</h2>
-    <p>Раздел собран из текущего контента карточки AI-программы без изменений логики верхнего блока.</p>
   </div>
   <div class="ac-site-section__inner" id="acFullAi"></div>
   </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="location">
+  <div class="container">
   <div class="ac-site-section__head">
     <h2>Локация</h2>
-    <p>Локация, карта и факты из действующего блока «Локация».</p>
   </div>
   <div class="ac-site-section__inner" id="acFullLocation"></div>
+  </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="photos">
+  <div class="container">
   <div class="ac-site-section__head">
     <h2>Фото лагеря</h2>
-    <p>Галерея с текущими категориями и просмотром в lightbox.</p>
   </div>
   <div class="ac-site-section__inner" id="acFullPhotos"></div>
+  </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="video">
+  <div class="container">
   <div class="ac-site-section__head">
     <h2>Видео</h2>
-    <p>Видео-контент на основе текущего видеоблока лагеря.</p>
   </div>
   <div class="ac-site-section__inner" id="acFullVideo"></div>
+  </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="reviews">
   <div class="container">
   <div class="ac-site-section__head">
     <h2>Отзывы родителей</h2>
-    <p>Те же отзывы и структура слайдера, что в рабочем табе карточки.</p>
   </div>
   <div class="ac-site-section__inner" id="acFullReviews"></div>
   </div>
@@ -3022,7 +3023,6 @@ AC.metrika = function(goal, params){
   <div class="container">
   <div class="ac-site-section__head">
     <h2>Команда</h2>
-    <p>Состав команды из тех же данных, что используются в существующем слайдере.</p>
   </div>
   <div class="ac-site-section__inner" id="acFullTeam"></div>
   </div>
@@ -3031,7 +3031,6 @@ AC.metrika = function(goal, params){
   <div class="container">
   <div class="ac-site-section__head">
     <h2>FAQ</h2>
-    <p>Ниже — самые важные ответы из действующего FAQ страницы.</p>
   </div>
   <div class="ac-site-section__inner" id="acFullFaq">
     <div class="ac-mini-faq">
@@ -4930,14 +4929,14 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       { key: "study", label: "Учёба" }
     ];
     cats.innerHTML = catList.map(function (c, i) {
-      return '<button class="media-chip ac-left-photo-cat' + (i === 0 ? " is-active" : "") + '" data-lcat="' + c.key + '">' + c.label + "</button>";
+      return '<button class="media-chip ac-full-photo-cat' + (i === 0 ? " is-active" : "") + '" data-lcat="' + c.key + '">' + c.label + "</button>";
     }).join("");
     function render(cat) {
       var list = mediaMap.photos[cat] || [];
       grid.innerHTML = list.map(function (item, i) {
         return '<div class="ac-left-photo-item" data-photo-index="' + i + '"><img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '" loading="lazy" decoding="async" width="800" height="800"></div>';
       }).join("");
-      $$(".ac-left-photo-cat", cats).forEach(function (btn) { btn.classList.toggle("is-active", btn.dataset.lcat === cat); });
+      $$(".ac-full-photo-cat", cats).forEach(function (btn) { btn.classList.toggle("is-active", btn.dataset.lcat === cat); });
       grid.onclick = function (e) {
         var item = e.target.closest(".ac-left-photo-item");
         if (!item) return;
@@ -4946,7 +4945,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       };
     }
     cats.onclick = function (e) {
-      var btn = e.target.closest(".ac-left-photo-cat");
+      var btn = e.target.closest(".ac-full-photo-cat");
       if (!btn) return;
       render(btn.getAttribute("data-lcat") || "all");
     };
@@ -4956,9 +4955,11 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
   function renderFullModeVideoSection() {
     var host = document.getElementById("acFullVideo");
     if (!host) return;
-    var items = AC_DEV_RUTUBE_VIDEO_FEED_ENABLED
+    var rutubeItems = AC_DEV_RUTUBE_VIDEO_FEED_ENABLED
       ? AC_DEV_RUTUBE_VIDEOS.filter(function (item) { return rutubeEmbedUrl(item.url); })
-      : (window.__acMediaMap && window.__acMediaMap.videos ? window.__acMediaMap.videos.slice() : []);
+      : [];
+    var mediaVideos = (window.__acMediaMap && window.__acMediaMap.videos) ? window.__acMediaMap.videos.slice() : [];
+    var items = rutubeItems.length ? rutubeItems : mediaVideos;
     if (!items.length) return;
 
     host.innerHTML =
@@ -4966,7 +4967,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     var grid = $(".ac-full-video-grid", host);
     if (!grid) return;
 
-    if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
+    if (rutubeItems.length) {
       grid.innerHTML = items.slice(0, 4).map(function (item, i) {
         var poster = rutubeThumbnailUrl(item.url);
         return '' +
@@ -9249,6 +9250,13 @@ body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__inner {
   width: min(var(--max), calc(100% - 32px));
   margin-left: auto;
   margin-right: auto;
+}
+
+body:not(.ac-compact-mode) .ac-site-section--extended .container .ac-site-section__head,
+body:not(.ac-compact-mode) .ac-site-section--extended .container .ac-site-section__inner {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head {

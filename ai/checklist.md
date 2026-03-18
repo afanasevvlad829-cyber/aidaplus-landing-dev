@@ -147,3 +147,33 @@
 - [x] Diff оставлен минимальным.
 - [ ] Ручная browser-проверка (desktop/mobile) в рамках task-6 не проводилась.
 - [ ] Локальная проверка синтаксиса `node --check` не выполнена (`node` не установлен в окружении).
+
+---
+
+# Checklist — Task 7
+
+- [x] Видео в `#video` full mode рендерится из существующих источников:
+  - [x] primary: Rutube feed (при валидных URL),
+  - [x] fallback: `window.__acMediaMap.videos`.
+- [x] Для видео сохранена текущая логика открытия через lightbox.
+- [x] Удалены служебные/технические подписи в full mode секциях:
+  - [x] `#program`
+  - [x] `#format`
+  - [x] `#ai`
+  - [x] `#location`
+  - [x] `#photos`
+  - [x] `#video`
+  - [x] `#reviews`
+  - [x] `#team`
+  - [x] `#faq`
+- [x] Единый container pattern применён ко всем указанным full mode секциям.
+- [x] Фото-фильтры в `#photos` работают без перезагрузки:
+  - [x] устранён конфликт обработчиков (full mode использует `.ac-full-photo-cat`);
+  - [x] active-state переключается.
+- [x] Фото в full mode по клику открываются в существующем fullscreen/lightbox с навигацией.
+- [x] Compact mode не изменён.
+- [x] Hero не изменён.
+- [x] Booking logic не изменён.
+- [x] Data sources не изменены.
+- [x] Выполнен `bash build.sh`.
+- [x] `dist/index.html` синхронизирован.
