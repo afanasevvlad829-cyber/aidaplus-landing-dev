@@ -152,6 +152,7 @@
 ### Build
 - Выполнен `bash build.sh`.
 - Результат: `dist/index.html` обновлён (`Built: dist/index.html`).
+- Деплой на этом окружении не выполнен: `./deploy.sh` завершился ошибкой `cd /var/www/aidaplus-dev: No such file or directory`.
 
 ---
 
@@ -192,3 +193,7 @@
   - compact mode,
   - hero business logic,
   - data sources.
+
+### Что не сделано явно
+- Ручная проверка в браузере (desktop/mobile) не выполнялась в рамках этого шага.
+- Автопроверка синтаксиса через `node --check` не выполнена: `node` отсутствует в текущем окружении.

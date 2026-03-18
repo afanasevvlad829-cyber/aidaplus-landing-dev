@@ -115,6 +115,8 @@
 - [x] Build:
   - [x] Выполнен `bash build.sh`.
   - [x] `dist/index.html` обновлён.
+- [ ] Deploy:
+  - [ ] `./deploy.sh` не выполнен на этом окружении (нет пути `/var/www/aidaplus-dev`).
 
 ---
 
@@ -143,3 +145,5 @@
   - [x] hero business logic не изменён.
   - [x] data sources не изменены.
 - [x] Diff оставлен минимальным.
+- [ ] Ручная browser-проверка (desktop/mobile) в рамках task-6 не проводилась.
+- [ ] Локальная проверка синтаксиса `node --check` не выполнена (`node` не установлен в окружении).
