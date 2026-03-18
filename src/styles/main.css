@@ -2268,67 +2268,6 @@ body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head h2 
   border-radius: 14px;
 }
 
-.ac-site-header__menu-slot {
-  display: none;
-}
-
-.ac-left-tab__text {
-  display: none;
-}
-
-body.mode-full .ac-site-nav {
-  display: none !important;
-}
-
-body.mode-full .ac-site-header__menu-slot {
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 0;
-  justify-content: flex-end;
-}
-
-body.mode-full #acLeftTabs.ac-left-tabs--header-mode {
-  margin: 0;
-  padding: 6px;
-  border-radius: 16px;
-  gap: 6px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(17, 24, 39, 0.08);
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
-}
-
-body.mode-full #acLeftTabs.ac-left-tabs--header-mode .ac-left-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  min-height: 36px;
-  padding: 0 12px;
-}
-
-body.mode-full #acLeftTabs.ac-left-tabs--header-mode .ac-left-tab__text {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-body.mode-full #acLeftTabs.ac-left-tabs--header-mode .ac-left-tab .ac-logo-img--tab {
-  width: 18px;
-  height: 18px;
-}
-
-body.mode-full #acLeftTabs.ac-left-tabs--header-mode .ac-view-switch--in-tabs {
-  margin-left: 4px;
-}
-
-#acLeftTabs.is-flip-animating {
-  will-change: transform;
-}
-
 #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch__label {
   font-size: 10px;
 }

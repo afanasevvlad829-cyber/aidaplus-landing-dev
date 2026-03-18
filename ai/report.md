@@ -227,33 +227,25 @@
 Точечная доработка навигации full mode: скрывать верхнее header-меню в `Подробно`, переносить текущее hero-меню (`#acLeftTabs`) в header с FLIP-анимацией и возвращать обратно в `Кратко` без клонирования DOM.
 
 ### Статус
-Выполнено.
+Откат выполнен (по запросу пользователя).
 
 ### Что сделано
-- В `index.html` добавлен слот для hero-меню в header:
-  - `#acHeaderHeroMenuSlot` (`.ac-site-header__menu-slot`).
-- Переключение режима расширено:
-  - в `applyMode()` добавлены `body.mode-compact` / `body.mode-full`;
-  - добавлен кастомный event `ac:view-mode-change` с текущим режимом.
-- В `src/scripts/main.js` реализован перенос одного и того же DOM-узла `#acLeftTabs`:
-  - `ensureFloatingHeroNav()` — мост между mode-классами и перемещением меню;
-  - `ensureHeroMenuLabels()` — добавляет текстовые подписи вкладкам (для top-nav вида в full mode);
-  - `animateHeroMenuFlip()` — FLIP-анимация (перелёт + лёгкий overshoot/scale).
-- В `src/styles/main.css` добавлены стили full-mode навигации:
-  - в `mode-full` скрывается `.ac-site-nav` (не удаляется из DOM);
-  - показывается `.ac-site-header__menu-slot`;
-  - `#acLeftTabs` в header-режиме отображается как компактная навбар-плашка с иконками и подписями.
+- Откатены изменения последней задачи по full mode navigation.
+- Удалено из `index.html`:
+  - header-slot `#acHeaderHeroMenuSlot`;
+  - дополнительные `mode-compact/mode-full` toggles в `applyMode()`;
+  - dispatch события `ac:view-mode-change`.
+- Удалено из `src/scripts/main.js`:
+  - `ensureFloatingHeroNav()`,
+  - `ensureHeroMenuLabels()`,
+  - `animateHeroMenuFlip()`,
+  - вызов `ensureFloatingHeroNav()` из `renderFullModeExtension()`.
+- Удалено из `src/styles/main.css`:
+  - все `mode-full` правила, которые скрывали `.ac-site-nav` и оформляли перенос `#acLeftTabs` в header.
 
 ### Ограничения
-- Hero/grid/booking/data sources/carousels/reviews/team/video/photo/faq логика не менялись.
-- Используется один и тот же `#acLeftTabs` (без дублирования меню).
-- Удаление служебных подписей:
-  - в full mode убраны технические поясняющие подзаголовки из секций `#program`, `#format`, `#ai`, `#location`, `#photos`, `#video`, `#reviews`, `#team`, `#faq`.
-- Единая ширина секций:
-  - все перечисленные full-mode секции обёрнуты в единый `<div class="container">...`;
-  - в CSS добавлено выравнивание head/inner внутри `.container` до `width: 100%` без дополнительных смещений.
-- Build:
-  - выполнен `bash build.sh`, `dist/index.html` обновлён.
+- Остальные секции и логика (booking/compact/full content/reviews/team/video/photo/faq) не менялись.
+- Выполнен `bash build.sh`, `dist/index.html` синхронизирован после отката.
 
 ### Ограничения
 - Не менялись:

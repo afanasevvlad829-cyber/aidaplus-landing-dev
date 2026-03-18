@@ -811,109 +811,6 @@
     }
   }
 
-  function ensureHeroMenuLabels(menu) {
-    if (!menu) return;
-    var labels = {
-      info: "Программа",
-      aiprogram: "AI программы",
-      place: "Локация",
-      photo: "Фото",
-      video: "Видео",
-      reviews: "Отзывы",
-      team: "Команда",
-      faq: "FAQ"
-    };
-    $$(".ac-left-tab[data-ltab]", menu).forEach(function (btn) {
-      var key = btn.getAttribute("data-ltab") || "";
-      var label = labels[key] || (btn.getAttribute("title") || btn.getAttribute("data-tip") || "").trim();
-      if (!label) return;
-      btn.setAttribute("data-nav-label", label);
-      Array.prototype.slice.call(btn.childNodes).forEach(function (node) {
-        if (node && node.nodeType === 3 && /\S/.test(node.nodeValue || "")) btn.removeChild(node);
-      });
-      var textNode = btn.querySelector(".ac-left-tab__text");
-      if (!textNode) {
-        textNode = document.createElement("span");
-        textNode.className = "ac-left-tab__text";
-        btn.appendChild(textNode);
-      }
-      textNode.textContent = label;
-    });
-  }
-
-  function animateHeroMenuFlip(node, first, last) {
-    if (!node || !first || !last) return;
-    var dx = first.left - last.left;
-    var dy = first.top - last.top;
-    var sx = first.width > 0 && last.width > 0 ? first.width / last.width : 1;
-    var sy = first.height > 0 && last.height > 0 ? first.height / last.height : 1;
-    node.classList.add("is-flip-animating");
-    var anim = node.animate(
-      [
-        { transformOrigin: "top left", transform: "translate(" + dx + "px," + dy + "px) scale(" + sx + "," + sy + ")" },
-        { transformOrigin: "top left", transform: "translate(" + (dx * 0.08) + "px," + (dy * 0.08) + "px) scale(1.04)" },
-        { transformOrigin: "top left", transform: "translate(0,0) scale(1)" }
-      ],
-      {
-        duration: 520,
-        easing: "cubic-bezier(0.2, 0.85, 0.2, 1)",
-        fill: "both"
-      }
-    );
-    anim.onfinish = function () { node.classList.remove("is-flip-animating"); };
-    anim.oncancel = function () { node.classList.remove("is-flip-animating"); };
-  }
-
-  function ensureFloatingHeroNav() {
-    if (window.__acHeroNavBridgeBound) return;
-    window.__acHeroNavBridgeBound = true;
-
-    var state = { parent: null, next: null };
-
-    function move(mode) {
-      var menu = document.getElementById("acLeftTabs");
-      var body = document.body;
-      var slot = document.getElementById("acHeaderHeroMenuSlot");
-      if (!menu || !body || !slot) return;
-
-      ensureHeroMenuLabels(menu);
-
-      if (!state.parent && menu.parentNode) {
-        state.parent = menu.parentNode;
-        state.next = menu.nextSibling;
-      }
-      if (!state.parent) return;
-
-      var target = mode === "full" ? slot : state.parent;
-      var first = menu.getBoundingClientRect();
-      if (mode === "full") {
-        if (menu.parentNode !== slot) slot.appendChild(menu);
-      } else if (menu.parentNode !== state.parent) {
-        if (state.next && state.next.parentNode === state.parent) state.parent.insertBefore(menu, state.next);
-        else state.parent.appendChild(menu);
-      }
-      menu.classList.toggle("ac-left-tabs--header-mode", mode === "full");
-      var last = menu.getBoundingClientRect();
-      if (first.width && last.width && menu.parentNode === target) animateHeroMenuFlip(menu, first, last);
-    }
-
-    function syncFromBody() {
-      var compact = document.body.classList.contains("ac-compact-mode");
-      document.body.classList.toggle("mode-compact", compact);
-      document.body.classList.toggle("mode-full", !compact);
-      move(compact ? "compact" : "full");
-    }
-
-    syncFromBody();
-
-    var mo = new MutationObserver(function () { syncFromBody(); });
-    mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    window.addEventListener("ac:view-mode-change", function (e) {
-      var mode = e && e.detail && e.detail.mode === "full" ? "full" : "compact";
-      move(mode);
-    });
-  }
-
   function renderFullModeExtension() {
     renderFullModeAiSection();
     renderFullModeLocationSection();
@@ -923,7 +820,6 @@
     renderFullModeTeamSection();
     renderFullModeFaqSection();
     ensureHeroFullModePolish();
-    ensureFloatingHeroNav();
   }
 
   function getSectionFromAnchor(doc, names) {

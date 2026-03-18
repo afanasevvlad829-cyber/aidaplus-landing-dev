@@ -303,20 +303,10 @@
 
 # Checklist — Task 13
 
-- [x] Реализовано переключение навигации между `mode-compact` и `mode-full`.
-- [x] В compact mode:
-  - [x] верхнее header-меню остаётся стандартным;
-  - [x] hero-меню остаётся в hero (внутри карточки).
-- [x] В full mode:
-  - [x] верхнее `.ac-site-nav` скрывается только через CSS/class (из DOM не удаляется);
-  - [x] `#acLeftTabs` переносится в header (`#acHeaderHeroMenuSlot`).
-- [x] FLIP-анимация реализована:
-  - [x] перелёт контейнера из old-координат в new-координаты;
-  - [x] лёгкий overshoot/scale в середине анимации.
-- [x] Возврат в compact mode:
-  - [x] меню анимированно возвращается обратно в исходный hero-контейнер.
-- [x] Не создавалось второе меню:
-  - [x] используется один и тот же DOM-элемент `#acLeftTabs`.
-- [x] В full mode hero-меню отображает иконки + подписи вкладок.
-- [x] Логика секций/каруселей/booking/hero layout не изменялась.
-- [ ] Ручная browser-проверка анимации (desktop + mobile) не проводилась в этой сессии.
+- [x] Выполнен откат Task 13 по запросу пользователя.
+- [x] Удалён `#acHeaderHeroMenuSlot` из `index.html`.
+- [x] Удалены `mode-compact/mode-full` классы и `ac:view-mode-change` dispatch из `applyMode()`.
+- [x] Удалены функции FLIP/переноса меню из `src/scripts/main.js`.
+- [x] Удалены `mode-full` nav-стили из `src/styles/main.css`.
+- [x] Остальные секции и логика не затронуты.
+- [x] `dist/index.html` синхронизирован через `bash build.sh`.
