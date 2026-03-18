@@ -574,3 +574,41 @@
 
 ### Build
 - Выполнен `bash build.sh`, `dist/index.html` синхронизирован.
+
+---
+
+## Task 18
+
+### Задача
+Точечная полировка full-mode секций `Команда / Видео / фон страницы` без изменения hero/nav/booking и уже стабилизированных блоков.
+
+### Статус
+Выполнено.
+
+### Что сделано
+- Команда (портреты):
+  - причина искажения: в full-mode карточке изображение растягивалось на всю ширину карточки (`width: 100%`) и выглядело вытянутым;
+  - исправлено в `.ac-full-cards-grid--team .ac-team-slider__img`:
+    - `width: clamp(86px, 7vw, 112px)`
+    - `aspect-ratio: 1 / 1`
+    - `border-radius: 50%`
+    - центрирование через `margin-left/right: auto`.
+- Видео (источник данных):
+  - в `renderFullModeVideoSection()` добавлен приоритет Rutube-источника (того же, что используется в эталонном видео-блоке);
+  - fallback-видео из `media manifest` очищается от шаблонных `video.tilda.cc/tpl_1035-*` через `sanitizeMediaVideos(...)`;
+  - итог: в full-mode больше не подмешиваются шаблонные Tilda-видео.
+- Видео (стрелки):
+  - секция `#video` переведена на карточный slider-контейнер с кнопками:
+    - `#acFullVideoPrev`
+    - `#acFullVideoNext`
+  - стрелки всегда присутствуют визуально; при недостатке контента получают `disabled`.
+- Фон:
+  - выровнен фон вокруг секций `#video`, `#reviews`, `#team` под общий светло-серый фон страницы:
+    - `body.ac-page #video, #reviews, #team { background-color: #f0f0f5; }`.
+
+### Откуда теперь берутся видео
+- Основной источник: `AC_DEV_RUTUBE_VIDEOS` (через валидные Rutube URL и текущую lightbox-логику).
+- Fallback (если Rutube недоступен): `window.__acMediaMap.videos` / manifest, но без шаблонных Tilda-заглушек.
+
+### Build
+- Выполнен `bash build.sh`, `dist/index.html` синхронизирован.

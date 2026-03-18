@@ -608,51 +608,135 @@
         return [];
       }
     }
+    function sanitizeMediaVideos(list) {
+      return (list || []).filter(function (item) {
+        var src = String(item && item.src || "");
+        if (!src) return false;
+        // Drop template Tilda videos from full-mode showcase.
+        if (/video\.tilda\.cc\/tilda\.cc\/tpl_1035-/i.test(src)) return false;
+        return true;
+      });
+    }
+
     var rutubeItems = AC_DEV_RUTUBE_VIDEO_FEED_ENABLED
       ? AC_DEV_RUTUBE_VIDEOS.filter(function (item) { return rutubeEmbedUrl(item.url); })
       : [];
     var mediaVideos = (window.__acMediaMap && window.__acMediaMap.videos) ? window.__acMediaMap.videos.slice() : [];
     if (!mediaVideos.length) mediaVideos = readManifestVideos();
-    var useRutube = !mediaVideos.length && rutubeItems.length > 0;
-    var items = mediaVideos.length ? mediaVideos : rutubeItems;
+    mediaVideos = sanitizeMediaVideos(mediaVideos);
+
+    // Prefer the same Rutube source that is used in the main video block.
+    var useRutube = rutubeItems.length > 0;
+    var items = useRutube ? rutubeItems : mediaVideos;
     if (!items.length) return;
 
+    var prevId = "acFullVideoPrev";
+    var nextId = "acFullVideoNext";
+    var trackId = "acFullVideoTrack";
     host.innerHTML =
-      '<div class="ac-left-video-grid ac-full-video-grid"></div>';
-    var grid = $(".ac-full-video-grid", host);
-    if (!grid) return;
+      '<div class="ac-full-cards-slider">' +
+      '  <button class="ac-full-cards-slider__arrow" id="' + prevId + '" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '  <div class="ac-full-cards-slider__viewport">' +
+      '    <div class="ac-full-video-grid ac-full-cards-slider__track" id="' + trackId + '"></div>' +
+      "  </div>" +
+      '  <button class="ac-full-cards-slider__arrow" id="' + nextId + '" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
+      "</div>";
 
-    if (useRutube) {
-      grid.innerHTML = items.slice(0, 4).map(function (item, i) {
-        var poster = rutubeThumbnailUrl(item.url);
-        return '' +
-          '<button type="button" class="ac-left-video-item ac-left-video-item--rutube" data-video-index="' + i + '">' +
-          '  <div class="ac-left-video-item__poster">' +
-          (poster ? '<img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" decoding="async" width="720" height="1280" referrerpolicy="strict-origin-when-cross-origin">' : "") +
-          '    <div class="ac-left-video-item__poster-shade"></div>' +
-          '    <div class="ac-left-video-item__play"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div>' +
-          '    <div class="ac-left-video-item__caption">' + (item.title || "Видео") + "</div>" +
-          "  </div>" +
-          "</button>";
-      }).join("");
-      grid.onclick = function (e) {
-        var item = e.target.closest(".ac-left-video-item");
-        if (!item) return;
-        var i = Number(item.getAttribute("data-video-index") || "0");
-        openRutubeVideoLightbox(items, i);
-      };
-      return;
+    var track = document.getElementById(trackId);
+    var prev = document.getElementById(prevId);
+    var next = document.getElementById(nextId);
+    if (!track || !prev || !next) return;
+
+    var index = 0;
+    var total = 1;
+    var resizeTimer = null;
+
+    function getPerSlide() {
+      var w = window.innerWidth || 1280;
+      if (w >= 1200) return 4;
+      if (w >= 760) return 2;
+      return 1;
     }
 
-    grid.innerHTML = items.slice(0, 4).map(function (item, i) {
-      return '<div class="ac-left-video-item" data-video-index="' + i + '"><video src="' + item.src + '" muted loop playsinline preload="metadata" controls aria-label="Видео: ' + (item.caption || "AidaCamp") + '"></video></div>';
-    }).join("");
-    grid.onclick = function (e) {
+    function chunk(arr, size) {
+      var out = [];
+      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+      return out;
+    }
+
+    function renderSlides() {
+      var perSlide = getPerSlide();
+      var slides = chunk(items, perSlide);
+      track.innerHTML = "";
+      slides.forEach(function (group, slideIdx) {
+        var slide = document.createElement("div");
+        slide.className = "ac-full-video-slide ac-full-cards-slider__slide";
+        slide.style.gridTemplateColumns = "repeat(" + perSlide + ", minmax(0,1fr))";
+        group.forEach(function (item, localIdx) {
+          var absoluteIdx = slideIdx * perSlide + localIdx;
+          if (useRutube) {
+            var poster = rutubeThumbnailUrl(item.url);
+            var btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "ac-left-video-item ac-left-video-item--rutube";
+            btn.setAttribute("data-video-index", String(absoluteIdx));
+            btn.innerHTML =
+              '<div class="ac-left-video-item__poster">' +
+              (poster ? '<img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" decoding="async" width="720" height="1280" referrerpolicy="strict-origin-when-cross-origin">' : "") +
+              '<div class="ac-left-video-item__poster-shade"></div>' +
+              '<div class="ac-left-video-item__play"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div>' +
+              '<div class="ac-left-video-item__caption">' + (item.title || "Видео") + "</div>" +
+              "</div>";
+            slide.appendChild(btn);
+          } else {
+            var card = document.createElement("div");
+            card.className = "ac-left-video-item";
+            card.setAttribute("data-video-index", String(absoluteIdx));
+            card.innerHTML = '<video src="' + item.src + '" muted loop playsinline preload="metadata" controls aria-label="Видео: ' + (item.caption || "AidaCamp") + '"></video>';
+            slide.appendChild(card);
+          }
+        });
+        track.appendChild(slide);
+      });
+      total = Math.max(1, slides.length);
+      if (index >= total) index = total - 1;
+      update();
+    }
+
+    function update() {
+      track.style.transform = "translateX(" + (-100 * index) + "%)";
+      var disabled = total < 2;
+      prev.disabled = disabled;
+      next.disabled = disabled;
+    }
+
+    prev.onclick = function () {
+      if (total < 2) return;
+      index = (index - 1 + total) % total;
+      update();
+    };
+    next.onclick = function () {
+      if (total < 2) return;
+      index = (index + 1) % total;
+      update();
+    };
+
+    track.onclick = function (e) {
       var item = e.target.closest(".ac-left-video-item");
       if (!item) return;
       var i = Number(item.getAttribute("data-video-index") || "0");
-      openMediaLightbox(items, i);
+      if (useRutube) openRutubeVideoLightbox(items, i);
+      else openMediaLightbox(items, i);
     };
+
+    renderSlides();
+    if (!host._fullVideoResizeBound) {
+      host._fullVideoResizeBound = true;
+      window.addEventListener("resize", function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderSlides, 120);
+      });
+    }
   }
 
   function renderFullModeFaqSection() {

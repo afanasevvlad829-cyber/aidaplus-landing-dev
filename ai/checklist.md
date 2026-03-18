@@ -408,3 +408,29 @@
   - [x] hero content/grid
 - [x] Выполнен `bash build.sh`.
 - [x] `dist/index.html` синхронизирован.
+
+---
+
+# Checklist — Task 18
+
+- [x] Команда (портреты):
+  - [x] устранено растяжение изображений по ширине карточки;
+  - [x] восстановлены естественные пропорции (`aspect-ratio: 1/1`);
+  - [x] форма портрета сделана круглой (`border-radius: 50%`);
+  - [x] центрирование портрета в карточке сохранено.
+- [x] Видео (источник):
+  - [x] full-mode видео берутся из существующего Rutube-источника страницы;
+  - [x] шаблонные Tilda-видео исключены из fallback.
+- [x] Видео (стрелки):
+  - [x] добавлены боковые стрелки `prev/next` в секцию full-mode видео;
+  - [x] при недостатке слайдов стрелки остаются на месте, но в `disabled`.
+- [x] Фон:
+  - [x] выровнен фон вокруг `#video/#reviews/#team` к единому светло-серому тону страницы.
+- [x] Не затронуты:
+  - [x] hero layout/content
+  - [x] compact/full navigation logic
+  - [x] booking logic
+  - [x] contact dropdown/data links
+  - [x] photo carousel/reviews slider/FAQ tabs logic
+- [x] Выполнен `bash build.sh`.
+- [x] `dist/index.html` синхронизирован.

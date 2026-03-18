@@ -2164,11 +2164,21 @@ body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head h2 
   color: #9a3412;
 }
 
-#acFullVideo .ac-full-video-grid,
 #acFullReviews .ac-full-cards-grid,
 #acFullTeam .ac-full-cards-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+#acFullVideo .ac-full-video-grid {
+  display: flex;
+  gap: 0;
+}
+
+#acFullVideo .ac-full-video-slide {
+  min-width: 100%;
+  display: grid;
   gap: 14px;
 }
 
@@ -2214,6 +2224,12 @@ body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head h2 
   display: grid;
   place-items: center;
   cursor: pointer;
+}
+
+.ac-full-cards-slider__arrow:disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
 }
 
 #acFullPhotos .ac-left-photo-item,
@@ -2411,6 +2427,12 @@ body.ac-page .ac-site-section .container {
   background-color: #f0f0f5;
 }
 
+body.ac-page #video,
+body.ac-page #reviews,
+body.ac-page #team {
+  background-color: #f0f0f5;
+}
+
 .ac-age__topline {
   display: flex;
   align-items: center;
@@ -2591,11 +2613,15 @@ body.ac-page .ac-site-section .container {
 }
 
 .ac-full-cards-grid--team .ac-team-slider__img {
-  width: 100%;
+  width: clamp(86px, 7vw, 112px);
   aspect-ratio: 1 / 1;
+  height: auto;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 50%;
   margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 #acFullFaq .ac-full-overlay-copy .ac-left-faq {
@@ -2645,7 +2671,7 @@ body.ac-page .ac-site-section .container {
 
   .ac-section-grid,
   #acFullPhotos .ac-full-photo-grid,
-  #acFullVideo .ac-full-video-grid,
+  #acFullVideo .ac-full-video-slide,
   #acFullReviews .ac-full-cards-grid,
   #acFullTeam .ac-full-cards-grid {
     grid-template-columns: 1fr;
