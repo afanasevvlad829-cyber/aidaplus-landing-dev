@@ -310,3 +310,29 @@
 - [x] Удалены `mode-full` nav-стили из `src/styles/main.css`.
 - [x] Остальные секции и логика не затронуты.
 - [x] `dist/index.html` синхронизирован через `bash build.sh`.
+
+---
+
+# Checklist — Task 14
+
+- [x] Добавлена отдельная full-mode nav-зона между `header` и `hero`:
+  - [x] `#acFullNavZone`
+  - [x] `#acFullNavMenuSlot`
+- [x] В `applyMode()` восстановлены:
+  - [x] `mode-compact/mode-full` классы на `body`
+  - [x] событие `ac:view-mode-change`
+- [x] Реализован перенос одного DOM-элемента `#acLeftTabs` (без клонирования):
+  - [x] в full mode — в верхнюю nav-зону
+  - [x] в compact mode — обратно в hero
+- [x] Реализована сдержанная FLIP-анимация переноса (premium-плавность без shuffle).
+- [x] В full mode:
+  - [x] верхнее `.ac-site-nav` скрывается через CSS
+  - [x] hero-menu отображается в формате иконка + подпись
+- [x] Выравнен общий фон страницы:
+  - [x] верх/низ в едином светло-сером тоне без резкого перехода.
+- [x] Не затронуты:
+  - [x] reviews/team/video/photo/FAQ/contact/booking logic
+  - [x] hero grid/layout
+  - [x] compact mode UX
+- [x] Выполнен `bash build.sh`.
+- [x] `dist/index.html` синхронизирован.

@@ -1250,6 +1250,9 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
     </nav>
   </div>
 </header>
+<div class="ac-full-nav-zone" id="acFullNavZone" aria-hidden="true">
+  <div class="ac-full-nav-zone__inner" id="acFullNavMenuSlot"></div>
+</div>
 <main class="ac-site-main" id="main-content">
 <section class="ac-site-section ac-anchor-offset" id="hero" aria-label="Главный экран">
 
@@ -3084,8 +3087,13 @@ AC.metrika = function(goal, params){
   function applyMode(mode){
     var compact = mode!=='full';
     body.classList.toggle('ac-compact-mode', compact);
+    body.classList.toggle('mode-compact', compact);
+    body.classList.toggle('mode-full', !compact);
     if(btn) btn.setAttribute('aria-pressed', String(!compact));
     try{ localStorage.setItem(key, compact ? 'compact' : 'full'); }catch(e){}
+    try{
+      window.dispatchEvent(new CustomEvent('ac:view-mode-change', { detail:{ mode: compact ? 'compact' : 'full' } }));
+    }catch(e){}
   }
   var saved='compact';
   try{ saved=localStorage.getItem(key)||'compact'; }catch(e){}
@@ -5360,6 +5368,103 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     }
   }
 
+  function ensureHeroMenuLabels(menu) {
+    if (!menu) return;
+    var labels = {
+      info: "Программа",
+      aiprogram: "AI программы",
+      place: "Локация",
+      photo: "Фото",
+      video: "Видео",
+      reviews: "Отзывы",
+      team: "Команда",
+      faq: "FAQ"
+    };
+    $$(".ac-left-tab[data-ltab]", menu).forEach(function (btn) {
+      var key = btn.getAttribute("data-ltab") || "";
+      var label = labels[key] || (btn.getAttribute("title") || btn.getAttribute("data-tip") || "").trim();
+      if (!label) return;
+      var textNode = btn.querySelector(".ac-left-tab__text");
+      if (!textNode) {
+        textNode = document.createElement("span");
+        textNode.className = "ac-left-tab__text";
+        btn.appendChild(textNode);
+      }
+      textNode.textContent = label;
+    });
+  }
+
+  function animateHeroMenuFlip(node, first, last) {
+    if (!node || !first || !last) return;
+    var dx = first.left - last.left;
+    var dy = first.top - last.top;
+    var sx = first.width > 0 && last.width > 0 ? first.width / last.width : 1;
+    var sy = first.height > 0 && last.height > 0 ? first.height / last.height : 1;
+    node.classList.add("is-flip-animating");
+    var anim = node.animate(
+      [
+        { transformOrigin: "top left", transform: "translate(" + dx + "px," + dy + "px) scale(" + sx + "," + sy + ")" },
+        { transformOrigin: "top left", transform: "translate(" + (dx * 0.05) + "px," + (dy * 0.05) + "px) scale(1.03)" },
+        { transformOrigin: "top left", transform: "translate(0,0) scale(1)" }
+      ],
+      {
+        duration: 440,
+        easing: "cubic-bezier(0.2, 0.85, 0.2, 1)",
+        fill: "both"
+      }
+    );
+    anim.onfinish = function () { node.classList.remove("is-flip-animating"); };
+    anim.oncancel = function () { node.classList.remove("is-flip-animating"); };
+  }
+
+  function ensureFloatingHeroNav() {
+    if (window.__acHeroNavBridgeBound) return;
+    window.__acHeroNavBridgeBound = true;
+
+    var state = { parent: null, next: null };
+
+    function move(mode) {
+      var menu = document.getElementById("acLeftTabs");
+      var slot = document.getElementById("acFullNavMenuSlot");
+      if (!menu || !slot) return;
+
+      ensureHeroMenuLabels(menu);
+
+      if (!state.parent && menu.parentNode) {
+        state.parent = menu.parentNode;
+        state.next = menu.nextSibling;
+      }
+      if (!state.parent) return;
+
+      var first = menu.getBoundingClientRect();
+      if (mode === "full") {
+        if (menu.parentNode !== slot) slot.appendChild(menu);
+      } else if (menu.parentNode !== state.parent) {
+        if (state.next && state.next.parentNode === state.parent) state.parent.insertBefore(menu, state.next);
+        else state.parent.appendChild(menu);
+      }
+      menu.classList.toggle("ac-left-tabs--floating-mode", mode === "full");
+      var last = menu.getBoundingClientRect();
+      if (first.width && last.width) animateHeroMenuFlip(menu, first, last);
+    }
+
+    function syncFromBody() {
+      var compact = document.body.classList.contains("ac-compact-mode");
+      document.body.classList.toggle("mode-compact", compact);
+      document.body.classList.toggle("mode-full", !compact);
+      move(compact ? "compact" : "full");
+    }
+
+    syncFromBody();
+
+    var mo = new MutationObserver(function () { syncFromBody(); });
+    mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    window.addEventListener("ac:view-mode-change", function (e) {
+      var mode = e && e.detail && e.detail.mode === "full" ? "full" : "compact";
+      move(mode);
+    });
+  }
+
   function renderFullModeExtension() {
     renderFullModeAiSection();
     renderFullModeLocationSection();
@@ -5369,6 +5474,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     renderFullModeTeamSection();
     renderFullModeFaqSection();
     ensureHeroFullModePolish();
+    ensureFloatingHeroNav();
   }
 
   function getSectionFromAnchor(doc, names) {
@@ -9721,6 +9827,78 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
   transform: translateX(18px);
 }
 
+.ac-full-nav-zone {
+  display: none;
+  position: sticky;
+  top: 74px;
+  z-index: 110;
+  padding: 10px 0 4px;
+  background: transparent;
+}
+
+.ac-full-nav-zone__inner {
+  width: min(var(--shell-max), calc(100% - 32px));
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#acLeftTabs .ac-left-tab__text {
+  display: none;
+}
+
+body.mode-full .ac-site-nav {
+  display: none !important;
+}
+
+body.mode-full .ac-full-nav-zone {
+  display: block;
+}
+
+body.mode-full #acLeftTabs.ac-left-tabs--floating-mode {
+  margin: 0;
+  padding: 6px;
+  border-radius: 16px;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+}
+
+body.mode-full #acLeftTabs.ac-left-tabs--floating-mode .ac-left-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  min-height: 36px;
+  padding: 0 12px;
+}
+
+body.mode-full #acLeftTabs.ac-left-tabs--floating-mode .ac-left-tab .ac-left-tab__text {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+body.mode-full #acLeftTabs.ac-left-tabs--floating-mode .ac-left-tab .ac-logo-img--tab {
+  width: 18px;
+  height: 18px;
+}
+
+#acLeftTabs.is-flip-animating {
+  will-change: transform;
+}
+
+body.ac-page,
+body.ac-page .ac-site-main,
+body.ac-page .ac-site-section {
+  background: #f0f0f5;
+}
+
 .ac-age__topline {
   display: flex;
   align-items: center;
@@ -9905,6 +10083,15 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
 }
 
 @media (max-width: 980px) {
+  .ac-full-nav-zone {
+    top: 0;
+    padding-top: 6px;
+  }
+
+  .ac-full-nav-zone__inner {
+    width: min(var(--shell-max), calc(100% - 20px));
+  }
+
   body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head,
   body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__inner {
     width: min(var(--max), calc(100% - 20px));

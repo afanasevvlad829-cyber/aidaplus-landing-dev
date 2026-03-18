@@ -434,3 +434,42 @@
   - booking logic,
   - compact mode,
   - hero/данные вне указанного UI-пасса.
+
+---
+
+## Task 14
+
+### Задача
+Точечная доработка full mode navigation и выравнивание общего фона страницы без изменения hero/grid/booking и уже реализованных секций A/B/C/D.
+
+### Статус
+Выполнено.
+
+### Что сделано
+- Full mode navigation:
+  - в `index.html` добавлена отдельная зона между `header` и `hero`:
+    - `#acFullNavZone`,
+    - `#acFullNavMenuSlot`;
+  - в `applyMode()` возвращены служебные mode-классы и событие:
+    - `body.mode-compact`,
+    - `body.mode-full`,
+    - `ac:view-mode-change`.
+- Перенос hero-меню на одном DOM-элементе:
+  - в `src/scripts/main.js` добавлены:
+    - `ensureFloatingHeroNav()` — перенос `#acLeftTabs` между hero и `#acFullNavMenuSlot`,
+    - `animateHeroMenuFlip()` — сдержанная FLIP-анимация (плавный перелёт + лёгкий overshoot),
+    - `ensureHeroMenuLabels()` — показ подписей вкладок в full mode;
+  - в `renderFullModeExtension()` подключён вызов `ensureFloatingHeroNav()`.
+- Визуальный слой навигации и фон:
+  - в `src/styles/main.css` добавлены стили для отдельной зоны `.ac-full-nav-zone` и floating-режима `#acLeftTabs.ac-left-tabs--floating-mode`;
+  - в full mode скрывается только верхнее `.ac-site-nav` (DOM не удаляется);
+  - выровнен фон страницы до единого светло-серого оттенка (`#f0f0f5`) для `body/.ac-site-main/.ac-site-section`.
+
+### Ограничения
+- Не менялись:
+  - reviews/team/video/photo/faq/contact/booking logic,
+  - hero grid и содержимое hero,
+  - compact mode композиция.
+
+### Build
+- Выполнен `bash build.sh`, `dist/index.html` синхронизирован.

@@ -2288,6 +2288,78 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
   transform: translateX(18px);
 }
 
+.ac-full-nav-zone {
+  display: none;
+  position: sticky;
+  top: 74px;
+  z-index: 110;
+  padding: 10px 0 4px;
+  background: transparent;
+}
+
+.ac-full-nav-zone__inner {
+  width: min(var(--shell-max), calc(100% - 32px));
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#acLeftTabs .ac-left-tab__text {
+  display: none;
+}
+
+body.mode-full .ac-site-nav {
+  display: none !important;
+}
+
+body.mode-full .ac-full-nav-zone {
+  display: block;
+}
+
+body.mode-full #acLeftTabs.ac-left-tabs--floating-mode {
+  margin: 0;
+  padding: 6px;
+  border-radius: 16px;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+}
+
+body.mode-full #acLeftTabs.ac-left-tabs--floating-mode .ac-left-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  min-height: 36px;
+  padding: 0 12px;
+}
+
+body.mode-full #acLeftTabs.ac-left-tabs--floating-mode .ac-left-tab .ac-left-tab__text {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+body.mode-full #acLeftTabs.ac-left-tabs--floating-mode .ac-left-tab .ac-logo-img--tab {
+  width: 18px;
+  height: 18px;
+}
+
+#acLeftTabs.is-flip-animating {
+  will-change: transform;
+}
+
+body.ac-page,
+body.ac-page .ac-site-main,
+body.ac-page .ac-site-section {
+  background: #f0f0f5;
+}
+
 .ac-age__topline {
   display: flex;
   align-items: center;
@@ -2472,6 +2544,15 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
 }
 
 @media (max-width: 980px) {
+  .ac-full-nav-zone {
+    top: 0;
+    padding-top: 6px;
+  }
+
+  .ac-full-nav-zone__inner {
+    width: min(var(--shell-max), calc(100% - 20px));
+  }
+
   body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head,
   body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__inner {
     width: min(var(--max), calc(100% - 20px));

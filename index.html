@@ -1250,6 +1250,9 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
     </nav>
   </div>
 </header>
+<div class="ac-full-nav-zone" id="acFullNavZone" aria-hidden="true">
+  <div class="ac-full-nav-zone__inner" id="acFullNavMenuSlot"></div>
+</div>
 <main class="ac-site-main" id="main-content">
 <section class="ac-site-section ac-anchor-offset" id="hero" aria-label="Главный экран">
 
@@ -3084,8 +3087,13 @@ AC.metrika = function(goal, params){
   function applyMode(mode){
     var compact = mode!=='full';
     body.classList.toggle('ac-compact-mode', compact);
+    body.classList.toggle('mode-compact', compact);
+    body.classList.toggle('mode-full', !compact);
     if(btn) btn.setAttribute('aria-pressed', String(!compact));
     try{ localStorage.setItem(key, compact ? 'compact' : 'full'); }catch(e){}
+    try{
+      window.dispatchEvent(new CustomEvent('ac:view-mode-change', { detail:{ mode: compact ? 'compact' : 'full' } }));
+    }catch(e){}
   }
   var saved='compact';
   try{ saved=localStorage.getItem(key)||'compact'; }catch(e){}
