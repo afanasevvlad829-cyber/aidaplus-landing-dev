@@ -809,6 +809,18 @@
         };
       }
     }
+
+    var contact = document.getElementById("acHeroContactCard");
+    if (contact && !contact._outsideCloseBound) {
+      contact._outsideCloseBound = true;
+      document.addEventListener("pointerdown", function (e) {
+        if (!contact.classList.contains("is-open")) return;
+        if (contact.contains(e.target)) return;
+        contact.classList.remove("is-open");
+        var t = contact.querySelector(".ac-hero-contact-card__toggle");
+        if (t) t.setAttribute("aria-expanded", "false");
+      });
+    }
   }
 
   function ensureHeroMenuLabels(menu) {
@@ -881,6 +893,8 @@
     function move(mode) {
       var menu = getStableMenuNode();
       var slot = document.getElementById("acFullNavMenuSlot");
+      var sw = document.getElementById("acViewSwitchWrap");
+      var swSlot = document.getElementById("acFullNavSwitchSlot");
       if (!menu || !slot) return;
 
       ensureHeroMenuLabels(menu);
@@ -894,9 +908,11 @@
       var first = menu.getBoundingClientRect();
       if (mode === "full") {
         if (menu.parentNode !== slot) slot.appendChild(menu);
+        if (sw && swSlot && sw.parentNode !== swSlot) swSlot.appendChild(sw);
       } else if (menu.parentNode !== state.parent) {
         if (state.next && state.next.parentNode === state.parent) state.parent.insertBefore(menu, state.next);
         else state.parent.appendChild(menu);
+        if (sw && sw.parentNode !== menu) menu.appendChild(sw);
       }
       menu.classList.toggle("ac-left-tabs--floating-mode", mode === "full");
       var last = menu.getBoundingClientRect();
