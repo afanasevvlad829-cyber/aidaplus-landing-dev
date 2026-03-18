@@ -955,61 +955,10 @@
   }
 
   function ensureFloatingHeroNav() {
-    if (window.__acHeroNavBridgeBound) return;
-    window.__acHeroNavBridgeBound = true;
-
-    var state = { parent: null, next: null, node: null };
-
-    function getStableMenuNode() {
-      var menus = Array.prototype.slice.call(document.querySelectorAll("#acLeftTabs"));
-      if (!menus.length) return null;
-      if (!state.node || !state.node.isConnected) state.node = menus[0];
-      menus.forEach(function (menu) {
-        if (menu !== state.node && menu.parentNode) menu.parentNode.removeChild(menu);
-      });
-      return state.node;
-    }
-
-    function move(mode) {
-      var menu = getStableMenuNode();
-      var slot = document.getElementById("acFullNavMenuSlot");
-      if (!menu || !slot) return;
-
-      ensureHeroMenuLabels(menu);
-
-      if ((!state.parent || !state.parent.isConnected) && menu.parentNode) {
-        state.parent = menu.parentNode;
-        state.next = menu.nextSibling;
-      }
-      if (!state.parent) return;
-
-      var first = menu.getBoundingClientRect();
-      if (mode === "full") {
-        if (menu.parentNode !== slot) slot.appendChild(menu);
-      } else if (menu.parentNode !== state.parent) {
-        if (state.next && state.next.parentNode === state.parent) state.parent.insertBefore(menu, state.next);
-        else state.parent.appendChild(menu);
-      }
-      menu.classList.toggle("ac-left-tabs--floating-mode", mode === "full");
-      var last = menu.getBoundingClientRect();
-      if (first.width && last.width) animateHeroMenuFlip(menu, first, last);
-    }
-
-    function syncFromBody() {
-      var compact = document.body.classList.contains("ac-compact-mode");
-      document.body.classList.toggle("mode-compact", compact);
-      document.body.classList.toggle("mode-full", !compact);
-      move(compact ? "compact" : "full");
-    }
-
-    syncFromBody();
-
-    var mo = new MutationObserver(function () { syncFromBody(); });
-    mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    window.addEventListener("ac:view-mode-change", function (e) {
-      var mode = e && e.detail && e.detail.mode === "full" ? "full" : "compact";
-      move(mode);
-    });
+    var menu = document.getElementById("acLeftTabs");
+    if (!menu) return;
+    menu.classList.remove("ac-left-tabs--floating-mode");
+    ensureHeroMenuLabels(menu);
   }
 
   function renderFullModeExtension() {

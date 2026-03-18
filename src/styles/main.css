@@ -2343,8 +2343,12 @@ body.mode-full #acLeftTabs .nav-label {
   display: inline-block !important;
 }
 
-body.mode-full .ac-site-nav {
+body.mode-compact .ac-site-nav {
   display: none !important;
+}
+
+body.mode-full .ac-site-nav {
+  display: block !important;
 }
 
 body.mode-full .ac-site-header {
@@ -2352,8 +2356,7 @@ body.mode-full .ac-site-header {
 }
 
 body.mode-full .ac-full-nav-zone {
-  display: block;
-  padding: 18px 0;
+  display: none !important;
 }
 
 body.mode-full #acFullNavSwitchSlot {
@@ -2374,6 +2377,14 @@ body.mode-full #acLeftTabs.ac-left-tabs--floating-mode {
   border: 0;
   box-shadow: none;
   transform: none !important;
+}
+
+body.mode-compact #acLeftTabs {
+  display: flex !important;
+}
+
+body.mode-full #acLeftTabs {
+  display: none !important;
 }
 
 body.mode-full #acLeftTabs.ac-left-tabs--floating-mode .ac-left-tab {

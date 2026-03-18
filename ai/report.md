@@ -476,6 +476,40 @@
 
 ---
 
+## Task 19
+
+### Задача
+Сделать упрощённую и стабильную логику navigation для режимов `Кратко / Подробно` без FLIP/перелётов/DOM-переносов.
+
+### Статус
+Выполнено.
+
+### Какая логика FLIP/floating была отключена
+- В `src/scripts/main.js` `ensureFloatingHeroNav()` переведена в no-op:
+  - удалено перемещение меню между контейнерами;
+  - удалены наблюдатели/route-обработчики FLIP-потока;
+  - снимается только legacy-класс `ac-left-tabs--floating-mode`.
+
+### Как теперь показывается/скрывается header nav
+- Через CSS и классы `body`:
+  - `body.mode-compact .ac-site-nav { display: none !important; }`
+  - `body.mode-full .ac-site-nav { display: block !important; }`
+
+### Как теперь показывается/скрывается hero menu
+- Через CSS и классы `body`:
+  - `body.mode-compact #acLeftTabs { display: flex !important; }`
+  - `body.mode-full #acLeftTabs { display: none !important; }`
+
+### Дополнительно
+- `full-nav-zone` отключён от текущего UI-потока:
+  - `body.mode-full .ac-full-nav-zone { display: none !important; }`
+- `switch` остаётся на постоянном месте, не переносится и не участвует в nav relocation.
+
+### Build
+- Выполнен `bash build.sh`, `dist/index.html` синхронизирован.
+
+---
+
 ## Task 15
 
 ### Задача
