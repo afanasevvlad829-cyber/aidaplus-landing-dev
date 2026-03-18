@@ -63,11 +63,13 @@
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
+  aspect-ratio: 9 / 16;
+  background: #0f172a;
 }
 
 .ac-left-video-item video {
   width: 100%;
-  height: auto;
+  height: 100%;
   aspect-ratio: 9 / 16;
   object-fit: cover;
   display: block;
@@ -128,7 +130,7 @@
   width: 100%;
   height: 100%;
   min-height: 0;
-  aspect-ratio: auto;
+  aspect-ratio: 9 / 16;
   border-radius: 12px;
   overflow: hidden;
   background:
@@ -2186,12 +2188,13 @@ body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head h2 
 #acFullVideo .ac-left-video-item {
   padding: 0;
   overflow: hidden;
+  aspect-ratio: 9 / 16;
 }
 
 #acFullVideo .ac-left-video-item__poster {
   border: 0;
   border-radius: var(--radius);
-  min-height: 230px;
+  min-height: 0;
 }
 
 #acFullReviews .ac-review-modern-card {

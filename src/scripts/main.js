@@ -29,7 +29,7 @@
       wrap._modBlinkTimer = null;
     }
     wrap.innerHTML =
-      '<img class="ac-logo-img ac-logo-img--side" src="/assets/aida-logo-small.png" alt="AidaCamp logo">' +
+      '<img class="ac-logo-img ac-logo-img--side" src="/assets/aida-logo-small.png" alt="AidaCamp logo" width="96" height="96" loading="eager" decoding="sync" fetchpriority="high">' +
       '<div class="ac-card-logo-side__text">Мы не играем<br>в игры —<br>мы их создаём</div>';
   }
 
@@ -141,7 +141,7 @@
           else if (len > 165) quoteClass += " is-lg";
           var stars = "★★★★★";
           card.innerHTML =
-            '<img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '">' +
+            '<img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '" width="72" height="72" loading="lazy" decoding="async">' +
             '<div class="' + quoteClass + '">“ ' + r.text + ' ”</div>' +
             '<div class="ac-review-modern-card__divider"></div>' +
             '<div class="ac-review-modern-card__name">' + r.name + '</div>' +
@@ -210,7 +210,7 @@
       '<div class="ac-book-card__dialog">' +
       '  <button type="button" class="ac-book-card__close" id="acBookInfoClose" aria-label="Закрыть карточку книги"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>' +
       '  <div class="ac-book-card__media">' +
-      '    <img class="ac-book-card__cover" src="' + AC_BOOK_INFO.cover + '" alt="' + AC_BOOK_INFO.title + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' +
+      '    <img class="ac-book-card__cover" src="' + AC_BOOK_INFO.cover + '" alt="' + AC_BOOK_INFO.title + '" loading="lazy" decoding="async" width="504" height="680" referrerpolicy="strict-origin-when-cross-origin">' +
       "  </div>" +
       '  <div class="ac-book-card__body">' +
       '    <div class="ac-book-card__eyebrow">Учебник по программированию</div>' +
@@ -315,7 +315,7 @@
         else if (len > 165) quoteClass += " is-lg";
         return '' +
           '<article class="ac-review-modern-card">' +
-          '  <img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '">' +
+          '  <img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '" width="72" height="72" loading="lazy" decoding="async">' +
           '  <div class="' + quoteClass + '">“ ' + r.text + ' ”</div>' +
           '  <div class="ac-review-modern-card__divider"></div>' +
           '  <div class="ac-review-modern-card__name">' + r.name + "</div>" +
@@ -350,7 +350,7 @@
       '<div class="ac-full-cards-grid ac-full-cards-grid--team">' +
       cards.slice(0, 4).map(function (p) {
         var mediaHtml = p.img
-          ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '">'
+          ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '" width="320" height="320" loading="lazy" decoding="async">'
           : '<div class="ac-team-slider__img ac-team-slider__img--placeholder">' + getTeamCardInitials(p.name) + "</div>";
         return '' +
           '<article class="ac-team-slider__card">' +
@@ -385,7 +385,7 @@
     function render(cat) {
       var list = mediaMap.photos[cat] || [];
       grid.innerHTML = list.map(function (item, i) {
-        return '<div class="ac-left-photo-item" data-photo-index="' + i + '"><img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '"></div>';
+        return '<div class="ac-left-photo-item" data-photo-index="' + i + '"><img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '" loading="lazy" decoding="async" width="800" height="800"></div>';
       }).join("");
       $$(".ac-left-photo-cat", cats).forEach(function (btn) { btn.classList.toggle("is-active", btn.dataset.lcat === cat); });
       grid.onclick = function (e) {
@@ -422,7 +422,7 @@
         return '' +
           '<button type="button" class="ac-left-video-item ac-left-video-item--rutube" data-video-index="' + i + '">' +
           '  <div class="ac-left-video-item__poster">' +
-          (poster ? '<img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' : "") +
+          (poster ? '<img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" decoding="async" width="720" height="1280" referrerpolicy="strict-origin-when-cross-origin">' : "") +
           '    <div class="ac-left-video-item__poster-shade"></div>' +
           '    <div class="ac-left-video-item__play"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div>' +
           '    <div class="ac-left-video-item__caption">' + (item.title || "Видео") + "</div>" +
@@ -776,7 +776,7 @@
         var poster = rutubeThumbnailUrl(item.url);
         card.innerHTML =
           '<div class="ac-left-video-item__poster">' +
-          (poster ? '  <img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' : "") +
+          (poster ? '  <img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" decoding="async" width="720" height="1280" referrerpolicy="strict-origin-when-cross-origin">' : "") +
           '  <div class="ac-left-video-item__poster-shade"></div>' +
           '  <div class="ac-left-video-item__play"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div>' +
           '  <div class="ac-left-video-item__caption">' + (item.title || "Видео") + "</div>" +
@@ -908,7 +908,7 @@
           var card = document.createElement("article");
           card.className = "ac-team-slider__card";
           var mediaHtml = p.img
-            ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '">'
+            ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '" width="320" height="320" loading="lazy" decoding="async">'
             : '<div class="ac-team-slider__img ac-team-slider__img--placeholder">' + getTeamCardInitials(p.name) + "</div>";
           card.innerHTML =
             mediaHtml +
@@ -1044,6 +1044,51 @@
       video.playsInline = true;
       video.setAttribute("aria-label", "Видео из галереи AidaCamp");
       link.replaceWith(video);
+    });
+  }
+
+  function applyImagePerformanceHints(root) {
+    var scope = root || document;
+    $$("img", scope).forEach(function (img) {
+      var cls = img.classList || { contains: function () { return false; } };
+      var isHero = !!(img.closest && img.closest("#hero"));
+      var isIcon = cls.contains("ac-icon");
+
+      if (!img.hasAttribute("loading")) {
+        img.setAttribute("loading", isHero ? "eager" : "lazy");
+      }
+      if (!img.hasAttribute("decoding")) {
+        img.setAttribute("decoding", isHero ? "sync" : "async");
+      }
+      if (isHero && !isIcon && !img.hasAttribute("fetchpriority")) {
+        img.setAttribute("fetchpriority", "high");
+      }
+
+      if (img.hasAttribute("width") && img.hasAttribute("height")) return;
+
+      var w = 800;
+      var h = 600;
+      if (cls.contains("ac-icon")) {
+        w = cls.contains("ac-icon--lg") ? 24 : (cls.contains("ac-icon--sm") ? 16 : 20);
+        h = w;
+      } else if (cls.contains("ac-review-modern-card__avatar")) {
+        w = 72; h = 72;
+      } else if (cls.contains("ac-team-slider__img")) {
+        w = 320; h = 320;
+      } else if (cls.contains("ac-left-video-item__poster-img")) {
+        w = 720; h = 1280;
+      } else if (cls.contains("ac-book-card__cover")) {
+        w = 504; h = 680;
+      } else if (cls.contains("ac-logo-img--side")) {
+        w = 96; h = 96;
+      } else if (cls.contains("ac-site-brand__logo")) {
+        w = 56; h = 56;
+      } else if (img.closest && img.closest(".ac-left-photo-item")) {
+        w = 800; h = 800;
+      }
+
+      img.setAttribute("width", String(w));
+      img.setAttribute("height", String(h));
     });
   }
 
@@ -1187,7 +1232,7 @@
       photoGrid.innerHTML = list.map(function (item, i) {
         return (
           '<div class="ac-left-photo-item" data-photo-index="' + i + '">' +
-          '<img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '">' +
+          '<img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '" loading="lazy" decoding="async" width="800" height="800">' +
           "</div>"
         );
       }).join("");
@@ -2418,6 +2463,7 @@
     refreshTeamFromRemote(true);
     ensureLeftTabsRouting();
     ensureGalleryAltAndVideo();
+    applyImagePerformanceHints(document);
     // Prefer build-time manifest; fallback to runtime parser.
     if (!loadMediaFromManifest()) loadMediaByCaption();
     renderFullModeExtension();
@@ -2485,6 +2531,9 @@
     setTimeout(ensureTeamCarousel, 2400);
     setTimeout(renderFullModeExtension, 1000);
     setTimeout(renderFullModeExtension, 2400);
+    setTimeout(function () { applyImagePerformanceHints(document); }, 600);
+    setTimeout(function () { applyImagePerformanceHints(document); }, 1800);
+    setTimeout(function () { applyImagePerformanceHints(document); }, 3600);
     if (AC_DEV_REMOTE_TEAM_REFRESH_ENABLED) {
       setTimeout(function () { refreshTeamFromRemote(true); }, 1500);
       setTimeout(function () { refreshTeamFromRemote(true); }, 5000);
