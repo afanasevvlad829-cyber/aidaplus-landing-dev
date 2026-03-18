@@ -773,12 +773,12 @@
       var socials = document.createElement("div");
       socials.className = "ac-age__socials";
       socials.innerHTML = '' +
-        '<a class="ac-age__social ac-age__social--vk" href="https://vk.com/" target="_blank" rel="noopener noreferrer" aria-label="VK">' + bootstrapIcon("vk") + "</a>" +
-        '<a class="ac-age__social ac-age__social--ig" href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">' + bootstrapIcon("instagram") + "</a>" +
-        '<a class="ac-age__social ac-age__social--tg" href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">' + bootstrapIcon("telegram") + "</a>" +
-        '<a class="ac-age__social ac-age__social--wa" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">' + bootstrapIcon("whatsapp") + "</a>" +
-        '<a class="ac-age__social ac-age__social--fb" href="https://facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">' + bootstrapIcon("facebook") + "</a>" +
-        '<a class="ac-age__social ac-age__social--ms" href="https://messenger.com/" target="_blank" rel="noopener noreferrer" aria-label="Messenger">' + bootstrapIcon("messenger") + "</a>";
+        '<a class="ac-age__social ac-age__social--vk" href="https://vk.com/aida_codit" target="_blank" rel="noopener noreferrer" aria-label="VK">' + bootstrapIcon("vk") + "</a>" +
+        '<a class="ac-age__social ac-age__social--tg" href="https://t.me/aidacodit" target="_blank" rel="noopener noreferrer" aria-label="Telegram">' + bootstrapIcon("telegram") + "</a>" +
+        '<a class="ac-age__social ac-age__social--wa" href="https://wa.me/79688086455?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BA%D1%83%D0%BF%D0%B8%D1%82%D1%8C%20%D0%BF%D1%83%D1%82%D0%B5%D0%B2%D0%BA%D1%83%20%D0%B2%20%D0%B4%D0%B5%D1%82%D1%81%D0%BA%D0%B8%D0%B9%20%D0%98%D0%A2-%D0%BB%D0%B0%D0%B3%D0%B5%D1%80%D1%8C" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">' + bootstrapIcon("whatsapp") + "</a>" +
+        '<a class="ac-age__social ac-age__social--yt" href="https://www.youtube.com/channel/UCavd6BfrYQ32HQX_S4iZ02g" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><span class="ac-age__social-text">YT</span></a>' +
+        '<a class="ac-age__social ac-age__social--ig" href="https://www.instagram.com/aidacamp2024?igsh=MXJnNmhqcjJ5Ym9vdQ==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">' + bootstrapIcon("instagram") + "</a>" +
+        '<a class="ac-age__social ac-age__social--dz" href="https://dzen.ru/aidacodit" target="_blank" rel="noopener noreferrer" aria-label="Dzen"><span class="ac-age__social-text">DZ</span></a>';
       age.appendChild(socials);
     }
 
@@ -795,10 +795,10 @@
         '  <button type="button" class="ac-hero-contact-card__toggle" aria-expanded="false" aria-label="Показать контакты"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
         "</div>" +
         '<div class="ac-hero-contact-card__body">' +
-        '  <a class="ac-hero-contact-card__item" href="tel:+79991234567">' + bootstrapIcon("phone") + "<span>Телефон</span></a>" +
-        '  <a class="ac-hero-contact-card__item" href="https://t.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("telegram") + "<span>Telegram</span></a>" +
-        '  <a class="ac-hero-contact-card__item" href="https://wa.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("whatsapp") + "<span>WhatsApp</span></a>" +
-        '  <a class="ac-hero-contact-card__item" href="https://messenger.com/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("messenger") + "<span>Max</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="tel:84951284429">' + bootstrapIcon("phone") + "<span>Телефон</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="https://t.me/aidacodit" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("telegram") + "<span>Telegram</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="https://wa.me/79688086455?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BA%D1%83%D0%BF%D0%B8%D1%82%D1%8C%20%D0%BF%D1%83%D1%82%D0%B5%D0%B2%D0%BA%D1%83%20%D0%B2%20%D0%B4%D0%B5%D1%82%D1%81%D0%BA%D0%B8%D0%B9%20%D0%98%D0%A2-%D0%BB%D0%B0%D0%B3%D0%B5%D1%80%D1%8C" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("whatsapp") + "<span>WhatsApp</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="https://vk.com/aida_codit" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("vk") + "<span>VK</span></a>" +
         "</div>";
       rightCard.appendChild(box);
       var toggle = box.querySelector(".ac-hero-contact-card__toggle");

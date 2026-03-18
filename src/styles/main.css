@@ -2458,10 +2458,19 @@ body.ac-page .ac-site-section .container {
   display: block;
 }
 
+.ac-age__social-text {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
 .ac-age__social--vk { background: #2787f5; }
 .ac-age__social--ig { background: linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7); }
 .ac-age__social--tg { background: #2aabee; }
 .ac-age__social--wa { background: #25d366; }
+.ac-age__social--yt { background: #ff0000; }
+.ac-age__social--dz { background: linear-gradient(135deg, #ff7a00, #ffb200); }
 .ac-age__social--fb { background: #1877f2; }
 .ac-age__social--ms { background: linear-gradient(135deg, #5f5cff, #d946ef); }
 
