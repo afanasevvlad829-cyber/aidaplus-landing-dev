@@ -1233,6 +1233,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
         <span class="ac-site-brand__sub">IT-лагерь для детей 7–14 лет</span>
       </span>
     </a>
+    <div class="ac-site-header__menu-slot" id="acHeaderHeroMenuSlot" aria-hidden="true"></div>
     <nav class="ac-site-nav" aria-label="Навигация по странице">
       <ul>
         <li><a href="#hero">Главный экран</a></li>
@@ -3084,8 +3085,13 @@ AC.metrika = function(goal, params){
   function applyMode(mode){
     var compact = mode!=='full';
     body.classList.toggle('ac-compact-mode', compact);
+    body.classList.toggle('mode-compact', compact);
+    body.classList.toggle('mode-full', !compact);
     if(btn) btn.setAttribute('aria-pressed', String(!compact));
     try{ localStorage.setItem(key, compact ? 'compact' : 'full'); }catch(e){}
+    try{
+      window.dispatchEvent(new CustomEvent('ac:view-mode-change', { detail:{ mode: compact ? 'compact' : 'full' } }));
+    }catch(e){}
   }
   var saved='compact';
   try{ saved=localStorage.getItem(key)||'compact'; }catch(e){}

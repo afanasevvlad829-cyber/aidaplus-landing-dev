@@ -305,7 +305,7 @@
   function renderFullModeReviewsSection() {
     var host = document.getElementById("acFullReviews");
     if (!host) return;
-    var reviews = AC_REVIEWS_DATA.slice(0, 4);
+    var reviews = AC_REVIEWS_DATA.slice();
     var prevId = "acFullReviewsPrev";
     var nextId = "acFullReviewsNext";
     var trackId = "acFullReviewsTrack";
@@ -325,7 +325,10 @@
     var total = 1;
     var resizeTimer = null;
     function getPerSlide() {
-      return (window.innerWidth || 1280) >= 980 ? 2 : 1;
+      var w = window.innerWidth || 1280;
+      if (w >= 1100) return 4;
+      if (w >= 760) return 2;
+      return 1;
     }
     function chunk(arr, size) {
       var out = [];
@@ -338,7 +341,10 @@
       track.innerHTML = "";
       slides.forEach(function (group) {
         var slide = document.createElement("div");
-        slide.className = "ac-full-cards-slider__slide ac-full-cards-grid ac-full-cards-grid--reviews";
+        slide.className = "ac-full-cards-slider__slide";
+        slide.style.display = "grid";
+        slide.style.gap = "14px";
+        slide.style.gridTemplateColumns = "repeat(" + perSlide + ", minmax(0,1fr))";
         group.forEach(function (r) {
           var quoteClass = "ac-review-modern-card__quote";
           var len = (r.text || "").length;
@@ -399,7 +405,6 @@
     }
     if (!cards.length) return;
 
-    cards = cards.slice(0, 4);
     var prevId = "acFullTeamPrev";
     var nextId = "acFullTeamNext";
     var trackId = "acFullTeamTrack";
@@ -419,7 +424,10 @@
     var total = 1;
     var resizeTimer = null;
     function getPerSlide() {
-      return (window.innerWidth || 1280) >= 980 ? 2 : 1;
+      var w = window.innerWidth || 1280;
+      if (w >= 1100) return 4;
+      if (w >= 760) return 2;
+      return 1;
     }
     function chunk(arr, size) {
       var out = [];
@@ -432,7 +440,10 @@
       track.innerHTML = "";
       slides.forEach(function (group) {
         var slide = document.createElement("div");
-        slide.className = "ac-full-cards-slider__slide ac-full-cards-grid ac-full-cards-grid--team";
+        slide.className = "ac-full-cards-slider__slide";
+        slide.style.display = "grid";
+        slide.style.gap = "14px";
+        slide.style.gridTemplateColumns = "repeat(" + perSlide + ", minmax(0,1fr))";
         group.forEach(function (p) {
           var mediaHtml = p.img
             ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '" width="320" height="320" loading="lazy" decoding="async">'
@@ -473,12 +484,23 @@
     var host = document.getElementById("acFullPhotos");
     var mediaMap = window.__acMediaMap;
     if (!host || !mediaMap || !mediaMap.photos) return;
+    var prevId = "acFullPhotosPrev";
+    var nextId = "acFullPhotosNext";
+    var trackId = "acFullPhotosTrack";
     host.innerHTML =
       '<div class="ac-full-media-toolbar ac-full-photo-cats"></div>' +
-      '<div class="ac-left-photo-grid ac-full-photo-grid"></div>';
+      '<div class="ac-full-cards-slider">' +
+      '  <button class="ac-full-cards-slider__arrow" id="' + prevId + '" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '  <div class="ac-full-cards-slider__viewport">' +
+      '    <div class="ac-full-photo-grid ac-full-cards-slider__track" id="' + trackId + '"></div>' +
+      "  </div>" +
+      '  <button class="ac-full-cards-slider__arrow" id="' + nextId + '" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
+      "</div>";
     var cats = $(".ac-full-photo-cats", host);
-    var grid = $(".ac-full-photo-grid", host);
-    if (!cats || !grid) return;
+    var track = document.getElementById(trackId);
+    var prev = document.getElementById(prevId);
+    var next = document.getElementById(nextId);
+    if (!cats || !track || !prev || !next) return;
     var catList = [
       { key: "all", label: "Все" },
       { key: "food", label: "Еда" },
@@ -489,25 +511,85 @@
     cats.innerHTML = catList.map(function (c, i) {
       return '<button class="media-chip ac-full-photo-cat' + (i === 0 ? " is-active" : "") + '" data-lcat="' + c.key + '">' + c.label + "</button>";
     }).join("");
-    function render(cat) {
-      var list = mediaMap.photos[cat] || [];
-      grid.innerHTML = list.map(function (item, i) {
-        return '<div class="ac-left-photo-item" data-photo-index="' + i + '"><img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '" loading="lazy" decoding="async" width="800" height="800"></div>';
-      }).join("");
-      $$(".ac-full-photo-cat", cats).forEach(function (btn) { btn.classList.toggle("is-active", btn.dataset.lcat === cat); });
-      grid.onclick = function (e) {
-        var item = e.target.closest(".ac-left-photo-item");
-        if (!item) return;
-        var i = Number(item.getAttribute("data-photo-index") || "0");
-        openMediaLightbox(list, i);
-      };
+
+    var index = 0;
+    var total = 1;
+    var currentList = [];
+    var resizeTimer = null;
+
+    function getPerSlide() {
+      var w = window.innerWidth || 1280;
+      if (w >= 1200) return 4;
+      if (w >= 760) return 2;
+      return 1;
     }
+
+    function chunk(arr, size) {
+      var out = [];
+      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+      return out;
+    }
+
+    function renderSlides() {
+      var perSlide = getPerSlide();
+      var slides = chunk(currentList, perSlide);
+      track.innerHTML = "";
+      slides.forEach(function (group, slideIdx) {
+        var slide = document.createElement("div");
+        slide.className = "ac-full-photo-slide ac-full-cards-slider__slide";
+        slide.style.gridTemplateColumns = "repeat(" + perSlide + ", minmax(0,1fr))";
+        group.forEach(function (item, localIdx) {
+          var photoIdx = slideIdx * perSlide + localIdx;
+          var card = document.createElement("div");
+          card.className = "ac-left-photo-item";
+          card.setAttribute("data-photo-index", String(photoIdx));
+          card.innerHTML = '<img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '" loading="lazy" decoding="async" width="800" height="800">';
+          slide.appendChild(card);
+        });
+        track.appendChild(slide);
+      });
+      total = Math.max(1, slides.length);
+      if (index >= total) index = total - 1;
+      update();
+    }
+
+    function update() {
+      track.style.transform = "translateX(" + (-100 * index) + "%)";
+      var hideNav = total < 2;
+      prev.style.visibility = hideNav ? "hidden" : "visible";
+      next.style.visibility = hideNav ? "hidden" : "visible";
+    }
+
+    prev.onclick = function () { index = (index - 1 + total) % total; update(); };
+    next.onclick = function () { index = (index + 1) % total; update(); };
+
+    function render(cat) {
+      currentList = mediaMap.photos[cat] || [];
+      index = 0;
+      renderSlides();
+      $$(".ac-full-photo-cat", cats).forEach(function (btn) { btn.classList.toggle("is-active", btn.dataset.lcat === cat); });
+    }
+
+    track.onclick = function (e) {
+      var item = e.target.closest(".ac-left-photo-item");
+      if (!item) return;
+      var i = Number(item.getAttribute("data-photo-index") || "0");
+      openMediaLightbox(currentList, i);
+    };
+
     cats.onclick = function (e) {
       var btn = e.target.closest(".ac-full-photo-cat");
       if (!btn) return;
       render(btn.getAttribute("data-lcat") || "all");
     };
     render("all");
+    if (!host._fullPhotosResizeBound) {
+      host._fullPhotosResizeBound = true;
+      window.addEventListener("resize", function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderSlides, 120);
+      });
+    }
   }
 
   function renderFullModeVideoSection() {
@@ -531,7 +613,8 @@
       : [];
     var mediaVideos = (window.__acMediaMap && window.__acMediaMap.videos) ? window.__acMediaMap.videos.slice() : [];
     if (!mediaVideos.length) mediaVideos = readManifestVideos();
-    var items = rutubeItems.length ? rutubeItems : mediaVideos;
+    var useRutube = !mediaVideos.length && rutubeItems.length > 0;
+    var items = mediaVideos.length ? mediaVideos : rutubeItems;
     if (!items.length) return;
 
     host.innerHTML =
@@ -539,7 +622,7 @@
     var grid = $(".ac-full-video-grid", host);
     if (!grid) return;
 
-    if (rutubeItems.length) {
+    if (useRutube) {
       grid.innerHTML = items.slice(0, 4).map(function (item, i) {
         var poster = rutubeThumbnailUrl(item.url);
         return '' +
@@ -576,6 +659,9 @@
     cloneOverlayContentToSection("acLtFaq", "acFullFaq");
     var host = document.getElementById("acFullFaq");
     if (!host) return;
+    $$(".ac-left-faq__gt, .ac-left-faq__group-title, .ac-left-faq h4, .ac-left-faq h5", host).forEach(function (el) {
+      el.style.display = "none";
+    });
     var items = $$(".ac-left-faq__item, .ac-mini-faq details", host);
     if (!items.length) return;
 
@@ -634,7 +720,8 @@
       if (!btn) return;
       apply(btn.getAttribute("data-fcat"));
     };
-    apply(tabs[0].key);
+    var initial = tabs.some(function (t) { return t.key === "med"; }) ? "med" : tabs[0].key;
+    apply(initial);
   }
 
   function bootstrapIcon(name) {
@@ -704,15 +791,14 @@
         '<div class="ac-hero-contact-card__head">' +
         '  <div>' +
         '    <div class="ac-hero-contact-card__title">Связаться с нами</div>' +
-        '    <a class="ac-hero-contact-card__phone" href="tel:+79991234567">+7 (999) 123-45-67</a>' +
         "  </div>" +
         '  <button type="button" class="ac-hero-contact-card__toggle" aria-expanded="false" aria-label="Показать контакты"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
         "</div>" +
         '<div class="ac-hero-contact-card__body">' +
-        '  <a class="ac-hero-contact-card__item" href="https://wa.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("whatsapp") + "<span>WhatsApp</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="tel:+79991234567">' + bootstrapIcon("phone") + "<span>Телефон</span></a>" +
         '  <a class="ac-hero-contact-card__item" href="https://t.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("telegram") + "<span>Telegram</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="https://wa.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("whatsapp") + "<span>WhatsApp</span></a>" +
         '  <a class="ac-hero-contact-card__item" href="https://messenger.com/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("messenger") + "<span>Max</span></a>" +
-        '  <a class="ac-hero-contact-card__item" href="tel:+79991234567">' + bootstrapIcon("phone") + "<span>Позвонить</span></a>" +
         "</div>";
       rightCard.appendChild(box);
       var toggle = box.querySelector(".ac-hero-contact-card__toggle");
@@ -725,6 +811,109 @@
     }
   }
 
+  function ensureHeroMenuLabels(menu) {
+    if (!menu) return;
+    var labels = {
+      info: "Программа",
+      aiprogram: "AI программы",
+      place: "Локация",
+      photo: "Фото",
+      video: "Видео",
+      reviews: "Отзывы",
+      team: "Команда",
+      faq: "FAQ"
+    };
+    $$(".ac-left-tab[data-ltab]", menu).forEach(function (btn) {
+      var key = btn.getAttribute("data-ltab") || "";
+      var label = labels[key] || (btn.getAttribute("title") || btn.getAttribute("data-tip") || "").trim();
+      if (!label) return;
+      btn.setAttribute("data-nav-label", label);
+      Array.prototype.slice.call(btn.childNodes).forEach(function (node) {
+        if (node && node.nodeType === 3 && /\S/.test(node.nodeValue || "")) btn.removeChild(node);
+      });
+      var textNode = btn.querySelector(".ac-left-tab__text");
+      if (!textNode) {
+        textNode = document.createElement("span");
+        textNode.className = "ac-left-tab__text";
+        btn.appendChild(textNode);
+      }
+      textNode.textContent = label;
+    });
+  }
+
+  function animateHeroMenuFlip(node, first, last) {
+    if (!node || !first || !last) return;
+    var dx = first.left - last.left;
+    var dy = first.top - last.top;
+    var sx = first.width > 0 && last.width > 0 ? first.width / last.width : 1;
+    var sy = first.height > 0 && last.height > 0 ? first.height / last.height : 1;
+    node.classList.add("is-flip-animating");
+    var anim = node.animate(
+      [
+        { transformOrigin: "top left", transform: "translate(" + dx + "px," + dy + "px) scale(" + sx + "," + sy + ")" },
+        { transformOrigin: "top left", transform: "translate(" + (dx * 0.08) + "px," + (dy * 0.08) + "px) scale(1.04)" },
+        { transformOrigin: "top left", transform: "translate(0,0) scale(1)" }
+      ],
+      {
+        duration: 520,
+        easing: "cubic-bezier(0.2, 0.85, 0.2, 1)",
+        fill: "both"
+      }
+    );
+    anim.onfinish = function () { node.classList.remove("is-flip-animating"); };
+    anim.oncancel = function () { node.classList.remove("is-flip-animating"); };
+  }
+
+  function ensureFloatingHeroNav() {
+    if (window.__acHeroNavBridgeBound) return;
+    window.__acHeroNavBridgeBound = true;
+
+    var state = { parent: null, next: null };
+
+    function move(mode) {
+      var menu = document.getElementById("acLeftTabs");
+      var body = document.body;
+      var slot = document.getElementById("acHeaderHeroMenuSlot");
+      if (!menu || !body || !slot) return;
+
+      ensureHeroMenuLabels(menu);
+
+      if (!state.parent && menu.parentNode) {
+        state.parent = menu.parentNode;
+        state.next = menu.nextSibling;
+      }
+      if (!state.parent) return;
+
+      var target = mode === "full" ? slot : state.parent;
+      var first = menu.getBoundingClientRect();
+      if (mode === "full") {
+        if (menu.parentNode !== slot) slot.appendChild(menu);
+      } else if (menu.parentNode !== state.parent) {
+        if (state.next && state.next.parentNode === state.parent) state.parent.insertBefore(menu, state.next);
+        else state.parent.appendChild(menu);
+      }
+      menu.classList.toggle("ac-left-tabs--header-mode", mode === "full");
+      var last = menu.getBoundingClientRect();
+      if (first.width && last.width && menu.parentNode === target) animateHeroMenuFlip(menu, first, last);
+    }
+
+    function syncFromBody() {
+      var compact = document.body.classList.contains("ac-compact-mode");
+      document.body.classList.toggle("mode-compact", compact);
+      document.body.classList.toggle("mode-full", !compact);
+      move(compact ? "compact" : "full");
+    }
+
+    syncFromBody();
+
+    var mo = new MutationObserver(function () { syncFromBody(); });
+    mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    window.addEventListener("ac:view-mode-change", function (e) {
+      var mode = e && e.detail && e.detail.mode === "full" ? "full" : "compact";
+      move(mode);
+    });
+  }
+
   function renderFullModeExtension() {
     renderFullModeAiSection();
     renderFullModeLocationSection();
@@ -734,6 +923,7 @@
     renderFullModeTeamSection();
     renderFullModeFaqSection();
     ensureHeroFullModePolish();
+    ensureFloatingHeroNav();
   }
 
   function getSectionFromAnchor(doc, names) {
@@ -1499,6 +1689,7 @@
     }
 
     applyHeroBackgroundRotation(mediaMap.hero || []);
+    renderFullModeVideoSection();
 
     window.__acMediaRendered = true;
     return true;

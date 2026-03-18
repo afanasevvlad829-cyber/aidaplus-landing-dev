@@ -218,6 +218,35 @@
   - устранён конфликт с глобальным делегированием кликов по `.ac-left-photo-cat`;
   - в full mode фильтры переведены на отдельный класс `.ac-full-photo-cat`;
   - active-state и фильтрация по категориям работают без перезагрузки.
+
+---
+
+## Task 13
+
+### Задача
+Точечная доработка навигации full mode: скрывать верхнее header-меню в `Подробно`, переносить текущее hero-меню (`#acLeftTabs`) в header с FLIP-анимацией и возвращать обратно в `Кратко` без клонирования DOM.
+
+### Статус
+Выполнено.
+
+### Что сделано
+- В `index.html` добавлен слот для hero-меню в header:
+  - `#acHeaderHeroMenuSlot` (`.ac-site-header__menu-slot`).
+- Переключение режима расширено:
+  - в `applyMode()` добавлены `body.mode-compact` / `body.mode-full`;
+  - добавлен кастомный event `ac:view-mode-change` с текущим режимом.
+- В `src/scripts/main.js` реализован перенос одного и того же DOM-узла `#acLeftTabs`:
+  - `ensureFloatingHeroNav()` — мост между mode-классами и перемещением меню;
+  - `ensureHeroMenuLabels()` — добавляет текстовые подписи вкладкам (для top-nav вида в full mode);
+  - `animateHeroMenuFlip()` — FLIP-анимация (перелёт + лёгкий overshoot/scale).
+- В `src/styles/main.css` добавлены стили full-mode навигации:
+  - в `mode-full` скрывается `.ac-site-nav` (не удаляется из DOM);
+  - показывается `.ac-site-header__menu-slot`;
+  - `#acLeftTabs` в header-режиме отображается как компактная навбар-плашка с иконками и подписями.
+
+### Ограничения
+- Hero/grid/booking/data sources/carousels/reviews/team/video/photo/faq логика не менялись.
+- Используется один и тот же `#acLeftTabs` (без дублирования меню).
 - Удаление служебных подписей:
   - в full mode убраны технические поясняющие подзаголовки из секций `#program`, `#format`, `#ai`, `#location`, `#photos`, `#video`, `#reviews`, `#team`, `#faq`.
 - Единая ширина секций:
@@ -278,3 +307,138 @@
   - compact mode,
   - hero business logic,
   - data sources.
+
+---
+
+## Task 9
+
+### Задача
+Точечная доработка full mode секций `Отзывы` и `Команда`: вернуть корректный слайдер с 4 карточками в видимой области на desktop, убрать пустую область справа, сохранить текущие data sources и стили карточек.
+
+### Статус
+Выполнено.
+
+### Что сделано
+- `renderFullModeReviewsSection()`:
+  - использует полный текущий dataset `AC_REVIEWS_DATA` (без принудительного `slice(0, 4)`);
+  - обновлена логика `perSlide`:
+    - desktop: 4 карточки,
+    - tablet: 2,
+    - mobile: 1;
+  - слайд строится с динамической `gridTemplateColumns = repeat(perSlide, ...)`, чтобы не оставлять пустые колонки справа;
+  - стрелки влево/вправо продолжают корректно листать слайды.
+- `renderFullModeTeamSection()`:
+  - убрано принудительное ограничение `cards.slice(0, 4)`;
+  - аналогично обновлён `perSlide` (4/2/1);
+  - применён динамический grid внутри слайда для устранения пустой правой области;
+  - стрелки листают карточки корректно.
+- Build:
+  - выполнен `bash build.sh`, `dist/index.html` синхронизирован.
+
+### Ограничения
+- Не менялись:
+  - compact mode,
+  - booking/data source логика,
+  - hero.
+
+---
+
+## Task 10
+
+### Задача
+Точечная доработка секции `Видео` в full mode: устранить отсутствие карточек, не ломая media source/manifest и существующую lightbox-логику.
+
+### Статус
+Выполнено.
+
+### Откуда берутся видео
+- Основной источник: `window.__acMediaMap.videos` (данные из media manifest).
+- Fallback: чтение `video`-элементов напрямую из `#ac-build-media-manifest`.
+- Резервный fallback: dev Rutube feed (только если данных из manifest/mediaMap нет).
+
+### Что было сломано
+- В full-mode рендере видео приоритетно использовался dev Rutube feed.
+- Из-за этого реальный media-source/manifest мог не попадать в DOM full-mode секции как основной контент.
+
+### Что исправлено
+- В `renderFullModeVideoSection()` изменён приоритет источников:
+  - сначала manifest/mediaMap,
+  - затем fallback на Rutube.
+- Добавлен принудительный ре-рендер full-mode видео после построения mediaMap (`renderGalleryFromMap(...)`), чтобы секция обновлялась сразу после загрузки данных.
+- Сохранена существующая логика открытия:
+  - для manifest-видео: `openMediaLightbox`,
+  - для Rutube fallback: `openRutubeVideoLightbox`.
+- Выполнен `bash build.sh`, `dist/index.html` синхронизирован.
+
+### Ограничения
+- Не менялись:
+  - compact mode,
+  - data sources,
+  - hero и booking logic.
+
+---
+
+## Task 11
+
+### Задача
+Точечная доработка `Фото лагеря` в full mode: заменить обычную grid-сетку на горизонтальную карусель в один ряд, сохранить фильтры и существующий lightbox.
+
+### Статус
+Выполнено.
+
+### Что сделано
+- В `renderFullModePhotosSection()`:
+  - заменён full-mode grid-рендер на карусельную структуру с `viewport + track + arrows`;
+  - добавлены стрелки влево/вправо в стиле остальных каруселей (`ac-full-cards-slider__arrow`);
+  - реализован рендер слайдов по `perSlide`:
+    - desktop: 4 карточки,
+    - tablet: 2,
+    - mobile: 1;
+  - фото остаются кликабельными и открываются через существующий `openMediaLightbox(...)`;
+  - фильтры `Все / Еда / Спорт / Бассейн / Учёба` сохранены и при переключении корректно пересобирают карусель (без возврата к grid).
+- В CSS (`src/styles/main.css`):
+  - для `#acFullPhotos .ac-full-photo-grid` включён горизонтальный track (`display:flex`);
+  - добавлен стиль `#acFullPhotos .ac-full-photo-slide` как единичного слайда шириной `100%` в один ряд.
+- Build:
+  - выполнен `bash build.sh`, `dist/index.html` синхронизирован.
+
+### Ограничения
+- Не менялись:
+  - compact mode,
+  - existing lightbox logic,
+  - data sources.
+
+---
+
+## Task 12
+
+### Задача
+Точечная доработка hero/full mode UI: компактный `contact card` с раскрывающимся списком, выравнивание соцсетей в age block вправо, ужесточение FAQ-фильтрации с дефолтной вкладкой `Медицина`.
+
+### Статус
+Выполнено.
+
+### Что сделано
+- Contact card (`Связаться с нами`):
+  - уменьшена ширина карточки примерно в 2 раза (`280 -> 150`);
+  - сохранено положение в правом hero-блоке;
+  - раскрытие по стрелке работает, список оформлен как dropdown под карточкой;
+  - в списке каналы:
+    - Телефон
+    - Telegram
+    - WhatsApp
+    - Max
+- Age socials:
+  - блок соцсетей выровнен по правому краю age-блока (`justify-content: flex-end`).
+- FAQ:
+  - скрыты служебные group-title элементы внутри full-mode FAQ;
+  - вкладки продолжают фильтровать DOM;
+  - по умолчанию выбирается `Медицина` (если раздел присутствует), и показываются только её вопросы.
+- Build:
+  - выполнен `bash build.sh`, `dist/index.html` синхронизирован.
+
+### Ограничения
+- Не менялись:
+  - booking logic,
+  - compact mode,
+  - hero/данные вне указанного UI-пасса.
