@@ -336,3 +336,19 @@
   - [x] compact mode UX
 - [x] Выполнен `bash build.sh`.
 - [x] `dist/index.html` синхронизирован.
+
+---
+
+# Checklist — Task 15
+
+- [x] Убрана дублирующая/конфликтующая логика перемещения `switch` из inline-скриптов `index.html`.
+- [x] В `src/scripts/main.js` удалены перемещения `switch` между контейнерами:
+  - [x] нет `appendChild`/`insertBefore` для `#acViewSwitchWrap`;
+  - [x] `switch` не вставляется в `#acLeftTabs` и не переносится в `#acFullNavSwitchSlot`.
+- [x] В relocation-логике перемещается только `#acLeftTabs`:
+  - [x] compact mode: меню в hero;
+  - [x] full mode: меню в `#acFullNavMenuSlot`.
+- [x] FLIP-анимация переноса меню сохранена для `#acLeftTabs`.
+- [x] `switch` остаётся в одном постоянном контейнере и не исчезает из-за relocation.
+- [x] Выполнен `bash build.sh`.
+- [x] `dist/index.html` синхронизирован.

@@ -739,14 +739,10 @@
   }
 
   function ensureHeroFullModePolish() {
-    var tabs = document.getElementById("acLeftTabs");
     var sw = document.getElementById("acViewSwitchWrap");
-    if (tabs && sw && sw.parentElement !== tabs) {
-      tabs.appendChild(sw);
-    }
     if (sw) {
       sw.classList.remove("ac-view-switch--dock");
-      sw.classList.add("ac-view-switch--in-tabs");
+      sw.classList.remove("ac-view-switch--in-tabs");
     }
 
     var age = document.getElementById("acAge");
@@ -893,8 +889,6 @@
     function move(mode) {
       var menu = getStableMenuNode();
       var slot = document.getElementById("acFullNavMenuSlot");
-      var sw = document.getElementById("acViewSwitchWrap");
-      var swSlot = document.getElementById("acFullNavSwitchSlot");
       if (!menu || !slot) return;
 
       ensureHeroMenuLabels(menu);
@@ -908,11 +902,9 @@
       var first = menu.getBoundingClientRect();
       if (mode === "full") {
         if (menu.parentNode !== slot) slot.appendChild(menu);
-        if (sw && swSlot && sw.parentNode !== swSlot) swSlot.appendChild(sw);
       } else if (menu.parentNode !== state.parent) {
         if (state.next && state.next.parentNode === state.parent) state.parent.insertBefore(menu, state.next);
         else state.parent.appendChild(menu);
-        if (sw && sw.parentNode !== menu) menu.appendChild(sw);
       }
       menu.classList.toggle("ac-left-tabs--floating-mode", mode === "full");
       var last = menu.getBoundingClientRect();

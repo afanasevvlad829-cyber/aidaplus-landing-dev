@@ -3426,11 +3426,7 @@ AC.metrika = function(goal, params){
 
   function moveViewSwitch(){
     var sw = document.getElementById('acViewSwitchWrap');
-    var right = document.querySelector('.ac-right');
-    if(sw && right && !sw.classList.contains('ac-view-switch--dock')){
-      right.appendChild(sw);
-      sw.classList.add('ac-view-switch--dock');
-    }
+    if(sw) sw.classList.remove('ac-view-switch--dock');
   }
 
   function renderCardRobot(){
@@ -3708,9 +3704,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d7dde6!important;}
 
   function moveSwitchExact(){
     var sw = $('#acViewSwitchWrap');
-    var right = $('.ac-right');
-    if(sw && right && sw.parentNode !== right){ right.appendChild(sw); }
-    if(sw) sw.classList.add('ac-view-switch--dock');
+    if(sw) sw.classList.remove('ac-view-switch--dock');
   }
 
   function humanizeDiagnostics(){

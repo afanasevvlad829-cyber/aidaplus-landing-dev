@@ -473,3 +473,31 @@
 
 ### Build
 - Выполнен `bash build.sh`, `dist/index.html` синхронизирован.
+
+---
+
+## Task 15
+
+### Задача
+Точечно исправить конфликт full/compact navigation: оставить один master-поток режима, зафиксировать `switch` в постоянном месте и перемещать только `#acLeftTabs`.
+
+### Статус
+Выполнено.
+
+### Что сделано
+- `src/scripts/main.js`:
+  - в `ensureHeroFullModePolish()` удалён перенос `#acViewSwitchWrap` в `#acLeftTabs`;
+  - в `ensureFloatingHeroNav()` удалены любые перемещения `switch` между слотами;
+  - теперь между контейнерами перемещается только `#acLeftTabs` (hero slot ↔ full-nav-zone), FLIP-анимация сохранена.
+- `index.html`:
+  - отключены конфликтующие inline-переносы `switch`:
+    - `moveViewSwitch()` больше не делает `appendChild`, только снимает legacy-класс;
+    - `moveSwitchExact()` больше не делает `appendChild`, только снимает legacy-класс.
+- В итоге `switch` живёт в постоянном контейнере (его исходная разметка в topbar hero) и больше не участвует в relocation-логике.
+
+### Какая дублирующая логика отключена
+- Отключены inline-паттерны перемещения `switch` из `index.html` (V4/V5 patch-скрипты).
+- В основном JS удалено перемещение `switch` в `#acFullNavSwitchSlot` и обратно в меню.
+
+### Build
+- Выполнен `bash build.sh`, `dist/index.html` синхронизирован.
