@@ -274,89 +274,25 @@
   function renderFullModeReviewsSection() {
     var host = document.getElementById("acFullReviews");
     if (!host) return;
-    host.innerHTML = '' +
-      '<div class="ac-reviews-modern ac-full-reviews-modern">' +
-      '  <div class="ac-reviews-modern__viewport">' +
-      '    <div class="ac-reviews-modern__track"></div>' +
-      "  </div>" +
-      '  <div class="ac-reviews-modern__nav">' +
-      '    <div class="ac-reviews-modern__nav-main">' +
-      '      <button class="ac-reviews-ya__arrow" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
-      '      <div class="ac-reviews-ya__dots"></div>' +
-      '      <button class="ac-reviews-ya__arrow" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
-      "    </div>" +
-      '    <a class="ac-reviews-modern__source-link" href="https://yandex.ru/maps/org/aydakemp/35558479035/reviews/?ll=38.874756%2C55.531232&z=7" target="_blank" rel="noopener noreferrer">Смотреть на Яндекс Картах</a>' +
-      "  </div>" +
+    var reviews = AC_REVIEWS_DATA.slice(0, 4);
+    host.innerHTML =
+      '<div class="ac-full-cards-grid ac-full-cards-grid--reviews">' +
+      reviews.map(function (r) {
+        var quoteClass = "ac-review-modern-card__quote";
+        var len = (r.text || "").length;
+        if (len > 210) quoteClass += " is-xl";
+        else if (len > 165) quoteClass += " is-lg";
+        return '' +
+          '<article class="ac-review-modern-card">' +
+          '  <img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '">' +
+          '  <div class="' + quoteClass + '">“ ' + r.text + ' ”</div>' +
+          '  <div class="ac-review-modern-card__divider"></div>' +
+          '  <div class="ac-review-modern-card__name">' + r.name + "</div>" +
+          '  <div class="ac-review-modern-card__sub">' + r.sub + "</div>" +
+          '  <div class="ac-review-modern-card__stars">★★★★★</div>' +
+          "</article>";
+      }).join("") +
       "</div>";
-
-    var root = $(".ac-full-reviews-modern", host);
-    var track = $(".ac-reviews-modern__track", root);
-    var dots = $(".ac-reviews-ya__dots", root);
-    var prev = $(".ac-reviews-ya__arrow:first-of-type", root);
-    var next = $(".ac-reviews-ya__arrow:last-of-type", root);
-    if (!root || !track || !dots || !prev || !next) return;
-
-    var index = 0;
-    var total = 1;
-    var resizeTimer = null;
-    function getCardsPerSlide() {
-      var w = window.innerWidth || 1280;
-      if (w >= 1200) return 3;
-      if (w >= 760) return 2;
-      return 1;
-    }
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-    function renderSlides() {
-      var slides = chunk(AC_REVIEWS_DATA, getCardsPerSlide());
-      track.innerHTML = "";
-      dots.innerHTML = "";
-      slides.forEach(function (group, idx) {
-        var slide = document.createElement("div");
-        slide.className = "ac-reviews-modern__slide";
-        group.forEach(function (r) {
-          var card = document.createElement("div");
-          card.className = "ac-review-modern-card";
-          var quoteClass = "ac-review-modern-card__quote";
-          var len = (r.text || "").length;
-          if (len > 210) quoteClass += " is-xl";
-          else if (len > 165) quoteClass += " is-lg";
-          card.innerHTML =
-            '<img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '">' +
-            '<div class="' + quoteClass + '">“ ' + r.text + ' ”</div>' +
-            '<div class="ac-review-modern-card__divider"></div>' +
-            '<div class="ac-review-modern-card__name">' + r.name + "</div>" +
-            '<div class="ac-review-modern-card__sub">' + r.sub + "</div>" +
-            '<div class="ac-review-modern-card__stars">★★★★★</div>';
-          slide.appendChild(card);
-        });
-        track.appendChild(slide);
-        var dot = document.createElement("span");
-        dot.className = "ac-reviews-ya__dot" + (idx === 0 ? " is-active" : "");
-        dots.appendChild(dot);
-      });
-      total = Math.max(1, slides.length);
-      if (index >= total) index = total - 1;
-      update();
-    }
-    function update() {
-      track.style.transform = "translateX(" + (-100 * index) + "%)";
-      $$(".ac-reviews-ya__dot", dots).forEach(function (d, i) { d.classList.toggle("is-active", i === index); });
-    }
-    prev.onclick = function () { index = (index - 1 + total) % total; update(); };
-    next.onclick = function () { index = (index + 1) % total; update(); };
-    renderSlides();
-
-    if (!host._fullReviewsResizeBound) {
-      host._fullReviewsResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
-    }
   }
 
   function renderFullModeTeamSection() {
@@ -379,72 +315,20 @@
     }
     if (!cards.length) return;
 
-    host.innerHTML = '' +
-      '<div class="ac-team-slider ac-full-team-slider">' +
-      '  <div class="ac-team-slider__viewport">' +
-      '    <div class="ac-team-slider__track"></div>' +
-      "  </div>" +
-      '  <div class="ac-team-slider__nav">' +
-      '    <button class="ac-team-slider__arrow" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
-      '    <button class="ac-team-slider__arrow" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
-      "  </div>" +
+    host.innerHTML =
+      '<div class="ac-full-cards-grid ac-full-cards-grid--team">' +
+      cards.slice(0, 4).map(function (p) {
+        var mediaHtml = p.img
+          ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '">'
+          : '<div class="ac-team-slider__img ac-team-slider__img--placeholder">' + getTeamCardInitials(p.name) + "</div>";
+        return '' +
+          '<article class="ac-team-slider__card">' +
+          mediaHtml +
+          '<div class="ac-team-slider__name">' + (p.name || "Команда AidaCamp") + "</div>" +
+          '<div class="ac-team-slider__role">' + (p.role || "Преподаватель") + "</div>" +
+          "</article>";
+      }).join("") +
       "</div>";
-
-    var root = $(".ac-full-team-slider", host);
-    var track = $(".ac-team-slider__track", root);
-    var prev = $(".ac-team-slider__arrow:first-of-type", root);
-    var next = $(".ac-team-slider__arrow:last-of-type", root);
-    if (!track || !prev || !next) return;
-    var index = 0;
-    var total = 1;
-    var resizeTimer = null;
-    function getCardsPerSlide() {
-      var w = window.innerWidth || 1280;
-      if (w >= 1200) return 3;
-      if (w >= 760) return 2;
-      return 1;
-    }
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-    function renderSlides() {
-      var slides = chunk(cards, getCardsPerSlide());
-      track.innerHTML = "";
-      slides.forEach(function (group) {
-        var slide = document.createElement("div");
-        slide.className = "ac-team-slider__slide";
-        group.forEach(function (p) {
-          var card = document.createElement("article");
-          card.className = "ac-team-slider__card";
-          var mediaHtml = p.img
-            ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '">'
-            : '<div class="ac-team-slider__img ac-team-slider__img--placeholder">' + getTeamCardInitials(p.name) + "</div>";
-          card.innerHTML =
-            mediaHtml +
-            '<div class="ac-team-slider__name">' + (p.name || "Команда AidaCamp") + "</div>" +
-            '<div class="ac-team-slider__role">' + (p.role || "Преподаватель") + "</div>";
-          slide.appendChild(card);
-        });
-        track.appendChild(slide);
-      });
-      total = Math.max(1, slides.length);
-      if (index >= total) index = total - 1;
-      update();
-    }
-    function update() { track.style.transform = "translateX(" + (-100 * index) + "%)"; }
-    prev.onclick = function () { index = (index - 1 + total) % total; update(); };
-    next.onclick = function () { index = (index + 1) % total; update(); };
-    renderSlides();
-
-    if (!host._fullTeamResizeBound) {
-      host._fullTeamResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
-    }
   }
 
   function renderFullModePhotosSection() {
@@ -534,6 +418,92 @@
     };
   }
 
+  function renderFullModeFaqSection() {
+    cloneOverlayContentToSection("acLtFaq", "acFullFaq");
+  }
+
+  function bootstrapIcon(name) {
+    var map = {
+      telegram: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M3.904 7.226c1.274-.555 2.123-.921 2.548-1.099 1.214-.505 1.467-.593 1.632-.596.036 0 .116.008.168.05a.18.18 0 0 1 .061.115c.006.046.014.149.008.23-.07.936-.475 3.207-.681 4.255-.087.443-.258.592-.424.607-.361.033-.635-.239-.985-.468-.548-.359-.858-.582-1.39-.932-.614-.404-.216-.626.134-.99.092-.096 1.698-1.556 1.73-1.688.004-.017.007-.08-.03-.113-.036-.034-.09-.022-.13-.013-.057.013-.966.614-2.728 1.804-.258.177-.492.263-.703.258-.232-.005-.678-.131-1.01-.239-.408-.133-.732-.204-.704-.43.015-.118.177-.239.504-.37"/></svg>',
+      whatsapp: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.601 2.326A7.85 7.85 0 0 0 8.03.02C3.79.02.335 3.476.335 7.72c0 1.356.355 2.68 1.028 3.85L.24 15.98l4.52-1.184a7.7 7.7 0 0 0 3.27.726h.003c4.238 0 7.696-3.456 7.698-7.702a7.64 7.64 0 0 0-2.13-5.494M8.034 14.1h-.002a6.3 6.3 0 0 1-3.21-.88l-.23-.137-2.68.702.715-2.611-.15-.239a6.3 6.3 0 0 1-.97-3.355c.002-3.484 2.84-6.32 6.33-6.32a6.29 6.29 0 0 1 4.496 1.86 6.28 6.28 0 0 1 1.85 4.465c-.002 3.49-2.84 6.326-6.329 6.326m3.466-4.73c-.19-.095-1.13-.558-1.305-.621-.175-.063-.302-.095-.43.095-.127.19-.492.622-.603.75-.11.127-.222.143-.413.047-.19-.095-.804-.296-1.532-.944-.566-.504-.948-1.126-1.06-1.317-.111-.19-.012-.293.084-.388.086-.085.19-.222.286-.334.095-.111.127-.19.19-.318.064-.127.032-.238-.015-.334-.048-.095-.43-1.036-.588-1.42-.155-.372-.313-.321-.43-.327l-.366-.006a.7.7 0 0 0-.509.238c-.175.19-.667.653-.667 1.593s.683 1.847.778 1.974c.095.127 1.344 2.06 3.258 2.888.455.196.81.313 1.087.4.457.145.873.124 1.202.075.366-.055 1.13-.462 1.29-.91.159-.446.159-.829.111-.91-.047-.079-.174-.127-.365-.222"/></svg>',
+      viber: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M11.18 1.754c1.63.69 2.74 2.27 2.93 4.08.14 1.33-.13 2.72-.88 3.82-.67 1-1.7 1.74-2.87 2.05-.28.08-.54.2-.78.37l-2.04 1.48c-.24.17-.54.2-.8.07-.26-.12-.44-.37-.48-.66l-.22-1.48a1.05 1.05 0 0 0-.39-.68 5.9 5.9 0 0 1-2.36-4.73c0-1.6.62-3.1 1.75-4.23A6.1 6.1 0 0 1 9.1.72c.72.07 1.43.25 2.08.53M9.2 2.3a4.8 4.8 0 0 0-3.42 1.42A4.8 4.8 0 0 0 4.36 7.1c0 1.3.56 2.53 1.54 3.37.41.35.68.83.75 1.36l.1.66 1.22-.88c.38-.28.82-.49 1.28-.61 1.74-.47 3.01-2.05 3.01-3.84 0-2.35-1.83-4.31-4.16-4.5z"/></svg>',
+      phone: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3.654 1.328a.68.68 0 0 1 .737-.171l2.522 1.01c.294.118.473.415.438.73l-.2 1.83a.68.68 0 0 1-.41.55l-1.23.53a11.5 11.5 0 0 0 4.64 4.64l.53-1.23a.68.68 0 0 1 .55-.41l1.83-.2a.68.68 0 0 1 .73.438l1.01 2.522a.68.68 0 0 1-.17.737l-1.27 1.27c-.74.74-1.83 1.03-2.84.77-2.3-.59-4.42-1.8-6.14-3.52S1.59 6.36 1 4.06c-.26-1.01.03-2.1.77-2.84z"/></svg>'
+    };
+    return map[name] || "";
+  }
+
+  function ensureHeroFullModePolish() {
+    var tabs = document.getElementById("acLeftTabs");
+    var sw = document.getElementById("acViewSwitchWrap");
+    if (tabs && sw && sw.parentElement !== tabs) {
+      tabs.appendChild(sw);
+    }
+    if (sw) {
+      sw.classList.remove("ac-view-switch--dock");
+      sw.classList.add("ac-view-switch--in-tabs");
+    }
+
+    var age = document.getElementById("acAge");
+    var ageLabel = age ? age.querySelector(".ac-age__label") : null;
+    var ageHint = document.getElementById("acAgeHint");
+    if (age && ageLabel && ageHint) {
+      var topLine = age.querySelector(".ac-age__topline");
+      if (!topLine) {
+        topLine = document.createElement("div");
+        topLine.className = "ac-age__topline";
+        age.insertBefore(topLine, age.firstChild);
+      }
+      if (ageLabel.parentElement !== topLine) topLine.appendChild(ageLabel);
+      if (ageHint.parentElement !== topLine) topLine.appendChild(ageHint);
+    }
+
+    var programAge = document.getElementById("acProgramAge");
+    if (ageHint && programAge) {
+      var raw = (programAge.textContent || "").trim();
+      if (raw) ageHint.textContent = /^Возраст:/.test(raw) ? raw : ("Возраст: " + raw);
+    }
+
+    if (age && !age.querySelector(".ac-age__socials")) {
+      var socials = document.createElement("div");
+      socials.className = "ac-age__socials";
+      socials.innerHTML = '' +
+        '<a class="ac-age__social-link" href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">' + bootstrapIcon("telegram") + "</a>" +
+        '<a class="ac-age__social-link" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">' + bootstrapIcon("whatsapp") + "</a>" +
+        '<a class="ac-age__social-link" href="viber://chat" aria-label="Viber">' + bootstrapIcon("viber") + "</a>" +
+        '<a class="ac-age__social-link" href="tel:+79991234567" aria-label="Телефон">' + bootstrapIcon("phone") + "</a>";
+      age.appendChild(socials);
+    }
+
+    var rightCard = document.querySelector(".ac-right");
+    if (rightCard && !document.getElementById("acHeroContactCard")) {
+      var box = document.createElement("div");
+      box.id = "acHeroContactCard";
+      box.className = "ac-hero-contact-card";
+      box.innerHTML = '' +
+        '<div class="ac-hero-contact-card__head">' +
+        '  <div>' +
+        '    <div class="ac-hero-contact-card__title">Связаться с нами</div>' +
+        '    <a class="ac-hero-contact-card__phone" href="tel:+79991234567">+7 (999) 123-45-67</a>' +
+        "  </div>" +
+        '  <button type="button" class="ac-hero-contact-card__toggle" aria-expanded="false" aria-label="Показать контакты"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
+        "</div>" +
+        '<div class="ac-hero-contact-card__body">' +
+        '  <a class="ac-hero-contact-card__item" href="https://t.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("telegram") + "<span>Telegram</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="https://wa.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("whatsapp") + "<span>WhatsApp</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="viber://chat">' + bootstrapIcon("viber") + "<span>Viber</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="tel:+79991234567">' + bootstrapIcon("phone") + "<span>Телефон</span></a>" +
+        "</div>";
+      rightCard.appendChild(box);
+      var toggle = box.querySelector(".ac-hero-contact-card__toggle");
+      if (toggle) {
+        toggle.onclick = function () {
+          var opened = box.classList.toggle("is-open");
+          toggle.setAttribute("aria-expanded", opened ? "true" : "false");
+        };
+      }
+    }
+  }
+
   function renderFullModeExtension() {
     cloneOverlayContentToSection("acLtAiprogram", "acFullAi");
     cloneOverlayContentToSection("acLtPlace", "acFullLocation");
@@ -541,6 +511,8 @@
     renderFullModeVideoSection();
     renderFullModeReviewsSection();
     renderFullModeTeamSection();
+    renderFullModeFaqSection();
+    ensureHeroFullModePolish();
   }
 
   function getSectionFromAnchor(doc, names) {

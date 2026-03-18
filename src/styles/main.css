@@ -2084,3 +2084,221 @@ html body .ac-right #acStep3 .ac-shift.is-selected.has-price-visible .ac-shift__
     grid-template-columns: 1fr;
   }
 }
+
+#acLeftTabs .ac-view-switch--in-tabs {
+  margin-left: auto;
+  padding: 4px 8px;
+  gap: 6px;
+  border-radius: 14px;
+}
+
+#acLeftTabs .ac-view-switch--in-tabs .ac-view-switch__label {
+  font-size: 10px;
+}
+
+#acLeftTabs .ac-view-switch--in-tabs .ac-view-switch__track {
+  width: 40px;
+  height: 22px;
+}
+
+#acLeftTabs .ac-view-switch--in-tabs .ac-view-switch__thumb {
+  width: 16px;
+  height: 16px;
+  top: 3px;
+  left: 3px;
+}
+
+body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch__thumb {
+  transform: translateX(18px);
+}
+
+.ac-age__topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ac-age__topline .ac-age__label {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.ac-age__topline .ac-age__hint {
+  margin: 0;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.ac-age__socials {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ac-age__social-link {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+}
+
+.ac-age__social-link svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+.ac-age__social-link:nth-child(1) { background: #2aabee; }
+.ac-age__social-link:nth-child(2) { background: #25d366; }
+.ac-age__social-link:nth-child(3) { background: #7360f2; }
+.ac-age__social-link:nth-child(4) { background: linear-gradient(180deg, #ff932e 0%, #ff7700 100%); }
+
+.ac-right {
+  position: relative;
+}
+
+.ac-hero-contact-card {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 4;
+  width: min(280px, calc(100% - 28px));
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.ac-hero-contact-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+}
+
+.ac-hero-contact-card__title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.ac-hero-contact-card__phone {
+  margin-top: 5px;
+  display: inline-block;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ac-hero-contact-card__toggle {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(243, 244, 246, 0.92);
+  color: #374151;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.ac-hero-contact-card__body {
+  display: none;
+  border-top: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.ac-hero-contact-card.is-open .ac-hero-contact-card__body {
+  display: block;
+}
+
+.ac-hero-contact-card.is-open .ac-hero-contact-card__toggle .ac-icon {
+  transform: rotate(90deg);
+}
+
+.ac-hero-contact-card__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: #111827;
+  text-decoration: none;
+  border-top: 1px solid rgba(17, 24, 39, 0.06);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ac-hero-contact-card__item:first-child {
+  border-top: none;
+}
+
+.ac-hero-contact-card__item svg {
+  width: 15px;
+  height: 15px;
+  color: #ff7700;
+  flex: 0 0 auto;
+}
+
+.ac-full-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ac-full-cards-grid--team .ac-team-slider__card {
+  height: 100%;
+}
+
+.ac-full-cards-grid--team .ac-team-slider__img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 10px;
+}
+
+#acFullFaq .ac-full-overlay-copy .ac-left-faq {
+  width: 100%;
+}
+
+#acFullFaq .ac-full-overlay-copy .ac-left-faq__item {
+  background: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+@media (max-width: 980px) {
+  .ac-full-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .ac-age__topline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .ac-hero-contact-card {
+    position: static;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .ac-full-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
