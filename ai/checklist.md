@@ -1,3 +1,26 @@
+# Checklist — Refactor Cleanup (текущий этап)
+
+- [x] Удалён временный inline hotfix-style: `#ac-manual-hotfix-style` из `index.html`.
+- [x] Удалён временный inline hotfix-script: `#ac-manual-hotfix-script` из `index.html`.
+- [x] Убрана дублирующая manual nav/contact логика из HTML (оставлена основная реализация в `src/scripts/main.js`).
+- [x] В `src/scripts/main.js` введены общие helper-утилиты:
+  - [x] `chunkArray(...)`
+  - [x] `debounce(...)`
+- [x] Сокращено дублирование в слайдерах/каруселях:
+  - [x] reviews tab
+  - [x] team tab
+  - [x] full photos
+  - [x] full video
+  - [x] full reviews
+  - [x] full team
+- [x] DEV switches собраны в единый блок `AC_DEV_CONFIG` с сохранением текущего поведения флагов.
+- [x] В `src/styles/main.css` добавлена секционная структура комментариями (nav/background/hero/components).
+- [x] Сокращён минимум один лишний `!important` без изменения UI-поведения.
+- [ ] Физическое разбиение `main.js` на отдельные файлы `features/*` не выполнено в этом безопасном pass.
+- [ ] Полная каскадная расчистка всех override-цепочек в `main.css` не выполнялась целиком (только точечная безопасная чистка).
+
+---
+
 # Checklist — Task 1
 
 - [x] Проверены секции: `#ai`, `#location`, `#photos`, `#video`, `#reviews`, `#team`, `#faq`.

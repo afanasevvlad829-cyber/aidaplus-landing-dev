@@ -1,10 +1,29 @@
 (function () {
+  // ===== Core helpers ========================================================
   function $(s, r) { return (r || document).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function chunkArray(arr, size) {
+    var out = [];
+    for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+    return out;
+  }
+  function debounce(fn, delay) {
+    var timer = null;
+    return function () {
+      var args = arguments;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(function () { fn.apply(null, args); }, delay);
+    };
+  }
 
-  // DEV switches. Disable before shipping final static production version.
-  var AC_DEV_REMOTE_TEAM_REFRESH_ENABLED = true;
-  var AC_DEV_RUTUBE_VIDEO_FEED_ENABLED = true;
+  // ===== Dev config ==========================================================
+  // Disable before shipping final static production version.
+  var AC_DEV_CONFIG = {
+    REMOTE_TEAM_REFRESH_ENABLED: true,
+    RUTUBE_VIDEO_FEED_ENABLED: true
+  };
+  var AC_DEV_REMOTE_TEAM_REFRESH_ENABLED = AC_DEV_CONFIG.REMOTE_TEAM_REFRESH_ENABLED;
+  var AC_DEV_RUTUBE_VIDEO_FEED_ENABLED = AC_DEV_CONFIG.RUTUBE_VIDEO_FEED_ENABLED;
   var AC_DEV_RUTUBE_VIDEOS = [
     {
       url: "https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/",
@@ -78,6 +97,7 @@
     }
   ];
 
+  // ===== Feature: Reviews ====================================================
   function ensureYandexReviewsTab() {
     var host = $("#acLtReviews");
     if (!host) return;
@@ -108,7 +128,6 @@
     var index = 0;
     var total = 1;
     var allDots = [];
-    var resizeTimer = null;
 
     function getCardsPerSlide() {
       var w = window.innerWidth || 1280;
@@ -117,15 +136,9 @@
       return 1;
     }
 
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-
     function renderSlides() {
       var perSlide = getCardsPerSlide();
-      var slides = chunk(reviews, perSlide);
+      var slides = chunkArray(reviews, perSlide);
       track.innerHTML = "";
       dots.innerHTML = "";
 
@@ -172,10 +185,7 @@
 
     if (!host._reviewsResizeBound) {
       host._reviewsResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -237,6 +247,7 @@
     return card;
   }
 
+  // ===== Feature: Book/Team ==================================================
   function ensureTeamTabLink() {
     var host = $("#acLtTeam");
     if (!host) return;
@@ -271,6 +282,7 @@
     target.appendChild(clone);
   }
 
+  // ===== Feature: Full mode sections ========================================
   function renderFullModeAiSection() {
     var source = document.getElementById("acLtAiprogram");
     var host = document.getElementById("acFullAi");
@@ -323,21 +335,15 @@
     if (!track || !prev || !next) return;
     var index = 0;
     var total = 1;
-    var resizeTimer = null;
     function getPerSlide() {
       var w = window.innerWidth || 1280;
       if (w >= 1100) return 4;
       if (w >= 760) return 2;
       return 1;
     }
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
     function renderSlides() {
       var perSlide = getPerSlide();
-      var slides = chunk(reviews, perSlide);
+      var slides = chunkArray(reviews, perSlide);
       track.innerHTML = "";
       slides.forEach(function (group) {
         var slide = document.createElement("div");
@@ -378,10 +384,7 @@
     renderSlides();
     if (!host._fullReviewsResizeBound) {
       host._fullReviewsResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -422,21 +425,15 @@
     if (!track || !prev || !next) return;
     var index = 0;
     var total = 1;
-    var resizeTimer = null;
     function getPerSlide() {
       var w = window.innerWidth || 1280;
       if (w >= 1100) return 4;
       if (w >= 760) return 2;
       return 1;
     }
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
     function renderSlides() {
       var perSlide = getPerSlide();
-      var slides = chunk(cards, perSlide);
+      var slides = chunkArray(cards, perSlide);
       track.innerHTML = "";
       slides.forEach(function (group) {
         var slide = document.createElement("div");
@@ -473,10 +470,7 @@
     renderSlides();
     if (!host._fullTeamResizeBound) {
       host._fullTeamResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -515,7 +509,6 @@
     var index = 0;
     var total = 1;
     var currentList = [];
-    var resizeTimer = null;
 
     function getPerSlide() {
       var w = window.innerWidth || 1280;
@@ -524,15 +517,9 @@
       return 1;
     }
 
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-
     function renderSlides() {
       var perSlide = getPerSlide();
-      var slides = chunk(currentList, perSlide);
+      var slides = chunkArray(currentList, perSlide);
       track.innerHTML = "";
       slides.forEach(function (group, slideIdx) {
         var slide = document.createElement("div");
@@ -585,10 +572,7 @@
     render("all");
     if (!host._fullPhotosResizeBound) {
       host._fullPhotosResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -649,7 +633,6 @@
 
     var index = 0;
     var total = 1;
-    var resizeTimer = null;
 
     function getPerSlide() {
       var w = window.innerWidth || 1280;
@@ -658,15 +641,9 @@
       return 1;
     }
 
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-
     function renderSlides() {
       var perSlide = getPerSlide();
-      var slides = chunk(items, perSlide);
+      var slides = chunkArray(items, perSlide);
       track.innerHTML = "";
       slides.forEach(function (group, slideIdx) {
         var slide = document.createElement("div");
@@ -732,10 +709,7 @@
     renderSlides();
     if (!host._fullVideoResizeBound) {
       host._fullVideoResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -808,6 +782,7 @@
     apply(initial);
   }
 
+  // ===== Feature: Hero/Navigation/Contacts ==================================
   function bootstrapIcon(name) {
     var map = {
       vk: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8.7 11.6h1c.3 0 .4-.2.4-.4v-1.4c0-.3.1-.4.3-.1l1.2 1.6c.2.2.3.3.6.3h1.8c.4 0 .5-.2.4-.5-.3-.7-1.7-2-1.8-2.2-.2-.3-.1-.4 0-.6 0 0 1.4-2 1.6-2.7.1-.3 0-.4-.3-.4h-2c-.2 0-.3.1-.4.3-.2.6-.9 1.8-1.1 2.1-.2.2-.2.3-.3.3-.1 0-.1-.1-.1-.3V5.4c0-.2-.1-.3-.4-.3H8.3c-.2 0-.3.1-.3.2 0 .2.3.2.3.7v1.7c0 .4-.1.5-.2.5-.3 0-.9-1.5-1.2-2.1-.1-.2-.2-.3-.4-.3H4.4c-.2 0-.3.1-.3.3.1.4.5 1.8 1.5 3 .6.8 1.5 1.2 2.4 1.2z"/></svg>',
@@ -1353,7 +1328,6 @@
 
     var index = 0;
     var total = 1;
-    var resizeTimer = null;
 
     function getCardsPerSlide() {
       var w = window.innerWidth || 1280;
@@ -1362,15 +1336,9 @@
       return 1;
     }
 
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-
     function renderSlides() {
       var perSlide = getCardsPerSlide();
-      var slides = chunk(cards, perSlide);
+      var slides = chunkArray(cards, perSlide);
       track.innerHTML = "";
 
       slides.forEach(function (group) {
@@ -1405,10 +1373,7 @@
 
     if (!host._teamResizeBound) {
       host._teamResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
 
     ensureTeamTabLink();

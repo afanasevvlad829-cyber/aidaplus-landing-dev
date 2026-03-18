@@ -1193,124 +1193,6 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 
 </style>
 
-<!-- MANUAL HOTFIX: nav + contacts -->
-<style id="ac-manual-hotfix-style">
-body.mode-compact { }
-body.mode-full { }
-
-#acManualFullNavZone{
-  display:none;
-  padding:18px 0 14px;
-  background:transparent;
-}
-#acManualFullNavZone.is-ready{
-  display:block;
-}
-#acManualFullNavZone .ac-manual-full-nav-inner{
-  width:min(var(--shell-max,1280px),calc(100% - 32px));
-  margin:0 auto;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-body:not(.ac-compact-mode) .ac-site-nav{
-  display:none !important;
-}
-
-body:not(.ac-compact-mode) .ac-site-main{
-  padding-top:8px !important;
-}
-
-body:not(.ac-compact-mode) #acLeftTabs{
-  position:relative !important;
-  top:auto !important;
-  left:auto !important;
-  right:auto !important;
-  bottom:auto !important;
-  transform:none !important;
-  margin:0 !important;
-}
-
-body:not(.ac-compact-mode) #acLeftTabs.ac-manual-floating{
-  display:flex !important;
-  flex-wrap:wrap !important;
-  gap:8px !important;
-  justify-content:center !important;
-  align-items:center !important;
-  background:rgba(255,255,255,.96) !important;
-  border:1px solid rgba(17,24,39,.08) !important;
-  border-radius:18px !important;
-  padding:8px 10px !important;
-  box-shadow:0 14px 34px rgba(15,23,42,.10) !important;
-  backdrop-filter:blur(12px) !important;
-}
-
-body:not(.ac-compact-mode) #acLeftTabs.ac-manual-floating .ac-left-tab{
-  margin:0 !important;
-}
-
-body:not(.ac-compact-mode) .ac-card__topbar{
-  z-index:30 !important;
-}
-
-body:not(.ac-compact-mode) #acViewSwitchWrap{
-  opacity:1 !important;
-  visibility:visible !important;
-  display:inline-flex !important;
-  position:relative !important;
-  transform:none !important;
-}
-
-.ac-hero-contact-card{
-  overflow:visible !important;
-  z-index:20 !important;
-}
-
-.ac-hero-contact-card__body{
-  display:block !important;
-  max-height:0 !important;
-  overflow:hidden !important;
-  opacity:0 !important;
-  pointer-events:none !important;
-  transition:max-height .26s ease, opacity .2s ease !important;
-  border-top:1px solid rgba(17,24,39,.08) !important;
-  background:rgba(255,255,255,.96) !important;
-}
-
-.ac-hero-contact-card.is-open{
-  overflow:visible !important;
-}
-
-.ac-hero-contact-card.is-open .ac-hero-contact-card__body{
-  max-height:260px !important;
-  opacity:1 !important;
-  pointer-events:auto !important;
-}
-
-.ac-hero-contact-card__item{
-  pointer-events:auto !important;
-}
-
-.ac-hero-contact-card__toggle .ac-icon,
-.ac-hero-contact-card__toggle img{
-  transition:transform .2s ease !important;
-}
-
-.ac-hero-contact-card.is-open .ac-hero-contact-card__toggle .ac-icon,
-.ac-hero-contact-card.is-open .ac-hero-contact-card__toggle img{
-  transform:rotate(90deg) !important;
-}
-
-@media (max-width: 760px){
-  #acManualFullNavZone{
-    padding:12px 0 10px;
-  }
-  #acManualFullNavZone .ac-manual-full-nav-inner{
-    width:min(var(--shell-max,1280px),calc(100% - 20px));
-  }
-}
-</style>
 
 <body class="ac-page ac-compact-mode">
 <div class="ac-tech-version-badge">TECH v2026.03.18-01</div>
@@ -4673,12 +4555,31 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
 <script id="ac-build-team-manifest" type="application/json">[]</script>
 <script id="ac-build-main-js">
 (function () {
+  // ===== Core helpers ========================================================
   function $(s, r) { return (r || document).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function chunkArray(arr, size) {
+    var out = [];
+    for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+    return out;
+  }
+  function debounce(fn, delay) {
+    var timer = null;
+    return function () {
+      var args = arguments;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(function () { fn.apply(null, args); }, delay);
+    };
+  }
 
-  // DEV switches. Disable before shipping final static production version.
-  var AC_DEV_REMOTE_TEAM_REFRESH_ENABLED = true;
-  var AC_DEV_RUTUBE_VIDEO_FEED_ENABLED = true;
+  // ===== Dev config ==========================================================
+  // Disable before shipping final static production version.
+  var AC_DEV_CONFIG = {
+    REMOTE_TEAM_REFRESH_ENABLED: true,
+    RUTUBE_VIDEO_FEED_ENABLED: true
+  };
+  var AC_DEV_REMOTE_TEAM_REFRESH_ENABLED = AC_DEV_CONFIG.REMOTE_TEAM_REFRESH_ENABLED;
+  var AC_DEV_RUTUBE_VIDEO_FEED_ENABLED = AC_DEV_CONFIG.RUTUBE_VIDEO_FEED_ENABLED;
   var AC_DEV_RUTUBE_VIDEOS = [
     {
       url: "https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/",
@@ -4752,6 +4653,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     }
   ];
 
+  // ===== Feature: Reviews ====================================================
   function ensureYandexReviewsTab() {
     var host = $("#acLtReviews");
     if (!host) return;
@@ -4782,7 +4684,6 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     var index = 0;
     var total = 1;
     var allDots = [];
-    var resizeTimer = null;
 
     function getCardsPerSlide() {
       var w = window.innerWidth || 1280;
@@ -4791,15 +4692,9 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       return 1;
     }
 
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-
     function renderSlides() {
       var perSlide = getCardsPerSlide();
-      var slides = chunk(reviews, perSlide);
+      var slides = chunkArray(reviews, perSlide);
       track.innerHTML = "";
       dots.innerHTML = "";
 
@@ -4846,10 +4741,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
 
     if (!host._reviewsResizeBound) {
       host._reviewsResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -4911,6 +4803,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     return card;
   }
 
+  // ===== Feature: Book/Team ==================================================
   function ensureTeamTabLink() {
     var host = $("#acLtTeam");
     if (!host) return;
@@ -4945,6 +4838,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     target.appendChild(clone);
   }
 
+  // ===== Feature: Full mode sections ========================================
   function renderFullModeAiSection() {
     var source = document.getElementById("acLtAiprogram");
     var host = document.getElementById("acFullAi");
@@ -4997,21 +4891,15 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     if (!track || !prev || !next) return;
     var index = 0;
     var total = 1;
-    var resizeTimer = null;
     function getPerSlide() {
       var w = window.innerWidth || 1280;
       if (w >= 1100) return 4;
       if (w >= 760) return 2;
       return 1;
     }
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
     function renderSlides() {
       var perSlide = getPerSlide();
-      var slides = chunk(reviews, perSlide);
+      var slides = chunkArray(reviews, perSlide);
       track.innerHTML = "";
       slides.forEach(function (group) {
         var slide = document.createElement("div");
@@ -5052,10 +4940,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     renderSlides();
     if (!host._fullReviewsResizeBound) {
       host._fullReviewsResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -5096,21 +4981,15 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     if (!track || !prev || !next) return;
     var index = 0;
     var total = 1;
-    var resizeTimer = null;
     function getPerSlide() {
       var w = window.innerWidth || 1280;
       if (w >= 1100) return 4;
       if (w >= 760) return 2;
       return 1;
     }
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
     function renderSlides() {
       var perSlide = getPerSlide();
-      var slides = chunk(cards, perSlide);
+      var slides = chunkArray(cards, perSlide);
       track.innerHTML = "";
       slides.forEach(function (group) {
         var slide = document.createElement("div");
@@ -5147,10 +5026,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     renderSlides();
     if (!host._fullTeamResizeBound) {
       host._fullTeamResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -5189,7 +5065,6 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     var index = 0;
     var total = 1;
     var currentList = [];
-    var resizeTimer = null;
 
     function getPerSlide() {
       var w = window.innerWidth || 1280;
@@ -5198,15 +5073,9 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       return 1;
     }
 
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-
     function renderSlides() {
       var perSlide = getPerSlide();
-      var slides = chunk(currentList, perSlide);
+      var slides = chunkArray(currentList, perSlide);
       track.innerHTML = "";
       slides.forEach(function (group, slideIdx) {
         var slide = document.createElement("div");
@@ -5259,10 +5128,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     render("all");
     if (!host._fullPhotosResizeBound) {
       host._fullPhotosResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -5323,7 +5189,6 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
 
     var index = 0;
     var total = 1;
-    var resizeTimer = null;
 
     function getPerSlide() {
       var w = window.innerWidth || 1280;
@@ -5332,15 +5197,9 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       return 1;
     }
 
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-
     function renderSlides() {
       var perSlide = getPerSlide();
-      var slides = chunk(items, perSlide);
+      var slides = chunkArray(items, perSlide);
       track.innerHTML = "";
       slides.forEach(function (group, slideIdx) {
         var slide = document.createElement("div");
@@ -5406,10 +5265,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     renderSlides();
     if (!host._fullVideoResizeBound) {
       host._fullVideoResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
   }
 
@@ -5482,6 +5338,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     apply(initial);
   }
 
+  // ===== Feature: Hero/Navigation/Contacts ==================================
   function bootstrapIcon(name) {
     var map = {
       vk: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8.7 11.6h1c.3 0 .4-.2.4-.4v-1.4c0-.3.1-.4.3-.1l1.2 1.6c.2.2.3.3.6.3h1.8c.4 0 .5-.2.4-.5-.3-.7-1.7-2-1.8-2.2-.2-.3-.1-.4 0-.6 0 0 1.4-2 1.6-2.7.1-.3 0-.4-.3-.4h-2c-.2 0-.3.1-.4.3-.2.6-.9 1.8-1.1 2.1-.2.2-.2.3-.3.3-.1 0-.1-.1-.1-.3V5.4c0-.2-.1-.3-.4-.3H8.3c-.2 0-.3.1-.3.2 0 .2.3.2.3.7v1.7c0 .4-.1.5-.2.5-.3 0-.9-1.5-1.2-2.1-.1-.2-.2-.3-.4-.3H4.4c-.2 0-.3.1-.3.3.1.4.5 1.8 1.5 3 .6.8 1.5 1.2 2.4 1.2z"/></svg>',
@@ -6027,7 +5884,6 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
 
     var index = 0;
     var total = 1;
-    var resizeTimer = null;
 
     function getCardsPerSlide() {
       var w = window.innerWidth || 1280;
@@ -6036,15 +5892,9 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       return 1;
     }
 
-    function chunk(arr, size) {
-      var out = [];
-      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-      return out;
-    }
-
     function renderSlides() {
       var perSlide = getCardsPerSlide();
-      var slides = chunk(cards, perSlide);
+      var slides = chunkArray(cards, perSlide);
       track.innerHTML = "";
 
       slides.forEach(function (group) {
@@ -6079,10 +5929,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
 
     if (!host._teamResizeBound) {
       host._teamResizeBound = true;
-      window.addEventListener("resize", function () {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(renderSlides, 120);
-      });
+      window.addEventListener("resize", debounce(renderSlides, 120));
     }
 
     ensureTeamTabLink();
@@ -7754,168 +7601,6 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
 </script>
 <!-- AC_BUILD_SCRIPT_END -->
 
-<!-- MANUAL HOTFIX: nav + contacts -->
-<script id="ac-manual-hotfix-script">
-(function(){
-  function ensureZone(){
-    var header = document.querySelector('.ac-site-header');
-    var main = document.querySelector('.ac-site-main');
-    if(!main) return null;
-    var zone = document.getElementById('acManualFullNavZone');
-    if(!zone){
-      zone = document.createElement('div');
-      zone.id = 'acManualFullNavZone';
-      zone.innerHTML = '<div class="ac-manual-full-nav-inner" id="acManualFullNavInner"></div>';
-      if(header && header.parentNode){
-        header.parentNode.insertBefore(zone, main);
-      }else{
-        document.body.insertBefore(zone, main);
-      }
-    }
-    return zone;
-  }
-
-  var menuHomeParent = null;
-  var menuHomeNext = null;
-
-  function rememberMenuHome(menu){
-    if(!menu || !menu.parentNode) return;
-    var zoneInner = document.getElementById('acManualFullNavInner');
-    if(zoneInner && menu.parentNode === zoneInner) return;
-    menuHomeParent = menu.parentNode;
-    menuHomeNext = menu.nextSibling;
-  }
-
-  function restoreMenu(menu){
-    if(!menu || !menuHomeParent) return;
-    if(menuHomeNext && menuHomeNext.parentNode === menuHomeParent){
-      menuHomeParent.insertBefore(menu, menuHomeNext);
-    }else{
-      menuHomeParent.appendChild(menu);
-    }
-    menu.classList.remove('ac-manual-floating');
-  }
-
-  function moveMenuToFull(menu){
-    var zone = ensureZone();
-    if(!zone) return;
-    var inner = document.getElementById('acManualFullNavInner');
-    if(!inner) return;
-    if(menu.parentNode !== inner){
-      inner.appendChild(menu);
-    }
-    menu.classList.add('ac-manual-floating');
-    zone.classList.add('is-ready');
-  }
-
-  function syncMode(){
-    var body = document.body;
-    if(!body) return;
-    var compact = body.classList.contains('ac-compact-mode');
-    body.classList.toggle('mode-compact', compact);
-    body.classList.toggle('mode-full', !compact);
-
-    var menu = document.getElementById('acLeftTabs');
-    if(menu){
-      if(!menuHomeParent) rememberMenuHome(menu);
-      if(compact){
-        restoreMenu(menu);
-      }else{
-        moveMenuToFull(menu);
-      }
-    }
-
-    var zone = document.getElementById('acManualFullNavZone');
-    if(zone){
-      zone.style.display = compact ? 'none' : 'block';
-    }
-  }
-
-  function bindContactCard(){
-    var card = document.getElementById('acHeroContactCard');
-    if(!card || card.dataset.manualBound === '1') return;
-    var toggle = card.querySelector('.ac-hero-contact-card__toggle');
-    if(!toggle) return;
-
-    card.dataset.manualBound = '1';
-
-    toggle.addEventListener('click', function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      var opened = card.classList.toggle('is-open');
-      toggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
-    });
-
-    card.addEventListener('click', function(e){
-      e.stopPropagation();
-    });
-
-    document.addEventListener('click', function(e){
-      if(!card.classList.contains('is-open')) return;
-      if(card.contains(e.target)) return;
-      card.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }, true);
-  }
-
-  function boot(){
-    ensureZone();
-    syncMode();
-    bindContactCard();
-
-    var bodyObserver = new MutationObserver(function(){
-      syncMode();
-      bindContactCard();
-    });
-
-    bodyObserver.observe(document.body, {
-      subtree:true,
-      childList:true,
-      attributes:true,
-      attributeFilter:['class']
-    });
-
-    var btn = document.getElementById('acViewToggle');
-    if(btn && !btn.dataset.manualModeBound){
-      btn.dataset.manualModeBound = '1';
-      btn.addEventListener('click', function(){
-        setTimeout(function(){
-          syncMode();
-          bindContactCard();
-        }, 0);
-        setTimeout(function(){
-          syncMode();
-          bindContactCard();
-        }, 120);
-      });
-    }
-
-    window.addEventListener('load', function(){
-      syncMode();
-      bindContactCard();
-    });
-
-    setTimeout(function(){
-      syncMode();
-      bindContactCard();
-    }, 200);
-    setTimeout(function(){
-      syncMode();
-      bindContactCard();
-    }, 800);
-    setTimeout(function(){
-      syncMode();
-      bindContactCard();
-    }, 1600);
-  }
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', boot);
-  }else{
-    boot();
-  }
-})();
-</script>
 
 </body>
 </html>
@@ -10255,6 +9940,7 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
   display: none;
 }
 
+/* ===== Full mode navigation ===== */
 #acLeftTabs .ac-left-tab__text {
   display: none;
 }
@@ -10334,6 +10020,7 @@ body.mode-full #acLeftTabs.ac-left-tabs--floating-mode .ac-view-switch--in-tabs 
   will-change: transform;
 }
 
+/* ===== Full page background ===== */
 body.ac-page,
 body.ac-page .ac-site-main,
 body.ac-page .ac-site-section {
@@ -10357,6 +10044,7 @@ body.ac-page #team {
   background-color: #f0f0f5;
 }
 
+/* ===== Hero: age block and socials ===== */
 .ac-age__topline {
   display: flex;
   align-items: center;
@@ -10421,6 +10109,7 @@ body.ac-page #team {
 .ac-age__social--fb { background: #1877f2; }
 .ac-age__social--ms { background: linear-gradient(135deg, #5f5cff, #d946ef); }
 
+/* ===== Hero: contact card ===== */
 .ac-right {
   position: relative;
 }
@@ -10502,7 +10191,7 @@ body.ac-page #team {
 }
 
 .ac-hero-contact-card.is-open {
-  overflow: visible !important;
+  overflow: visible;
 }
 
 .ac-hero-contact-card.is-open .ac-hero-contact-card__toggle .ac-icon {
@@ -10532,6 +10221,7 @@ body.ac-page #team {
   flex: 0 0 auto;
 }
 
+/* ===== Full mode section components ===== */
 .ac-full-cards-grid--team .ac-team-slider__card {
   height: 100%;
 }

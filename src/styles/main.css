@@ -2331,6 +2331,7 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
   display: none;
 }
 
+/* ===== Full mode navigation ===== */
 #acLeftTabs .ac-left-tab__text {
   display: none;
 }
@@ -2410,6 +2411,7 @@ body.mode-full #acLeftTabs.ac-left-tabs--floating-mode .ac-view-switch--in-tabs 
   will-change: transform;
 }
 
+/* ===== Full page background ===== */
 body.ac-page,
 body.ac-page .ac-site-main,
 body.ac-page .ac-site-section {
@@ -2433,6 +2435,7 @@ body.ac-page #team {
   background-color: #f0f0f5;
 }
 
+/* ===== Hero: age block and socials ===== */
 .ac-age__topline {
   display: flex;
   align-items: center;
@@ -2497,6 +2500,7 @@ body.ac-page #team {
 .ac-age__social--fb { background: #1877f2; }
 .ac-age__social--ms { background: linear-gradient(135deg, #5f5cff, #d946ef); }
 
+/* ===== Hero: contact card ===== */
 .ac-right {
   position: relative;
 }
@@ -2578,7 +2582,7 @@ body.ac-page #team {
 }
 
 .ac-hero-contact-card.is-open {
-  overflow: visible !important;
+  overflow: visible;
 }
 
 .ac-hero-contact-card.is-open .ac-hero-contact-card__toggle .ac-icon {
@@ -2608,6 +2612,7 @@ body.ac-page #team {
   flex: 0 0 auto;
 }
 
+/* ===== Full mode section components ===== */
 .ac-full-cards-grid--team .ac-team-slider__card {
   height: 100%;
 }
