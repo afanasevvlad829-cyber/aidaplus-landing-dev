@@ -21,12 +21,12 @@ echo
 
 read -r -p "Commit message: " COMMIT_MSG
 if [[ -z "${COMMIT_MSG}" ]]; then
-  COMMIT_MSG="full mode update"
+  COMMIT_MSG="обновление лендинга"
 fi
 
 echo
 echo "=== GIT ADD ==="
-git add index.html src/scripts/main.js src/styles/main.css dist/index.html || true
+git add .
 
 echo
 echo "=== GIT COMMIT ==="
@@ -66,25 +66,11 @@ echo "=== DEPLOY ==="
 ./deploy.sh
 echo
 
-echo "=== GREP NEW FULL MODE SECTIONS IN FILES ==="
-grep -n 'id=\"ai\"\\|id=\"location\"\\|id=\"photos\"\\|id=\"video\"\\|id=\"reviews\"\\|id=\"team\"' index.html dist/index.html || true
-echo
-
-echo "=== GREP NAV ANCHORS IN FILES ==="
-grep -n 'href=\"#ai\"\\|href=\"#location\"\\|href=\"#photos\"\\|href=\"#video\"\\|href=\"#reviews\"\\|href=\"#team\"' index.html dist/index.html || true
-echo
-
 echo "=== LIVE CHECK ==="
-curl -s https://dev.aidaplus.ru | grep -o 'id=\"ai\"\\|id=\"location\"\\|id=\"photos\"\\|id=\"video\"\\|id=\"reviews\"\\|id=\"team\"\\|href=\"#ai\"\\|href=\"#location\"\\|href=\"#photos\"\\|href=\"#video\"\\|href=\"#reviews\"\\|href=\"#team\"' | sort | uniq || true
+curl -s https://dev.aidaplus.ru | head -40 || true
 REMOTE_EOF
 
 echo
 echo "=== DONE ==="
 echo "Open:"
 echo "https://dev.aidaplus.ru"
-echo
-echo "Manual check:"
-echo "1. Переключить в 'Подробно'"
-echo "2. Проверить новые секции ниже hero"
-echo "3. Проверить якоря верхнего меню"
-echo "4. Проверить фото / видео / отзывы / команду"
