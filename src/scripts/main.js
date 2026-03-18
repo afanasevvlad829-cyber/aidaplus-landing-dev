@@ -306,24 +306,77 @@
     var host = document.getElementById("acFullReviews");
     if (!host) return;
     var reviews = AC_REVIEWS_DATA.slice(0, 4);
+    var prevId = "acFullReviewsPrev";
+    var nextId = "acFullReviewsNext";
+    var trackId = "acFullReviewsTrack";
     host.innerHTML =
-      '<div class="ac-full-cards-grid ac-full-cards-grid--reviews">' +
-      reviews.map(function (r) {
-        var quoteClass = "ac-review-modern-card__quote";
-        var len = (r.text || "").length;
-        if (len > 210) quoteClass += " is-xl";
-        else if (len > 165) quoteClass += " is-lg";
-        return '' +
-          '<article class="ac-review-modern-card">' +
-          '  <img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '" width="72" height="72" loading="lazy" decoding="async">' +
-          '  <div class="' + quoteClass + '">“ ' + r.text + ' ”</div>' +
-          '  <div class="ac-review-modern-card__divider"></div>' +
-          '  <div class="ac-review-modern-card__name">' + r.name + "</div>" +
-          '  <div class="ac-review-modern-card__sub">' + r.sub + "</div>" +
-          '  <div class="ac-review-modern-card__stars">★★★★★</div>' +
-          "</article>";
-      }).join("") +
+      '<div class="ac-full-cards-slider">' +
+      '  <button class="ac-full-cards-slider__arrow" id="' + prevId + '" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '  <div class="ac-full-cards-slider__viewport">' +
+      '    <div class="ac-full-cards-slider__track" id="' + trackId + '"></div>' +
+      "  </div>" +
+      '  <button class="ac-full-cards-slider__arrow" id="' + nextId + '" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
       "</div>";
+    var track = document.getElementById(trackId);
+    var prev = document.getElementById(prevId);
+    var next = document.getElementById(nextId);
+    if (!track || !prev || !next) return;
+    var index = 0;
+    var total = 1;
+    var resizeTimer = null;
+    function getPerSlide() {
+      return (window.innerWidth || 1280) >= 980 ? 2 : 1;
+    }
+    function chunk(arr, size) {
+      var out = [];
+      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+      return out;
+    }
+    function renderSlides() {
+      var perSlide = getPerSlide();
+      var slides = chunk(reviews, perSlide);
+      track.innerHTML = "";
+      slides.forEach(function (group) {
+        var slide = document.createElement("div");
+        slide.className = "ac-full-cards-slider__slide ac-full-cards-grid ac-full-cards-grid--reviews";
+        group.forEach(function (r) {
+          var quoteClass = "ac-review-modern-card__quote";
+          var len = (r.text || "").length;
+          if (len > 210) quoteClass += " is-xl";
+          else if (len > 165) quoteClass += " is-lg";
+          var card = document.createElement("article");
+          card.className = "ac-review-modern-card";
+          card.innerHTML =
+            '<img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '" width="72" height="72" loading="lazy" decoding="async">' +
+            '<div class="' + quoteClass + '">“ ' + r.text + ' ”</div>' +
+            '<div class="ac-review-modern-card__divider"></div>' +
+            '<div class="ac-review-modern-card__name">' + r.name + "</div>" +
+            '<div class="ac-review-modern-card__sub">' + r.sub + "</div>" +
+            '<div class="ac-review-modern-card__stars">★★★★★</div>';
+          slide.appendChild(card);
+        });
+        track.appendChild(slide);
+      });
+      total = Math.max(1, slides.length);
+      if (index >= total) index = total - 1;
+      update();
+    }
+    function update() {
+      track.style.transform = "translateX(" + (-100 * index) + "%)";
+      var hideNav = total < 2;
+      prev.style.visibility = hideNav ? "hidden" : "visible";
+      next.style.visibility = hideNav ? "hidden" : "visible";
+    }
+    prev.onclick = function () { index = (index - 1 + total) % total; update(); };
+    next.onclick = function () { index = (index + 1) % total; update(); };
+    renderSlides();
+    if (!host._fullReviewsResizeBound) {
+      host._fullReviewsResizeBound = true;
+      window.addEventListener("resize", function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderSlides, 120);
+      });
+    }
   }
 
   function renderFullModeTeamSection() {
@@ -346,20 +399,74 @@
     }
     if (!cards.length) return;
 
+    cards = cards.slice(0, 4);
+    var prevId = "acFullTeamPrev";
+    var nextId = "acFullTeamNext";
+    var trackId = "acFullTeamTrack";
     host.innerHTML =
-      '<div class="ac-full-cards-grid ac-full-cards-grid--team">' +
-      cards.slice(0, 4).map(function (p) {
-        var mediaHtml = p.img
-          ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '" width="320" height="320" loading="lazy" decoding="async">'
-          : '<div class="ac-team-slider__img ac-team-slider__img--placeholder">' + getTeamCardInitials(p.name) + "</div>";
-        return '' +
-          '<article class="ac-team-slider__card">' +
-          mediaHtml +
-          '<div class="ac-team-slider__name">' + (p.name || "Команда AidaCamp") + "</div>" +
-          '<div class="ac-team-slider__role">' + (p.role || "Преподаватель") + "</div>" +
-          "</article>";
-      }).join("") +
+      '<div class="ac-full-cards-slider">' +
+      '  <button class="ac-full-cards-slider__arrow" id="' + prevId + '" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '  <div class="ac-full-cards-slider__viewport">' +
+      '    <div class="ac-full-cards-slider__track" id="' + trackId + '"></div>' +
+      "  </div>" +
+      '  <button class="ac-full-cards-slider__arrow" id="' + nextId + '" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
       "</div>";
+    var track = document.getElementById(trackId);
+    var prev = document.getElementById(prevId);
+    var next = document.getElementById(nextId);
+    if (!track || !prev || !next) return;
+    var index = 0;
+    var total = 1;
+    var resizeTimer = null;
+    function getPerSlide() {
+      return (window.innerWidth || 1280) >= 980 ? 2 : 1;
+    }
+    function chunk(arr, size) {
+      var out = [];
+      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+      return out;
+    }
+    function renderSlides() {
+      var perSlide = getPerSlide();
+      var slides = chunk(cards, perSlide);
+      track.innerHTML = "";
+      slides.forEach(function (group) {
+        var slide = document.createElement("div");
+        slide.className = "ac-full-cards-slider__slide ac-full-cards-grid ac-full-cards-grid--team";
+        group.forEach(function (p) {
+          var mediaHtml = p.img
+            ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '" width="320" height="320" loading="lazy" decoding="async">'
+            : '<div class="ac-team-slider__img ac-team-slider__img--placeholder">' + getTeamCardInitials(p.name) + "</div>";
+          var card = document.createElement("article");
+          card.className = "ac-team-slider__card";
+          card.innerHTML =
+            mediaHtml +
+            '<div class="ac-team-slider__name">' + (p.name || "Команда AidaCamp") + "</div>" +
+            '<div class="ac-team-slider__role">' + (p.role || "Преподаватель") + "</div>";
+          slide.appendChild(card);
+        });
+        track.appendChild(slide);
+      });
+      total = Math.max(1, slides.length);
+      if (index >= total) index = total - 1;
+      update();
+    }
+    function update() {
+      track.style.transform = "translateX(" + (-100 * index) + "%)";
+      var hideNav = total < 2;
+      prev.style.visibility = hideNav ? "hidden" : "visible";
+      next.style.visibility = hideNav ? "hidden" : "visible";
+    }
+    prev.onclick = function () { index = (index - 1 + total) % total; update(); };
+    next.onclick = function () { index = (index + 1) % total; update(); };
+    renderSlides();
+    if (!host._fullTeamResizeBound) {
+      host._fullTeamResizeBound = true;
+      window.addEventListener("resize", function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderSlides, 120);
+      });
+    }
   }
 
   function renderFullModePhotosSection() {
@@ -406,10 +513,24 @@
   function renderFullModeVideoSection() {
     var host = document.getElementById("acFullVideo");
     if (!host) return;
+    function readManifestVideos() {
+      var el = document.getElementById("ac-build-media-manifest");
+      if (!el) return [];
+      try {
+        var data = JSON.parse(el.textContent || "[]");
+        if (!Array.isArray(data)) return [];
+        return data.filter(function (x) { return x && x.type === "video" && x.src; }).map(function (x) {
+          return { type: "video", src: x.src, caption: x.caption || "Видео" };
+        });
+      } catch (e) {
+        return [];
+      }
+    }
     var rutubeItems = AC_DEV_RUTUBE_VIDEO_FEED_ENABLED
       ? AC_DEV_RUTUBE_VIDEOS.filter(function (item) { return rutubeEmbedUrl(item.url); })
       : [];
     var mediaVideos = (window.__acMediaMap && window.__acMediaMap.videos) ? window.__acMediaMap.videos.slice() : [];
+    if (!mediaVideos.length) mediaVideos = readManifestVideos();
     var items = rutubeItems.length ? rutubeItems : mediaVideos;
     if (!items.length) return;
 
@@ -453,6 +574,67 @@
 
   function renderFullModeFaqSection() {
     cloneOverlayContentToSection("acLtFaq", "acFullFaq");
+    var host = document.getElementById("acFullFaq");
+    if (!host) return;
+    var items = $$(".ac-left-faq__item, .ac-mini-faq details", host);
+    if (!items.length) return;
+
+    function detect(text) {
+      var t = (text || "").toLowerCase();
+      if (/мед|врач|здоров/.test(t)) return "med";
+      if (/безопас|охран|кпп|закрыт/.test(t)) return "safe";
+      if (/питан|еда|корм/.test(t)) return "food";
+      if (/бассейн|плав/.test(t)) return "pool";
+      if (/прожив|корпус|комнат|услов/.test(t)) return "live";
+      if (/организац|режим|распис|чат|звон/.test(t)) return "org";
+      if (/взять|вещ|документ|чемодан/.test(t)) return "pack";
+      return "other";
+    }
+
+    var tabs = [
+      { key: "med", label: "Медицина" },
+      { key: "safe", label: "Безопасность" },
+      { key: "food", label: "Питание" },
+      { key: "pool", label: "Бассейн" },
+      { key: "live", label: "Проживание" },
+      { key: "org", label: "Организация" },
+      { key: "pack", label: "Что взять с собой" },
+      { key: "other", label: "Другое" }
+    ];
+
+    var present = {};
+    items.forEach(function (item) {
+      var cat = detect(item.textContent || "");
+      item.setAttribute("data-faq-cat", cat);
+      item.classList.add("ac-full-faq-item");
+      present[cat] = true;
+    });
+
+    tabs = tabs.filter(function (t) { return !!present[t.key]; });
+    if (!tabs.length) return;
+
+    var toolbar = document.createElement("div");
+    toolbar.className = "ac-full-media-toolbar ac-full-faq-tabs";
+    toolbar.innerHTML = tabs.map(function (tab, i) {
+      return '<button class="media-chip ac-full-faq-tab' + (i === 0 ? " is-active" : "") + '" data-fcat="' + tab.key + '">' + tab.label + "</button>";
+    }).join("");
+    host.insertBefore(toolbar, host.firstChild);
+
+    function apply(cat) {
+      items.forEach(function (item) {
+        item.style.display = item.getAttribute("data-faq-cat") === cat ? "" : "none";
+      });
+      $$(".ac-full-faq-tab", toolbar).forEach(function (btn) {
+        btn.classList.toggle("is-active", btn.getAttribute("data-fcat") === cat);
+      });
+    }
+
+    toolbar.onclick = function (e) {
+      var btn = e.target.closest(".ac-full-faq-tab");
+      if (!btn) return;
+      apply(btn.getAttribute("data-fcat"));
+    };
+    apply(tabs[0].key);
   }
 
   function bootstrapIcon(name) {
@@ -527,10 +709,10 @@
         '  <button type="button" class="ac-hero-contact-card__toggle" aria-expanded="false" aria-label="Показать контакты"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
         "</div>" +
         '<div class="ac-hero-contact-card__body">' +
-        '  <a class="ac-hero-contact-card__item" href="https://t.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("telegram") + "<span>Telegram</span></a>" +
         '  <a class="ac-hero-contact-card__item" href="https://wa.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("whatsapp") + "<span>WhatsApp</span></a>" +
-        '  <a class="ac-hero-contact-card__item" href="viber://chat">' + bootstrapIcon("viber") + "<span>Viber</span></a>" +
-        '  <a class="ac-hero-contact-card__item" href="tel:+79991234567">' + bootstrapIcon("phone") + "<span>Телефон</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="https://t.me/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("telegram") + "<span>Telegram</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="https://messenger.com/" target="_blank" rel="noopener noreferrer">' + bootstrapIcon("messenger") + "<span>Max</span></a>" +
+        '  <a class="ac-hero-contact-card__item" href="tel:+79991234567">' + bootstrapIcon("phone") + "<span>Позвонить</span></a>" +
         "</div>";
       rightCard.appendChild(box);
       var toggle = box.querySelector(".ac-hero-contact-card__toggle");
