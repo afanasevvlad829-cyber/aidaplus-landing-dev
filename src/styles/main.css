@@ -1,5 +1,11 @@
 /* AidaPlus modular overrides (build-injected) */
 
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
 /* 1) Logo: static (no blink animation for now) */
 .ac-card-logo-side {
   overflow: visible;

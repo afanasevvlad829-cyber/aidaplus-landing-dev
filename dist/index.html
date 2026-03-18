@@ -6,7 +6,7 @@
 <title>AidaCamp — IT-лагерь в Подмосковье</title>
 <meta name="description" content="AidaCamp — IT-лагерь для детей 7–14 лет: AI-проекты, бассейн, спорт, внутренняя экономика и бронирование смен.">
 <link rel="icon" type="image/png" href="/assets/aida-logo-small.png">
-<meta name="ac-tech-version" content="2026.03.17-04">
+<meta name="ac-tech-version" content="2026.03.18-01">
 <script>
 window.AC_POPUPS_ENABLED = false;
 if (window.AC_POPUPS_ENABLED === false) {
@@ -1193,7 +1193,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 
 </style>
 <body class="ac-page ac-compact-mode">
-<div class="ac-tech-version-badge">TECH v2026.03.17-04</div>
+<div class="ac-tech-version-badge">TECH v2026.03.18-01</div>
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
   <defs>
     <symbol id="acLogoSvgSymbol" viewBox="0 0 500 500">
@@ -2924,6 +2924,7 @@ AC.metrika = function(goal, params){
 
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="program">
+  <div class="container">
   <div class="ac-site-section__head">
     <h2>Программа по возрастам</h2>
     <p>Секции ниже собраны из действующего контента страницы: без придуманного маркетингового текста, только то, что уже используется в лендинге.</p>
@@ -2943,6 +2944,7 @@ AC.metrika = function(goal, params){
         <p><strong>AI-интенсив.</strong> Нейросети, боты, хакатон с защитой проекта.</p>
       </article>
     </div>
+  </div>
   </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="format">
@@ -2978,11 +2980,13 @@ AC.metrika = function(goal, params){
   </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="ai">
+  <div class="container">
   <div class="ac-site-section__head">
     <h2>AI-программы</h2>
     <p>Раздел собран из текущего контента карточки AI-программы без изменений логики верхнего блока.</p>
   </div>
   <div class="ac-site-section__inner" id="acFullAi"></div>
+  </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="location">
   <div class="ac-site-section__head">
@@ -3006,20 +3010,25 @@ AC.metrika = function(goal, params){
   <div class="ac-site-section__inner" id="acFullVideo"></div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="reviews">
+  <div class="container">
   <div class="ac-site-section__head">
     <h2>Отзывы родителей</h2>
     <p>Те же отзывы и структура слайдера, что в рабочем табе карточки.</p>
   </div>
   <div class="ac-site-section__inner" id="acFullReviews"></div>
+  </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="team">
+  <div class="container">
   <div class="ac-site-section__head">
     <h2>Команда</h2>
     <p>Состав команды из тех же данных, что используются в существующем слайдере.</p>
   </div>
   <div class="ac-site-section__inner" id="acFullTeam"></div>
+  </div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="faq">
+  <div class="container">
   <div class="ac-site-section__head">
     <h2>FAQ</h2>
     <p>Ниже — самые важные ответы из действующего FAQ страницы.</p>
@@ -3043,6 +3052,7 @@ AC.metrika = function(goal, params){
         <p>Родительский Telegram-чат и ежедневные фото.</p>
       </details>
     </div>
+  </div>
   </div>
 </section>
 </main>
@@ -7152,6 +7162,12 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
 <!-- AC_BUILD_STYLE_START -->
 <style id="ac-build-main-css">
 /* AidaPlus modular overrides (build-injected) */
+
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
 
 /* 1) Logo: static (no blink animation for now) */
 .ac-card-logo-side {
