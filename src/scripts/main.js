@@ -271,6 +271,37 @@
     target.appendChild(clone);
   }
 
+  function renderFullModeAiSection() {
+    var source = document.getElementById("acLtAiprogram");
+    var host = document.getElementById("acFullAi");
+    if (!source || !host) return;
+    var stat = source.querySelector(".ac-ai-stat-card");
+    var grid = source.querySelector(".ac-ai-stat-grid");
+    var manifesto = source.querySelector(".ac-ai-manifesto");
+    host.innerHTML =
+      '<div class="ac-section-grid">' +
+      '  <article class="ac-section-card">' + (stat ? stat.outerHTML : "") + "</article>" +
+      '  <article class="ac-section-card">' + (grid ? grid.outerHTML : "") + "</article>" +
+      '  <article class="ac-section-card"><div class="ac-section-card__text">' + (manifesto ? manifesto.innerHTML : "") + "</div></article>" +
+      "</div>";
+  }
+
+  function renderFullModeLocationSection() {
+    var source = document.getElementById("acLtPlace");
+    var host = document.getElementById("acFullLocation");
+    if (!source || !host) return;
+    var title = source.querySelector(":scope > div:nth-child(1)");
+    var sub = source.querySelector(":scope > div:nth-child(2)");
+    var map = source.querySelector(".ac-left-map");
+    var facts = source.querySelector(".ac-left-facts");
+    host.innerHTML =
+      '<div class="ac-section-grid">' +
+      '  <article class="ac-section-card"><h3>Где проходит смена</h3><div class="ac-section-card__text">' + (title ? title.innerHTML : "") + (sub ? ('<div style="margin-top:6px">' + sub.innerHTML + "</div>") : "") + "</div></article>" +
+      '  <article class="ac-section-card">' + (map ? map.outerHTML : "") + "</article>" +
+      '  <article class="ac-section-card"><h3>Что рядом и внутри</h3>' + (facts ? facts.outerHTML : "") + "</article>" +
+      "</div>";
+  }
+
   function renderFullModeReviewsSection() {
     var host = document.getElementById("acFullReviews");
     if (!host) return;
@@ -336,7 +367,7 @@
     var mediaMap = window.__acMediaMap;
     if (!host || !mediaMap || !mediaMap.photos) return;
     host.innerHTML =
-      '<div class="ac-left-photo-cats ac-full-photo-cats"></div>' +
+      '<div class="ac-full-media-toolbar ac-full-photo-cats"></div>' +
       '<div class="ac-left-photo-grid ac-full-photo-grid"></div>';
     var cats = $(".ac-full-photo-cats", host);
     var grid = $(".ac-full-photo-grid", host);
@@ -349,7 +380,7 @@
       { key: "study", label: "Учёба" }
     ];
     cats.innerHTML = catList.map(function (c, i) {
-      return '<button class="ac-left-photo-cat' + (i === 0 ? " is-active" : "") + '" data-lcat="' + c.key + '">' + c.label + "</button>";
+      return '<button class="media-chip ac-left-photo-cat' + (i === 0 ? " is-active" : "") + '" data-lcat="' + c.key + '">' + c.label + "</button>";
     }).join("");
     function render(cat) {
       var list = mediaMap.photos[cat] || [];
@@ -386,7 +417,7 @@
     if (!grid) return;
 
     if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
-      grid.innerHTML = items.map(function (item, i) {
+      grid.innerHTML = items.slice(0, 4).map(function (item, i) {
         var poster = rutubeThumbnailUrl(item.url);
         return '' +
           '<button type="button" class="ac-left-video-item ac-left-video-item--rutube" data-video-index="' + i + '">' +
@@ -407,7 +438,7 @@
       return;
     }
 
-    grid.innerHTML = items.map(function (item, i) {
+    grid.innerHTML = items.slice(0, 4).map(function (item, i) {
       return '<div class="ac-left-video-item" data-video-index="' + i + '"><video src="' + item.src + '" muted loop playsinline preload="metadata" controls aria-label="Видео: ' + (item.caption || "AidaCamp") + '"></video></div>';
     }).join("");
     grid.onclick = function (e) {
@@ -424,8 +455,12 @@
 
   function bootstrapIcon(name) {
     var map = {
+      vk: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8.7 11.6h1c.3 0 .4-.2.4-.4v-1.4c0-.3.1-.4.3-.1l1.2 1.6c.2.2.3.3.6.3h1.8c.4 0 .5-.2.4-.5-.3-.7-1.7-2-1.8-2.2-.2-.3-.1-.4 0-.6 0 0 1.4-2 1.6-2.7.1-.3 0-.4-.3-.4h-2c-.2 0-.3.1-.4.3-.2.6-.9 1.8-1.1 2.1-.2.2-.2.3-.3.3-.1 0-.1-.1-.1-.3V5.4c0-.2-.1-.3-.4-.3H8.3c-.2 0-.3.1-.3.2 0 .2.3.2.3.7v1.7c0 .4-.1.5-.2.5-.3 0-.9-1.5-1.2-2.1-.1-.2-.2-.3-.4-.3H4.4c-.2 0-.3.1-.3.3.1.4.5 1.8 1.5 3 .6.8 1.5 1.2 2.4 1.2z"/></svg>',
+      instagram: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.3c2.2 0 2.4 0 3.3.1.8 0 1.2.2 1.5.3.4.2.7.4 1 .7.3.3.5.6.7 1 .1.3.3.7.3 1.5.1.9.1 1.1.1 3.3s0 2.4-.1 3.3c0 .8-.2 1.2-.3 1.5-.2.4-.4.7-.7 1-.3.3-.6.5-1 .7-.3.1-.7.3-1.5.3-.9.1-1.1.1-3.3.1s-2.4 0-3.3-.1c-.8 0-1.2-.2-1.5-.3-.4-.2-.7-.4-1-.7-.3-.3-.5-.6-.7-1-.1-.3-.3-.7-.3-1.5C1.3 10.4 1.3 10.2 1.3 8s0-2.4.1-3.3c0-.8.2-1.2.3-1.5.2-.4.4-.7.7-1 .3-.3.6-.5 1-.7.3-.1.7-.3 1.5-.3.9-.1 1.1-.1 3.3-.1m0 1.2c-2.2 0-2.4 0-3.3.1-.7 0-1 .2-1.2.2-.3.1-.5.2-.7.4-.2.2-.3.4-.4.7-.1.2-.2.5-.2 1.2C2 5.9 2 6.1 2 8s0 2.1.1 2.9c0 .7.2 1 .2 1.2.1.3.2.5.4.7.2.2.4.3.7.4.2.1.5.2 1.2.2.8.1 1 .1 2.9.1s2.1 0 2.9-.1c.7 0 1-.2 1.2-.2.3-.1.5-.2.7-.4.2-.2.3-.4.4-.7.1-.2.2-.5.2-1.2.1-.8.1-1 .1-2.9s0-2.1-.1-2.9c0-.7-.2-1-.2-1.2a1.8 1.8 0 0 0-1.1-1.1c-.2-.1-.5-.2-1.2-.2-.8-.1-1-.1-2.9-.1z"/><path d="M8 4.5A3.5 3.5 0 1 1 8 11.5 3.5 3.5 0 0 1 8 4.5m0 1.2A2.3 2.3 0 1 0 8 10.3 2.3 2.3 0 0 0 8 5.7m3.6-1.3a.8.8 0 1 1 0 1.6.8.8 0 0 1 0-1.6"/></svg>',
       telegram: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M3.904 7.226c1.274-.555 2.123-.921 2.548-1.099 1.214-.505 1.467-.593 1.632-.596.036 0 .116.008.168.05a.18.18 0 0 1 .061.115c.006.046.014.149.008.23-.07.936-.475 3.207-.681 4.255-.087.443-.258.592-.424.607-.361.033-.635-.239-.985-.468-.548-.359-.858-.582-1.39-.932-.614-.404-.216-.626.134-.99.092-.096 1.698-1.556 1.73-1.688.004-.017.007-.08-.03-.113-.036-.034-.09-.022-.13-.013-.057.013-.966.614-2.728 1.804-.258.177-.492.263-.703.258-.232-.005-.678-.131-1.01-.239-.408-.133-.732-.204-.704-.43.015-.118.177-.239.504-.37"/></svg>',
       whatsapp: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.601 2.326A7.85 7.85 0 0 0 8.03.02C3.79.02.335 3.476.335 7.72c0 1.356.355 2.68 1.028 3.85L.24 15.98l4.52-1.184a7.7 7.7 0 0 0 3.27.726h.003c4.238 0 7.696-3.456 7.698-7.702a7.64 7.64 0 0 0-2.13-5.494M8.034 14.1h-.002a6.3 6.3 0 0 1-3.21-.88l-.23-.137-2.68.702.715-2.611-.15-.239a6.3 6.3 0 0 1-.97-3.355c.002-3.484 2.84-6.32 6.33-6.32a6.29 6.29 0 0 1 4.496 1.86 6.28 6.28 0 0 1 1.85 4.465c-.002 3.49-2.84 6.326-6.329 6.326m3.466-4.73c-.19-.095-1.13-.558-1.305-.621-.175-.063-.302-.095-.43.095-.127.19-.492.622-.603.75-.11.127-.222.143-.413.047-.19-.095-.804-.296-1.532-.944-.566-.504-.948-1.126-1.06-1.317-.111-.19-.012-.293.084-.388.086-.085.19-.222.286-.334.095-.111.127-.19.19-.318.064-.127.032-.238-.015-.334-.048-.095-.43-1.036-.588-1.42-.155-.372-.313-.321-.43-.327l-.366-.006a.7.7 0 0 0-.509.238c-.175.19-.667.653-.667 1.593s.683 1.847.778 1.974c.095.127 1.344 2.06 3.258 2.888.455.196.81.313 1.087.4.457.145.873.124 1.202.075.366-.055 1.13-.462 1.29-.91.159-.446.159-.829.111-.91-.047-.079-.174-.127-.365-.222"/></svg>',
+      facebook: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M16 8A8 8 0 1 0 6.8 15.9v-5.6H4.8V8h2V6.3c0-2 1.2-3.1 3-3.1.9 0 1.8.2 1.8.2v2h-1c-1 0-1.3.6-1.3 1.3V8h2.2l-.4 2.3H9.3V16A8 8 0 0 0 16 8"/></svg>',
+      messenger: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1C4.1 1 1 3.9 1 7.5c0 2 1 3.8 2.7 5l-.5 2.6 2.6-1.4c.7.2 1.4.3 2.2.3 3.9 0 7-2.9 7-6.5S11.9 1 8 1m.7 8.7L6.9 7.8 3.6 9.7 7.2 6l1.8 1.9L12.4 6z"/></svg>',
       viber: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M11.18 1.754c1.63.69 2.74 2.27 2.93 4.08.14 1.33-.13 2.72-.88 3.82-.67 1-1.7 1.74-2.87 2.05-.28.08-.54.2-.78.37l-2.04 1.48c-.24.17-.54.2-.8.07-.26-.12-.44-.37-.48-.66l-.22-1.48a1.05 1.05 0 0 0-.39-.68 5.9 5.9 0 0 1-2.36-4.73c0-1.6.62-3.1 1.75-4.23A6.1 6.1 0 0 1 9.1.72c.72.07 1.43.25 2.08.53M9.2 2.3a4.8 4.8 0 0 0-3.42 1.42A4.8 4.8 0 0 0 4.36 7.1c0 1.3.56 2.53 1.54 3.37.41.35.68.83.75 1.36l.1.66 1.22-.88c.38-.28.82-.49 1.28-.61 1.74-.47 3.01-2.05 3.01-3.84 0-2.35-1.83-4.31-4.16-4.5z"/></svg>',
       phone: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3.654 1.328a.68.68 0 0 1 .737-.171l2.522 1.01c.294.118.473.415.438.73l-.2 1.83a.68.68 0 0 1-.41.55l-1.23.53a11.5 11.5 0 0 0 4.64 4.64l.53-1.23a.68.68 0 0 1 .55-.41l1.83-.2a.68.68 0 0 1 .73.438l1.01 2.522a.68.68 0 0 1-.17.737l-1.27 1.27c-.74.74-1.83 1.03-2.84.77-2.3-.59-4.42-1.8-6.14-3.52S1.59 6.36 1 4.06c-.26-1.01.03-2.1.77-2.84z"/></svg>'
     };
@@ -467,10 +502,12 @@
       var socials = document.createElement("div");
       socials.className = "ac-age__socials";
       socials.innerHTML = '' +
-        '<a class="ac-age__social-link" href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">' + bootstrapIcon("telegram") + "</a>" +
-        '<a class="ac-age__social-link" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">' + bootstrapIcon("whatsapp") + "</a>" +
-        '<a class="ac-age__social-link" href="viber://chat" aria-label="Viber">' + bootstrapIcon("viber") + "</a>" +
-        '<a class="ac-age__social-link" href="tel:+79991234567" aria-label="Телефон">' + bootstrapIcon("phone") + "</a>";
+        '<a class="ac-age__social ac-age__social--vk" href="https://vk.com/" target="_blank" rel="noopener noreferrer" aria-label="VK">' + bootstrapIcon("vk") + "</a>" +
+        '<a class="ac-age__social ac-age__social--ig" href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">' + bootstrapIcon("instagram") + "</a>" +
+        '<a class="ac-age__social ac-age__social--tg" href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">' + bootstrapIcon("telegram") + "</a>" +
+        '<a class="ac-age__social ac-age__social--wa" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">' + bootstrapIcon("whatsapp") + "</a>" +
+        '<a class="ac-age__social ac-age__social--fb" href="https://facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">' + bootstrapIcon("facebook") + "</a>" +
+        '<a class="ac-age__social ac-age__social--ms" href="https://messenger.com/" target="_blank" rel="noopener noreferrer" aria-label="Messenger">' + bootstrapIcon("messenger") + "</a>";
       age.appendChild(socials);
     }
 
@@ -505,8 +542,8 @@
   }
 
   function renderFullModeExtension() {
-    cloneOverlayContentToSection("acLtAiprogram", "acFullAi");
-    cloneOverlayContentToSection("acLtPlace", "acFullLocation");
+    renderFullModeAiSection();
+    renderFullModeLocationSection();
     renderFullModePhotosSection();
     renderFullModeVideoSection();
     renderFullModeReviewsSection();

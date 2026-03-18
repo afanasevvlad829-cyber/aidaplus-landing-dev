@@ -2011,6 +2011,15 @@ html body .ac-right #acStep3 .ac-shift.is-selected.has-price-visible .ac-shift__
 }
 :root {
   --ac-icon-size: 20px;
+  --bg: #f4f5f8;
+  --surface: #fff;
+  --line: rgba(17, 24, 39, 0.08);
+  --text: #111827;
+  --muted: #6b7280;
+  --brand: #ff7700;
+  --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  --radius: 22px;
+  --max: 1280px;
 }
 
 .ac-icon {
@@ -2059,30 +2068,138 @@ html body .ac-right #acStep3 .ac-shift.is-selected.has-price-visible .ac-shift__
   min-height: 280px;
 }
 
-#acFullPhotos .ac-left-photo-grid {
-  gap: 10px;
+body:not(.ac-compact-mode) .ac-site-section--extended {
+  padding-top: 60px;
+  padding-bottom: 60px;
 }
 
-#acFullVideo .ac-full-video-grid {
+body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head,
+body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__inner {
+  width: min(var(--max), calc(100% - 32px));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head {
+  margin-bottom: 28px;
+}
+
+body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head h2 {
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.1;
+}
+
+.ac-section-grid {
+  display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 18px;
 }
 
+.ac-section-card {
+  border-radius: var(--radius);
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid rgba(17, 24, 39, 0.04);
+  box-shadow: var(--shadow);
+}
+
+.ac-section-card__text {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #374151;
+}
+
+#acFullLocation .ac-left-map {
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 240px;
+}
+
+#acFullLocation .ac-left-facts {
+  display: grid;
+  gap: 8px;
+}
+
+.ac-full-media-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.media-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #fff;
+  color: #4b5563;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+  cursor: pointer;
+}
+
+.media-chip.is-active {
+  background: #fff3e8;
+  border-color: #ffd8b5;
+  color: #9a3412;
+}
+
+#acFullPhotos .ac-full-photo-grid,
+#acFullVideo .ac-full-video-grid,
+#acFullReviews .ac-full-cards-grid,
+#acFullTeam .ac-full-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+#acFullPhotos .ac-left-photo-item,
+#acFullVideo .ac-left-video-item,
 #acFullReviews .ac-review-modern-card,
-#acFullTeam .ac-team-slider__card {
+#acFullTeam .ac-team-slider__card,
+#acFullFaq .ac-left-faq__item {
+  border-radius: var(--radius);
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid rgba(17, 24, 39, 0.04);
+  box-shadow: var(--shadow);
+}
+
+#acFullPhotos .ac-left-photo-item {
+  padding: 0;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+}
+
+#acFullPhotos .ac-left-photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#acFullVideo .ac-left-video-item {
+  padding: 0;
+  overflow: hidden;
+}
+
+#acFullVideo .ac-left-video-item__poster {
+  border: 0;
+  border-radius: var(--radius);
+  min-height: 230px;
+}
+
+#acFullReviews .ac-review-modern-card {
   min-height: 100%;
 }
 
-@media (max-width: 960px) {
-  #acFullVideo .ac-full-video-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  #acFullVideo .ac-full-video-grid {
-    grid-template-columns: 1fr;
-  }
+#acFullTeam .ac-team-slider__card {
+  min-height: 100%;
 }
 
 #acLeftTabs .ac-view-switch--in-tabs {
@@ -2138,28 +2255,31 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
   gap: 8px;
 }
 
-.ac-age__social-link {
-  width: 30px;
-  height: 30px;
+.ac-age__social {
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   text-decoration: none;
+  font-weight: 800;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
 }
 
-.ac-age__social-link svg {
+.ac-age__social svg {
   width: 15px;
   height: 15px;
   display: block;
 }
 
-.ac-age__social-link:nth-child(1) { background: #2aabee; }
-.ac-age__social-link:nth-child(2) { background: #25d366; }
-.ac-age__social-link:nth-child(3) { background: #7360f2; }
-.ac-age__social-link:nth-child(4) { background: linear-gradient(180deg, #ff932e 0%, #ff7700 100%); }
+.ac-age__social--vk { background: #2787f5; }
+.ac-age__social--ig { background: linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7); }
+.ac-age__social--tg { background: #2aabee; }
+.ac-age__social--wa { background: #25d366; }
+.ac-age__social--fb { background: #1877f2; }
+.ac-age__social--ms { background: linear-gradient(135deg, #5f5cff, #d946ef); }
 
 .ac-right {
   position: relative;
@@ -2250,12 +2370,6 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
   flex: 0 0 auto;
 }
 
-.ac-full-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
 .ac-full-cards-grid--team .ac-team-slider__card {
   height: 100%;
 }
@@ -2280,8 +2394,17 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
 }
 
 @media (max-width: 980px) {
-  .ac-full-cards-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__head,
+  body:not(.ac-compact-mode) .ac-site-section--extended .ac-site-section__inner {
+    width: min(var(--max), calc(100% - 20px));
+  }
+
+  .ac-section-grid,
+  #acFullPhotos .ac-full-photo-grid,
+  #acFullVideo .ac-full-video-grid,
+  #acFullReviews .ac-full-cards-grid,
+  #acFullTeam .ac-full-cards-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2298,7 +2421,5 @@ body:not(.ac-compact-mode) #acLeftTabs .ac-view-switch--in-tabs .ac-view-switch_
     margin-bottom: 12px;
   }
 
-  .ac-full-cards-grid {
-    grid-template-columns: 1fr;
-  }
+  .ac-section-grid { grid-template-columns: 1fr; }
 }
