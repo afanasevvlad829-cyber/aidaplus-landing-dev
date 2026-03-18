@@ -830,8 +830,10 @@
       var textNode = btn.querySelector(".ac-left-tab__text");
       if (!textNode) {
         textNode = document.createElement("span");
-        textNode.className = "ac-left-tab__text";
+        textNode.className = "ac-left-tab__text nav-label";
         btn.appendChild(textNode);
+      } else {
+        textNode.classList.add("nav-label");
       }
       textNode.textContent = label;
     });
@@ -864,16 +866,26 @@
     if (window.__acHeroNavBridgeBound) return;
     window.__acHeroNavBridgeBound = true;
 
-    var state = { parent: null, next: null };
+    var state = { parent: null, next: null, node: null };
+
+    function getStableMenuNode() {
+      var menus = Array.prototype.slice.call(document.querySelectorAll("#acLeftTabs"));
+      if (!menus.length) return null;
+      if (!state.node || !state.node.isConnected) state.node = menus[0];
+      menus.forEach(function (menu) {
+        if (menu !== state.node && menu.parentNode) menu.parentNode.removeChild(menu);
+      });
+      return state.node;
+    }
 
     function move(mode) {
-      var menu = document.getElementById("acLeftTabs");
+      var menu = getStableMenuNode();
       var slot = document.getElementById("acFullNavMenuSlot");
       if (!menu || !slot) return;
 
       ensureHeroMenuLabels(menu);
 
-      if (!state.parent && menu.parentNode) {
+      if ((!state.parent || !state.parent.isConnected) && menu.parentNode) {
         state.parent = menu.parentNode;
         state.next = menu.nextSibling;
       }
