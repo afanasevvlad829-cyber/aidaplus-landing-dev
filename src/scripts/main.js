@@ -33,54 +33,56 @@
       '<div class="ac-card-logo-side__text">Мы не играем<br>в игры —<br>мы их создаём</div>';
   }
 
+  var AC_REVIEWS_DATA = [
+    {
+      name: "Сергей Найденов",
+      sub: "папа участника, 13 лет",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80",
+      text: "Сын вернулся из лагеря более собранным и уверенным. Очень зашло, что учеба была через проекты, а не через сухую теорию. Для нас это был лучший формат каникул.",
+      stars: 5
+    },
+    {
+      name: "Natalia Savenkova",
+      sub: "мама участницы, 11 лет",
+      avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&q=80",
+      text: "Это был первый выездной лагерь для дочери, и всё прошло спокойно. Вожатые всегда на связи, программа насыщенная, ребёнок просится обратно уже на следующую смену.",
+      stars: 5
+    },
+    {
+      name: "Виктория",
+      sub: "мама участника, 12 лет",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80",
+      text: "Сильное место и по атмосфере, и по содержанию. Ребёнок не просто отдохнул, а действительно прокачался в IT и стал намного самостоятельнее в бытовых вопросах.",
+      stars: 5
+    },
+    {
+      name: "Отзыв родителя",
+      sub: "из Яндекс Карт",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80",
+      text: "Для нас было важно, чтобы лагерь дал результат, а не просто занял время. Итог: готовые мини-проекты, новые друзья и заметно выросшая мотивация к учебе.",
+      stars: 5
+    },
+    {
+      name: "Отзыв родителя",
+      sub: "из Яндекс Карт",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80",
+      text: "Очень понравился баланс между технологиями, спортом и отдыхом. Организация чёткая, питание хорошее, а главное - ребёнок всё время был вовлечён и доволен.",
+      stars: 5
+    },
+    {
+      name: "Екатерина Л.",
+      sub: "мама участника, 10 лет",
+      avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=300&q=80",
+      text: "Спасибо команде лагеря за внимание к детям и понятную обратную связь для родителей. Ребёнок приехал с идеями для собственных проектов и впервые сам попросил записать его на следующую смену.",
+      stars: 5
+    }
+  ];
+
   function ensureYandexReviewsTab() {
     var host = $("#acLtReviews");
     if (!host) return;
 
-    var reviews = [
-      {
-        name: "Сергей Найденов",
-        sub: "папа участника, 13 лет",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80",
-        text: "Сын вернулся из лагеря более собранным и уверенным. Очень зашло, что учеба была через проекты, а не через сухую теорию. Для нас это был лучший формат каникул.",
-        stars: 5
-      },
-      {
-        name: "Natalia Savenkova",
-        sub: "мама участницы, 11 лет",
-        avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&q=80",
-        text: "Это был первый выездной лагерь для дочери, и всё прошло спокойно. Вожатые всегда на связи, программа насыщенная, ребёнок просится обратно уже на следующую смену.",
-        stars: 5
-      },
-      {
-        name: "Виктория",
-        sub: "мама участника, 12 лет",
-        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80",
-        text: "Сильное место и по атмосфере, и по содержанию. Ребёнок не просто отдохнул, а действительно прокачался в IT и стал намного самостоятельнее в бытовых вопросах.",
-        stars: 5
-      },
-      {
-        name: "Отзыв родителя",
-        sub: "из Яндекс Карт",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80",
-        text: "Для нас было важно, чтобы лагерь дал результат, а не просто занял время. Итог: готовые мини-проекты, новые друзья и заметно выросшая мотивация к учебе.",
-        stars: 5
-      },
-      {
-        name: "Отзыв родителя",
-        sub: "из Яндекс Карт",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80",
-        text: "Очень понравился баланс между технологиями, спортом и отдыхом. Организация чёткая, питание хорошее, а главное - ребёнок всё время был вовлечён и доволен.",
-        stars: 5
-      },
-      {
-        name: "Екатерина Л.",
-        sub: "мама участника, 10 лет",
-        avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=300&q=80",
-        text: "Спасибо команде лагеря за внимание к детям и понятную обратную связь для родителей. Ребёнок приехал с идеями для собственных проектов и впервые сам попросил записать его на следующую смену.",
-        stars: 5
-      }
-    ];
+    var reviews = AC_REVIEWS_DATA.slice();
 
     host.innerHTML = '' +
       '<div class="ac-reviews-modern">' +
@@ -254,6 +256,291 @@
         if (card) card.style.display = "flex";
       };
     }
+  }
+
+  function cloneOverlayContentToSection(sourceId, targetId) {
+    var source = document.getElementById(sourceId);
+    var target = document.getElementById(targetId);
+    if (!source || !target) return;
+    var clone = source.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.style.display = "flex";
+    clone.classList.add("ac-full-overlay-copy");
+    $$("[id]", clone).forEach(function (el) { el.removeAttribute("id"); });
+    target.innerHTML = "";
+    target.appendChild(clone);
+  }
+
+  function renderFullModeReviewsSection() {
+    var host = document.getElementById("acFullReviews");
+    if (!host) return;
+    host.innerHTML = '' +
+      '<div class="ac-reviews-modern ac-full-reviews-modern">' +
+      '  <div class="ac-reviews-modern__viewport">' +
+      '    <div class="ac-reviews-modern__track"></div>' +
+      "  </div>" +
+      '  <div class="ac-reviews-modern__nav">' +
+      '    <div class="ac-reviews-modern__nav-main">' +
+      '      <button class="ac-reviews-ya__arrow" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '      <div class="ac-reviews-ya__dots"></div>' +
+      '      <button class="ac-reviews-ya__arrow" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
+      "    </div>" +
+      '    <a class="ac-reviews-modern__source-link" href="https://yandex.ru/maps/org/aydakemp/35558479035/reviews/?ll=38.874756%2C55.531232&z=7" target="_blank" rel="noopener noreferrer">Смотреть на Яндекс Картах</a>' +
+      "  </div>" +
+      "</div>";
+
+    var root = $(".ac-full-reviews-modern", host);
+    var track = $(".ac-reviews-modern__track", root);
+    var dots = $(".ac-reviews-ya__dots", root);
+    var prev = $(".ac-reviews-ya__arrow:first-of-type", root);
+    var next = $(".ac-reviews-ya__arrow:last-of-type", root);
+    if (!root || !track || !dots || !prev || !next) return;
+
+    var index = 0;
+    var total = 1;
+    var resizeTimer = null;
+    function getCardsPerSlide() {
+      var w = window.innerWidth || 1280;
+      if (w >= 1200) return 3;
+      if (w >= 760) return 2;
+      return 1;
+    }
+    function chunk(arr, size) {
+      var out = [];
+      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+      return out;
+    }
+    function renderSlides() {
+      var slides = chunk(AC_REVIEWS_DATA, getCardsPerSlide());
+      track.innerHTML = "";
+      dots.innerHTML = "";
+      slides.forEach(function (group, idx) {
+        var slide = document.createElement("div");
+        slide.className = "ac-reviews-modern__slide";
+        group.forEach(function (r) {
+          var card = document.createElement("div");
+          card.className = "ac-review-modern-card";
+          var quoteClass = "ac-review-modern-card__quote";
+          var len = (r.text || "").length;
+          if (len > 210) quoteClass += " is-xl";
+          else if (len > 165) quoteClass += " is-lg";
+          card.innerHTML =
+            '<img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '">' +
+            '<div class="' + quoteClass + '">“ ' + r.text + ' ”</div>' +
+            '<div class="ac-review-modern-card__divider"></div>' +
+            '<div class="ac-review-modern-card__name">' + r.name + "</div>" +
+            '<div class="ac-review-modern-card__sub">' + r.sub + "</div>" +
+            '<div class="ac-review-modern-card__stars">★★★★★</div>';
+          slide.appendChild(card);
+        });
+        track.appendChild(slide);
+        var dot = document.createElement("span");
+        dot.className = "ac-reviews-ya__dot" + (idx === 0 ? " is-active" : "");
+        dots.appendChild(dot);
+      });
+      total = Math.max(1, slides.length);
+      if (index >= total) index = total - 1;
+      update();
+    }
+    function update() {
+      track.style.transform = "translateX(" + (-100 * index) + "%)";
+      $$(".ac-reviews-ya__dot", dots).forEach(function (d, i) { d.classList.toggle("is-active", i === index); });
+    }
+    prev.onclick = function () { index = (index - 1 + total) % total; update(); };
+    next.onclick = function () { index = (index + 1) % total; update(); };
+    renderSlides();
+
+    if (!host._fullReviewsResizeBound) {
+      host._fullReviewsResizeBound = true;
+      window.addEventListener("resize", function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderSlides, 120);
+      });
+    }
+  }
+
+  function renderFullModeTeamSection() {
+    var host = document.getElementById("acFullTeam");
+    if (!host) return;
+    var cards = [];
+    if (Array.isArray(window.__acTeamCards) && window.__acTeamCards.length) {
+      cards = window.__acTeamCards.slice();
+    } else {
+      cards = $$(".ac-team-slider__card", document).map(function (card) {
+        var img = $(".ac-team-slider__img", card);
+        var nameEl = $(".ac-team-slider__name", card);
+        var roleEl = $(".ac-team-slider__role", card);
+        return {
+          img: img ? (img.getAttribute("src") || "") : "",
+          name: nameEl ? (nameEl.textContent || "").trim() : "",
+          role: roleEl ? (roleEl.textContent || "").trim() : ""
+        };
+      }).filter(function (x) { return x.name; });
+    }
+    if (!cards.length) return;
+
+    host.innerHTML = '' +
+      '<div class="ac-team-slider ac-full-team-slider">' +
+      '  <div class="ac-team-slider__viewport">' +
+      '    <div class="ac-team-slider__track"></div>' +
+      "  </div>" +
+      '  <div class="ac-team-slider__nav">' +
+      '    <button class="ac-team-slider__arrow" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '    <button class="ac-team-slider__arrow" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
+      "  </div>" +
+      "</div>";
+
+    var root = $(".ac-full-team-slider", host);
+    var track = $(".ac-team-slider__track", root);
+    var prev = $(".ac-team-slider__arrow:first-of-type", root);
+    var next = $(".ac-team-slider__arrow:last-of-type", root);
+    if (!track || !prev || !next) return;
+    var index = 0;
+    var total = 1;
+    var resizeTimer = null;
+    function getCardsPerSlide() {
+      var w = window.innerWidth || 1280;
+      if (w >= 1200) return 3;
+      if (w >= 760) return 2;
+      return 1;
+    }
+    function chunk(arr, size) {
+      var out = [];
+      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+      return out;
+    }
+    function renderSlides() {
+      var slides = chunk(cards, getCardsPerSlide());
+      track.innerHTML = "";
+      slides.forEach(function (group) {
+        var slide = document.createElement("div");
+        slide.className = "ac-team-slider__slide";
+        group.forEach(function (p) {
+          var card = document.createElement("article");
+          card.className = "ac-team-slider__card";
+          var mediaHtml = p.img
+            ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '">'
+            : '<div class="ac-team-slider__img ac-team-slider__img--placeholder">' + getTeamCardInitials(p.name) + "</div>";
+          card.innerHTML =
+            mediaHtml +
+            '<div class="ac-team-slider__name">' + (p.name || "Команда AidaCamp") + "</div>" +
+            '<div class="ac-team-slider__role">' + (p.role || "Преподаватель") + "</div>";
+          slide.appendChild(card);
+        });
+        track.appendChild(slide);
+      });
+      total = Math.max(1, slides.length);
+      if (index >= total) index = total - 1;
+      update();
+    }
+    function update() { track.style.transform = "translateX(" + (-100 * index) + "%)"; }
+    prev.onclick = function () { index = (index - 1 + total) % total; update(); };
+    next.onclick = function () { index = (index + 1) % total; update(); };
+    renderSlides();
+
+    if (!host._fullTeamResizeBound) {
+      host._fullTeamResizeBound = true;
+      window.addEventListener("resize", function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderSlides, 120);
+      });
+    }
+  }
+
+  function renderFullModePhotosSection() {
+    var host = document.getElementById("acFullPhotos");
+    var mediaMap = window.__acMediaMap;
+    if (!host || !mediaMap || !mediaMap.photos) return;
+    host.innerHTML =
+      '<div class="ac-left-photo-cats ac-full-photo-cats"></div>' +
+      '<div class="ac-left-photo-grid ac-full-photo-grid"></div>';
+    var cats = $(".ac-full-photo-cats", host);
+    var grid = $(".ac-full-photo-grid", host);
+    if (!cats || !grid) return;
+    var catList = [
+      { key: "all", label: "Все" },
+      { key: "food", label: "Еда" },
+      { key: "sport", label: "Спорт" },
+      { key: "pool", label: "Бассейн" },
+      { key: "study", label: "Учёба" }
+    ];
+    cats.innerHTML = catList.map(function (c, i) {
+      return '<button class="ac-left-photo-cat' + (i === 0 ? " is-active" : "") + '" data-lcat="' + c.key + '">' + c.label + "</button>";
+    }).join("");
+    function render(cat) {
+      var list = mediaMap.photos[cat] || [];
+      grid.innerHTML = list.map(function (item, i) {
+        return '<div class="ac-left-photo-item" data-photo-index="' + i + '"><img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '"></div>';
+      }).join("");
+      $$(".ac-left-photo-cat", cats).forEach(function (btn) { btn.classList.toggle("is-active", btn.dataset.lcat === cat); });
+      grid.onclick = function (e) {
+        var item = e.target.closest(".ac-left-photo-item");
+        if (!item) return;
+        var i = Number(item.getAttribute("data-photo-index") || "0");
+        openMediaLightbox(list, i);
+      };
+    }
+    cats.onclick = function (e) {
+      var btn = e.target.closest(".ac-left-photo-cat");
+      if (!btn) return;
+      render(btn.getAttribute("data-lcat") || "all");
+    };
+    render("all");
+  }
+
+  function renderFullModeVideoSection() {
+    var host = document.getElementById("acFullVideo");
+    if (!host) return;
+    var items = AC_DEV_RUTUBE_VIDEO_FEED_ENABLED
+      ? AC_DEV_RUTUBE_VIDEOS.filter(function (item) { return rutubeEmbedUrl(item.url); })
+      : (window.__acMediaMap && window.__acMediaMap.videos ? window.__acMediaMap.videos.slice() : []);
+    if (!items.length) return;
+
+    host.innerHTML =
+      '<div class="ac-left-video-grid ac-full-video-grid"></div>';
+    var grid = $(".ac-full-video-grid", host);
+    if (!grid) return;
+
+    if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
+      grid.innerHTML = items.map(function (item, i) {
+        var poster = rutubeThumbnailUrl(item.url);
+        return '' +
+          '<button type="button" class="ac-left-video-item ac-left-video-item--rutube" data-video-index="' + i + '">' +
+          '  <div class="ac-left-video-item__poster">' +
+          (poster ? '<img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' : "") +
+          '    <div class="ac-left-video-item__poster-shade"></div>' +
+          '    <div class="ac-left-video-item__play"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div>' +
+          '    <div class="ac-left-video-item__caption">' + (item.title || "Видео") + "</div>" +
+          "  </div>" +
+          "</button>";
+      }).join("");
+      grid.onclick = function (e) {
+        var item = e.target.closest(".ac-left-video-item");
+        if (!item) return;
+        var i = Number(item.getAttribute("data-video-index") || "0");
+        openRutubeVideoLightbox(items, i);
+      };
+      return;
+    }
+
+    grid.innerHTML = items.map(function (item, i) {
+      return '<div class="ac-left-video-item" data-video-index="' + i + '"><video src="' + item.src + '" muted loop playsinline preload="metadata" controls aria-label="Видео: ' + (item.caption || "AidaCamp") + '"></video></div>';
+    }).join("");
+    grid.onclick = function (e) {
+      var item = e.target.closest(".ac-left-video-item");
+      if (!item) return;
+      var i = Number(item.getAttribute("data-video-index") || "0");
+      openMediaLightbox(items, i);
+    };
+  }
+
+  function renderFullModeExtension() {
+    cloneOverlayContentToSection("acLtAiprogram", "acFullAi");
+    cloneOverlayContentToSection("acLtPlace", "acFullLocation");
+    renderFullModePhotosSection();
+    renderFullModeVideoSection();
+    renderFullModeReviewsSection();
+    renderFullModeTeamSection();
   }
 
   function getSectionFromAnchor(doc, names) {
@@ -2124,6 +2411,7 @@
     ensureGalleryAltAndVideo();
     // Prefer build-time manifest; fallback to runtime parser.
     if (!loadMediaFromManifest()) loadMediaByCaption();
+    renderFullModeExtension();
     enhanceShifts();
     recoverEmptyShifts("init");
     scheduleShiftsHardLock("init");
@@ -2186,6 +2474,8 @@
     setTimeout(ensureYandexReviewsTab, 2200);
     setTimeout(ensureTeamCarousel, 1000);
     setTimeout(ensureTeamCarousel, 2400);
+    setTimeout(renderFullModeExtension, 1000);
+    setTimeout(renderFullModeExtension, 2400);
     if (AC_DEV_REMOTE_TEAM_REFRESH_ENABLED) {
       setTimeout(function () { refreshTeamFromRemote(true); }, 1500);
       setTimeout(function () { refreshTeamFromRemote(true); }, 5000);
@@ -2195,6 +2485,7 @@
     if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
       setTimeout(renderRutubeVideos, 400);
       setTimeout(renderRutubeVideos, 1600);
+      setTimeout(renderFullModeExtension, 1800);
     }
     setTimeout(ensureLeftTabsRouting, 500);
     setTimeout(function () { recoverEmptyShifts("t+500"); }, 500);
@@ -2254,4 +2545,3 @@
     init();
   }
 })();
-

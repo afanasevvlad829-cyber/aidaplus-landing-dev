@@ -1238,6 +1238,12 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
         <li><a href="#hero">Главный экран</a></li>
         <li><a href="#program">Программа</a></li>
         <li><a href="#format">Формат</a></li>
+        <li><a href="#ai">AI-программы</a></li>
+        <li><a href="#location">Локация</a></li>
+        <li><a href="#photos">Фото</a></li>
+        <li><a href="#video">Видео</a></li>
+        <li><a href="#reviews">Отзывы</a></li>
+        <li><a href="#team">Команда</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a class="is-cta" href="#booking">Бронирование</a></li>
       </ul>
@@ -1265,7 +1271,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 
       <!-- ИНФО-ПАНЕЛЬ (поверх карточки) -->
       <div class="ac-card-info" id="acCardInfo">
-        <button class="ac-card-info__close" id="acCardInfoClose">✕</button>
+        <button class="ac-card-info__close" id="acCardInfoClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
         <span class="ac-card-info__badge" id="acCiBadge">Смена</span>
         <div class="ac-card-info__title" id="acCiTitle"></div>
         <div class="ac-card-info__date" id="acCiDate"></div>
@@ -1284,7 +1290,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
           <span class="ac-card-info__price-label">Цена смены</span>
           <span class="ac-card-info__price-val" id="acCiPrice"></span>
         </div>
-        <button class="ac-card-info__btn" id="acCiSelectBtn">Выбрать эту смену →</button>
+        <button class="ac-card-info__btn" id="acCiSelectBtn">Выбрать эту смену <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
       </div>
     </div>
 
@@ -1305,7 +1311,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
       <button class="ac-badge" id="acAiBadgeBtn" onclick="acOpenAiTab()">🤖 AI‑программы июнь</button>
 
       <!-- Кнопка закрыть шаг 4 -->
-      <button class="ac-step4-close" id="acStep4Close">✕</button>
+      <button class="ac-step4-close" id="acStep4Close"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
 
       <!-- ШАГ 1 -->
       <div class="ac-step is-active" id="acStep1" style="display:flex;align-items:center;justify-content:center;">
@@ -1313,7 +1319,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
           <div style="font-size:36px;margin-bottom:10px;">👦👧</div>
           <div style="font-family:'Comfortaa',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;">Выберите возраст ребёнка</div>
           <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5;">Передвиньте слайдер на карточке слева — покажем подходящую программу и смены</div>
-          <div style="margin-top:16px;font-size:22px;animation:acBounceX 1.5s ease-in-out infinite;">←</div>
+          <div style="margin-top:16px;font-size:22px;animation:acBounceX 1.5s ease-in-out infinite;"><img class="ac-icon ac-icon--lg" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></div>
         </div>
       </div>
 
@@ -1326,19 +1332,19 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
         </div>
         <div class="ac-safety__grid">
           <div class="ac-safety__item">
-            <span class="ac-safety__icon">🏥</span>
+            <span class="ac-safety__icon"><img class="ac-icon" src="/assets/icons/med.svg" alt="" aria-hidden="true"></span>
             <div class="ac-safety__text"><b>Медик 24/7</b>Врач на территории всю смену</div>
           </div>
           <div class="ac-safety__item">
-            <span class="ac-safety__icon">🔒</span>
+            <span class="ac-safety__icon"><img class="ac-icon" src="/assets/icons/lock.svg" alt="" aria-hidden="true"></span>
             <div class="ac-safety__text"><b>Охрана</b>Закрытая территория, КПП</div>
           </div>
           <div class="ac-safety__item">
-            <span class="ac-safety__icon">🍽️</span>
+            <span class="ac-safety__icon"><img class="ac-icon" src="/assets/icons/food.svg" alt="" aria-hidden="true"></span>
             <div class="ac-safety__text"><b>5-разовое питание</b>Горячее каждый день</div>
           </div>
           <div class="ac-safety__item">
-            <span class="ac-safety__icon">🏊</span>
+            <span class="ac-safety__icon"><img class="ac-icon" src="/assets/icons/pool.svg" alt="" aria-hidden="true"></span>
             <div class="ac-safety__text"><b>Бассейн</b>Каждый день, тренер рядом</div>
           </div>
         </div>
@@ -1349,7 +1355,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
         <div class="ac-shifts__title" id="acShiftsTitle">Все смены</div>
         <div class="ac-shifts__hint" id="acShiftsHint">👆 Нажмите на смену, чтобы выбрать</div>
         <div class="ac-shifts__list" id="acShiftsList"></div>
-        <button class="ac-book-btn" id="acBookBtn">Перейти к бронированию →</button>
+        <button class="ac-book-btn" id="acBookBtn">Перейти к бронированию <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
       </div>
 
       <!-- ШАГ 4 -->
@@ -1392,7 +1398,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 
       <!-- Баннер возврата -->
       <div class="ac-return-banner" id="acReturnBanner">
-        <button class="ac-return-banner__close" id="acRbClose">✕</button>
+        <button class="ac-return-banner__close" id="acRbClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
         <div class="ac-return-banner__icon" id="acRbIcon"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 2v3"/><path d="M22 12h-3"/><path d="M12 22v-3"/><path d="M2 12h3"/></svg></div>
         <div class="ac-return-banner__title" id="acRbTitle"></div>
         <div class="ac-return-banner__sub" id="acRbSub"></div>
@@ -1404,13 +1410,13 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 
       <!-- Навигация -->
       <div class="ac-nav">
-        <button class="ac-nav__btn" id="acPrev">←</button>
+        <button class="ac-nav__btn" id="acPrev"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>
         <span class="ac-nav__label" id="acNavLabel">Шаг 1 из 4</span>
-        <button class="ac-nav__btn" id="acNext">→</button>
+        <button class="ac-nav__btn" id="acNext"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
       </div>
 
       <!-- CTA кнопка шаг 2 -->
-      <button class="ac-cta-next" id="acCtaNext">Смотреть смены и цены →</button>
+      <button class="ac-cta-next" id="acCtaNext">Смотреть смены и цены <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
     </div>
 
   </div>
@@ -1419,9 +1425,9 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 <!-- МОДАЛКА ФИКСАЦИИ -->
 <div class="ac-fix-backdrop" id="acFixBackdrop">
   <div class="ac-fix-modal">
-    <button class="ac-fix-modal__close" id="acFixClose">✕</button>
+    <button class="ac-fix-modal__close" id="acFixClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
     <div class="ac-fix-modal__top">
-      <div class="ac-fix-modal__emoji">🔒</div>
+      <div class="ac-fix-modal__emoji"><img class="ac-icon ac-icon--lg" src="/assets/icons/lock.svg" alt="" aria-hidden="true"></div>
       <div class="ac-fix-modal__title">Подробнее о смене</div>
       <div class="ac-fix-modal__code" id="acFixCode"></div>
       <div class="ac-fix-modal__price" id="acFixPrice"></div>
@@ -1432,16 +1438,16 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
       <div id="acFixForm">
         <input class="ac-fix-modal__input" id="acFixPhone" autocomplete="tel" type="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel">
         <div class="ac-fix-modal__hint">Мы не передаём номер третьим лицам</div>
-        <button class="ac-fix-modal__btn" id="acFixSubmit">🔒 Зафиксировать мою цену</button>
+        <button class="ac-fix-modal__btn" id="acFixSubmit"><img class="ac-icon ac-icon--sm" src="/assets/icons/lock.svg" alt="" aria-hidden="true"> Зафиксировать мою цену</button>
         <button class="ac-fix-modal__btn ac-fix-modal__btn--ghost" id="acFixLater">Позже</button>
       
       </div>
       <div class="ac-fix-modal__success" id="acFixSuccess">
-        <div class="ac-fix-modal__success-icon">✅</div>
+        <div class="ac-fix-modal__success-icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/check.svg" alt="" aria-hidden="true"></div>
         <div class="ac-fix-modal__success-title">Цена зафиксирована!</div>
         <div class="ac-fix-modal__success-text" id="acFixSuccessText"></div>
         <div class="ac-fix-modal__success-timer" id="acFixModalTimer"></div>
-        <button class="ac-fix-modal__btn" id="acFixGoBook">Перейти к бронированию →</button>
+        <button class="ac-fix-modal__btn" id="acFixGoBook">Перейти к бронированию <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>
         <button class="ac-fix-modal__btn ac-fix-modal__btn--secondary" id="acFixClose2">Закрыть</button>
         <div class="ac-share" id="acShare">
           <div class="ac-share__title">Поделитесь с друзьями 🙌</div>
@@ -1465,7 +1471,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
   </div>
   <div class="ac-bar__btns">
     <button class="ac-bar__btn ac-bar__btn--primary" id="acBarAction"></button>
-    <button class="ac-bar__btn ac-bar__btn--secondary" id="acBarClose">✕</button>
+    <button class="ac-bar__btn ac-bar__btn--secondary" id="acBarClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
   </div>
 </div>
 
@@ -1477,7 +1483,7 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
       <span>Показываем в момент интереса, а не сразу на первом экране.</span>
     </div>
     <button class="ac-nudge__action" id="acNudgeProjectBtn" type="button">AI-программы</button>
-    <button class="ac-nudge__close" id="acNudgeProjectClose" type="button" aria-label="Закрыть">✕</button>
+    <button class="ac-nudge__close" id="acNudgeProjectClose" type="button" aria-label="Закрыть"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
   </div>
   <div class="ac-nudge" id="acNudgeGuarantee" hidden>
     <div class="ac-nudge__icon ac-nudge__icon--safe"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
@@ -1486,19 +1492,19 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
       <span>Показываем после просмотра цен и клика по смене — когда может появиться сомнение.</span>
     </div>
     <button class="ac-nudge__action" id="acNudgeGuaranteeBtn" type="button">К бронированию</button>
-    <button class="ac-nudge__close" id="acNudgeGuaranteeClose" type="button" aria-label="Закрыть">✕</button>
+    <button class="ac-nudge__close" id="acNudgeGuaranteeClose" type="button" aria-label="Закрыть"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
   </div>
 </div>
 
 <!-- EXIT INTENT -->
 <div class="ac-exit-backdrop" id="acExitBackdrop">
   <div class="ac-exit-modal">
-    <button class="ac-exit-modal__close" id="acExitClose">✕</button>
+    <button class="ac-exit-modal__close" id="acExitClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
     <div class="ac-exit-modal__emoji">⏳</div>
     <div class="ac-exit-modal__title">Подождите! Ваша цена пропадёт</div>
     <div class="ac-exit-modal__text" id="acExitText"></div>
     <div class="ac-exit-modal__price" id="acExitPrice"></div>
-    <button class="ac-exit-modal__btn" id="acExitFix">🔒 Зафиксировать цену</button>
+    <button class="ac-exit-modal__btn" id="acExitFix"><img class="ac-icon ac-icon--sm" src="/assets/icons/lock.svg" alt="" aria-hidden="true"> Зафиксировать цену</button>
     <button class="ac-exit-modal__btn--secondary" id="acExitDismiss">Всё равно уйти</button>
   </div>
 </div>
@@ -1506,12 +1512,12 @@ body:not(.ac-compact-mode) .ac-view-switch__thumb{transform:translateX(20px);}
 <!-- REVISIT -->
 <div class="ac-revisit-backdrop" id="acRevisitBackdrop">
   <div class="ac-revisit-modal">
-    <button class="ac-revisit-modal__close" id="acRevisitClose">✕</button>
+    <button class="ac-revisit-modal__close" id="acRevisitClose"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>
     <div class="ac-revisit-modal__emoji">👋</div>
     <div class="ac-revisit-modal__title">С возвращением!</div>
     <div class="ac-revisit-modal__text" id="acRevisitText"></div>
     <div class="ac-revisit-modal__price" id="acRevisitPrice"></div>
-    <button class="ac-revisit-modal__btn" id="acRevisitFix">🔒 Зафиксировать цену</button>
+    <button class="ac-revisit-modal__btn" id="acRevisitFix"><img class="ac-icon ac-icon--sm" src="/assets/icons/lock.svg" alt="" aria-hidden="true"> Зафиксировать цену</button>
     <button class="ac-revisit-modal__btn--ghost" id="acRevisitDismiss">Посмотреть другие смены</button>
   </div>
 </div>
@@ -1573,7 +1579,7 @@ document.getElementById('acCardContent').innerHTML = `
   </div>
   <div class="ac-age" id="acAge">
     <div class="ac-age__label">Выберите возраст</div>
-    <div class="ac-age__hint" id="acAgeHint">← передвиньте слайдер</div>
+    <div class="ac-age__hint" id="acAgeHint"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"> передвиньте слайдер</div>
     <input id="acSlider" type="range" min="0" max="3" step="1" value="0">
     <div class="ac-age__marks">
       <span style="opacity:0">—</span>
@@ -1662,7 +1668,7 @@ document.getElementById('acCardContent').innerHTML = `
       <div class="ac-left-fact">🚗 60 км по Киевскому шоссе</div>
       <div class="ac-left-fact">🚌 Трансфер от м. Юго-Западная</div>
       <div class="ac-left-fact">🌳 Закрытая территория 14 га</div>
-      <div class="ac-left-fact">🏊 Бассейн, спорт, лес</div>
+      <div class="ac-left-fact"><img class="ac-icon ac-icon--sm" src="/assets/icons/pool.svg" alt="" aria-hidden="true"> Бассейн, спорт, лес</div>
     </div>
   </div>
 
@@ -1671,8 +1677,8 @@ document.getElementById('acCardContent').innerHTML = `
       <button class="ac-left-photo-cat is-active" data-lcat="all">Все</button>
       <button class="ac-left-photo-cat" data-lcat="housing">🏠 Жильё</button>
       <button class="ac-left-photo-cat" data-lcat="study">💻 Учёба</button>
-      <button class="ac-left-photo-cat" data-lcat="food">🍽 Еда</button>
-      <button class="ac-left-photo-cat" data-lcat="pool">🏊 Бассейн</button>
+      <button class="ac-left-photo-cat" data-lcat="food"><img class="ac-icon ac-icon--sm" src="/assets/icons/food.svg" alt="" aria-hidden="true"> Еда</button>
+      <button class="ac-left-photo-cat" data-lcat="pool"><img class="ac-icon ac-icon--sm" src="/assets/icons/pool.svg" alt="" aria-hidden="true"> Бассейн</button>
     </div>
     <div class="ac-left-photo-grid">
       <div class="ac-left-photo-item" data-lcat="study"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=300&q=70" alt="IT"></div>
@@ -1698,14 +1704,14 @@ document.getElementById('acCardContent').innerHTML = `
 
   <div class="ac-left-overlay" id="acLtFaq">
     <div class="ac-left-faq">
-      <div class="ac-left-faq__gt">🏥 Медицина</div>
+      <div class="ac-left-faq__gt"><img class="ac-icon ac-icon--sm" src="/assets/icons/med.svg" alt="" aria-hidden="true"> Медицина</div>
       <div class="ac-left-faq__item"><div class="ac-left-faq__q">Есть ли медик в лагере?</div><div class="ac-left-faq__a">Медработник на территории 24/7 всю смену.</div></div>
       <div class="ac-left-faq__item"><div class="ac-left-faq__q">Что если ребёнок заболеет?</div><div class="ac-left-faq__a">Медик осматривает, при необходимости вызывает скорую. Вы получите звонок сразу.</div></div>
       <div class="ac-left-faq__item"><div class="ac-left-faq__q">Можно давать лекарства?</div><div class="ac-left-faq__a">Передайте медику с инструкцией — будет выдавать по расписанию.</div></div>
-      <div class="ac-left-faq__gt">🔒 Безопасность</div>
+      <div class="ac-left-faq__gt"><img class="ac-icon ac-icon--sm" src="/assets/icons/lock.svg" alt="" aria-hidden="true"> Безопасность</div>
       <div class="ac-left-faq__item"><div class="ac-left-faq__q">Территория закрыта?</div><div class="ac-left-faq__a">Да, огорожена, КПП с охраной. Посторонние не допускаются.</div></div>
       <div class="ac-left-faq__item"><div class="ac-left-faq__q">Сколько детей на вожатого?</div><div class="ac-left-faq__a">Не более 8–10 детей, вожатые работают в парах.</div></div>
-      <div class="ac-left-faq__gt">🍽 Питание</div>
+      <div class="ac-left-faq__gt"><img class="ac-icon ac-icon--sm" src="/assets/icons/food.svg" alt="" aria-hidden="true"> Питание</div>
       <div class="ac-left-faq__item"><div class="ac-left-faq__q">Сколько раз кормят?</div><div class="ac-left-faq__a">5 раз в день: завтрак, второй завтрак, обед, полдник, ужин. Всё горячее.</div></div>
       <div class="ac-left-faq__item"><div class="ac-left-faq__q">Учитываются аллергии?</div><div class="ac-left-faq__a">Укажите при регистрации — повар и медик будут в курсе.</div></div>
       <div class="ac-left-faq__gt">🏠 Проживание</div>
@@ -1751,7 +1757,7 @@ AC.allShifts = {
       finalPrice: 79000,
       seatLabel: 'Осталось 4 места',
       showReturnBadge: false,
-      priorityLabel: '🔥 ХИТ',
+      priorityLabel: '<img class="ac-icon ac-icon--sm" src="/assets/icons/fire-hit.svg" alt="" aria-hidden="true"> ХИТ',
       promoCodePrefix: 'AIDA-JUNE1',
       info: {
         headline:    'Войдите в 1% разработчиков, которые управляют AI',
@@ -1765,13 +1771,13 @@ AC.allShifts = {
           { icon: '👁️', text: 'Компьютерное зрение — распознавание объектов и лиц на фото/видео' },
           { icon: '🎨', text: 'Генерация изображений: создаём арт с помощью AI (Stable Diffusion, DALL·E)' },
           { icon: '🎬', text: 'AI и видео: автоматическая обработка, субтитры, монтаж нейросетями' },
-          { icon: '🤖', text: 'Telegram-бот с искусственным интеллектом — собственный проект' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/robot.svg" alt="" aria-hidden="true">', text: 'Telegram-бот с искусственным интеллектом — собственный проект' },
           { icon: '🏆', text: 'Хакатон: защита AI-проекта перед жюри и родителями' }
         ],
         included: [
-          { icon: '🏊', text: 'Бассейн каждый день' },
-          { icon: '🍽️', text: '5-разовое питание' },
-          { icon: '🏥', text: 'Медик 24/7 на территории' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/pool.svg" alt="" aria-hidden="true">', text: 'Бассейн каждый день' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/food.svg" alt="" aria-hidden="true">', text: '5-разовое питание' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/med.svg" alt="" aria-hidden="true">', text: 'Медик 24/7 на территории' },
           { icon: '🛏️', text: 'Проживание в комфортных корпусах' }
         ],
         footer: '5% программистов зарабатывают 80% всех денег в IT. AI-разработчики — это следующий 1%. Сейчас самое время войти.'
@@ -1790,13 +1796,13 @@ AC.allShifts = {
       info: {
         program: [
           { icon: '🎮', text: 'Разработка игр на Python/Pygame' },
-          { icon: '🤖', text: 'Telegram-боты с AI' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/robot.svg" alt="" aria-hidden="true">', text: 'Telegram-боты с AI' },
           { icon: '🏆', text: 'Командный хакатон' }
         ],
         included: [
-          { icon: '🏊', text: 'Бассейн каждый день' },
-          { icon: '🍽️', text: '5-разовое питание' },
-          { icon: '🏥', text: 'Медик 24/7 на территории' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/pool.svg" alt="" aria-hidden="true">', text: 'Бассейн каждый день' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/food.svg" alt="" aria-hidden="true">', text: '5-разовое питание' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/med.svg" alt="" aria-hidden="true">', text: 'Медик 24/7 на территории' },
           { icon: '🛏️', text: 'Проживание в комфортных корпусах' }
         ]
       }
@@ -1818,9 +1824,9 @@ AC.allShifts = {
           { icon: '🏆', text: 'Финальный показ проектов' }
         ],
         included: [
-          { icon: '🏊', text: 'Бассейн каждый день' },
-          { icon: '🍽️', text: '5-разовое питание' },
-          { icon: '🏥', text: 'Медик 24/7 на территории' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/pool.svg" alt="" aria-hidden="true">', text: 'Бассейн каждый день' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/food.svg" alt="" aria-hidden="true">', text: '5-разовое питание' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/med.svg" alt="" aria-hidden="true">', text: 'Медик 24/7 на территории' },
           { icon: '🛏️', text: 'Проживание в комфортных корпусах' }
         ]
       }
@@ -1842,9 +1848,9 @@ AC.allShifts = {
           { icon: '🏆', text: 'Финальный показ проектов' }
         ],
         included: [
-          { icon: '🏊', text: 'Бассейн каждый день' },
-          { icon: '🍽️', text: '5-разовое питание' },
-          { icon: '🏥', text: 'Медик 24/7 на территории' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/pool.svg" alt="" aria-hidden="true">', text: 'Бассейн каждый день' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/food.svg" alt="" aria-hidden="true">', text: '5-разовое питание' },
+          { icon: '<img class="ac-icon ac-icon--sm" src="/assets/icons/med.svg" alt="" aria-hidden="true">', text: 'Медик 24/7 на территории' },
           { icon: '🛏️', text: 'Проживание в комфортных корпусах' }
         ]
       }
@@ -1891,7 +1897,7 @@ AC.sendTelegram = function(promo, childName){
     +'📞 Телефон: '+(promo.phone||'—')+'\n'
     +'🏕 Смена: '+promo.shiftName+'\n'
     +'🎟 Промокод: '+promo.code+'\n'
-    +'💰 Цена: '+AC.fmt(promo.finalPrice)+'\n'
+    +'<img class="ac-icon ac-icon--sm" src="/assets/icons/money.svg" alt="" aria-hidden="true"> Цена: '+AC.fmt(promo.finalPrice)+'\n'
     +(childName?'👦 Имя: '+childName+'\n':'')
     +'🕐 Время: '+new Date().toLocaleString('ru-RU');
   fetch('https://api.telegram.org/bot'+AC.CFG.tgToken+'/sendMessage',{
@@ -2046,7 +2052,7 @@ AC.metrika = function(goal, params){
     var pEl=document.getElementById('acCiProgram'); pEl.innerHTML='';
     prog.forEach(function(it){pEl.innerHTML+='<div class="ac-card-info__item"><span class="ac-card-info__item-icon">'+it.icon+'</span><span>'+it.text+'</span></div>';});
 
-    var incl=info.included||[{icon:'🏊',text:'Бассейн'},{icon:'🍽️',text:'5-разовое питание'},{icon:'🏥',text:'Медик 24/7'}];
+    var incl=info.included||[{icon:'<img class="ac-icon ac-icon--sm" src="/assets/icons/pool.svg" alt="" aria-hidden="true">',text:'Бассейн'},{icon:'<img class="ac-icon ac-icon--sm" src="/assets/icons/food.svg" alt="" aria-hidden="true">',text:'5-разовое питание'},{icon:'<img class="ac-icon ac-icon--sm" src="/assets/icons/med.svg" alt="" aria-hidden="true">',text:'Медик 24/7'}];
     var iEl=document.getElementById('acCiIncluded'); iEl.innerHTML='';
     incl.forEach(function(it){iEl.innerHTML+='<div class="ac-card-info__item"><span class="ac-card-info__item-icon">'+it.icon+'</span><span>'+it.text+'</span></div>';});
 
@@ -2080,7 +2086,7 @@ AC.metrika = function(goal, params){
     if(p.status==='active'){
       var left=p.activatedAt+C.holdHours*3600000-now();
       if(left<=0){AC.clearPromo();rbBanner.classList.remove('is-visible');return;}
-      rbIcon.textContent='🔒'; rbTitle.textContent='Ждём вас!';
+      rbIcon.innerHTML='<img class="ac-icon ac-icon--lg" src="/assets/icons/lock.svg" alt="" aria-hidden="true">'; rbTitle.textContent='Ждём вас!';
       rbSub.textContent='Цена '+fmt(p.finalPrice)+' на «'+sName+'» зафиксирована.';
       rbCode.style.display='inline-block'; rbCode.textContent=p.code;
       rbTimer.textContent='⏳ Истекает через: '+AC.fmtCountdown(left);
@@ -2103,7 +2109,7 @@ AC.metrika = function(goal, params){
   }
   rbCode.addEventListener('click',function(){
     try{navigator.clipboard.writeText(rbCode.textContent);}catch(e){}
-    var old=rbCode.textContent; rbCode.textContent='✅ Скопировано';
+    var old=rbCode.innerHTML; rbCode.innerHTML='<img class="ac-icon ac-icon--sm" src="/assets/icons/check.svg" alt="" aria-hidden="true"> Скопировано';
     setTimeout(function(){rbCode.textContent=old;},1500);
   });
   rbDismiss.addEventListener('click',function(){_rbShown=true;rbBanner.classList.remove('is-visible');AC.goToStep(3);});
@@ -2242,7 +2248,7 @@ AC.metrika = function(goal, params){
   fixBackdrop.addEventListener('click',function(e){if(e.target===fixBackdrop)closeFixModal();});
   fixCode.addEventListener('click',function(){
     try{navigator.clipboard.writeText(fixCode.textContent);}catch(e){}
-    var old=fixCode.textContent; fixCode.textContent='✅ Скопировано';
+    var old=fixCode.innerHTML; fixCode.innerHTML='<img class="ac-icon ac-icon--sm" src="/assets/icons/check.svg" alt="" aria-hidden="true"> Скопировано';
     setTimeout(function(){fixCode.textContent=old;},1500);
   });
 
@@ -2310,7 +2316,7 @@ AC.metrika = function(goal, params){
     if(p.status==='active'){
       var left=p.activatedAt+C.holdHours*3600000-now();
       if(left<=0){AC.clearPromo();acBar.classList.remove('is-open');return;}
-      acBarText.innerHTML='🔒 <strong>'+fmt(p.finalPrice)+'</strong> на «'+shift.name+'» — цена зафиксирована';
+      acBarText.innerHTML='<img class="ac-icon ac-icon--sm" src="/assets/icons/lock.svg" alt="" aria-hidden="true"> <strong>'+fmt(p.finalPrice)+'</strong> на «'+shift.name+'» — цена зафиксирована';
       acBarTimer.textContent='Истекает через: '+AC.fmtCountdown(left);
       acBarAction.textContent='К бронированию →';
       acBarAction.onclick=function(){AC.goToStep(4);};
@@ -2407,7 +2413,7 @@ AC.metrika = function(goal, params){
       if(hasPromo&&promo.status==='active'){
         btnTxt='<svg width="15" height="15" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#dcfce7"/><polyline points="8 12 11 15 16 9" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg> Зафиксировано → бронировать'; metaTxt='Промокод: '+promo.code;
       } else if(hasPromo&&stage===2){
-        btnTxt='<svg width="15" height="15" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFE4CC"/><rect x="8" y="11" width="8" height="7" rx="2" fill="#FF7700"/><path d="M9 11V8a3 3 0 0 1 6 0v3" stroke="#FF7700" stroke-width="2" stroke-linecap="round" fill="none"/></svg> Зафиксировать на 72 ч'; metaTxt='✨ Найдена лучшая цена!';
+        btnTxt='<svg width="15" height="15" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFE4CC"/><rect x="8" y="11" width="8" height="7" rx="2" fill="#FF7700"/><path d="M9 11V8a3 3 0 0 1 6 0v3" stroke="#FF7700" stroke-width="2" stroke-linecap="round" fill="none"/></svg> Зафиксировать на 72 ч'; metaTxt='<img class="ac-icon ac-icon--sm" src="/assets/icons/sparkle.svg" alt="" aria-hidden="true"> Найдена лучшая цена!';
       } else if(hasPromo&&stage===1){
         btnTxt='<svg width="15" height="15" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFE4CC"/><path d="M8 12l4-4 4 4M12 8v8" stroke="#FF7700" stroke-width="2" stroke-linecap="round" fill="none"/></svg> Улучшить цену ещё раз'; metaTxt='Осталась 1 попытка';
       } else {
@@ -2424,7 +2430,7 @@ AC.metrika = function(goal, params){
       el.innerHTML=
         '<div class="ac-shift__left">'+
           (badgesHtml?'<div class="ac-shift__badges">'+badgesHtml+'</div>':'')+
-          '<span class="ac-shift__best-label'+(earned?' is-earned':'')+'">✨ Найдена лучшая цена</span>'+
+          '<span class="ac-shift__best-label'+(earned?' is-earned':'')+'"><img class="ac-icon ac-icon--sm" src="/assets/icons/sparkle.svg" alt="" aria-hidden="true"> Найдена лучшая цена</span>'+
           '<div class="ac-shift__dateline">'+
             '<span class="ac-shift__date">'+normalizeShiftDateLabel(shift.bookingOptionLabel)+'</span>'+
             (shift.days?'<span class="ac-shift__days">'+shift.days+' д.</span>':'')+
@@ -2510,10 +2516,10 @@ AC.metrika = function(goal, params){
           var taken = TOTAL - (shift.seats||5);
           var pct   = Math.round(taken/TOTAL*100);
           var msgs = [
-            '🔍 Смотрим текущие бронирования...',
-            '📋 Ищем свободные места...',
-            '🔄 Проверяем отказы и неоплаты...',
-            '💰 Считаем максимально доступную цену...'
+            '<img class="ac-icon ac-icon--sm" src="/assets/icons/search.svg" alt="" aria-hidden="true"> Смотрим текущие бронирования...',
+            '<img class="ac-icon ac-icon--sm" src="/assets/icons/clipboard.svg" alt="" aria-hidden="true"> Ищем свободные места...',
+            '<img class="ac-icon ac-icon--sm" src="/assets/icons/refresh.svg" alt="" aria-hidden="true"> Проверяем отказы и неоплаты...',
+            '<img class="ac-icon ac-icon--sm" src="/assets/icons/money.svg" alt="" aria-hidden="true"> Считаем максимально доступную цену...'
           ];
           var bkd  = document.getElementById('acSearchBackdrop');
           var stat = document.getElementById('acSearchStatus');
@@ -2815,7 +2821,7 @@ AC.metrika = function(goal, params){
           if(document.getElementById('acSC_'+shift.id)) return; // уже добавлено
           var metaEl=el.querySelector('.ac-shift__meta');
           if(!metaEl) return;
-          var checkHtml='<div class="ac-shift__seats-check" id="acSC_'+shift.id+'">🔍 Проверяем наличие мест...</div>'+
+          var checkHtml='<div class="ac-shift__seats-check" id="acSC_'+shift.id+'"><img class="ac-icon ac-icon--sm" src="/assets/icons/search.svg" alt="" aria-hidden="true"> Проверяем наличие мест...</div>'+
             '<div class="ac-shift__seats-prog" id="acSP_'+shift.id+'">'+
               '<div class="ac-shift__seats-prog-lbl" id="acSPL_'+shift.id+'"></div>'+
               '<div class="ac-shift__seats-prog-wrap"><div class="ac-shift__seats-prog-fill" id="acSPF_'+shift.id+'"></div></div>'+
@@ -2888,7 +2894,7 @@ AC.metrika = function(goal, params){
 <div id="acSearchBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;padding:20px;">
   <div id="acSearchModal" style="background:#fff;border-radius:22px;padding:28px 24px;width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,0.3);font-family:'Comfortaa',sans-serif;">
     <div style="text-align:center;margin-bottom:20px;">
-      <div style="font-size:28px;margin-bottom:8px;">🔍</div>
+      <div style="font-size:28px;margin-bottom:8px;"><img class="ac-icon ac-icon--lg" src="/assets/icons/search.svg" alt="" aria-hidden="true"></div>
       <div id="acSearchTitle" style="font-size:16px;font-weight:700;color:#111827;">Ищем лучшую цену</div>
     </div>
     <!-- Статус -->
@@ -2970,6 +2976,48 @@ AC.metrika = function(goal, params){
       </article>
     </div>
   </div>
+</section>
+<section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="ai">
+  <div class="ac-site-section__head">
+    <h2>AI-программы</h2>
+    <p>Раздел собран из текущего контента карточки AI-программы без изменений логики верхнего блока.</p>
+  </div>
+  <div class="ac-site-section__inner" id="acFullAi"></div>
+</section>
+<section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="location">
+  <div class="ac-site-section__head">
+    <h2>Локация</h2>
+    <p>Локация, карта и факты из действующего блока «Локация».</p>
+  </div>
+  <div class="ac-site-section__inner" id="acFullLocation"></div>
+</section>
+<section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="photos">
+  <div class="ac-site-section__head">
+    <h2>Фото лагеря</h2>
+    <p>Галерея с текущими категориями и просмотром в lightbox.</p>
+  </div>
+  <div class="ac-site-section__inner" id="acFullPhotos"></div>
+</section>
+<section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="video">
+  <div class="ac-site-section__head">
+    <h2>Видео</h2>
+    <p>Видео-контент на основе текущего видеоблока лагеря.</p>
+  </div>
+  <div class="ac-site-section__inner" id="acFullVideo"></div>
+</section>
+<section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="reviews">
+  <div class="ac-site-section__head">
+    <h2>Отзывы родителей</h2>
+    <p>Те же отзывы и структура слайдера, что в рабочем табе карточки.</p>
+  </div>
+  <div class="ac-site-section__inner" id="acFullReviews"></div>
+</section>
+<section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="team">
+  <div class="ac-site-section__head">
+    <h2>Команда</h2>
+    <p>Состав команды из тех же данных, что используются в существующем слайдере.</p>
+  </div>
+  <div class="ac-site-section__inner" id="acFullTeam"></div>
 </section>
 <section class="ac-site-section ac-site-section--extended ac-anchor-offset" id="faq">
   <div class="ac-site-section__head">
@@ -4525,54 +4573,56 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       '<div class="ac-card-logo-side__text">Мы не играем<br>в игры —<br>мы их создаём</div>';
   }
 
+  var AC_REVIEWS_DATA = [
+    {
+      name: "Сергей Найденов",
+      sub: "папа участника, 13 лет",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80",
+      text: "Сын вернулся из лагеря более собранным и уверенным. Очень зашло, что учеба была через проекты, а не через сухую теорию. Для нас это был лучший формат каникул.",
+      stars: 5
+    },
+    {
+      name: "Natalia Savenkova",
+      sub: "мама участницы, 11 лет",
+      avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&q=80",
+      text: "Это был первый выездной лагерь для дочери, и всё прошло спокойно. Вожатые всегда на связи, программа насыщенная, ребёнок просится обратно уже на следующую смену.",
+      stars: 5
+    },
+    {
+      name: "Виктория",
+      sub: "мама участника, 12 лет",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80",
+      text: "Сильное место и по атмосфере, и по содержанию. Ребёнок не просто отдохнул, а действительно прокачался в IT и стал намного самостоятельнее в бытовых вопросах.",
+      stars: 5
+    },
+    {
+      name: "Отзыв родителя",
+      sub: "из Яндекс Карт",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80",
+      text: "Для нас было важно, чтобы лагерь дал результат, а не просто занял время. Итог: готовые мини-проекты, новые друзья и заметно выросшая мотивация к учебе.",
+      stars: 5
+    },
+    {
+      name: "Отзыв родителя",
+      sub: "из Яндекс Карт",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80",
+      text: "Очень понравился баланс между технологиями, спортом и отдыхом. Организация чёткая, питание хорошее, а главное - ребёнок всё время был вовлечён и доволен.",
+      stars: 5
+    },
+    {
+      name: "Екатерина Л.",
+      sub: "мама участника, 10 лет",
+      avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=300&q=80",
+      text: "Спасибо команде лагеря за внимание к детям и понятную обратную связь для родителей. Ребёнок приехал с идеями для собственных проектов и впервые сам попросил записать его на следующую смену.",
+      stars: 5
+    }
+  ];
+
   function ensureYandexReviewsTab() {
     var host = $("#acLtReviews");
     if (!host) return;
 
-    var reviews = [
-      {
-        name: "Сергей Найденов",
-        sub: "папа участника, 13 лет",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80",
-        text: "Сын вернулся из лагеря более собранным и уверенным. Очень зашло, что учеба была через проекты, а не через сухую теорию. Для нас это был лучший формат каникул.",
-        stars: 5
-      },
-      {
-        name: "Natalia Savenkova",
-        sub: "мама участницы, 11 лет",
-        avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&q=80",
-        text: "Это был первый выездной лагерь для дочери, и всё прошло спокойно. Вожатые всегда на связи, программа насыщенная, ребёнок просится обратно уже на следующую смену.",
-        stars: 5
-      },
-      {
-        name: "Виктория",
-        sub: "мама участника, 12 лет",
-        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80",
-        text: "Сильное место и по атмосфере, и по содержанию. Ребёнок не просто отдохнул, а действительно прокачался в IT и стал намного самостоятельнее в бытовых вопросах.",
-        stars: 5
-      },
-      {
-        name: "Отзыв родителя",
-        sub: "из Яндекс Карт",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80",
-        text: "Для нас было важно, чтобы лагерь дал результат, а не просто занял время. Итог: готовые мини-проекты, новые друзья и заметно выросшая мотивация к учебе.",
-        stars: 5
-      },
-      {
-        name: "Отзыв родителя",
-        sub: "из Яндекс Карт",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80",
-        text: "Очень понравился баланс между технологиями, спортом и отдыхом. Организация чёткая, питание хорошее, а главное - ребёнок всё время был вовлечён и доволен.",
-        stars: 5
-      },
-      {
-        name: "Екатерина Л.",
-        sub: "мама участника, 10 лет",
-        avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=300&q=80",
-        text: "Спасибо команде лагеря за внимание к детям и понятную обратную связь для родителей. Ребёнок приехал с идеями для собственных проектов и впервые сам попросил записать его на следующую смену.",
-        stars: 5
-      }
-    ];
+    var reviews = AC_REVIEWS_DATA.slice();
 
     host.innerHTML = '' +
       '<div class="ac-reviews-modern">' +
@@ -4581,9 +4631,9 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       "  </div>" +
       '  <div class="ac-reviews-modern__nav">' +
       '    <div class="ac-reviews-modern__nav-main">' +
-      '      <button class="ac-reviews-ya__arrow" id="acReviewsPrevMod" type="button" aria-label="Назад">←</button>' +
+      '      <button class="ac-reviews-ya__arrow" id="acReviewsPrevMod" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
       '      <div class="ac-reviews-ya__dots" id="acReviewsDotsMod"></div>' +
-      '      <button class="ac-reviews-ya__arrow" id="acReviewsNextMod" type="button" aria-label="Вперёд">→</button>' +
+      '      <button class="ac-reviews-ya__arrow" id="acReviewsNextMod" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
       '    </div>' +
       '    <a class="ac-reviews-modern__source-link" href="https://yandex.ru/maps/org/aydakemp/35558479035/reviews/?ll=38.874756%2C55.531232&z=7" target="_blank" rel="noopener noreferrer">Смотреть на Яндекс Картах</a>' +
       "  </div>" +
@@ -4698,7 +4748,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     card.style.display = "none";
     card.innerHTML =
       '<div class="ac-book-card__dialog">' +
-      '  <button type="button" class="ac-book-card__close" id="acBookInfoClose" aria-label="Закрыть карточку книги">✕</button>' +
+      '  <button type="button" class="ac-book-card__close" id="acBookInfoClose" aria-label="Закрыть карточку книги"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>' +
       '  <div class="ac-book-card__media">' +
       '    <img class="ac-book-card__cover" src="' + AC_BOOK_INFO.cover + '" alt="' + AC_BOOK_INFO.title + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' +
       "  </div>" +
@@ -4746,6 +4796,291 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
         if (card) card.style.display = "flex";
       };
     }
+  }
+
+  function cloneOverlayContentToSection(sourceId, targetId) {
+    var source = document.getElementById(sourceId);
+    var target = document.getElementById(targetId);
+    if (!source || !target) return;
+    var clone = source.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.style.display = "flex";
+    clone.classList.add("ac-full-overlay-copy");
+    $$("[id]", clone).forEach(function (el) { el.removeAttribute("id"); });
+    target.innerHTML = "";
+    target.appendChild(clone);
+  }
+
+  function renderFullModeReviewsSection() {
+    var host = document.getElementById("acFullReviews");
+    if (!host) return;
+    host.innerHTML = '' +
+      '<div class="ac-reviews-modern ac-full-reviews-modern">' +
+      '  <div class="ac-reviews-modern__viewport">' +
+      '    <div class="ac-reviews-modern__track"></div>' +
+      "  </div>" +
+      '  <div class="ac-reviews-modern__nav">' +
+      '    <div class="ac-reviews-modern__nav-main">' +
+      '      <button class="ac-reviews-ya__arrow" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '      <div class="ac-reviews-ya__dots"></div>' +
+      '      <button class="ac-reviews-ya__arrow" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
+      "    </div>" +
+      '    <a class="ac-reviews-modern__source-link" href="https://yandex.ru/maps/org/aydakemp/35558479035/reviews/?ll=38.874756%2C55.531232&z=7" target="_blank" rel="noopener noreferrer">Смотреть на Яндекс Картах</a>' +
+      "  </div>" +
+      "</div>";
+
+    var root = $(".ac-full-reviews-modern", host);
+    var track = $(".ac-reviews-modern__track", root);
+    var dots = $(".ac-reviews-ya__dots", root);
+    var prev = $(".ac-reviews-ya__arrow:first-of-type", root);
+    var next = $(".ac-reviews-ya__arrow:last-of-type", root);
+    if (!root || !track || !dots || !prev || !next) return;
+
+    var index = 0;
+    var total = 1;
+    var resizeTimer = null;
+    function getCardsPerSlide() {
+      var w = window.innerWidth || 1280;
+      if (w >= 1200) return 3;
+      if (w >= 760) return 2;
+      return 1;
+    }
+    function chunk(arr, size) {
+      var out = [];
+      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+      return out;
+    }
+    function renderSlides() {
+      var slides = chunk(AC_REVIEWS_DATA, getCardsPerSlide());
+      track.innerHTML = "";
+      dots.innerHTML = "";
+      slides.forEach(function (group, idx) {
+        var slide = document.createElement("div");
+        slide.className = "ac-reviews-modern__slide";
+        group.forEach(function (r) {
+          var card = document.createElement("div");
+          card.className = "ac-review-modern-card";
+          var quoteClass = "ac-review-modern-card__quote";
+          var len = (r.text || "").length;
+          if (len > 210) quoteClass += " is-xl";
+          else if (len > 165) quoteClass += " is-lg";
+          card.innerHTML =
+            '<img class="ac-review-modern-card__avatar" src="' + r.avatar + '" alt="' + r.name + '">' +
+            '<div class="' + quoteClass + '">“ ' + r.text + ' ”</div>' +
+            '<div class="ac-review-modern-card__divider"></div>' +
+            '<div class="ac-review-modern-card__name">' + r.name + "</div>" +
+            '<div class="ac-review-modern-card__sub">' + r.sub + "</div>" +
+            '<div class="ac-review-modern-card__stars">★★★★★</div>';
+          slide.appendChild(card);
+        });
+        track.appendChild(slide);
+        var dot = document.createElement("span");
+        dot.className = "ac-reviews-ya__dot" + (idx === 0 ? " is-active" : "");
+        dots.appendChild(dot);
+      });
+      total = Math.max(1, slides.length);
+      if (index >= total) index = total - 1;
+      update();
+    }
+    function update() {
+      track.style.transform = "translateX(" + (-100 * index) + "%)";
+      $$(".ac-reviews-ya__dot", dots).forEach(function (d, i) { d.classList.toggle("is-active", i === index); });
+    }
+    prev.onclick = function () { index = (index - 1 + total) % total; update(); };
+    next.onclick = function () { index = (index + 1) % total; update(); };
+    renderSlides();
+
+    if (!host._fullReviewsResizeBound) {
+      host._fullReviewsResizeBound = true;
+      window.addEventListener("resize", function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderSlides, 120);
+      });
+    }
+  }
+
+  function renderFullModeTeamSection() {
+    var host = document.getElementById("acFullTeam");
+    if (!host) return;
+    var cards = [];
+    if (Array.isArray(window.__acTeamCards) && window.__acTeamCards.length) {
+      cards = window.__acTeamCards.slice();
+    } else {
+      cards = $$(".ac-team-slider__card", document).map(function (card) {
+        var img = $(".ac-team-slider__img", card);
+        var nameEl = $(".ac-team-slider__name", card);
+        var roleEl = $(".ac-team-slider__role", card);
+        return {
+          img: img ? (img.getAttribute("src") || "") : "",
+          name: nameEl ? (nameEl.textContent || "").trim() : "",
+          role: roleEl ? (roleEl.textContent || "").trim() : ""
+        };
+      }).filter(function (x) { return x.name; });
+    }
+    if (!cards.length) return;
+
+    host.innerHTML = '' +
+      '<div class="ac-team-slider ac-full-team-slider">' +
+      '  <div class="ac-team-slider__viewport">' +
+      '    <div class="ac-team-slider__track"></div>' +
+      "  </div>" +
+      '  <div class="ac-team-slider__nav">' +
+      '    <button class="ac-team-slider__arrow" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '    <button class="ac-team-slider__arrow" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
+      "  </div>" +
+      "</div>";
+
+    var root = $(".ac-full-team-slider", host);
+    var track = $(".ac-team-slider__track", root);
+    var prev = $(".ac-team-slider__arrow:first-of-type", root);
+    var next = $(".ac-team-slider__arrow:last-of-type", root);
+    if (!track || !prev || !next) return;
+    var index = 0;
+    var total = 1;
+    var resizeTimer = null;
+    function getCardsPerSlide() {
+      var w = window.innerWidth || 1280;
+      if (w >= 1200) return 3;
+      if (w >= 760) return 2;
+      return 1;
+    }
+    function chunk(arr, size) {
+      var out = [];
+      for (var i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+      return out;
+    }
+    function renderSlides() {
+      var slides = chunk(cards, getCardsPerSlide());
+      track.innerHTML = "";
+      slides.forEach(function (group) {
+        var slide = document.createElement("div");
+        slide.className = "ac-team-slider__slide";
+        group.forEach(function (p) {
+          var card = document.createElement("article");
+          card.className = "ac-team-slider__card";
+          var mediaHtml = p.img
+            ? '<img class="ac-team-slider__img" src="' + p.img + '" alt="' + (p.name || "Команда AidaCamp") + '">'
+            : '<div class="ac-team-slider__img ac-team-slider__img--placeholder">' + getTeamCardInitials(p.name) + "</div>";
+          card.innerHTML =
+            mediaHtml +
+            '<div class="ac-team-slider__name">' + (p.name || "Команда AidaCamp") + "</div>" +
+            '<div class="ac-team-slider__role">' + (p.role || "Преподаватель") + "</div>";
+          slide.appendChild(card);
+        });
+        track.appendChild(slide);
+      });
+      total = Math.max(1, slides.length);
+      if (index >= total) index = total - 1;
+      update();
+    }
+    function update() { track.style.transform = "translateX(" + (-100 * index) + "%)"; }
+    prev.onclick = function () { index = (index - 1 + total) % total; update(); };
+    next.onclick = function () { index = (index + 1) % total; update(); };
+    renderSlides();
+
+    if (!host._fullTeamResizeBound) {
+      host._fullTeamResizeBound = true;
+      window.addEventListener("resize", function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderSlides, 120);
+      });
+    }
+  }
+
+  function renderFullModePhotosSection() {
+    var host = document.getElementById("acFullPhotos");
+    var mediaMap = window.__acMediaMap;
+    if (!host || !mediaMap || !mediaMap.photos) return;
+    host.innerHTML =
+      '<div class="ac-left-photo-cats ac-full-photo-cats"></div>' +
+      '<div class="ac-left-photo-grid ac-full-photo-grid"></div>';
+    var cats = $(".ac-full-photo-cats", host);
+    var grid = $(".ac-full-photo-grid", host);
+    if (!cats || !grid) return;
+    var catList = [
+      { key: "all", label: "Все" },
+      { key: "food", label: "Еда" },
+      { key: "sport", label: "Спорт" },
+      { key: "pool", label: "Бассейн" },
+      { key: "study", label: "Учёба" }
+    ];
+    cats.innerHTML = catList.map(function (c, i) {
+      return '<button class="ac-left-photo-cat' + (i === 0 ? " is-active" : "") + '" data-lcat="' + c.key + '">' + c.label + "</button>";
+    }).join("");
+    function render(cat) {
+      var list = mediaMap.photos[cat] || [];
+      grid.innerHTML = list.map(function (item, i) {
+        return '<div class="ac-left-photo-item" data-photo-index="' + i + '"><img src="' + item.src + '" alt="' + (item.caption || "AidaCamp media") + '"></div>';
+      }).join("");
+      $$(".ac-left-photo-cat", cats).forEach(function (btn) { btn.classList.toggle("is-active", btn.dataset.lcat === cat); });
+      grid.onclick = function (e) {
+        var item = e.target.closest(".ac-left-photo-item");
+        if (!item) return;
+        var i = Number(item.getAttribute("data-photo-index") || "0");
+        openMediaLightbox(list, i);
+      };
+    }
+    cats.onclick = function (e) {
+      var btn = e.target.closest(".ac-left-photo-cat");
+      if (!btn) return;
+      render(btn.getAttribute("data-lcat") || "all");
+    };
+    render("all");
+  }
+
+  function renderFullModeVideoSection() {
+    var host = document.getElementById("acFullVideo");
+    if (!host) return;
+    var items = AC_DEV_RUTUBE_VIDEO_FEED_ENABLED
+      ? AC_DEV_RUTUBE_VIDEOS.filter(function (item) { return rutubeEmbedUrl(item.url); })
+      : (window.__acMediaMap && window.__acMediaMap.videos ? window.__acMediaMap.videos.slice() : []);
+    if (!items.length) return;
+
+    host.innerHTML =
+      '<div class="ac-left-video-grid ac-full-video-grid"></div>';
+    var grid = $(".ac-full-video-grid", host);
+    if (!grid) return;
+
+    if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
+      grid.innerHTML = items.map(function (item, i) {
+        var poster = rutubeThumbnailUrl(item.url);
+        return '' +
+          '<button type="button" class="ac-left-video-item ac-left-video-item--rutube" data-video-index="' + i + '">' +
+          '  <div class="ac-left-video-item__poster">' +
+          (poster ? '<img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' : "") +
+          '    <div class="ac-left-video-item__poster-shade"></div>' +
+          '    <div class="ac-left-video-item__play"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div>' +
+          '    <div class="ac-left-video-item__caption">' + (item.title || "Видео") + "</div>" +
+          "  </div>" +
+          "</button>";
+      }).join("");
+      grid.onclick = function (e) {
+        var item = e.target.closest(".ac-left-video-item");
+        if (!item) return;
+        var i = Number(item.getAttribute("data-video-index") || "0");
+        openRutubeVideoLightbox(items, i);
+      };
+      return;
+    }
+
+    grid.innerHTML = items.map(function (item, i) {
+      return '<div class="ac-left-video-item" data-video-index="' + i + '"><video src="' + item.src + '" muted loop playsinline preload="metadata" controls aria-label="Видео: ' + (item.caption || "AidaCamp") + '"></video></div>';
+    }).join("");
+    grid.onclick = function (e) {
+      var item = e.target.closest(".ac-left-video-item");
+      if (!item) return;
+      var i = Number(item.getAttribute("data-video-index") || "0");
+      openMediaLightbox(items, i);
+    };
+  }
+
+  function renderFullModeExtension() {
+    cloneOverlayContentToSection("acLtAiprogram", "acFullAi");
+    cloneOverlayContentToSection("acLtPlace", "acFullLocation");
+    renderFullModePhotosSection();
+    renderFullModeVideoSection();
+    renderFullModeReviewsSection();
+    renderFullModeTeamSection();
   }
 
   function getSectionFromAnchor(doc, names) {
@@ -4947,9 +5282,9 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       '    <div class="ac-left-video-carousel__track" id="acRutubeTrack"></div>' +
       "  </div>" +
       '  <div class="ac-left-video-carousel__nav">' +
-      '    <button class="ac-left-video-carousel__arrow" id="acRutubePrev" type="button" aria-label="Назад">←</button>' +
+      '    <button class="ac-left-video-carousel__arrow" id="acRutubePrev" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
       '    <div class="ac-left-video-carousel__dots" id="acRutubeDots"></div>' +
-      '    <button class="ac-left-video-carousel__arrow" id="acRutubeNext" type="button" aria-label="Вперёд">→</button>' +
+      '    <button class="ac-left-video-carousel__arrow" id="acRutubeNext" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
       "  </div>" +
       "</div>";
 
@@ -4974,7 +5309,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
           '<div class="ac-left-video-item__poster">' +
           (poster ? '  <img class="ac-left-video-item__poster-img" src="' + poster + '" alt="' + (item.title || "Видео") + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">' : "") +
           '  <div class="ac-left-video-item__poster-shade"></div>' +
-          '  <div class="ac-left-video-item__play">▶</div>' +
+          '  <div class="ac-left-video-item__play"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div>' +
           '  <div class="ac-left-video-item__caption">' + (item.title || "Видео") + "</div>" +
           "</div>" +
           "";
@@ -5065,8 +5400,8 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       '    <div class="ac-team-slider__track" id="acTeamTrackMod"></div>' +
       "  </div>" +
       '  <div class="ac-team-slider__nav">' +
-      '    <button class="ac-team-slider__arrow" id="acTeamPrevMod" type="button" aria-label="Назад">←</button>' +
-      '    <button class="ac-team-slider__arrow" id="acTeamNextMod" type="button" aria-label="Вперёд">→</button>' +
+      '    <button class="ac-team-slider__arrow" id="acTeamPrevMod" type="button" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
+      '    <button class="ac-team-slider__arrow" id="acTeamNextMod" type="button" aria-label="Вперёд"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>' +
       "  </div>" +
       "</div>";
 
@@ -5306,10 +5641,10 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     el.id = "acMediaLightbox";
     el.className = "ac-media-lightbox";
     el.innerHTML =
-      '<button class="ac-media-lightbox__close" aria-label="Закрыть">✕</button>' +
-      '<button class="ac-media-lightbox__nav ac-media-lightbox__nav--prev" aria-label="Назад">←</button>' +
+      '<button class="ac-media-lightbox__close" aria-label="Закрыть"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>' +
+      '<button class="ac-media-lightbox__nav ac-media-lightbox__nav--prev" aria-label="Назад"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true"></button>' +
       '<div class="ac-media-lightbox__stage"></div>' +
-      '<button class="ac-media-lightbox__nav ac-media-lightbox__nav--next" aria-label="Вперед">→</button>';
+      '<button class="ac-media-lightbox__nav ac-media-lightbox__nav--next" aria-label="Вперед"><img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true"></button>';
     document.body.appendChild(el);
     return el;
   }
@@ -5460,9 +5795,9 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       videoHost.innerHTML = '<h3 style="margin:0 0 8px;font-size:14px">🎬 Видео из лагеря</h3><div style="font-size:12px;color:#9ca3af">Видео скоро появятся</div>';
     } else if (videoGrid && !videos.length) {
       videoGrid.innerHTML =
-        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon">▶</div><div class="ac-left-video-ph__text">Скоро</div></div>' +
-        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon">▶</div><div class="ac-left-video-ph__text">Скоро</div></div>' +
-        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon">▶</div><div class="ac-left-video-ph__text">Скоро</div></div>';
+        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div><div class="ac-left-video-ph__text">Скоро</div></div>' +
+        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div><div class="ac-left-video-ph__text">Скоро</div></div>' +
+        '<div class="ac-left-video-ph"><div class="ac-left-video-ph__icon"><img class="ac-icon ac-icon--lg" src="/assets/icons/play.svg" alt="" aria-hidden="true"></div><div class="ac-left-video-ph__text">Скоро</div></div>';
     }
 
     applyHeroBackgroundRotation(mediaMap.hero || []);
@@ -5618,7 +5953,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
       '<div style="width:min(100%,380px);background:#fff;border-radius:16px;padding:16px;box-shadow:0 20px 40px rgba(0,0,0,.28)">' +
       '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
       '    <strong id="acModCalTitle">Календарь смены</strong>' +
-      '    <button id="acModCalClose" style="border:none;background:#f3f4f6;border-radius:8px;padding:4px 8px;cursor:pointer">✕</button>' +
+      '    <button id="acModCalClose" style="border:none;background:#f3f4f6;border-radius:8px;padding:4px 8px;cursor:pointer"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>' +
       "  </div>" +
       '  <div id="acModCalMonth" style="font-size:12px;color:#ff7700;font-weight:700;margin-bottom:8px"></div>' +
       '  <div id="acModCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px"></div>' +
@@ -5782,7 +6117,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     view.innerHTML =
       '<div class="ac-shifts-calendar__toolbar">' +
       '  <div class="ac-shifts-calendar__toolbar-title">Календарь смен</div>' +
-      '  <button type="button" class="ac-shifts-calendar__close" id="acShiftsCalendarClose" aria-label="Вернуться к карточкам смен">✕</button>' +
+      '  <button type="button" class="ac-shifts-calendar__close" id="acShiftsCalendarClose" aria-label="Вернуться к карточкам смен"><img class="ac-icon ac-icon--sm" src="/assets/icons/close.svg" alt="" aria-hidden="true"></button>' +
       "</div>";
     var closeBtn = $("#acShiftsCalendarClose", view);
     if (closeBtn) {
@@ -6616,6 +6951,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     ensureGalleryAltAndVideo();
     // Prefer build-time manifest; fallback to runtime parser.
     if (!loadMediaFromManifest()) loadMediaByCaption();
+    renderFullModeExtension();
     enhanceShifts();
     recoverEmptyShifts("init");
     scheduleShiftsHardLock("init");
@@ -6678,6 +7014,8 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     setTimeout(ensureYandexReviewsTab, 2200);
     setTimeout(ensureTeamCarousel, 1000);
     setTimeout(ensureTeamCarousel, 2400);
+    setTimeout(renderFullModeExtension, 1000);
+    setTimeout(renderFullModeExtension, 2400);
     if (AC_DEV_REMOTE_TEAM_REFRESH_ENABLED) {
       setTimeout(function () { refreshTeamFromRemote(true); }, 1500);
       setTimeout(function () { refreshTeamFromRemote(true); }, 5000);
@@ -6687,6 +7025,7 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     if (AC_DEV_RUTUBE_VIDEO_FEED_ENABLED) {
       setTimeout(renderRutubeVideos, 400);
       setTimeout(renderRutubeVideos, 1600);
+      setTimeout(renderFullModeExtension, 1800);
     }
     setTimeout(ensureLeftTabsRouting, 500);
     setTimeout(function () { recoverEmptyShifts("t+500"); }, 500);
@@ -6746,7 +7085,6 @@ body.ac-compact-mode .ac-view-switch__track{background:#d9e0ea!important;}
     init();
   }
 })();
-
 
 </script>
 <!-- AC_BUILD_SCRIPT_END -->
@@ -8748,6 +9086,99 @@ html body .ac-right #acStep3 .ac-shift.is-selected.has-price-visible .ac-shift__
   margin-top: 10px !important;
 }
 
+.ac-icon{
+  width:20px;
+  height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  color:currentColor;
+  flex:0 0 auto;
+}
+
+.ac-icon--sm{width:16px;height:16px;}
+.ac-icon--lg{width:24px;height:24px;}
+
+.ac-icon-wrap{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+:root {
+  --ac-icon-size: 20px;
+}
+
+.ac-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.ac-icon--sm {
+  width: 16px;
+  height: 16px;
+}
+
+.ac-icon--lg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Full-mode extension blocks (below hero only). */
+#acFullAi,
+#acFullLocation,
+#acFullPhotos,
+#acFullVideo,
+#acFullReviews,
+#acFullTeam {
+  width: 100%;
+}
+
+.ac-full-overlay-copy {
+  position: static !important;
+  inset: auto !important;
+  display: flex !important;
+  width: 100%;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.ac-full-overlay-copy .ac-left-map {
+  min-height: 280px;
+}
+
+#acFullPhotos .ac-left-photo-grid {
+  gap: 10px;
+}
+
+#acFullVideo .ac-full-video-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#acFullReviews .ac-review-modern-card,
+#acFullTeam .ac-team-slider__card {
+  min-height: 100%;
+}
+
+@media (max-width: 960px) {
+  #acFullVideo .ac-full-video-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  #acFullVideo .ac-full-video-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
 </style>
 <!-- AC_BUILD_STYLE_END -->

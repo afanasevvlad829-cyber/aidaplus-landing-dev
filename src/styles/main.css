@@ -2029,3 +2029,58 @@ html body .ac-right #acStep3 .ac-shift.is-selected.has-price-visible .ac-shift__
   width: 24px;
   height: 24px;
 }
+
+/* Full-mode extension blocks (below hero only). */
+#acFullAi,
+#acFullLocation,
+#acFullPhotos,
+#acFullVideo,
+#acFullReviews,
+#acFullTeam {
+  width: 100%;
+}
+
+.ac-full-overlay-copy {
+  position: static !important;
+  inset: auto !important;
+  display: flex !important;
+  width: 100%;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.ac-full-overlay-copy .ac-left-map {
+  min-height: 280px;
+}
+
+#acFullPhotos .ac-left-photo-grid {
+  gap: 10px;
+}
+
+#acFullVideo .ac-full-video-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#acFullReviews .ac-review-modern-card,
+#acFullTeam .ac-team-slider__card {
+  min-height: 100%;
+}
+
+@media (max-width: 960px) {
+  #acFullVideo .ac-full-video-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  #acFullVideo .ac-full-video-grid {
+    grid-template-columns: 1fr;
+  }
+}
