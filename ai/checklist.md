@@ -352,3 +352,59 @@
 - [x] `switch` остаётся в одном постоянном контейнере и не исчезает из-за relocation.
 - [x] Выполнен `bash build.sh`.
 - [x] `dist/index.html` синхронизирован.
+
+---
+
+# Checklist — Task 16
+
+- [x] Dropdown `Связаться с нами` раскрывается визуально полностью.
+- [x] В закрытом состоянии body скрыт:
+  - [x] `max-height: 0`
+  - [x] `opacity: 0`
+  - [x] `pointer-events: none`
+- [x] В открытом состоянии (`.is-open`) body раскрыт:
+  - [x] `max-height` увеличен до рабочего значения
+  - [x] `opacity: 1`
+  - [x] `visibility: visible`
+  - [x] `pointer-events: auto`
+- [x] Добавлен safeguard от обрезания в open state:
+  - [x] `.ac-hero-contact-card.is-open { overflow: visible !important; }`
+- [x] JS-логика toggle/close не ломалась:
+  - [x] `.is-open` переключается
+  - [x] `aria-expanded` обновляется
+  - [x] клик вне карточки закрывает dropdown
+  - [x] клики по ссылкам внутри не блокируются
+- [x] Hero layout / menu / booking / секции не изменены.
+- [x] Выполнен `bash build.sh`.
+- [x] `dist/index.html` синхронизирован.
+
+---
+
+# Checklist — Task 17
+
+- [x] Master-логика режима остаётся единой и предсказуемой:
+  - [x] `ac-compact-mode` переключается через `applyMode`.
+  - [x] `mode-compact/mode-full` синхронизируются стабильно.
+  - [x] не зафиксировано новых конфликтующих переносов `switch`.
+- [x] `switch` живёт в постоянном контейнере (`.ac-card__topbar`) и не переносится по DOM.
+- [x] Перемещается только `#acLeftTabs`:
+  - [x] compact -> внутри hero
+  - [x] full -> `#acFullNavMenuSlot`
+  - [x] без клонирования, один DOM-элемент
+- [x] Для `switch` не используются `appendChild/insertBefore/prepend` паттерны.
+- [x] Full-mode menu опущено ниже и визуально отделено:
+  - [x] `body.mode-full .ac-full-nav-zone { padding: 18px 0; }`
+  - [x] mobile/tablet: `padding: 16px 0`
+  - [x] конечная позиция задаётся `.ac-full-nav-zone`.
+  - [x] добавлен safeguard `transform: none !important` для floating menu, чтобы убрать залипание финальной transform-позиции.
+- [x] Contact dropdown раскрывается полностью и не обрезается:
+  - [x] body раскрывается через `max-height` + `opacity/visibility/pointer-events`.
+  - [x] ссылки кликабельны.
+  - [x] outside-click закрытие работает.
+- [x] Не затронуты:
+  - [x] reviews/team/video/photo carousel/FAQ
+  - [x] contact links data/socials links data
+  - [x] booking logic
+  - [x] hero content/grid
+- [x] Выполнен `bash build.sh`.
+- [x] `dist/index.html` синхронизирован.

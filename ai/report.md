@@ -501,3 +501,76 @@
 
 ### Build
 - Выполнен `bash build.sh`, `dist/index.html` синхронизирован.
+
+---
+
+## Task 16
+
+### Задача
+Исправить визуальное раскрытие dropdown `Связаться с нами`: контакты есть в DOM, но body обрезался и не раскрывался визуально.
+
+### Статус
+Выполнено.
+
+### Что мешало раскрытию (CSS)
+- В закрытом состоянии dropdown-body не имел явного контролируемого `max-height`, а в окружении с конфликтующими патч-стилями это приводило к визуальному обрезанию.
+- При открытии не было жёсткого гарантированного правила для полной видимости через `max-height`, из-за чего блок мог оставаться «сжатым».
+
+### Что изменено
+- В `src/styles/main.css` для `.ac-hero-contact-card__body`:
+  - добавлен `max-height: 0` в закрытом состоянии;
+  - добавлен transition по `max-height` (плюс существующие `opacity/transform/visibility`).
+- Для `.ac-hero-contact-card.is-open .ac-hero-contact-card__body`:
+  - добавлен `max-height: 260px`;
+  - сохранены `opacity:1`, `visibility:visible`, `pointer-events:auto`.
+- Добавлен safeguard:
+  - `.ac-hero-contact-card.is-open { overflow: visible !important; }`
+  - чтобы открытый dropdown не резался конфликтующими правилами.
+
+### Как теперь работает `.is-open`
+- Кнопка toggle в JS (без изменений бизнес-логики) переключает `.is-open` и `aria-expanded`.
+- В закрытом состоянии body скрыт (`max-height:0`, `opacity:0`, `pointer-events:none`).
+- В открытом состоянии body раскрывается полностью (`max-height:260px`) и ссылки кликабельны.
+- Клик вне карточки закрывает dropdown, клики внутри по ссылкам не блокируются.
+
+### Build
+- Выполнен `bash build.sh`, `dist/index.html` синхронизирован.
+
+---
+
+## Task 17
+
+### Задача
+Финальный polishing для full/compact navigation и contact dropdown: стабилизировать одну master-логику режима, оставить `switch` в постоянном месте, опустить full-mode menu в отдельной верхней зоне и дофиксить визуальное раскрытие dropdown.
+
+### Статус
+Выполнено.
+
+### Что сделано
+- Режим и switch:
+  - подтверждена единая master-логика режима: переключение идёт через `applyMode()` (inline) + реакцию `src/scripts/main.js` (`syncFromBody()`/`MutationObserver`);
+  - `switch` остаётся в постоянном контейнере (`.ac-card__topbar`) и не переносится по DOM;
+  - перемещается только `#acLeftTabs` (hero slot ↔ `#acFullNavMenuSlot`) с FLIP-анимацией.
+- Full mode menu position:
+  - в `src/styles/main.css` увеличены вертикальные отступы зоны:
+    - `body.mode-full .ac-full-nav-zone { padding: 18px 0; }`
+    - на `<=980px`: `padding: 16px 0;`
+  - для floating-меню добавлен safeguard:
+    - `body.mode-full #acLeftTabs.ac-left-tabs--floating-mode { transform: none !important; }`
+  - итоговая позиция меню теперь задаётся контейнером `.ac-full-nav-zone` (а не остаточным transform).
+- Contact dropdown:
+  - `ac-hero-contact-card__body` переведён на стабильное раскрытие под head-блоком:
+    - `position: static`, `margin: 0 10px 10px`, `max-height: 0` (closed),
+    - `max-height: 260px` в `.is-open`,
+    - сохранены `opacity/visibility/pointer-events` переключения.
+  - ссылки остаются кликабельными; outside click/aria-toggle логика в JS сохранена.
+
+### Что именно было отключено/убрано ранее и остаётся в силе
+- Убраны паттерны перемещения `switch`:
+  - `tabs.appendChild(sw)`
+  - `menu.appendChild(sw)`
+  - `right.appendChild(sw)`
+  - и аналогичные `insertBefore/prepend` для `switch`.
+
+### Build
+- Выполнен `bash build.sh`, `dist/index.html` синхронизирован.
