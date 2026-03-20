@@ -405,6 +405,8 @@
     team: "team"
   };
 
+  var AGE_SLIDER_POINTS = [9, 11, 13];
+
   var state = {
     mode: getInitialMode(),
     activeTab: "info",
@@ -488,6 +490,17 @@
       }
     }
     return AGE_PROFILES[0];
+  }
+
+  function sliderValueToAge(sliderValue) {
+    var index = clamp(Math.round(sliderValue), 0, AGE_SLIDER_POINTS.length - 1);
+    return AGE_SLIDER_POINTS[index];
+  }
+
+  function ageToSliderValue(age) {
+    if (age <= 9) return 0;
+    if (age <= 12) return 1;
+    return 2;
   }
 
   function findShiftById(shiftId) {
@@ -879,8 +892,9 @@
     if (subtitle) subtitle.textContent = profile.subtitle;
     if (progress) progress.textContent = profile.progress;
     if (ageText) ageText.textContent = profile.ageText;
-    if (ageInput && Number(ageInput.value) !== state.age) {
-      ageInput.value = String(state.age);
+    var sliderValue = ageToSliderValue(state.age);
+    if (ageInput && Number(ageInput.value) !== sliderValue) {
+      ageInput.value = String(sliderValue);
     }
 
     if (benefits) {
@@ -1661,13 +1675,52 @@
     var ageInput = event.target.closest("#acAgeInput");
     if (!ageInput) return;
 
-    setAge(Number(ageInput.value));
+    setAge(sliderValueToAge(Number(ageInput.value)));
   }
 
   function handleKeydown(event) {
     if (event.key === "Escape") {
       closeAllOverlays();
     }
+  }
+
+  function setupAuditToggleButton() {
+    var existing = document.getElementById("acAuditToggle");
+    if (existing) return;
+
+    var button = document.createElement("button");
+    button.id = "acAuditToggle";
+    button.className = "ac-audit-toggle-btn";
+    button.type = "button";
+    button.setAttribute("aria-label", "Переключить audit режим");
+
+    var isAudit = false;
+    try {
+      isAudit = (window.location.search || "").indexOf("audit=1") !== -1;
+    } catch (_err) {
+      isAudit = false;
+    }
+
+    button.textContent = isAudit ? "Audit OFF" : "Audit ON";
+
+    button.addEventListener("click", function () {
+      var url;
+      try {
+        url = new URL(window.location.href);
+      } catch (_err) {
+        return;
+      }
+
+      if (url.searchParams.get("audit") === "1") {
+        url.searchParams.delete("audit");
+      } else {
+        url.searchParams.set("audit", "1");
+      }
+
+      window.location.href = url.toString();
+    });
+
+    document.body.appendChild(button);
   }
 
   function enableAuditMode() {
@@ -1710,6 +1763,7 @@
       { group: "hero", selector: "#acHeroBenefits li", label: "Hero Left: пункт преимуществ", all: true },
       { group: "hero", selector: "#acAgeLabel", label: "Hero Left: лейбл возраста" },
       { group: "hero", selector: "#acAgeText", label: "Hero Left: текст возраста" },
+      { group: "hero", selector: ".ac-age-bar", label: "Hero Left: контейнер слайдера" },
       { group: "hero", selector: "#acAgeInput", label: "Hero Left: возраст слайдер" },
       { group: "hero", selector: ".ac-age-marks", label: "Hero Left: шкала возрастов" },
       { group: "hero", selector: ".ac-social-row a", label: "Hero Left: соцкнопка", all: true },
@@ -1835,6 +1889,14 @@
         el.setAttribute("data-audit-group", target.group);
         el.style.setProperty("--ac-audit-badge-x", String(3 + ((order - 1) % 3) * 24) + "px");
         el.style.setProperty("--ac-audit-badge-y", String(3 + Math.floor(((order - 1) % 6) / 3) * 24) + "px");
+        if (target.selector === ".ac-age-bar") {
+          el.style.setProperty("--ac-audit-badge-x", "6px");
+          el.style.setProperty("--ac-audit-badge-y", "-12px");
+        }
+        if (target.selector === "#acAgeInput") {
+          el.style.setProperty("--ac-audit-badge-x", "2px");
+          el.style.setProperty("--ac-audit-badge-y", "-18px");
+        }
         var badge = document.createElement("button");
         badge.type = "button";
         badge.className = "ac-audit-badge";
@@ -2748,6 +2810,7 @@
     document.addEventListener("input", handleInput);
     document.addEventListener("keydown", handleKeydown);
 
+    setupAuditToggleButton();
     enableAuditMode();
   }
 

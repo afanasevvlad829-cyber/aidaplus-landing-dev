@@ -787,6 +787,7 @@ body[data-mode="full"] .ac-compact-nav {
   grid-template-columns: var(--size-36) 1fr auto;
   gap: var(--space-10);
   align-items: center;
+  padding: 0 var(--space-lg);
 }
 
 .ac-round-btn {
@@ -916,6 +917,9 @@ body[data-mode="compact"] .ac-hero-overlay.is-intro .ac-funnel-body {
   backdrop-filter: blur(8px);
   text-align: center;
   padding: var(--space-2xl) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 body[data-mode="compact"] .ac-hero-overlay.is-intro h2 {
@@ -944,6 +948,12 @@ body[data-mode="compact"] .ac-hero-overlay.is-intro p {
 
 body[data-mode="compact"] .ac-hero-overlay.is-intro .ac-hero-grid {
   display: none;
+}
+
+body[data-mode="compact"] .ac-hero-overlay.is-intro .ac-funnel-controls {
+  width: min(430px, calc(100% - var(--space-4xl)));
+  margin: 0 auto;
+  padding: 0;
 }
 
 .ac-section {
@@ -1636,6 +1646,28 @@ body.ac-audit-mode .ac-audit-target--hidden .ac-audit-badge {
   border-radius: 12px;
   padding: 10px;
   backdrop-filter: blur(8px);
+}
+
+.ac-audit-toggle-btn {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 9999;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(14, 22, 36, 0.92);
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.ac-audit-toggle-btn:hover {
+  border-color: rgba(255, 136, 0, 0.9);
+  background: rgba(255, 136, 0, 0.28);
 }
 
 .ac-audit-panel__toolbar {
