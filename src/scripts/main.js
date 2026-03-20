@@ -1763,15 +1763,8 @@ var HERO_SLIDESHOW_INTERVAL_MS = 4200;
     var compactNav = document.getElementById("acCompactNav");
 
     if (!topNav || !compactNav) return;
-
-    if (state.mode === "full") {
-      topNav.innerHTML = '<div class="ac-container">' + buildMenuItems("full") + "</div>";
-      compactNav.innerHTML = "";
-      return;
-    }
-
-    compactNav.innerHTML = buildMenuItems("compact");
-    topNav.innerHTML = "";
+    topNav.innerHTML = '<div class="ac-container">' + buildMenuItems("full") + "</div>";
+    compactNav.innerHTML = "";
   }
 
   function renderInfoCard() {
