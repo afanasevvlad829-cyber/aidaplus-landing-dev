@@ -1487,6 +1487,14 @@
       var shiftIdx = SHIFTS.indexOf(shift);
       var meta = getShiftPriceMeta(shift, shiftIdx);
       var promoView = getShiftPromoView(shift.id, meta);
+      var actionClass = "ac-shift-price-btn";
+      if (promoView.status === "active") {
+        actionClass += " is-fixed";
+      } else if (promoView.stage >= 2) {
+        actionClass += " is-fix";
+      } else if (promoView.stage === 1) {
+        actionClass += " is-upgrade";
+      }
 
       listHtml +=
         '<article class="ac-shift-item' +
@@ -1509,7 +1517,7 @@
         '<div class="ac-shift-item__seats">Осталось ' + meta.seats + " мест</div>" +
         "</div>" +
         '<div class="ac-shift-item__actions">' +
-        '<button class="ac-primary-btn ac-shift-price-btn" type="button" data-action="shift-price" data-shift-id="' + shift.id + '">' +
+        '<button class="ac-primary-btn ' + actionClass + '" type="button" data-action="shift-price" data-shift-id="' + shift.id + '">' +
         promoView.actionText +
         "</button>" +
         "</div>" +
