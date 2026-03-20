@@ -7,6 +7,7 @@
     allowUiActions: false,
     allowDrag: true,
     snapGrid: 4,
+    normalizeToParent: true,
     lockUntilAge: true,
     ageSelected: false,
     stageSync: null
@@ -1849,6 +1850,7 @@
     auditRuntime.allowUiActions = false;
     auditRuntime.allowDrag = true;
     auditRuntime.snapGrid = 4;
+    auditRuntime.normalizeToParent = true;
     auditRuntime.lockUntilAge = true;
     auditRuntime.ageSelected = false;
 
@@ -1875,9 +1877,12 @@
       '<button class="ac-audit-status is-on" type="button" data-action="audit-ui-toggle">UI OFF</button>' +
       '<button class="ac-audit-status is-on" type="button" data-action="audit-drag-toggle">DRAG ON</button>' +
       '<button class="ac-audit-status is-on" type="button" data-action="audit-snap-toggle">SNAP 4PX</button>' +
+      '<button class="ac-audit-status is-on" type="button" data-action="audit-normalize-toggle">NORM PARENT ON</button>' +
+      '<button class="ac-audit-status" type="button" data-action="audit-apply-confirmed">APPLY CONFIRMED</button>' +
       "</div>" +
       '<div class="ac-audit-control-panel__sub">Перетащите бейдж блока, затем отметьте статус привязки.</div>' +
-      '<ol class="ac-audit-control-panel__moved"></ol>';
+      '<ol class="ac-audit-control-panel__moved"></ol>' +
+      '<pre class="ac-audit-control-panel__apply-log">Нет подтвержденных правок</pre>';
 
     var stagePanel = document.createElement("aside");
     stagePanel.className = "ac-audit-stage-panel";
@@ -1959,6 +1964,51 @@
       };
     }
 
+    function getNodeSelector(node) {
+      if (!node) return "unknown";
+      if (node.id) return "#" + node.id;
+      if (node.classList && node.classList.length) return "." + node.classList[0];
+      return String(node.tagName || "node").toLowerCase();
+    }
+
+    function readParentAnchor(item) {
+      var nodeRect = item.node.getBoundingClientRect();
+      var parent = item.node.parentElement;
+      if (!parent) {
+        return {
+          parentSelector: "document",
+          anchorX: "left",
+          anchorY: "top",
+          left: Math.round(nodeRect.left),
+          top: Math.round(nodeRect.top),
+          right: Math.round(window.innerWidth - nodeRect.right),
+          bottom: Math.round(window.innerHeight - nodeRect.bottom),
+          offsetX: Math.round(nodeRect.left),
+          offsetY: Math.round(nodeRect.top),
+          normX: toPercent(nodeRect.left, window.innerWidth),
+          normY: toPercent(nodeRect.top, window.innerHeight)
+        };
+      }
+      var parentRect = parent.getBoundingClientRect();
+      var relLeft = nodeRect.left - parentRect.left;
+      var relTop = nodeRect.top - parentRect.top;
+      var relRight = parentRect.right - nodeRect.right;
+      var relBottom = parentRect.bottom - nodeRect.bottom;
+      return {
+        parentSelector: getNodeSelector(parent),
+        anchorX: "left",
+        anchorY: "top",
+        left: Math.round(relLeft),
+        top: Math.round(relTop),
+        right: Math.round(relRight),
+        bottom: Math.round(relBottom),
+        offsetX: Math.round(relLeft),
+        offsetY: Math.round(relTop),
+        normX: toPercent(relLeft, parentRect.width || 1),
+        normY: toPercent(relTop, parentRect.height || 1)
+      };
+    }
+
     function normalizeToGrid(value) {
       var grid = auditRuntime.snapGrid || 0;
       if (!grid || grid < 1) return value;
@@ -1969,6 +2019,7 @@
       var uiBtn = controlPanel.querySelector('[data-action="audit-ui-toggle"]');
       var dragBtn = controlPanel.querySelector('[data-action="audit-drag-toggle"]');
       var snapBtn = controlPanel.querySelector('[data-action="audit-snap-toggle"]');
+      var normalizeBtn = controlPanel.querySelector('[data-action="audit-normalize-toggle"]');
 
       if (uiBtn) {
         uiBtn.classList.toggle("is-on", !auditRuntime.allowUiActions);
@@ -1984,6 +2035,11 @@
         var snapOn = !!auditRuntime.snapGrid;
         snapBtn.classList.toggle("is-on", snapOn);
         snapBtn.textContent = snapOn ? "SNAP " + String(auditRuntime.snapGrid) + "PX" : "SNAP OFF";
+      }
+
+      if (normalizeBtn) {
+        normalizeBtn.classList.toggle("is-on", auditRuntime.normalizeToParent);
+        normalizeBtn.textContent = auditRuntime.normalizeToParent ? "NORM PARENT ON" : "NORM PARENT OFF";
       }
     }
 
@@ -2093,6 +2149,8 @@
           "px · dy " +
           String(record.dy) +
           "px · " +
+          (auditRuntime.normalizeToParent ? "parent " + record.parentSelector : "viewport") +
+          " · " +
           record.anchorX +
           ":" +
           String(record.offsetX) +
@@ -2105,6 +2163,7 @@
           " / " +
           record.normY +
           "</div>" +
+          '<div class="ac-audit-moved-item__actions">' +
           '<button class="ac-audit-status ac-audit-status--row' +
           (record.status === "fixed" ? " is-fixed" : "") +
           '" type="button" data-action="audit-item-status" data-index="' +
@@ -2113,24 +2172,100 @@
           "STATUS: " +
           String(record.status).toUpperCase() +
           "</button>" +
+          '<button class="ac-audit-status ac-audit-status--row' +
+          (record.decision === "accept" ? " is-on" : "") +
+          '" type="button" data-action="audit-item-decision" data-index="' +
+          String(record.index) +
+          '" data-decision="accept">ACCEPT</button>' +
+          '<button class="ac-audit-status ac-audit-status--row' +
+          (record.decision === "hold" ? " is-on" : "") +
+          '" type="button" data-action="audit-item-decision" data-index="' +
+          String(record.index) +
+          '" data-decision="hold">HOLD</button>' +
+          '<button class="ac-audit-status ac-audit-status--row' +
+          (record.decision === "reject" ? " is-on" : "") +
+          '" type="button" data-action="audit-item-decision" data-index="' +
+          String(record.index) +
+          '" data-decision="reject">REJECT</button>' +
+          "</div>" +
+          '<input class="ac-audit-comment" type="text" data-action="audit-item-comment" data-index="' +
+          String(record.index) +
+          '" placeholder="Комментарий для внедрения" value="' +
+          String(record.comment || "").replace(/\"/g, "&quot;") +
+          '">' +
           "</li>";
       }
 
       movedList.innerHTML = html;
     }
 
+    function applyConfirmedChanges() {
+      var accepted = [];
+      for (var ai = 0; ai < movedOrder.length; ai += 1) {
+        var idx = movedOrder[ai];
+        var record = movedMap[idx];
+        if (!record) continue;
+        if (record.status === "fixed" && record.decision === "accept") {
+          accepted.push(record);
+        }
+      }
+
+      var logNode = controlPanel.querySelector(".ac-audit-control-panel__apply-log");
+      if (!logNode) return;
+
+      if (!accepted.length) {
+        logNode.textContent = "Нет подтвержденных правок";
+        return;
+      }
+
+      var lines = [];
+      for (var ri = 0; ri < accepted.length; ri += 1) {
+        var r = accepted[ri];
+        lines.push(
+          "#" +
+            String(r.index) +
+            " " +
+            r.label +
+            " | parent=" +
+            r.parentSelector +
+            " | dx=" +
+            String(r.dx) +
+            " dy=" +
+            String(r.dy) +
+            " | " +
+            r.anchorX +
+            ":" +
+            String(r.offsetX) +
+            " " +
+            r.anchorY +
+            ":" +
+            String(r.offsetY) +
+            " | " +
+            r.normX +
+            "/" +
+            r.normY +
+            (r.comment ? " | note: " + r.comment : "")
+        );
+      }
+      logNode.textContent = lines.join("\n");
+    }
+
     function upsertMovedRecord(item) {
-      var anchor = readAnchor(item);
+      var anchor = auditRuntime.normalizeToParent ? readParentAnchor(item) : readAnchor(item);
       var index = item.index;
       if (!movedMap[index]) {
         movedOrder.push(index);
       }
+      var prev = movedMap[index] || {};
       movedMap[index] = {
         index: index,
         label: item.label,
         dx: Math.round(item.offsetX || 0),
         dy: Math.round(item.offsetY || 0),
-        status: movedMap[index] ? movedMap[index].status : "draft",
+        status: prev.status || "draft",
+        decision: prev.decision || "hold",
+        comment: prev.comment || "",
+        parentSelector: anchor.parentSelector || "viewport",
         anchorX: anchor.anchorX,
         anchorY: anchor.anchorY,
         offsetX: anchor.offsetX,
@@ -2248,6 +2383,7 @@
         movedOrder = [];
         movedMap = {};
         renderMovedList();
+        applyConfirmedChanges();
         return;
       }
 
@@ -2320,20 +2456,60 @@
         return;
       }
 
-      var statusBtn = event.target.closest('[data-action="audit-item-status"]');
-      if (!statusBtn) return;
-      var itemIndex = Number(statusBtn.getAttribute("data-index"));
-      if (!itemIndex || !movedMap[itemIndex]) return;
-      var current = movedMap[itemIndex].status || "draft";
-      var currentIdx = 0;
-      for (var sf = 0; sf < statusFlow.length; sf += 1) {
-        if (statusFlow[sf] === current) {
-          currentIdx = sf;
-          break;
+      if (event.target.closest('[data-action="audit-normalize-toggle"]')) {
+        auditRuntime.normalizeToParent = !auditRuntime.normalizeToParent;
+        for (var rn = 0; rn < movedOrder.length; rn += 1) {
+          var index = movedOrder[rn];
+          for (var nn = 0; nn < nodes.length; nn += 1) {
+            if (nodes[nn].index === index) {
+              upsertMovedRecord(nodes[nn]);
+              break;
+            }
+          }
         }
+        syncControlPanelState();
+        renderMovedList();
+        return;
       }
-      movedMap[itemIndex].status = statusFlow[(currentIdx + 1) % statusFlow.length];
-      renderMovedList();
+
+      if (event.target.closest('[data-action="audit-apply-confirmed"]')) {
+        applyConfirmedChanges();
+        return;
+      }
+
+      var statusBtn = event.target.closest('[data-action="audit-item-status"]');
+      if (statusBtn) {
+        var itemIndex = Number(statusBtn.getAttribute("data-index"));
+        if (!itemIndex || !movedMap[itemIndex]) return;
+        var current = movedMap[itemIndex].status || "draft";
+        var currentIdx = 0;
+        for (var sf = 0; sf < statusFlow.length; sf += 1) {
+          if (statusFlow[sf] === current) {
+            currentIdx = sf;
+            break;
+          }
+        }
+        movedMap[itemIndex].status = statusFlow[(currentIdx + 1) % statusFlow.length];
+        renderMovedList();
+        return;
+      }
+
+      var decisionBtn = event.target.closest('[data-action="audit-item-decision"]');
+      if (decisionBtn) {
+        var decisionIndex = Number(decisionBtn.getAttribute("data-index"));
+        var decision = decisionBtn.getAttribute("data-decision") || "hold";
+        if (!decisionIndex || !movedMap[decisionIndex]) return;
+        movedMap[decisionIndex].decision = decision;
+        renderMovedList();
+      }
+    });
+
+    controlPanel.addEventListener("input", function (event) {
+      var commentInput = event.target.closest('[data-action="audit-item-comment"]');
+      if (!commentInput) return;
+      var itemIndex = Number(commentInput.getAttribute("data-index"));
+      if (!itemIndex || !movedMap[itemIndex]) return;
+      movedMap[itemIndex].comment = commentInput.value || "";
     });
 
     stagePanel.addEventListener("click", function (event) {

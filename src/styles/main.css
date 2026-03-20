@@ -1775,7 +1775,7 @@ body.ac-audit-mode .ac-audit-target--hidden .ac-audit-badge {
 .ac-audit-control-panel__statuses {
   margin-top: 8px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
 }
 
@@ -1847,6 +1847,43 @@ body.ac-audit-mode .ac-audit-target--hidden .ac-audit-badge {
   line-height: 1.35;
 }
 
+.ac-audit-moved-item__actions {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ac-audit-comment {
+  margin-top: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-radius: 7px;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 11px;
+}
+
+.ac-audit-comment::placeholder {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.ac-audit-control-panel__apply-log {
+  margin: 8px 0 0;
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #d8e2ff;
+  background: rgba(255, 255, 255, 0.05);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .ac-audit-control-panel--collapsed {
   width: auto;
   max-height: none;
@@ -1855,7 +1892,8 @@ body.ac-audit-mode .ac-audit-target--hidden .ac-audit-badge {
 
 .ac-audit-control-panel--collapsed .ac-audit-control-panel__statuses,
 .ac-audit-control-panel--collapsed .ac-audit-control-panel__sub,
-.ac-audit-control-panel--collapsed .ac-audit-control-panel__moved {
+.ac-audit-control-panel--collapsed .ac-audit-control-panel__moved,
+.ac-audit-control-panel--collapsed .ac-audit-control-panel__apply-log {
   display: none;
 }
 
