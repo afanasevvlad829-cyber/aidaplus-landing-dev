@@ -223,6 +223,9 @@
     var fallback = SHIFT_PRICE_META[idx] || SHIFT_PRICE_META[0];
     var finalPrice = fallback.finalPrice;
     var basePrice = Math.round(finalPrice * (1 + SHIFT_PRICE_CFG.initialMarkup));
+    var totalSeats = 45;
+    var seatsLeft = Math.max(0, Number(fallback.seats || 0));
+    var reserved = Math.max(0, totalSeats - seatsLeft);
     return {
       date: fallback.date,
       days: fallback.days,
@@ -230,8 +233,19 @@
       badge: fallback.badge,
       finalPrice: finalPrice,
       basePrice: basePrice,
-      shiftName: shift.summary || shift.line
+      shiftName: shift.summary || shift.line,
+      occupancyPercent: Math.round((reserved / totalSeats) * 100),
+      occupancyLine: reserved + " из " + totalSeats + " мест"
     };
+  }
+
+  function formatPromoTtl(expiresAt) {
+    var leftMs = Math.max(0, Number(expiresAt || 0) - Date.now());
+    var totalSeconds = Math.floor(leftMs / 1000);
+    var hours = Math.floor(totalSeconds / 3600);
+    var minutes = Math.floor((totalSeconds % 3600) / 60);
+    var seconds = totalSeconds % 60;
+    return String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
   }
 
   function getShiftPromoView(shiftId, meta) {
@@ -261,7 +275,8 @@
         oldPrice: oldPrice,
         code: String(promo.code || ""),
         actionText: "Зафиксировано — бронировать",
-        metaText: "Промокод: " + String(promo.code || "")
+        metaText: "Промокод: " + String(promo.code || ""),
+        promoTtl: formatPromoTtl(promo.expiresAt || 0)
       };
     }
 
@@ -1449,44 +1464,46 @@
   }
 
   function renderShiftOverlay() {
-    var filtered = [];
+    var allShifts = SHIFTS.slice(0, 4);
+    var visibleShifts = shiftsShowAll || allShifts.length <= 2 ? allShifts : allShifts.slice(0, 2);
+    if (!visibleShifts.length) {
+      return "";
+    }
 
-    for (var i = 0; i < SHIFTS.length; i += 1) {
-      if (state.direction === SHIFTS[i].direction || state.direction === "all") {
-        filtered.push(SHIFTS[i]);
+    var profile = findProfileByAge(state.age);
+    var ageTitle = "СМЕНЫ ДЛЯ " + profile.min + "-" + profile.max + " ЛЕТ";
+    var featuredShiftId = state.selectedShiftId;
+    var featuredFound = false;
+    for (var f = 0; f < visibleShifts.length; f += 1) {
+      if (visibleShifts[f].id === featuredShiftId) {
+        featuredFound = true;
+        break;
       }
     }
-
-    if (!filtered.length) {
-      filtered = SHIFTS.slice();
+    if (!featuredFound) {
+      featuredShiftId = visibleShifts[0].id;
     }
 
-    var directionHtml =
-      '<button class="ac-direction-btn' +
-      (state.direction === "all" ? " is-active" : "") +
-      '" type="button" data-action="set-direction" data-direction="all">' +
-      CONTENT_MAP.ui.all +
-      "</button>";
-
-    for (var j = 0; j < DIRECTIONS.length; j += 1) {
-      var direction = DIRECTIONS[j];
-      directionHtml +=
-        '<button class="ac-direction-btn' +
-        (state.direction === direction.id ? " is-active" : "") +
-        '" type="button" data-action="set-direction" data-direction="' +
-        direction.id +
+    function renderCompactShiftItem(shift, meta) {
+      return (
+        '<button class="ac-shift-item ac-shift-item--compact' +
+        (shift.id === featuredShiftId ? " is-active" : "") +
+        '" type="button" data-action="select-shift" data-shift-id="' +
+        shift.id +
         '">' +
-        direction.label +
-        "</button>";
+        '<div class="ac-shift-item__body">' +
+        (meta.badge ? '<span class="ac-shift-item__badge">' + meta.badge + "</span>" : "") +
+        '<div class="ac-shift-item__line">' +
+        '<span class="ac-shift-item__name">' + meta.date + "</span>" +
+        '<span class="ac-shift-item__days">' + meta.days + " дн.</span>" +
+        "</div>" +
+        '<div class="ac-shift-item__meta">' + shift.summary + "</div>" +
+        "</div>" +
+        "</button>"
+      );
     }
 
-    var visibleShifts = shiftsShowAll || filtered.length <= 2 ? filtered : filtered.slice(0, 2);
-    var listHtml = "";
-    for (var k = 0; k < visibleShifts.length; k += 1) {
-      var shift = visibleShifts[k];
-      var shiftIdx = SHIFTS.indexOf(shift);
-      var meta = getShiftPriceMeta(shift, shiftIdx);
-      var promoView = getShiftPromoView(shift.id, meta);
+    function renderFeaturedShiftItem(shift, meta, promoView) {
       var actionClass = "ac-shift-price-btn";
       if (promoView.status === "active") {
         actionClass += " is-fixed";
@@ -1496,44 +1513,72 @@
         actionClass += " is-upgrade";
       }
 
-      listHtml +=
-        '<article class="ac-shift-item' +
-        (state.selectedShiftId === shift.id ? " is-active" : "") +
-        '">' +
-        '<button class="ac-shift-item__select" type="button" data-action="select-shift" data-shift-id="' + shift.id + '">' +
-        '<div class="ac-shift-item__name">' +
-        meta.date +
-        ' <span class="ac-shift-item__days">' + meta.days + " дн.</span>" +
+      var showOccupancy = promoView.stage > 0 || promoView.status === "active";
+      var occupancyTitle = showOccupancy ? "Смена заполнена" : "Проверяем заполненность смены...";
+      var occupancyPercent = showOccupancy ? meta.occupancyPercent : 0;
+      var occupancyLine = showOccupancy ? meta.occupancyLine : "забронировано —";
+      var promoMarkup = promoView.status === "active"
+        ? (
+          '<div class="ac-shift-item__promo-live">' +
+          '<div class="ac-shift-item__promo-code">' + (promoView.code || "") + "</div>" +
+          '<div class="ac-shift-item__promo-ttl">Действует: ' + (promoView.promoTtl || "00:00:00") + "</div>" +
+          "</div>"
+        )
+        : "";
+
+      return (
+        '<article class="ac-shift-item ac-shift-item--featured is-active">' +
+        '<div class="ac-shift-item--featured__left">' +
         (meta.badge ? '<span class="ac-shift-item__badge">' + meta.badge + "</span>" : "") +
-        '</div><div class="ac-shift-item__meta">' +
-        shift.summary +
-        '</div><div class="ac-shift-item__promo">' +
-        promoView.metaText +
+        '<div class="ac-shift-item__line">' +
+        '<span class="ac-shift-item__name">' + meta.date + "</span>" +
+        '<span class="ac-shift-item__days">' + meta.days + " дн.</span>" +
         "</div>" +
-        "</button>" +
-        '<div class="ac-shift-item__side">' +
-        (promoView.oldPrice ? '<div class="ac-shift-item__price-old">' + promoView.oldPrice + "</div>" : "") +
+        '<div class="ac-shift-item__meta">' + shift.summary + "</div>" +
+        '<div class="ac-shift-item__occupancy">' +
+        '<div class="ac-shift-item__occupancy-title">' + occupancyTitle + "</div>" +
+        '<div class="ac-shift-item__occupancy-kpi">' +
+        '<strong>' + occupancyPercent + "%</strong>" +
+        '<div class="ac-shift-item__occupancy-bar"><span style="width:' + occupancyPercent + '%;"></span></div>' +
+        "</div>" +
+        '<div class="ac-shift-item__occupancy-meta">' + occupancyLine + "</div>" +
+        "</div>" +
+        "</div>" +
+        '<div class="ac-shift-item--featured__right">' +
+        '<div class="ac-shift-item__price-caption">Цена подтверждена для вас</div>' +
+        '<div class="ac-shift-item__price-shell">' +
+        '<div class="ac-shift-item__price-old' + (promoView.oldPrice ? "" : " is-empty") + '">' + (promoView.oldPrice || "—") + "</div>" +
         '<div class="ac-shift-item__price">' + formatPriceNumber(promoView.price) + "</div>" +
-        '<div class="ac-shift-item__seats">Осталось ' + meta.seats + " мест</div>" +
         "</div>" +
-        '<div class="ac-shift-item__actions">' +
+        promoMarkup +
         '<button class="ac-primary-btn ' + actionClass + '" type="button" data-action="shift-price" data-shift-id="' + shift.id + '">' +
         promoView.actionText +
         "</button>" +
         "</div>" +
-        "</article>";
+        "</article>"
+      );
     }
 
-    var listClass = state.shiftView === "grid" ? " ac-shift-list--grid" : "";
+    var listHtml = "";
+    for (var i = 0; i < visibleShifts.length; i += 1) {
+      var shift = visibleShifts[i];
+      var shiftIdx = allShifts.indexOf(shift);
+      var meta = getShiftPriceMeta(shift, shiftIdx);
+      if (shift.id === featuredShiftId) {
+        listHtml += renderFeaturedShiftItem(shift, meta, getShiftPromoView(shift.id, meta));
+      } else {
+        listHtml += renderCompactShiftItem(shift, meta);
+      }
+    }
 
     return (
       '<div class="ac-overlay-backdrop" data-action="overlay-backdrop">' +
-      '<article class="ac-overlay-card" role="dialog" aria-modal="true" aria-label="' +
+      '<article class="ac-overlay-card ac-overlay-card--shifts" role="dialog" aria-modal="true" aria-label="' +
       CONTENT_MAP.ui.shiftsTitle +
       '">' +
       '<div class="ac-overlay-head">' +
-      '<h3 class="ac-overlay-title">' +
-      CONTENT_MAP.ui.shiftsTitle +
+      '<h3 class="ac-overlay-title ac-overlay-title--shifts">' +
+      ageTitle +
       '</h3>' +
       '<button class="ac-overlay-close" type="button" data-action="overlay-close" aria-label="' + CONTENT_MAP.ui.closeAria + '">' +
       '<img class="ac-icon ac-icon--sm" src="' +
@@ -1541,32 +1586,14 @@
       '" alt="" aria-hidden="true">' +
       "</button>" +
       "</div>" +
-      '<div class="ac-direction-row">' +
-      directionHtml +
-      "</div>" +
-      '<div class="ac-shift-toolbar">' +
-      '<div class="ac-overlay-meta">' +
-      CONTENT_MAP.ui.shiftsMeta +
-      '</div>' +
-      '<button class="ac-shift-toggle" type="button" data-action="set-shift-view" data-shift-view="' +
-      (state.shiftView === "list" ? "grid" : "list") +
-      '">' +
-      (state.shiftView === "list" ? CONTENT_MAP.ui.grid : CONTENT_MAP.ui.list) +
-      "</button>" +
-      "</div>" +
-      '<div class="ac-shift-list' +
-      listClass +
-      '">' +
+      '<div class="ac-shift-list ac-shift-list--compact">' +
       listHtml +
       "</div>" +
-      (filtered.length > 2
+      (allShifts.length > 2
         ? '<button class="ac-shift-more-btn" type="button" data-action="shift-show-more">' +
           (shiftsShowAll ? "Скрыть дополнительные смены" : "Показать ещё 2 смены →") +
           "</button>"
         : "") +
-      '<div class="ac-overlay-actions"><button class="ac-primary-btn" type="button" data-action="overlay-close">' +
-      CONTENT_MAP.ui.confirm +
-      "</button></div>" +
       "</article>" +
       "</div>"
     );
