@@ -185,12 +185,36 @@ body {
   right: var(--space-lg);
   z-index: 70;
   border-radius: var(--radius-sm);
-  padding: var(--space-sm) var(--space-lg);
+  padding: var(--space-xs) var(--space-sm) var(--space-xs) var(--space-lg);
   font-size: var(--font-size-body-sm);
   font-weight: 700;
   color: #eff3ff;
   background: #3c455a;
   box-shadow: var(--ac-shadow-badge);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.ac-tech-badge__text {
+  white-space: nowrap;
+}
+
+.ac-tech-badge__close {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ac-tech-badge__close:hover {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .ac-mode-toggle {
@@ -907,16 +931,16 @@ body[data-mode="compact"] .ac-hero-overlay.is-intro {
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-lg);
+  display: block;
 }
 
 body[data-mode="compact"] .ac-hero-overlay.is-intro .ac-funnel-body {
   width: min(430px, calc(100% - var(--space-4xl)));
   margin: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   border: var(--border-1) solid rgba(255, 255, 255, 0.45);
   border-radius: var(--radius-lg);
   background: rgba(52, 66, 86, 0.34);
@@ -957,9 +981,14 @@ body[data-mode="compact"] .ac-hero-overlay.is-intro .ac-hero-grid {
 }
 
 body[data-mode="compact"] .ac-hero-overlay.is-intro .ac-funnel-controls {
-  width: min(430px, calc(100% - var(--space-4xl)));
+  width: auto;
+  position: absolute;
+  left: var(--space-lg);
+  right: var(--space-lg);
+  bottom: 0;
   margin: 0;
   padding: 0;
+  align-items: end;
 }
 
 body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {

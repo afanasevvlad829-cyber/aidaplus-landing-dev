@@ -2,6 +2,8 @@
   "use strict";
 
   var MODE_KEY = "ac:mode";
+  var TECH_BADGE_DISMISSED_KEY = "ac:tech-badge-dismissed";
+  var BUILD_TAG = "TECH v2026.03.20-06";
   var auditRuntime = {
     active: false,
     allowUiActions: false,
@@ -1344,8 +1346,35 @@
   }
 
   function renderStaticLabels() {
+    var techBadge = document.getElementById("acTechBadge");
+    if (techBadge) {
+      var dismissed = false;
+      try {
+        dismissed = localStorage.getItem(TECH_BADGE_DISMISSED_KEY) === "1";
+      } catch (_errDismiss) {
+        dismissed = false;
+      }
+
+      var now = new Date();
+      var hh = String(now.getHours()).padStart(2, "0");
+      var mm = String(now.getMinutes()).padStart(2, "0");
+      var timeLabel = hh + ":" + mm;
+
+      techBadge.innerHTML =
+        '<span class="ac-tech-badge__text">' +
+        BUILD_TAG +
+        " · " +
+        timeLabel +
+        "</span>" +
+        '<button class="ac-tech-badge__close" type="button" data-action="tech-badge-close" aria-label="Скрыть метку сборки">' +
+        '<img class="ac-icon ac-icon--sm" src="' +
+        ICON_MAP.close +
+        '" alt="" aria-hidden="true">' +
+        "</button>";
+      techBadge.hidden = dismissed;
+    }
+
     var assignments = [
-      ["acTechBadge", CONTENT_MAP.ui.techBadge],
       ["acBrandSub", CONTENT_MAP.ui.brandSub],
       ["acAgeLabel", CONTENT_MAP.ui.ageLabel],
       ["acHeroContactLabel", CONTENT_MAP.ui.heroContactLabel],
@@ -1520,10 +1549,27 @@
   }
 
   function handleClick(event) {
+    var techBadgeClose = event.target.closest('[data-action="tech-badge-close"]');
+    if (techBadgeClose) {
+      var techBadge = document.getElementById("acTechBadge");
+      if (techBadge) {
+        techBadge.hidden = true;
+      }
+      try {
+        localStorage.setItem(TECH_BADGE_DISMISSED_KEY, "1");
+      } catch (_errTechBadge) {
+        // ignore storage errors
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
     if (auditRuntime.active && !auditRuntime.allowUiActions) {
       var inAuditControls = event.target.closest(".ac-audit-panel, .ac-audit-control-panel, .ac-audit-stage-panel");
       var auditBadge = event.target.closest(".ac-audit-badge");
-      if (auditBadge || !inAuditControls) {
+      var inTopAuditControl = event.target.closest("#acAuditToggle");
+      if (auditBadge || (!inAuditControls && !inTopAuditControl)) {
         event.preventDefault();
         event.stopPropagation();
         return;
@@ -1948,7 +1994,7 @@
       '<div class="ac-audit-panel__toolbar">' +
       '<div class="ac-audit-panel__head">Hero Audit Map</div>' +
       '<button class="ac-audit-panel__toggle" type="button" aria-label="Сбросить позиции блоков" data-action="audit-reset-pos">Сброс</button>' +
-      '<button class="ac-audit-panel__toggle" type="button" aria-label="Свернуть панель" data-action="audit-toggle">Свернуть</button>' +
+      '<button class="ac-audit-panel__toggle" type="button" aria-label="Развернуть панель" data-action="audit-toggle">Развернуть</button>' +
       "</div>" +
       '<div class="ac-audit-panel__sub">Глобальная нумерация всех значимых блоков сайта</div>' +
       '<div class="ac-audit-groups"></div>' +
@@ -1959,7 +2005,7 @@
     controlPanel.innerHTML =
       '<div class="ac-audit-control-panel__toolbar">' +
       '<div class="ac-audit-control-panel__head">Audit Actions</div>' +
-      '<button class="ac-audit-panel__toggle" type="button" data-action="audit-control-toggle" aria-label="Свернуть панель действий">Свернуть</button>' +
+      '<button class="ac-audit-panel__toggle" type="button" data-action="audit-control-toggle" aria-label="Развернуть панель действий">Развернуть</button>' +
       "</div>" +
       '<div class="ac-audit-control-panel__statuses">' +
       '<button class="ac-audit-status is-on" type="button" data-action="audit-ui-toggle">UI OFF</button>' +
@@ -1979,7 +2025,7 @@
     stagePanel.innerHTML =
       '<div class="ac-audit-stage-panel__toolbar">' +
       '<div class="ac-audit-stage-panel__head">Site Stages</div>' +
-      '<button class="ac-audit-panel__toggle" type="button" data-action="audit-stage-toggle" aria-label="Свернуть стадии">Свернуть</button>' +
+      '<button class="ac-audit-panel__toggle" type="button" data-action="audit-stage-toggle" aria-label="Развернуть стадии">Развернуть</button>' +
       "</div>" +
       '<div class="ac-audit-stage-panel__statuses">' +
       '<button class="ac-audit-status is-on" type="button" data-action="audit-stage-lock-toggle">LOCK UNTIL AGE ON</button>' +
@@ -2760,6 +2806,10 @@
         }
       })(nodes[h]);
     }
+
+    panel.classList.add("ac-audit-panel--collapsed");
+    controlPanel.classList.add("ac-audit-control-panel--collapsed");
+    stagePanel.classList.add("ac-audit-stage-panel--collapsed");
 
     document.body.appendChild(panel);
     document.body.appendChild(controlPanel);
