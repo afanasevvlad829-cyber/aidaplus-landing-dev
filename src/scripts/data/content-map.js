@@ -1,8 +1,6 @@
-(function () {
-  "use strict";
-  var ICON_MAP = (window.AC_DATA && window.AC_DATA.ICON_MAP) || {};
+import { ICON_MAP } from "./icon-map.js";
 
-  var CONTENT_MAP = {
+export const CONTENT_MAP = {
     menu: [
       { key: "info", label: "О лагере", icon: ICON_MAP.robot, href: "#program" },
       { key: "aiprogram", label: "AI программы", icon: ICON_MAP.sparkle, href: "#ai" },
@@ -45,7 +43,7 @@
       modeFullLabel: "Подробно",
       brandSub: "IT-лагерь 7-14 лет",
       ageLabel: "Выберите возраст",
-      heroContactLabel: "Связаться с нами",
+      heroContactLabel: "Связаться",
       heroCampaignLabel: "AI-программы июнь",
       heroOverlayTitle: "ПРОГРАММА И БЕЗОПАСНОСТЬ",
       heroSafetyMedTitle: "Медик 24/7",
@@ -62,6 +60,7 @@
       locationWhereTitle: "Где проходит смена",
       locationNearbyTitle: "Что рядом и внутри",
       watchVideoLabel: "Смотреть видео",
+      reviewsYandexUrl: "https://yandex.ru/maps/org/aydakemp/35558479035/reviews/?ll=38.874756%2C55.531232&z=7",
       contactMeta: "Оставьте заявку, и мы подберем смену по возрасту и интересам ребенка.",
       phoneLabel: "Телефон",
       telegramLabel: "Telegram",
@@ -120,16 +119,16 @@
     ],
     location: {
       where: [
-        "📍 60 км от Москвы · Киевское шоссе",
+        "60 км от Москвы · Киевское шоссе",
         "Санаторий «Изумруд», Наро-Фоминский район"
       ],
       nearby: [
-        "🚗 60 км по Киевскому шоссе",
-        "🚌 Трансфер от м. Юго-Западная",
-        "🌳 Закрытая территория 14 га",
-        "🏊 Бассейн, спорт, лес"
+        "60 км по Киевскому шоссе",
+        "Трансфер от м. Юго-Западная",
+        "Закрытая территория 14 га",
+        "Бассейн, спорт, лес"
       ],
-      mapUrl: "https://yandex.ru/map-widget/v1/?ll=36.7318%2C55.3506&z=13&pt=36.7318,55.3506,pm2rdm"
+      mapUrl: "https://yandex.ru/maps/-/CPRuQ0pY"
     },
     photoCategories: [
       { id: "all", label: "Все" },
@@ -177,33 +176,39 @@
     reviews: [
       {
         name: "Сергей Найденов",
-        meta: "папа участника, 13 лет",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80",
-        quote: "Сын вернулся из лагеря более собранным и уверенным. Очень зашло, что учеба была через проекты, а не через сухую теорию. Для нас это был лучший формат каникул."
+        meta: "Знаток города 3 уровня · 2 февраля",
+        avatar: "https://avatars.mds.yandex.net/get-yapic/27503/0r-4/islands-68",
+        quote: "Отличное расположение в живописном месте, большие просторные аудитории для занятий. Большое значение придавалось и активностям вне аудиторных занятий: футбол, бадминтон и прочее. Педагоги регулярно присылали отчеты о том, как проходят зантия. Вообще, у ребенка остались только самые положительные воспоминания."
+      },
+      {
+        name: "виктория",
+        meta: "Знаток города 4 уровня · 13 ноября 2024",
+        avatar: "https://avatars.mds.yandex.net/get-yapic/54535/fsnR7nvUqoioiSqyIVRArH7QSFs-1/islands-68",
+        quote: "лагерь \"Айдакемп\" - это круто! Я была там несколько раз, и каждый раз это был незабываемый опыт! Лагерь находится в живописном месте, на берегу озера, что делает его…"
       },
       {
         name: "Natalia Savenkova",
-        meta: "мама участницы, 11 лет",
-        avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&q=80",
-        quote: "Это был первый выездной лагерь для дочери, и всё прошло спокойно. Вожатые всегда на связи, программа насыщенная, ребёнок просится обратно уже на следующую смену."
+        meta: "Знаток города 5 уровня · 10 ноября 2024",
+        avatar: "https://avatars.mds.yandex.net/get-yapic/68143/0s-4/islands-68",
+        quote: "Хочу поблагодарить АйДаКемп за отличную организацию и правильный подход в общении и воспитании детей в лагере! Потрясающие вожатые и педагоги. С Полиной и Варей общалась часто и в восторге от них. Очень эмпатичные 👍🏻. Организатор, Дарья всегда на связи🫶. Большое всем…"
       },
       {
-        name: "Виктория",
-        meta: "мама участника, 12 лет",
-        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80",
-        quote: "Сильное место и по атмосфере, и по содержанию. Ребёнок не просто отдохнул, а действительно прокачался в IT и стал намного самостоятельнее в бытовых вопросах."
+        name: "Надежда Ш.",
+        meta: "Знаток города 5 уровня · 12 августа 2025",
+        avatar: "https://avatars.mds.yandex.net/get-yapic/58107/0f-1/islands-68",
+        quote: "Сын в 9 лет этим летом побывал в первый раз в этом лагере. Это был его первый опыт, когда он поехал в лагерь без друзей и больше чем на 5 дней. Он гстался в полном восторге, сказал что обязательно поедет еще. Мне как маме понравилась организация! Регулярные фотоотчеты и постоянная связь с вожатыми. Думаю в него мы обязательно вернемся!"
       },
       {
-        name: "Отзыв родителя",
-        meta: "из Яндекс Карт",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80",
-        quote: "Для нас было важно, чтобы лагерь дал результат, а не просто занял время. Итог: готовые мини-проекты, новые друзья и заметно выросшая мотивация к учебе."
+        name: "Кристина",
+        meta: "Знаток города 8 уровня · 8 ноября 2024",
+        avatar: "https://avatars.mds.yandex.net/get-yapic/49368/enc-f5d05dcd44e9fc6a6283d03f5fc4dfbadc08d6b278aedeb06cfa14e5027cfb80/islands-68",
+        quote: "Дочери лагерь понравился, с удовольствием провела время на каникулах. Интересные занятия, вкусная еда, комфортное размещение. Никаких замечаний нет, все прошло отлично."
       },
       {
-        name: "Екатерина Л.",
-        meta: "мама участника, 10 лет",
-        avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=300&q=80",
-        quote: "Спасибо команде лагеря за внимание к детям и понятную обратную связь для родителей."
+        name: "Мария Григорьева",
+        meta: "Знаток города 11 уровня · 13 ноября 2024",
+        avatar: "https://avatars.mds.yandex.net/get-yapic/56823/XGlOg8N65vTR91xedCasHKXWqI-1/islands-68",
+        quote: "Отправляла детей 10 и 14 лет, оба остались довольны, оба готовы на следующий год снова ехать (кажется, это лучшая оценка)). У меня как родителя замечаний нет. Благодарна за опыт, досуг, общение и пользу для детей. Занятия программированием в Айда Кодить и летний лагерь организатора теперь часть жизни. Спасибо!"
       }
     ],
     team: [
@@ -284,11 +289,11 @@
         "Как вернуть оплату при отмене?"
       ]
     }
-  };
+};
 
-  var TABS = CONTENT_MAP.menu;
+export const TABS = CONTENT_MAP.menu;
 
-  var AGE_PROFILES = [
+export const AGE_PROFILES = [
     {
       id: "7-9",
       min: 7,
@@ -331,9 +336,9 @@
         { icon: ICON_MAP.pool, text: "Фокус на режиме, здоровье и спорте" }
       ]
     }
-  ];
+];
 
-  var SHIFTS = [
+export const SHIFTS = [
     {
       id: "shift-1",
       direction: "base",
@@ -351,7 +356,7 @@
       direction: "web",
       line: "10-12 лет",
       summary: "Python, веб-проекты и командные мини-спринты.",
-      nextCta: "Проверить безопасность",
+      nextCta: "Выбрать смену",
       benefits: [
         { icon: ICON_MAP.robot, text: "Python + веб-проекты в мини-командах" },
         { icon: ICON_MAP.money, text: "Игровая экономика: роли, бюджет, решения" },
@@ -382,16 +387,16 @@
         { icon: ICON_MAP.pool, text: "Подтверждение смены и организационных деталей" }
       ]
     }
-  ];
+];
 
-  var DIRECTIONS = [
+export const DIRECTIONS = [
     { id: "base", label: "База" },
     { id: "web", label: "Web" },
     { id: "ai", label: "AI" },
     { id: "pro", label: "Pro" }
-  ];
+];
 
-  var TAB_TO_SECTION = {
+export const TAB_TO_SECTION = {
     info: "program",
     aiprogram: "ai",
     location: "location",
@@ -400,17 +405,6 @@
     faq: "faq",
     reviews: "reviews",
     team: "team"
-  };
+};
 
-  var AGE_SLIDER_POINTS = [9, 11, 13];
-
-  window.AC_DATA = window.AC_DATA || {};
-  window.AC_DATA.ICON_MAP = ICON_MAP;
-  window.AC_DATA.CONTENT_MAP = CONTENT_MAP;
-  window.AC_DATA.TABS = TABS;
-  window.AC_DATA.AGE_PROFILES = AGE_PROFILES;
-  window.AC_DATA.SHIFTS = SHIFTS;
-  window.AC_DATA.DIRECTIONS = DIRECTIONS;
-  window.AC_DATA.TAB_TO_SECTION = TAB_TO_SECTION;
-  window.AC_DATA.AGE_SLIDER_POINTS = AGE_SLIDER_POINTS;
-})();
+export const AGE_SLIDER_POINTS = [9, 11, 13];
