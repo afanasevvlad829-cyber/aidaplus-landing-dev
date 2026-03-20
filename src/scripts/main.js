@@ -857,25 +857,53 @@
 
   function renderFunnel() {
     var shift = getCurrentShift();
+    var isIntroStep = state.step === 0;
 
+    var overlayTitle = document.getElementById("acHeroOverlayTitle");
     var line = document.getElementById("acProgramLine");
     var summary = document.getElementById("acProgramSummary");
     var status = document.getElementById("acStepStatus");
     var nextBtn = document.getElementById("acStepNextBtn");
     var prevBtn = document.querySelector('[data-action="step-prev"]');
+    var overlay = document.querySelector(".ac-hero-overlay");
 
-    if (line) line.textContent = shift.line;
-    if (summary) summary.textContent = shift.summary;
+    if (overlay) {
+      overlay.classList.toggle("is-intro", isIntroStep);
+    }
+
+    if (isIntroStep) {
+      if (overlayTitle) overlayTitle.textContent = "👦👧";
+      if (line) line.textContent = "Выберите возраст ребёнка";
+      if (summary) {
+        summary.textContent = "Передвиньте слайдер на карточке слева — покажем подходящую программу и смены";
+      }
+    } else {
+      if (overlayTitle) overlayTitle.textContent = CONTENT_MAP.ui.heroOverlayTitle;
+      if (line) line.textContent = shift.line;
+      if (summary) summary.textContent = shift.summary;
+    }
+
     if (status) {
       status.textContent =
         CONTENT_MAP.ui.stepLabel + " " + String(state.step + 1) + " " + CONTENT_MAP.ui.stepLabelDelimiter + " " + String(SHIFTS.length);
     }
 
     if (nextBtn) {
-      if (state.step >= SHIFTS.length - 1) {
+      if (isIntroStep) {
+        nextBtn.classList.add("ac-primary-btn--intro");
+        nextBtn.innerHTML =
+          '<img class="ac-icon ac-icon--sm" src="' +
+          ICON_MAP.chevronRight +
+          '" alt="" aria-hidden="true">';
+        nextBtn.setAttribute("aria-label", "Следующий шаг");
+      } else if (state.step >= SHIFTS.length - 1) {
+        nextBtn.classList.remove("ac-primary-btn--intro");
         nextBtn.textContent = CONTENT_MAP.ui.finalBookingCta;
+        nextBtn.removeAttribute("aria-label");
       } else {
+        nextBtn.classList.remove("ac-primary-btn--intro");
         nextBtn.textContent = shift.nextCta;
+        nextBtn.removeAttribute("aria-label");
       }
     }
 
@@ -1568,6 +1596,318 @@
     }
   }
 
+  function enableAuditMode() {
+    var search = "";
+    try {
+      search = window.location.search || "";
+    } catch (_err) {
+      return;
+    }
+
+    if (search.indexOf("audit=1") === -1) return;
+
+    var auditGroups = [
+      { id: "topnav", label: "TopNav" },
+      { id: "hero", label: "Hero" },
+      { id: "funnel", label: "Funnel" },
+      { id: "program", label: "Программа" },
+      { id: "format", label: "Формат" },
+      { id: "ai", label: "AI" },
+      { id: "location", label: "Локация" },
+      { id: "photos", label: "Фото" },
+      { id: "video", label: "Видео" },
+      { id: "reviews", label: "Отзывы" },
+      { id: "team", label: "Команда" },
+      { id: "faq", label: "FAQ" },
+      { id: "footer", label: "Footer" }
+    ];
+
+    var auditTargets = [
+      { group: "topnav", selector: "#acViewToggle", label: "Toggle: Режим кратко/подробно" },
+      { group: "topnav", selector: "#acTopNav", label: "TopNav: контейнер" },
+      { group: "topnav", selector: "#acTopNav [data-action='tab']", label: "TopNav: пункт меню", all: true },
+
+      { group: "hero", selector: ".ac-compact-nav", label: "Hero: компактное меню" },
+      { group: "hero", selector: ".ac-compact-nav [data-action='tab']", label: "Hero: иконка меню", all: true },
+      { group: "hero", selector: ".ac-hero-left", label: "Hero Left: контейнер" },
+      { group: "hero", selector: "#acHeroTitle", label: "Hero Left: главный заголовок" },
+      { group: "hero", selector: "#acHeroSubtitle", label: "Hero Left: подзаголовок" },
+      { group: "hero", selector: "#acHeroProgress", label: "Hero Left: прогресс" },
+      { group: "hero", selector: "#acHeroBenefits li", label: "Hero Left: пункт преимуществ", all: true },
+      { group: "hero", selector: "#acAgeLabel", label: "Hero Left: лейбл возраста" },
+      { group: "hero", selector: "#acAgeText", label: "Hero Left: текст возраста" },
+      { group: "hero", selector: "#acAgeInput", label: "Hero Left: возраст слайдер" },
+      { group: "hero", selector: ".ac-age-marks", label: "Hero Left: шкала возрастов" },
+      { group: "hero", selector: ".ac-social-row a", label: "Hero Left: соцкнопка", all: true },
+      { group: "hero", selector: ".ac-hero-right", label: "Hero Right: контейнер" },
+      { group: "hero", selector: ".ac-hero-pill--left", label: "Hero Right: кнопка Связаться" },
+      { group: "hero", selector: ".ac-hero-pill--right", label: "Hero Right: плашка AI-программы" },
+
+      { group: "funnel", selector: ".ac-hero-overlay", label: "Funnel: контейнер" },
+      { group: "funnel", selector: "#acHeroOverlayTitle", label: "Funnel: заголовок" },
+      { group: "funnel", selector: "#acProgramLine", label: "Funnel: строка программы" },
+      { group: "funnel", selector: "#acProgramSummary", label: "Funnel: описание" },
+      { group: "funnel", selector: ".ac-hero-grid__item", label: "Funnel: карточка безопасности", all: true },
+      { group: "funnel", selector: ".ac-funnel-controls [data-action='step-prev']", label: "Funnel: кнопка назад" },
+      { group: "funnel", selector: "#acStepStatus", label: "Funnel: статус шага" },
+      { group: "funnel", selector: ".ac-funnel-controls [data-action='step-next']", label: "Funnel: кнопка далее/цены" },
+
+      { group: "program", selector: "#program", label: "Программа: секция" },
+      { group: "program", selector: "#program h2", label: "Программа: заголовок" },
+      { group: "program", selector: "#program .ac-card", label: "Программа: карточка", all: true },
+
+      { group: "format", selector: "#format", label: "Формат: секция" },
+      { group: "format", selector: "#format h2", label: "Формат: заголовок" },
+      { group: "format", selector: "#format .ac-card", label: "Формат: карточка", all: true },
+
+      { group: "ai", selector: "#ai", label: "AI: секция" },
+      { group: "ai", selector: "#ai h2", label: "AI: заголовок" },
+      { group: "ai", selector: "#ai .ac-card", label: "AI: карточка", all: true },
+
+      { group: "location", selector: "#location", label: "Локация: секция" },
+      { group: "location", selector: "#location h2", label: "Локация: заголовок" },
+      { group: "location", selector: "#location .ac-card", label: "Локация: карточка", all: true },
+
+      { group: "photos", selector: "#photos", label: "Фото: секция" },
+      { group: "photos", selector: "#photos h2", label: "Фото: заголовок" },
+      { group: "photos", selector: "#photos .ac-filter-chip", label: "Фото: фильтр", all: true },
+      { group: "photos", selector: "#photos [data-action='photo-prev'], #photos [data-action='photo-next']", label: "Фото: навигация", all: true },
+      { group: "photos", selector: "#photos .ac-photo-strip img", label: "Фото: изображение", all: true },
+
+      { group: "video", selector: "#video", label: "Видео: секция" },
+      { group: "video", selector: "#video h2", label: "Видео: заголовок" },
+      { group: "video", selector: "#video .ac-video-card", label: "Видео: карточка", all: true },
+      { group: "video", selector: "#video [data-action='video-prev'], #video [data-action='video-next']", label: "Видео: навигация", all: true },
+
+      { group: "reviews", selector: "#reviews", label: "Отзывы: секция" },
+      { group: "reviews", selector: "#reviews h2", label: "Отзывы: заголовок" },
+      { group: "reviews", selector: "#reviews .ac-review-card", label: "Отзывы: карточка", all: true },
+      { group: "reviews", selector: "#reviews [data-action='reviews-prev'], #reviews [data-action='reviews-next']", label: "Отзывы: навигация", all: true },
+
+      { group: "team", selector: "#team", label: "Команда: секция" },
+      { group: "team", selector: "#team h2", label: "Команда: заголовок" },
+      { group: "team", selector: "#team .ac-team-card", label: "Команда: карточка", all: true },
+      { group: "team", selector: "#team [data-action='team-prev'], #team [data-action='team-next']", label: "Команда: навигация", all: true },
+
+      { group: "faq", selector: "#faq", label: "FAQ: секция" },
+      { group: "faq", selector: "#faq h2", label: "FAQ: заголовок" },
+      { group: "faq", selector: "#faq .ac-faq-tab", label: "FAQ: таб", all: true },
+      { group: "faq", selector: "#faq .ac-faq-item", label: "FAQ: пункт", all: true },
+
+      { group: "footer", selector: ".ac-footer", label: "Footer: контейнер" },
+      { group: "footer", selector: "#acFooterBrand, #acFooterTagline", label: "Footer: текст", all: true }
+    ];
+
+    var nodes = [];
+    var order = 1;
+
+    for (var i = 0; i < auditTargets.length; i += 1) {
+      var target = auditTargets[i];
+      if (target.all) {
+        var many = document.querySelectorAll(target.selector);
+        for (var k = 0; k < many.length; k += 1) {
+          var elMany = many[k];
+          if (!elMany) continue;
+          elMany.classList.add("ac-audit-target");
+          elMany.setAttribute("data-audit-index", String(order));
+          elMany.setAttribute("data-audit-label", target.label + " #" + String(k + 1));
+          elMany.setAttribute("data-audit-group", target.group);
+          elMany.style.setProperty("--ac-audit-badge-x", String(3 + ((order - 1) % 3) * 24) + "px");
+          elMany.style.setProperty("--ac-audit-badge-y", String(3 + Math.floor(((order - 1) % 6) / 3) * 24) + "px");
+          var badgeMany = document.createElement("button");
+          badgeMany.type = "button";
+          badgeMany.className = "ac-audit-badge";
+          badgeMany.setAttribute("aria-label", "Блок " + String(order));
+          badgeMany.textContent = String(order);
+          elMany.appendChild(badgeMany);
+          nodes.push({
+            index: order,
+            label: target.label + " #" + String(k + 1),
+            group: target.group,
+            node: elMany,
+            badge: badgeMany
+          });
+          order += 1;
+        }
+      } else {
+        var el = document.querySelector(target.selector);
+        if (!el) continue;
+        el.classList.add("ac-audit-target");
+        el.setAttribute("data-audit-index", String(order));
+        el.setAttribute("data-audit-label", target.label);
+        el.setAttribute("data-audit-group", target.group);
+        el.style.setProperty("--ac-audit-badge-x", String(3 + ((order - 1) % 3) * 24) + "px");
+        el.style.setProperty("--ac-audit-badge-y", String(3 + Math.floor(((order - 1) % 6) / 3) * 24) + "px");
+        var badge = document.createElement("button");
+        badge.type = "button";
+        badge.className = "ac-audit-badge";
+        badge.setAttribute("aria-label", "Блок " + String(order));
+        badge.textContent = String(order);
+        el.appendChild(badge);
+        nodes.push({
+          index: order,
+          label: target.label,
+          group: target.group,
+          node: el,
+          badge: badge
+        });
+        order += 1;
+      }
+    }
+
+    document.body.classList.add("ac-audit-mode");
+
+    var panel = document.createElement("aside");
+    panel.className = "ac-audit-panel";
+    panel.innerHTML =
+      '<div class="ac-audit-panel__toolbar">' +
+      '<div class="ac-audit-panel__head">Hero Audit Map</div>' +
+      '<button class="ac-audit-panel__toggle" type="button" aria-label="Свернуть панель" data-action="audit-toggle">Свернуть</button>' +
+      "</div>" +
+      '<div class="ac-audit-panel__sub">Глобальная нумерация всех значимых блоков сайта</div>' +
+      '<div class="ac-audit-groups"></div>' +
+      '<ol class="ac-audit-panel__list"></ol>';
+
+    var groupsState = {};
+    for (var g = 0; g < auditGroups.length; g += 1) {
+      groupsState[auditGroups[g].id] = true;
+    }
+
+    var groupsWrap = panel.querySelector(".ac-audit-groups");
+    if (groupsWrap) {
+      var groupsHtml = "";
+      groupsHtml += '<button class="ac-audit-group is-on" type="button" data-action="audit-group-all-on">Все ON</button>';
+      groupsHtml += '<button class="ac-audit-group" type="button" data-action="audit-group-all-off">Все OFF</button>';
+      for (var gg = 0; gg < auditGroups.length; gg += 1) {
+        groupsHtml +=
+          '<button class="ac-audit-group is-on" type="button" data-action="audit-group-toggle" data-group="' +
+          auditGroups[gg].id +
+          '">' +
+          auditGroups[gg].label +
+          "</button>";
+      }
+      groupsWrap.innerHTML = groupsHtml;
+    }
+
+    var list = panel.querySelector(".ac-audit-panel__list");
+    if (list) {
+      for (var j = 0; j < nodes.length; j += 1) {
+        var item = nodes[j];
+        var li = document.createElement("li");
+        li.className = "ac-audit-panel__item";
+        li.setAttribute("data-group", item.group);
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ac-audit-jump";
+        btn.setAttribute("data-index", String(item.index));
+        btn.setAttribute("data-group", item.group);
+        btn.textContent = String(item.index) + ". " + item.label;
+        li.appendChild(btn);
+        list.appendChild(li);
+        item.listItem = li;
+      }
+    }
+
+    function syncGroupFilters() {
+      for (var n = 0; n < nodes.length; n += 1) {
+        var visible = groupsState[nodes[n].group] !== false;
+        nodes[n].node.classList.toggle("ac-audit-target--hidden", !visible);
+        if (nodes[n].listItem) {
+          nodes[n].listItem.classList.toggle("ac-audit-panel__item--hidden", !visible);
+        }
+      }
+
+      var groupButtons = panel.querySelectorAll('[data-action="audit-group-toggle"]');
+      for (var b = 0; b < groupButtons.length; b += 1) {
+        var groupId = groupButtons[b].getAttribute("data-group");
+        var isOn = groupsState[groupId] !== false;
+        groupButtons[b].classList.toggle("is-on", isOn);
+      }
+    }
+
+    function setActiveNode(targetNode) {
+      for (var q = 0; q < nodes.length; q += 1) {
+        nodes[q].node.classList.remove("ac-audit-target--active");
+      }
+      if (targetNode) {
+        targetNode.classList.add("ac-audit-target--active");
+      }
+    }
+
+    panel.addEventListener("click", function (event) {
+      var toggleButton = event.target.closest('[data-action="audit-toggle"]');
+      if (toggleButton) {
+        var collapsed = panel.classList.toggle("ac-audit-panel--collapsed");
+        toggleButton.textContent = collapsed ? "Развернуть" : "Свернуть";
+        toggleButton.setAttribute("aria-label", collapsed ? "Развернуть панель" : "Свернуть панель");
+        return;
+      }
+
+      if (event.target.closest('[data-action="audit-group-all-on"]')) {
+        for (var z = 0; z < auditGroups.length; z += 1) {
+          groupsState[auditGroups[z].id] = true;
+        }
+        syncGroupFilters();
+        return;
+      }
+
+      if (event.target.closest('[data-action="audit-group-all-off"]')) {
+        for (var zz = 0; zz < auditGroups.length; zz += 1) {
+          groupsState[auditGroups[zz].id] = false;
+        }
+        syncGroupFilters();
+        return;
+      }
+
+      var groupToggle = event.target.closest('[data-action="audit-group-toggle"]');
+      if (groupToggle) {
+        var targetGroup = groupToggle.getAttribute("data-group");
+        if (targetGroup && hasOwn(groupsState, targetGroup)) {
+          groupsState[targetGroup] = !groupsState[targetGroup];
+          syncGroupFilters();
+        }
+        return;
+      }
+
+      var btn = event.target.closest(".ac-audit-jump");
+      if (!btn) return;
+      var idx = Number(btn.getAttribute("data-index"));
+      if (!idx) return;
+      var targetNode = null;
+      for (var p = 0; p < nodes.length; p += 1) {
+        if (nodes[p].index === idx) {
+          targetNode = nodes[p].node;
+          break;
+        }
+      }
+      if (!targetNode) return;
+      targetNode.scrollIntoView({ behavior: "smooth", block: "center" });
+      setActiveNode(targetNode);
+    });
+
+    for (var h = 0; h < nodes.length; h += 1) {
+      (function (item) {
+        if (item.badge) {
+          item.badge.addEventListener("mouseenter", function () {
+            setActiveNode(item.node);
+          });
+          item.badge.addEventListener("focus", function () {
+            setActiveNode(item.node);
+          });
+        }
+
+        if (item.listItem) {
+          item.listItem.addEventListener("mouseenter", function () {
+            setActiveNode(item.node);
+          });
+        }
+      })(nodes[h]);
+    }
+
+    document.body.appendChild(panel);
+    syncGroupFilters();
+  }
+
   function bootstrap() {
     renderLayout();
     renderStaticLabels();
@@ -1595,6 +1935,8 @@
     document.addEventListener("click", handleClick);
     document.addEventListener("input", handleInput);
     document.addEventListener("keydown", handleKeydown);
+
+    enableAuditMode();
   }
 
   bootstrap();
