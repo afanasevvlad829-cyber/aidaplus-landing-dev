@@ -70,10 +70,30 @@
           <div class="ac-hero-right__bg"></div>
           <div class="ac-hero-right__scrim"></div>
 
-          <button class="ac-hero-pill ac-hero-pill--left" type="button" data-action="open-contact">
-            <span id="acHeroContactLabel"></span>
-            <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
-          </button>
+          <div id="acContactPanel" class="ac-contact-panel">
+            <button id="acContactButton" class="ac-hero-pill ac-hero-pill--left ac-contact-trigger" type="button" data-action="open-contact" aria-expanded="false" aria-controls="acContactMenu">
+              <span id="acHeroContactLabel"></span>
+              <img class="ac-icon ac-icon--sm ac-contact-trigger__chevron" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+            </button>
+            <div id="acContactMenu" class="ac-contact-menu" hidden>
+              <a class="ac-contact-menu__item" href="tel:+74951234567">
+                <img class="ac-icon ac-icon--sm" src="/assets/icons/phone-city.svg" alt="" aria-hidden="true">
+                <span>+7 (495) 123-45-67</span>
+              </a>
+              <a class="ac-contact-menu__item" href="tel:+79688086455">
+                <img class="ac-icon ac-icon--sm" src="/assets/icons/phone-mobile.svg" alt="" aria-hidden="true">
+                <span>+7 (968) 808-64-55</span>
+              </a>
+              <a class="ac-contact-menu__item" href="https://wa.me/79688086455" target="_blank" rel="noopener">
+                <img class="ac-icon ac-icon--sm" src="/assets/icons/whatsapp.svg" alt="" aria-hidden="true">
+                <span>WhatsApp</span>
+              </a>
+              <a class="ac-contact-menu__item" href="https://t.me/aidacodit" target="_blank" rel="noopener">
+                <img class="ac-icon ac-icon--sm" src="/assets/icons/telegram.svg" alt="" aria-hidden="true">
+                <span>@aidacodit</span>
+              </a>
+            </div>
+          </div>
           <div class="ac-hero-pill ac-hero-pill--right">
             <img class="ac-icon ac-icon--sm" src="/assets/icons/robot.svg" alt="" aria-hidden="true">
             <span id="acHeroCampaignLabel"></span>

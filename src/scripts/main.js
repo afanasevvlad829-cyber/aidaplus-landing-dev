@@ -10,6 +10,7 @@
   var heroSlideTimer = null;
   var heroSlideIndex = 0;
   var HERO_SLIDE_INTERVAL_MS = 5200;
+  var CONTACT_AUTO_CLOSE_MS = 1000;
   var SHIFT_PROMO_STORAGE_KEY = "acPromoV1";
   var SHIFT_PRICE_CFG = {
     initialMarkup: 0.2,
@@ -28,6 +29,7 @@
   var shiftsShowAll = false;
   var shiftCalendar = { open: false, shiftId: "" };
   var promoTicker = null;
+  var contactCloseTimer = null;
   var auditRuntime = (window.AC_FEATURES && window.AC_FEATURES.auditRuntime) || {
     active: false,
     allowUiActions: false,
@@ -709,6 +711,13 @@
     }
 
     if (changed) {
+      if (name === "contact") {
+        if (!isOpen) {
+          clearContactCloseTimer();
+        }
+        renderLayout();
+      }
+
       renderOverlays();
 
       if (name === "shifts" && isOpen) {
@@ -740,8 +749,41 @@
     }
 
     if (changed) {
+      clearContactCloseTimer();
+      renderLayout();
       renderOverlays();
     }
+  }
+
+  function clearContactCloseTimer() {
+    if (!contactCloseTimer) return;
+    clearTimeout(contactCloseTimer);
+    contactCloseTimer = null;
+  }
+
+  function scheduleContactCloseTimer() {
+    clearContactCloseTimer();
+    contactCloseTimer = setTimeout(function () {
+      contactCloseTimer = null;
+      if (!state.overlays.contact) return;
+      state.overlays.contact = false;
+      renderLayout();
+    }, CONTACT_AUTO_CLOSE_MS);
+  }
+
+  function setupContactDropdown() {
+    var panel = document.getElementById("acContactPanel");
+    if (!panel || panel.dataset.bound === "1") return;
+    panel.dataset.bound = "1";
+
+    panel.addEventListener("mouseenter", function () {
+      clearContactCloseTimer();
+    });
+
+    panel.addEventListener("mouseleave", function () {
+      if (!state.overlays.contact) return;
+      scheduleContactCloseTimer();
+    });
   }
 
   function setPhotoCategory(categoryId) {
@@ -822,6 +864,10 @@
   function renderLayout() {
     var body = document.body;
     var toggle = document.getElementById("acViewToggle");
+    var contactPanel = document.getElementById("acContactPanel");
+    var contactButton = document.getElementById("acContactButton");
+    var contactMenu = document.getElementById("acContactMenu");
+    var isContactOpen = !!state.overlays.contact;
 
     if (body) {
       body.setAttribute("data-mode", state.mode);
@@ -829,6 +875,16 @@
 
     if (toggle) {
       toggle.setAttribute("aria-pressed", String(state.mode === "full"));
+    }
+
+    if (contactPanel) {
+      contactPanel.classList.toggle("is-open", isContactOpen);
+    }
+    if (contactButton) {
+      contactButton.setAttribute("aria-expanded", String(isContactOpen));
+    }
+    if (contactMenu) {
+      contactMenu.hidden = !isContactOpen;
     }
   }
 
@@ -1782,12 +1838,6 @@
       return;
     }
 
-    if (state.overlays.contact) {
-      overlayRoot.style.pointerEvents = "auto";
-      overlayRoot.innerHTML = renderContactOverlay();
-      return;
-    }
-
     if (state.overlays.shifts) {
       overlayRoot.style.pointerEvents = "auto";
       overlayRoot.innerHTML = renderShiftOverlay();
@@ -1884,7 +1934,13 @@
 
     var contactButton = event.target.closest('[data-action="open-contact"]');
     if (contactButton) {
-      setOverlay("contact", true);
+      clearContactCloseTimer();
+      setOverlay("contact", !state.overlays.contact);
+      return;
+    }
+
+    if (state.overlays.contact && !event.target.closest("#acContactPanel")) {
+      setOverlay("contact", false);
       return;
     }
 
@@ -3216,6 +3272,7 @@
     document.addEventListener("input", handleInput);
     document.addEventListener("keydown", handleKeydown);
 
+    setupContactDropdown();
     setupAuditToggleButton();
     enableAuditMode();
   }
