@@ -9,6 +9,8 @@ html,
 body {
   margin: 0;
   padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -223,6 +225,7 @@ body[data-mode="full"] .ac-top-nav .ac-container {
 
 .ac-menu-shell {
   width: 100%;
+  max-width: 100%;
   display: flex;
   align-items: center;
   min-width: 0;
@@ -231,6 +234,8 @@ body[data-mode="full"] .ac-top-nav .ac-container {
 .ac-menu--compact {
   gap: var(--space-xs);
   margin: var(--space-14) 0 var(--space-sm);
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -270,6 +275,7 @@ body[data-mode="full"] .ac-top-nav .ac-container {
   margin: var(--space-14) 0 var(--space-md);
   flex-wrap: nowrap;
   min-width: 0;
+  max-width: 100%;
   height: auto;
   overflow-x: auto;
   overflow-y: hidden;
@@ -364,10 +370,12 @@ body[data-mode="full"] .ac-top-nav .ac-container {
 
 .ac-main {
   padding-bottom: var(--space-2xl);
+  min-width: 0;
 }
 
 .ac-hero {
   padding-top: 0;
+  min-width: 0;
 }
 
 .ac-hero__grid {
@@ -375,6 +383,7 @@ body[data-mode="full"] .ac-top-nav .ac-container {
   grid-template-columns: 1fr 1fr;
   gap: var(--space-2xl);
   align-items: stretch;
+  min-width: 0;
 }
 
 .ac-hero-left,
@@ -389,6 +398,7 @@ body[data-mode="full"] .ac-top-nav .ac-container {
 .ac-hero-right,
 .ac-card--hero {
   height: 100%;
+  min-width: 0;
 }
 
 .ac-hero-left {
@@ -404,6 +414,11 @@ body[data-mode="compact"] .ac-compact-nav {
 
 body[data-mode="full"] .ac-compact-nav {
   display: none;
+}
+
+.ac-compact-nav {
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .ac-card {
@@ -431,6 +446,7 @@ body[data-mode="full"] .ac-compact-nav {
   margin: var(--space-10) 0 var(--space-md);
   font-size: var(--font-size-25-94);
   line-height: var(--line-height-32-425);
+  overflow-wrap: anywhere;
 }
 
 .ac-hero-subtitle {
@@ -438,6 +454,7 @@ body[data-mode="full"] .ac-compact-nav {
   color: var(--ac-sub);
   font-size: var(--font-size-12-97);
   line-height: var(--line-height-20-752);
+  overflow-wrap: anywhere;
 }
 
 .ac-progress {
@@ -493,6 +510,7 @@ body[data-mode="full"] .ac-compact-nav {
   gap: var(--space-md);
   color: #2f3a56;
   font-size: var(--font-size-h3);
+  min-width: 0;
 }
 
 .ac-benefit-icon {
@@ -529,6 +547,7 @@ body[data-mode="full"] .ac-compact-nav {
 
 .ac-age-block__head span {
   color: #ef8300;
+  overflow-wrap: anywhere;
 }
 
 .ac-age-bar {
@@ -963,7 +982,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
 .ac-media-row {
   display: grid;
-  grid-template-columns: var(--size-36) 1fr var(--size-36);
+  grid-template-columns: var(--size-36) minmax(0, 1fr) var(--size-36);
   align-items: center;
   gap: var(--space-sm);
 }
@@ -1281,6 +1300,8 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
 .ac-overlay-card {
   width: min(var(--overlay-max-width), 100%);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
   border-radius: var(--radius-lg);
   border: var(--border-1) solid #dbe1ef;
   background: #fff;
@@ -1538,6 +1559,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   .ac-mode-toggle {
     padding: 0 var(--toggle-padding-x);
     gap: var(--space-sm);
+    max-width: calc(100vw - (var(--container-padding-mobile) * 2));
   }
 
   .ac-mode-toggle__track {
@@ -1613,6 +1635,11 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
     width: var(--chip-height);
     height: var(--chip-height);
     font-size: var(--font-size-social-mobile);
+  }
+
+  .ac-social-row {
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .ac-footer__inner {
