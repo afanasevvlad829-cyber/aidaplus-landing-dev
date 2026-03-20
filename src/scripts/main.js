@@ -27,6 +27,7 @@
   ];
   var shiftsShowAll = false;
   var shiftCalendar = { open: false, shiftId: "" };
+  var promoTicker = null;
   var auditRuntime = (window.AC_FEATURES && window.AC_FEATURES.auditRuntime) || {
     active: false,
     allowUiActions: false,
@@ -149,6 +150,15 @@
       }
     }
     return SHIFTS[0];
+  }
+
+  function findExactShiftById(shiftId) {
+    for (var i = 0; i < SHIFTS.length; i += 1) {
+      if (SHIFTS[i].id === shiftId) {
+        return SHIFTS[i];
+      }
+    }
+    return null;
   }
 
   function getCurrentShift() {
@@ -297,6 +307,42 @@
     return String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
   }
 
+  function getPromoRemainingMs(promo) {
+    if (!promo || promo.status !== "active") return 0;
+    return Math.max(0, Number(promo.expiresAt || 0) - Date.now());
+  }
+
+  function stopPromoTicker() {
+    if (!promoTicker) return;
+    clearInterval(promoTicker);
+    promoTicker = null;
+  }
+
+  function startPromoTicker() {
+    if (promoTicker) return;
+    promoTicker = setInterval(function () {
+      var promo = loadShiftPromo();
+      if (!promo || promo.status !== "active") {
+        stopPromoTicker();
+        return;
+      }
+      if (getPromoRemainingMs(promo) <= 0) {
+        try {
+          localStorage.removeItem(SHIFT_PROMO_STORAGE_KEY);
+        } catch (_err) {
+          // ignore storage errors
+        }
+        stopPromoTicker();
+        renderInfoCard();
+        renderOverlays();
+        return;
+      }
+      if (state.overlays.shifts) {
+        renderOverlays();
+      }
+    }, 1000);
+  }
+
   function getShiftPromoView(shiftId, meta) {
     var promo = loadShiftPromo();
     if (!promo || promo.shiftId !== shiftId) {
@@ -337,7 +383,8 @@
         oldPrice: oldPrice,
         code: String(promo.code || ""),
         actionText: "Зафиксировать цену на 72 ч",
-        metaText: "Найдена лучшая цена"
+        metaText: "Найдена лучшая цена",
+        promoTtl: "Активируется после фиксации"
       };
     }
 
@@ -631,6 +678,14 @@
     if (isOpen) {
       if (name === "shifts") {
         shiftsShowAll = false;
+        var promo = loadShiftPromo();
+        if (promo && promo.shiftId) {
+          var promoShift = findExactShiftById(promo.shiftId);
+          if (promoShift) {
+            state.selectedShiftId = promoShift.id;
+            state.direction = promoShift.direction;
+          }
+        }
         if (state.direction !== "all") {
           state.direction = "all";
         }
@@ -1526,6 +1581,23 @@
     var profile = findProfileByAge(state.age);
     var ageTitle = "СМЕНЫ ДЛЯ " + profile.min + "-" + profile.max + " ЛЕТ";
     var featuredShiftId = state.selectedShiftId;
+    if (!shiftsShowAll) {
+      var featuredShiftObj = findShiftById(featuredShiftId);
+      var featuredInVisible = false;
+      for (var vf = 0; vf < visibleShifts.length; vf += 1) {
+        if (visibleShifts[vf].id === featuredShiftId) {
+          featuredInVisible = true;
+          break;
+        }
+      }
+      if (featuredShiftObj && !featuredInVisible) {
+        if (visibleShifts.length === 1) {
+          visibleShifts.push(featuredShiftObj);
+        } else {
+          visibleShifts[visibleShifts.length - 1] = featuredShiftObj;
+        }
+      }
+    }
     var featuredFound = false;
     for (var f = 0; f < visibleShifts.length; f += 1) {
       if (visibleShifts[f].id === featuredShiftId) {
@@ -1570,14 +1642,21 @@
       var occupancyTitle = showOccupancy ? "Смена заполнена" : "Проверяем заполненность смены...";
       var occupancyPercent = showOccupancy ? meta.occupancyPercent : 0;
       var occupancyLine = showOccupancy ? meta.occupancyLine : "забронировано —";
-      var promoMarkup = promoView.status === "active"
-        ? (
+    var promoMarkup = promoView.status === "active"
+      ? (
+        '<div class="ac-shift-item__promo-live">' +
+        '<div class="ac-shift-item__promo-code">' + (promoView.code || "") + "</div>" +
+        '<div class="ac-shift-item__promo-ttl">Действует: ' + (promoView.promoTtl || "00:00:00") + "</div>" +
+        "</div>"
+      )
+      : "";
+      if (promoView.stage >= 2 && promoView.status !== "active") {
+        promoMarkup =
           '<div class="ac-shift-item__promo-live">' +
           '<div class="ac-shift-item__promo-code">' + (promoView.code || "") + "</div>" +
-          '<div class="ac-shift-item__promo-ttl">Действует: ' + (promoView.promoTtl || "00:00:00") + "</div>" +
-          "</div>"
-        )
-        : "";
+          '<div class="ac-shift-item__promo-ttl">' + (promoView.promoTtl || "Активируется после фиксации") + "</div>" +
+          "</div>";
+      }
 
       return (
         '<article class="ac-shift-item ac-shift-item--featured is-active">' +
@@ -1712,11 +1791,22 @@
     if (state.overlays.shifts) {
       overlayRoot.style.pointerEvents = "auto";
       overlayRoot.innerHTML = renderShiftOverlay();
+      startPromoTicker();
       return;
     }
 
+    stopPromoTicker();
     overlayRoot.style.pointerEvents = "none";
     overlayRoot.innerHTML = "";
+  }
+
+  function hydratePromoState() {
+    var promo = loadShiftPromo();
+    if (!promo || !promo.shiftId) return;
+    var shift = findExactShiftById(promo.shiftId);
+    if (!shift) return;
+    state.selectedShiftId = shift.id;
+    state.direction = shift.direction;
   }
 
   function openTabTarget(tabElement) {
@@ -3098,6 +3188,7 @@
   }
 
   function bootstrap() {
+    hydratePromoState();
     renderLayout();
     renderStaticLabels();
     renderMenu();
