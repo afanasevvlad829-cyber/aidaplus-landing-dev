@@ -82,13 +82,17 @@
       heroContactLabel: "Связаться с нами",
       heroCampaignLabel: "AI-программы июнь",
       heroOverlayTitle: "ПРОГРАММА И БЕЗОПАСНОСТЬ",
-      heroSafetyMed: "Медик 24/7",
-      heroSafetyLock: "Охрана",
-      heroSafetyFood: "5-разовое питание",
-      heroSafetyPool: "Бассейн",
+      heroSafetyMedTitle: "Медик 24/7",
+      heroSafetyMedDesc: "Врач на территории всю смену",
+      heroSafetyLockTitle: "Охрана",
+      heroSafetyLockDesc: "Закрытая территория, КПП",
+      heroSafetyFoodTitle: "5-разовое питание",
+      heroSafetyFoodDesc: "Горячее каждый день",
+      heroSafetyPoolTitle: "Бассейн",
+      heroSafetyPoolDesc: "Каждый день, тренер рядом",
       stepLabel: "Шаг",
       stepLabelDelimiter: "из",
-      finalBookingCta: "Смотреть смены и цены",
+      finalBookingCta: "Смотреть даты и цены смен",
       locationWhereTitle: "Где проходит смена",
       locationNearbyTitle: "Что рядом и внутри",
       watchVideoLabel: "Смотреть видео",
@@ -366,28 +370,48 @@
       direction: "base",
       line: "7-9 лет",
       summary: "Визуальное программирование, первые игры, логика.",
-      nextCta: "Уточнить формат"
+      nextCta: "Уточнить формат",
+      benefits: [
+        { icon: ICON_MAP.robot, text: "Визуальные IT-проекты по уровню ребёнка" },
+        { icon: ICON_MAP.money, text: "Первые шаги во внутренней экономике" },
+        { icon: ICON_MAP.pool, text: "Бассейн и активность каждый день" }
+      ]
     },
     {
       id: "shift-2",
       direction: "web",
       line: "10-12 лет",
       summary: "Python, веб-проекты и командные мини-спринты.",
-      nextCta: "Проверить безопасность"
+      nextCta: "Проверить безопасность",
+      benefits: [
+        { icon: ICON_MAP.robot, text: "Python + веб-проекты в мини-командах" },
+        { icon: ICON_MAP.money, text: "Игровая экономика: роли, бюджет, решения" },
+        { icon: ICON_MAP.pool, text: "Ежедневный спорт и бассейн по расписанию" }
+      ]
     },
     {
       id: "shift-3",
       direction: "ai",
       line: "13-14 лет",
       summary: "AI-практика, анализ данных, проектная защита.",
-      nextCta: "Выбрать смену"
+      nextCta: "Выбрать смену",
+      benefits: [
+        { icon: ICON_MAP.robot, text: "AI-кейсы, аналитика и защита проекта" },
+        { icon: ICON_MAP.money, text: "Управление ресурсами в проектной команде" },
+        { icon: ICON_MAP.pool, text: "Баланс: интеллектуальная и физическая нагрузка" }
+      ]
     },
     {
       id: "shift-4",
       direction: "pro",
       line: "Смена и цены",
       summary: "Финальный выбор смены, условий и бронирования.",
-      nextCta: "Смотреть смены и цены"
+      nextCta: "Смотреть даты и цены смен",
+      benefits: [
+        { icon: ICON_MAP.robot, text: "Финальная программа по выбранному направлению" },
+        { icon: ICON_MAP.money, text: "Прозрачные даты, цены и условия бронирования" },
+        { icon: ICON_MAP.pool, text: "Подтверждение смены и организационных деталей" }
+      ]
     }
   ];
 
@@ -521,6 +545,18 @@
     return SHIFTS[safeStep];
   }
 
+  function getHeroBenefits() {
+    var profile = findProfileByAge(state.age);
+    if (state.step === 0) {
+      return profile.benefits;
+    }
+    var shift = getCurrentShift();
+    if (shift && shift.benefits && shift.benefits.length) {
+      return shift.benefits;
+    }
+    return profile.benefits;
+  }
+
   function hasTab(tabKey) {
     for (var i = 0; i < TABS.length; i += 1) {
       if (TABS[i].key === tabKey) {
@@ -574,6 +610,7 @@
     state.selectedShiftId = shift.id;
     state.direction = shift.direction;
 
+    renderInfoCard();
     renderFunnel();
 
     if (withFunnelStartTracking && prevStep === 0 && safeStep > 0) {
@@ -886,6 +923,7 @@
 
   function renderInfoCard() {
     var profile = findProfileByAge(state.age);
+    var heroBenefits = getHeroBenefits();
 
     var title = document.getElementById("acHeroTitle");
     var subtitle = document.getElementById("acHeroSubtitle");
@@ -912,8 +950,8 @@
 
     if (benefits) {
       var benefitHtml = "";
-      for (var i = 0; i < profile.benefits.length; i += 1) {
-        var benefit = profile.benefits[i];
+      for (var i = 0; i < heroBenefits.length; i += 1) {
+        var benefit = heroBenefits[i];
         benefitHtml +=
           "<li>" +
           '<span class="ac-benefit-icon">' +
@@ -971,6 +1009,7 @@
     if (nextBtn) {
       if (isIntroStep) {
         nextBtn.classList.add("ac-primary-btn--intro");
+        nextBtn.classList.remove("ac-primary-btn--cta");
         nextBtn.innerHTML =
           '<img class="ac-icon ac-icon--sm" src="' +
           ICON_MAP.chevronRight +
@@ -978,10 +1017,12 @@
         nextBtn.setAttribute("aria-label", "Следующий шаг");
       } else if (state.step >= SHIFTS.length - 1) {
         nextBtn.classList.remove("ac-primary-btn--intro");
+        nextBtn.classList.add("ac-primary-btn--cta");
         nextBtn.textContent = CONTENT_MAP.ui.finalBookingCta;
         nextBtn.removeAttribute("aria-label");
       } else {
         nextBtn.classList.remove("ac-primary-btn--intro");
+        nextBtn.classList.remove("ac-primary-btn--cta");
         nextBtn.textContent = shift.nextCta;
         nextBtn.removeAttribute("aria-label");
       }
@@ -1392,10 +1433,14 @@
       ["acHeroContactLabel", CONTENT_MAP.ui.heroContactLabel],
       ["acHeroCampaignLabel", CONTENT_MAP.ui.heroCampaignLabel],
       ["acHeroOverlayTitle", CONTENT_MAP.ui.heroOverlayTitle],
-      ["acHeroSafetyMed", CONTENT_MAP.ui.heroSafetyMed],
-      ["acHeroSafetyLock", CONTENT_MAP.ui.heroSafetyLock],
-      ["acHeroSafetyFood", CONTENT_MAP.ui.heroSafetyFood],
-      ["acHeroSafetyPool", CONTENT_MAP.ui.heroSafetyPool]
+      ["acHeroSafetyMedTitle", CONTENT_MAP.ui.heroSafetyMedTitle],
+      ["acHeroSafetyMedDesc", CONTENT_MAP.ui.heroSafetyMedDesc],
+      ["acHeroSafetyLockTitle", CONTENT_MAP.ui.heroSafetyLockTitle],
+      ["acHeroSafetyLockDesc", CONTENT_MAP.ui.heroSafetyLockDesc],
+      ["acHeroSafetyFoodTitle", CONTENT_MAP.ui.heroSafetyFoodTitle],
+      ["acHeroSafetyFoodDesc", CONTENT_MAP.ui.heroSafetyFoodDesc],
+      ["acHeroSafetyPoolTitle", CONTENT_MAP.ui.heroSafetyPoolTitle],
+      ["acHeroSafetyPoolDesc", CONTENT_MAP.ui.heroSafetyPoolDesc]
     ];
 
     for (var i = 0; i < assignments.length; i += 1) {
