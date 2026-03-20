@@ -1514,12 +1514,17 @@
   function renderSections() {
     renderContentSections();
 
+    var targetId = TAB_TO_SECTION[state.activeTab];
     var sections = document.querySelectorAll(".ac-section");
     for (var i = 0; i < sections.length; i += 1) {
       sections[i].classList.remove("ac-section--focus");
+      if (state.mode === "compact" && targetId) {
+        sections[i].hidden = sections[i].id !== targetId;
+      } else {
+        sections[i].hidden = false;
+      }
     }
 
-    var targetId = TAB_TO_SECTION[state.activeTab];
     if (!targetId) return;
 
     var targetSection = document.getElementById(targetId);
