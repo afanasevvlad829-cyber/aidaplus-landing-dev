@@ -1703,15 +1703,24 @@
 
     for (var i = 0; i < auditTargets.length; i += 1) {
       var target = auditTargets[i];
-      if (target.all) {
-        var many = document.querySelectorAll(target.selector);
-        for (var k = 0; k < many.length; k += 1) {
-          var elMany = many[k];
-          if (!elMany) continue;
-          elMany.classList.add("ac-audit-target");
-          elMany.setAttribute("data-audit-index", String(order));
-          elMany.setAttribute("data-audit-label", target.label + " #" + String(k + 1));
-          elMany.setAttribute("data-audit-group", target.group);
+        if (target.all) {
+          var many = document.querySelectorAll(target.selector);
+          for (var k = 0; k < many.length; k += 1) {
+            var elMany = many[k];
+            if (!elMany) continue;
+            elMany.classList.add("ac-audit-target");
+            var posMany = "";
+            try {
+              posMany = window.getComputedStyle(elMany).position || "";
+            } catch (_errPosMany) {
+              posMany = "";
+            }
+            if (posMany === "static" || !posMany) {
+              elMany.classList.add("ac-audit-target--relative");
+            }
+            elMany.setAttribute("data-audit-index", String(order));
+            elMany.setAttribute("data-audit-label", target.label + " #" + String(k + 1));
+            elMany.setAttribute("data-audit-group", target.group);
           elMany.style.setProperty("--ac-audit-badge-x", String(3 + ((order - 1) % 3) * 24) + "px");
           elMany.style.setProperty("--ac-audit-badge-y", String(3 + Math.floor(((order - 1) % 6) / 3) * 24) + "px");
           var badgeMany = document.createElement("button");
@@ -1733,6 +1742,15 @@
         var el = document.querySelector(target.selector);
         if (!el) continue;
         el.classList.add("ac-audit-target");
+        var pos = "";
+        try {
+          pos = window.getComputedStyle(el).position || "";
+        } catch (_errPos) {
+          pos = "";
+        }
+        if (pos === "static" || !pos) {
+          el.classList.add("ac-audit-target--relative");
+        }
         el.setAttribute("data-audit-index", String(order));
         el.setAttribute("data-audit-label", target.label);
         el.setAttribute("data-audit-group", target.group);
@@ -1755,6 +1773,21 @@
       }
     }
 
+    for (var c = 0; c < nodes.length; c += 1) {
+      var maybeContainer = nodes[c].node;
+      var descendants = maybeContainer.querySelectorAll(".ac-audit-target");
+      var hasNestedTargets = false;
+      for (var d = 0; d < descendants.length; d += 1) {
+        if (descendants[d] !== maybeContainer) {
+          hasNestedTargets = true;
+          break;
+        }
+      }
+      if (hasNestedTargets) {
+        maybeContainer.classList.add("ac-audit-target--container");
+      }
+    }
+
     document.body.classList.add("ac-audit-mode");
 
     var panel = document.createElement("aside");
@@ -1762,6 +1795,7 @@
     panel.innerHTML =
       '<div class="ac-audit-panel__toolbar">' +
       '<div class="ac-audit-panel__head">Hero Audit Map</div>' +
+      '<button class="ac-audit-panel__toggle" type="button" aria-label="Сбросить позиции блоков" data-action="audit-reset-pos">Сброс</button>' +
       '<button class="ac-audit-panel__toggle" type="button" aria-label="Свернуть панель" data-action="audit-toggle">Свернуть</button>' +
       "</div>" +
       '<div class="ac-audit-panel__sub">Глобальная нумерация всех значимых блоков сайта</div>' +
@@ -1834,12 +1868,80 @@
       }
     }
 
+    function setNodeOffset(item, dx, dy) {
+      item.offsetX = dx;
+      item.offsetY = dy;
+      item.node.style.setProperty("--ac-audit-dx", String(dx) + "px");
+      item.node.style.setProperty("--ac-audit-dy", String(dy) + "px");
+    }
+
+    var dragState = null;
+
+    function startDrag(event, item) {
+      if (!item || !item.node) return;
+      if (event.button !== 0) return;
+      event.preventDefault();
+      event.stopPropagation();
+
+      dragState = {
+        item: item,
+        startX: event.clientX,
+        startY: event.clientY,
+        baseX: item.offsetX || 0,
+        baseY: item.offsetY || 0,
+        rect: item.node.getBoundingClientRect()
+      };
+
+      item.node.classList.add("ac-audit-target--dragging");
+      setActiveNode(item.node);
+    }
+
+    document.addEventListener("mousemove", function (event) {
+      if (!dragState) return;
+      var margin = 4;
+      var nextX = dragState.baseX + (event.clientX - dragState.startX);
+      var nextY = dragState.baseY + (event.clientY - dragState.startY);
+      var projectedLeft = dragState.rect.left + (nextX - dragState.baseX);
+      var projectedRight = dragState.rect.right + (nextX - dragState.baseX);
+      var projectedTop = dragState.rect.top + (nextY - dragState.baseY);
+      var projectedBottom = dragState.rect.bottom + (nextY - dragState.baseY);
+
+      if (projectedLeft < margin) {
+        nextX += margin - projectedLeft;
+      }
+      if (projectedRight > window.innerWidth - margin) {
+        nextX -= projectedRight - (window.innerWidth - margin);
+      }
+      if (projectedTop < margin) {
+        nextY += margin - projectedTop;
+      }
+      if (projectedBottom > window.innerHeight - margin) {
+        nextY -= projectedBottom - (window.innerHeight - margin);
+      }
+
+      setNodeOffset(dragState.item, nextX, nextY);
+    });
+
+    document.addEventListener("mouseup", function () {
+      if (!dragState) return;
+      dragState.item.node.classList.remove("ac-audit-target--dragging");
+      dragState = null;
+    });
+
     panel.addEventListener("click", function (event) {
       var toggleButton = event.target.closest('[data-action="audit-toggle"]');
       if (toggleButton) {
         var collapsed = panel.classList.toggle("ac-audit-panel--collapsed");
         toggleButton.textContent = collapsed ? "Развернуть" : "Свернуть";
         toggleButton.setAttribute("aria-label", collapsed ? "Развернуть панель" : "Свернуть панель");
+        return;
+      }
+
+      if (event.target.closest('[data-action="audit-reset-pos"]')) {
+        for (var rr = 0; rr < nodes.length; rr += 1) {
+          setNodeOffset(nodes[rr], 0, 0);
+          nodes[rr].node.classList.remove("ac-audit-target--active");
+        }
         return;
       }
 
@@ -1893,6 +1995,9 @@
           });
           item.badge.addEventListener("focus", function () {
             setActiveNode(item.node);
+          });
+          item.badge.addEventListener("mousedown", function (event) {
+            startDrag(event, item);
           });
         }
 
