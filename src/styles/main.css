@@ -307,8 +307,8 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  flex-wrap: wrap;
-  overflow-x: visible;
+  flex-wrap: nowrap;
+  overflow-x: hidden;
   overflow-y: hidden;
   height: var(--topnav-height);
   scrollbar-width: none;
@@ -332,38 +332,35 @@ body[data-mode="full"] .ac-top-nav .ac-container {
   display: flex;
   align-items: center;
   height: 100%;
-  width: 100%;
   min-width: 0;
-  flex: 1 1 auto;
 }
 
 .ac-menu {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .ac-menu-shell {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-}
-
-.ac-menu-toggle-slot {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex: 0 0 auto;
+  min-width: 0;
 }
 
 .ac-menu--compact {
   gap: var(--space-xs);
   margin: var(--space-14) 0 var(--space-sm);
   min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ac-menu--compact::-webkit-scrollbar {
+  display: none;
 }
 
 .ac-menu-item--compact {
@@ -392,17 +389,23 @@ body[data-mode="full"] .ac-top-nav .ac-container {
   gap: var(--space-sm);
   padding: 0;
   margin: var(--space-14) 0 var(--space-md);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   min-width: 0;
   height: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.ac-menu-shell--compact .ac-menu--compact {
-  margin-right: auto;
+.ac-menu--full::-webkit-scrollbar {
+  display: none;
 }
 
-.ac-menu-shell--full .ac-menu--full {
-  margin-right: auto;
+.ac-menu--compact .ac-mode-toggle,
+.ac-menu--full .ac-mode-toggle {
+  margin-left: auto;
+  flex: 0 0 auto;
 }
 
 .ac-chip,

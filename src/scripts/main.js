@@ -822,6 +822,19 @@
       }
     }
 
+    var toggleMarkup =
+      '<button id="acViewToggle" class="ac-mode-toggle" type="button" data-action="toggle-mode" aria-label="Режим просмотра" aria-pressed="' +
+      String(state.mode === "full") +
+      '">' +
+      '<span class="ac-mode-toggle__label">' +
+      CONTENT_MAP.ui.modeCompactLabel +
+      "</span>" +
+      '<span class="ac-mode-toggle__track" aria-hidden="true"><span class="ac-mode-toggle__thumb"></span></span>' +
+      '<span class="ac-mode-toggle__label">' +
+      CONTENT_MAP.ui.modeFullLabel +
+      "</span>" +
+      "</button>";
+
     return (
       '<div class="ac-menu-shell ac-menu-shell--' +
       variant +
@@ -830,21 +843,10 @@
       variant +
       '">' +
       items +
+      toggleMarkup +
       "</div>" +
-      '<div class="ac-menu-toggle-slot" data-menu-toggle-slot="' +
-      variant +
-      '"></div>' +
       "</div>"
     );
-  }
-
-  function mountToggleIntoMenu(root, variant) {
-    if (!root) return;
-    var toggle = document.getElementById("acViewToggle");
-    if (!toggle) return;
-    var slot = root.querySelector('[data-menu-toggle-slot="' + variant + '"]');
-    if (!slot) return;
-    slot.appendChild(toggle);
   }
 
   function renderMenu() {
@@ -856,13 +858,11 @@
     if (state.mode === "full") {
       topNav.innerHTML = '<div class="ac-container">' + buildMenuItems("full") + "</div>";
       compactNav.innerHTML = "";
-      mountToggleIntoMenu(topNav, "full");
       return;
     }
 
     compactNav.innerHTML = buildMenuItems("compact");
     topNav.innerHTML = "";
-    mountToggleIntoMenu(compactNav, "compact");
   }
 
   function renderInfoCard() {
@@ -1328,8 +1328,6 @@
   function renderStaticLabels() {
     var assignments = [
       ["acTechBadge", CONTENT_MAP.ui.techBadge],
-      ["acModeLabelCompact", CONTENT_MAP.ui.modeCompactLabel],
-      ["acModeLabelFull", CONTENT_MAP.ui.modeFullLabel],
       ["acBrandSub", CONTENT_MAP.ui.brandSub],
       ["acAgeLabel", CONTENT_MAP.ui.ageLabel],
       ["acHeroContactLabel", CONTENT_MAP.ui.heroContactLabel],
