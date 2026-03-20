@@ -928,9 +928,13 @@
     var nextBtn = document.getElementById("acStepNextBtn");
     var prevBtn = document.querySelector('[data-action="step-prev"]');
     var overlay = document.querySelector(".ac-hero-overlay");
+    var heroRight = document.querySelector(".ac-hero-right");
 
     if (overlay) {
       overlay.classList.toggle("is-intro", isIntroStep);
+    }
+    if (heroRight) {
+      heroRight.classList.toggle("is-intro", isIntroStep && state.mode === "compact");
     }
 
     if (isIntroStep) {
