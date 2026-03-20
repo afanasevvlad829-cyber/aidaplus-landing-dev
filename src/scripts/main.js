@@ -2438,11 +2438,22 @@ var HERO_SLIDESHOW_INTERVAL_MS = 4200;
     }
 
     var targetId = TAB_TO_SECTION[state.activeTab];
-    if (!targetId) return;
+    var isCompact = state.mode === "compact";
 
-    var targetSection = document.getElementById(targetId);
-    if (targetSection) {
-      targetSection.classList.add("ac-section--focus");
+    for (var j = 0; j < sections.length; j += 1) {
+      var section = sections[j];
+      if (!isCompact) {
+        section.hidden = false;
+        continue;
+      }
+      section.hidden = !targetId || section.id !== targetId;
+    }
+
+    if (targetId) {
+      var targetSection = document.getElementById(targetId);
+      if (targetSection) {
+        targetSection.classList.add("ac-section--focus");
+      }
     }
   }
 
