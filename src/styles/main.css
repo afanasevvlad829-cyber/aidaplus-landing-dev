@@ -818,9 +818,9 @@ body[data-mode="full"] .ac-compact-nav {
   width: var(--size-36);
   height: var(--size-36);
   border-radius: 50%;
-  border: var(--border-1) solid rgba(255, 255, 255, 0.6);
-  background: rgba(26, 32, 45, 0.5);
-  color: #fff;
+  border: var(--border-1) solid var(--ac-border);
+  background: #fff;
+  color: var(--ac-chip-text);
   display: grid;
   place-items: center;
   cursor: grab;
@@ -985,7 +985,7 @@ body[data-mode="compact"] .ac-hero-overlay.is-intro .ac-funnel-controls {
   position: absolute;
   left: var(--space-lg);
   right: var(--space-lg);
-  bottom: 0;
+  bottom: var(--space-lg);
   margin: 0;
   padding: 0;
   align-items: end;
@@ -1041,22 +1041,28 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
 .ac-filter-chip {
   border: var(--border-1) solid var(--ac-border);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
   background: #fff;
   color: var(--ac-chip-text);
   height: var(--chip-height);
-  padding: 0 var(--space-md);
+  padding: 0 var(--chip-padding-x);
   font: inherit;
   font-size: var(--font-size-chip);
   font-weight: 700;
+  line-height: var(--line-height-chip);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
   cursor: grab;
   white-space: nowrap;
 }
 
 .ac-filter-chip.is-active {
   color: #ef8300;
-  border-color: #f0c98f;
-  background: #fff8ee;
+  border-color: var(--ac-border);
+  background: #fff;
+  box-shadow: none;
 }
 
 .ac-nav-btn {

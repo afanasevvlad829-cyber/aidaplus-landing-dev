@@ -3,7 +3,9 @@
 
   var MODE_KEY = "ac:mode";
   var TECH_BADGE_DISMISSED_KEY = "ac:tech-badge-dismissed";
-  var BUILD_TAG = "TECH v2026.03.20-06";
+  var BUILD_TAG = "TECH v2026.03.20-07";
+  var HERO_SUBTITLE_STATIC = "Для детей 7–14 лет: свои IT‑проекты, бассейн и спорт каждый день, внутренняя экономика с лагерной валютой.";
+  var ageSelectionConfirmed = false;
   var auditRuntime = {
     active: false,
     allowUiActions: false,
@@ -604,11 +606,13 @@
     if (safeAge === state.age) return;
 
     state.age = safeAge;
+    ageSelectionConfirmed = true;
     if (auditRuntime.active) {
       auditRuntime.ageSelected = true;
     }
 
     renderInfoCard();
+    renderFunnel();
 
     track("age_selected", {
       age: state.age,
@@ -887,13 +891,20 @@
     var subtitle = document.getElementById("acHeroSubtitle");
     var progress = document.getElementById("acHeroProgress");
     var benefits = document.getElementById("acHeroBenefits");
+    var ageLabel = document.getElementById("acAgeLabel");
     var ageText = document.getElementById("acAgeText");
     var ageInput = document.getElementById("acAgeInput");
 
     if (title) title.textContent = profile.title;
-    if (subtitle) subtitle.textContent = profile.subtitle;
+    if (subtitle) subtitle.textContent = HERO_SUBTITLE_STATIC;
     if (progress) progress.textContent = profile.progress;
-    if (ageText) ageText.textContent = profile.ageText;
+    if (ageText) {
+      ageText.textContent = profile.ageText;
+      ageText.style.display = ageSelectionConfirmed ? "none" : "";
+    }
+    if (ageLabel) {
+      ageLabel.textContent = ageSelectionConfirmed ? profile.ageText : CONTENT_MAP.ui.ageLabel;
+    }
     var sliderValue = ageToSliderValue(state.age);
     if (ageInput && Number(ageInput.value) !== sliderValue) {
       ageInput.value = String(sliderValue);
@@ -922,6 +933,7 @@
   function renderFunnel() {
     var shift = getCurrentShift();
     var isIntroStep = state.step === 0;
+    var profile = findProfileByAge(state.age);
 
     var overlayTitle = document.getElementById("acHeroOverlayTitle");
     var line = document.getElementById("acProgramLine");
@@ -940,10 +952,10 @@
     }
 
     if (isIntroStep) {
-      if (overlayTitle) overlayTitle.textContent = "👦👧";
-      if (line) line.textContent = "Выберите возраст ребёнка";
+      if (overlayTitle) overlayTitle.textContent = profile.ageText;
+      if (line) line.textContent = "Описание смены";
       if (summary) {
-        summary.textContent = "Передвиньте слайдер на карточке слева — покажем подходящую программу и смены";
+        summary.textContent = profile.subtitle;
       }
     } else {
       if (overlayTitle) overlayTitle.textContent = CONTENT_MAP.ui.heroOverlayTitle;
