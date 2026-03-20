@@ -20,12 +20,13 @@
     holdHours: 72
   };
   var SHIFT_PRICE_META = [
-    { date: "1–13 ИЮН", days: 13, seats: 4, finalPrice: 79000, badge: "ХИТ" },
-    { date: "15–27 ИЮН", days: 13, seats: 8, finalPrice: 95000, badge: "" },
-    { date: "1–13 АВГ", days: 13, seats: 10, finalPrice: 75000, badge: "" },
-    { date: "17–26 АВГ", days: 10, seats: 6, finalPrice: 79000, badge: "" }
+    { date: "1–13 ИЮН", days: 13, seats: 4, finalPrice: 79000, badge: "ХИТ", monthLabel: "Июнь 2026", monthIndex: 5, year: 2026, startDay: 1, endDay: 13 },
+    { date: "15–27 ИЮН", days: 13, seats: 8, finalPrice: 95000, badge: "", monthLabel: "Июнь 2026", monthIndex: 5, year: 2026, startDay: 15, endDay: 27 },
+    { date: "1–13 АВГ", days: 13, seats: 10, finalPrice: 75000, badge: "", monthLabel: "Август 2026", monthIndex: 7, year: 2026, startDay: 1, endDay: 13 },
+    { date: "17–26 АВГ", days: 10, seats: 6, finalPrice: 79000, badge: "", monthLabel: "Август 2026", monthIndex: 7, year: 2026, startDay: 17, endDay: 26 }
   ];
   var shiftsShowAll = false;
+  var shiftCalendar = { open: false, shiftId: "" };
   var auditRuntime = (window.AC_FEATURES && window.AC_FEATURES.auditRuntime) || {
     active: false,
     allowUiActions: false,
@@ -234,9 +235,57 @@
       finalPrice: finalPrice,
       basePrice: basePrice,
       shiftName: shift.summary || shift.line,
+      monthLabel: fallback.monthLabel || "",
+      monthIndex: Number(fallback.monthIndex || 0),
+      year: Number(fallback.year || 2026),
+      startDay: Number(fallback.startDay || 1),
+      endDay: Number(fallback.endDay || 1),
       occupancyPercent: Math.round((reserved / totalSeats) * 100),
       occupancyLine: reserved + " из " + totalSeats + " мест"
     };
+  }
+
+  function buildShiftCalendarMarkup(meta, shiftId) {
+    var weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+    var firstDate = new Date(meta.year, meta.monthIndex, 1);
+    var monthWeekday = (firstDate.getDay() + 6) % 7;
+    var daysInMonth = new Date(meta.year, meta.monthIndex + 1, 0).getDate();
+    var dayCells = "";
+    var i;
+
+    for (i = 0; i < monthWeekday; i += 1) {
+      dayCells += '<span class="ac-shift-calendar__day ac-shift-calendar__day--empty"></span>';
+    }
+
+    for (i = 1; i <= daysInMonth; i += 1) {
+      var isInRange = i >= meta.startDay && i <= meta.endDay;
+      var isEdge = i === meta.startDay || i === meta.endDay;
+      var dayClass = "ac-shift-calendar__day";
+      if (isInRange) {
+        dayClass += " is-range";
+      }
+      if (isEdge) {
+        dayClass += " is-edge";
+      }
+      dayCells += '<span class="' + dayClass + '">' + i + "</span>";
+    }
+
+    var weekdayCells = "";
+    for (i = 0; i < weekdays.length; i += 1) {
+      weekdayCells += "<span>" + weekdays[i] + "</span>";
+    }
+
+    return (
+      '<div class="ac-shift-calendar" data-shift-calendar-root="' + shiftId + '">' +
+      '<div class="ac-shift-calendar__head">' +
+      '<strong>Календарь смены</strong>' +
+      '<button class="ac-shift-calendar__close" type="button" data-action="shift-calendar-close" aria-label="Закрыть календарь">×</button>' +
+      "</div>" +
+      '<div class="ac-shift-calendar__month">' + meta.monthLabel + "</div>" +
+      '<div class="ac-shift-calendar__weekdays">' + weekdayCells + "</div>" +
+      '<div class="ac-shift-calendar__grid">' + dayCells + "</div>" +
+      "</div>"
+    );
   }
 
   function formatPromoTtl(expiresAt) {
@@ -540,6 +589,8 @@
     if (state.selectedShiftId !== shift.id) {
       state.selectedShiftId = shift.id;
       state.direction = shift.direction;
+      shiftCalendar.open = false;
+      shiftCalendar.shiftId = "";
       changed = true;
     }
 
@@ -617,6 +668,8 @@
 
   function closeAllOverlays() {
     var changed = false;
+    shiftCalendar.open = false;
+    shiftCalendar.shiftId = "";
 
     if (state.photoLightboxIndex >= 0) {
       state.photoLightboxIndex = -1;
@@ -1533,6 +1586,9 @@
         '<div class="ac-shift-item__line">' +
         '<span class="ac-shift-item__name">' + meta.date + "</span>" +
         '<span class="ac-shift-item__days">' + meta.days + " дн.</span>" +
+        '<button class="ac-shift-item__date-icon" type="button" data-action="shift-calendar-toggle" data-shift-id="' + shift.id + '" aria-label="Открыть календарь смены">' +
+        '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.clipboard + '" alt="" aria-hidden="true">' +
+        "</button>" +
         "</div>" +
         '<div class="ac-shift-item__meta">' + shift.summary + "</div>" +
         '<div class="ac-shift-item__occupancy">' +
@@ -1554,6 +1610,7 @@
         '<button class="ac-primary-btn ' + actionClass + '" type="button" data-action="shift-price" data-shift-id="' + shift.id + '">' +
         promoView.actionText +
         "</button>" +
+        (shiftCalendar.open && shiftCalendar.shiftId === shift.id ? buildShiftCalendarMarkup(meta, shift.id) : "") +
         "</div>" +
         "</article>"
       );
@@ -1803,8 +1860,32 @@
       return;
     }
 
+    var shiftCalendarToggle = event.target.closest('[data-action="shift-calendar-toggle"]');
+    if (shiftCalendarToggle) {
+      var calendarShiftId = shiftCalendarToggle.dataset.shiftId || "";
+      if (shiftCalendar.open && shiftCalendar.shiftId === calendarShiftId) {
+        shiftCalendar.open = false;
+        shiftCalendar.shiftId = "";
+      } else {
+        shiftCalendar.open = true;
+        shiftCalendar.shiftId = calendarShiftId;
+      }
+      renderOverlays();
+      return;
+    }
+
+    var shiftCalendarClose = event.target.closest('[data-action="shift-calendar-close"]');
+    if (shiftCalendarClose) {
+      shiftCalendar.open = false;
+      shiftCalendar.shiftId = "";
+      renderOverlays();
+      return;
+    }
+
     var shiftPriceButton = event.target.closest('[data-action="shift-price"]');
     if (shiftPriceButton) {
+      shiftCalendar.open = false;
+      shiftCalendar.shiftId = "";
       applyShiftPriceStep(shiftPriceButton.dataset.shiftId || SHIFTS[0].id);
       return;
     }
