@@ -1668,7 +1668,8 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   border-left: var(--border-1) solid #f3dcc1;
   padding-left: var(--space-lg);
   display: grid;
-  align-content: start;
+  align-content: stretch;
+  grid-template-rows: auto auto auto 1fr;
   gap: 8px;
   position: relative;
 }
@@ -1762,6 +1763,15 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   padding: 6px 8px;
   display: grid;
   gap: 2px;
+  min-height: 44px;
+  align-content: center;
+}
+
+.ac-shift-item__promo-live.is-placeholder {
+  opacity: 0;
+  border-color: transparent;
+  background: transparent;
+  pointer-events: none;
 }
 
 .ac-shift-item__promo-code {
@@ -1879,6 +1889,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   width: 100%;
   min-height: 42px;
   white-space: nowrap;
+  align-self: end;
 }
 
 .ac-shift-price-btn.is-upgrade {

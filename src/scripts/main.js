@@ -1703,19 +1703,24 @@
       var occupancyTitle = showOccupancy ? "Смена заполнена" : "Проверяем заполненность смены...";
       var occupancyPercent = showOccupancy ? meta.occupancyPercent : 0;
       var occupancyLine = showOccupancy ? meta.occupancyLine : "забронировано —";
-    var promoMarkup = promoView.status === "active"
-      ? (
-        '<div class="ac-shift-item__promo-live">' +
-        '<div class="ac-shift-item__promo-code">' + (promoView.code || "") + "</div>" +
-        '<div class="ac-shift-item__promo-ttl">Действует: ' + (promoView.promoTtl || "00:00:00") + "</div>" +
-        "</div>"
-      )
-      : "";
-      if (promoView.stage >= 2 && promoView.status !== "active") {
+      var promoMarkup = "";
+      if (promoView.status === "active") {
+        promoMarkup =
+          '<div class="ac-shift-item__promo-live">' +
+          '<div class="ac-shift-item__promo-code">' + (promoView.code || "") + "</div>" +
+          '<div class="ac-shift-item__promo-ttl">Действует: ' + (promoView.promoTtl || "00:00:00") + "</div>" +
+          "</div>";
+      } else if (promoView.stage >= 2) {
         promoMarkup =
           '<div class="ac-shift-item__promo-live">' +
           '<div class="ac-shift-item__promo-code">' + (promoView.code || "") + "</div>" +
           '<div class="ac-shift-item__promo-ttl">' + (promoView.promoTtl || "Активируется после фиксации") + "</div>" +
+          "</div>";
+      } else {
+        promoMarkup =
+          '<div class="ac-shift-item__promo-live is-placeholder" aria-hidden="true">' +
+          '<div class="ac-shift-item__promo-code">AIDA-0000</div>' +
+          '<div class="ac-shift-item__promo-ttl">Действует: 00:00:00</div>' +
           "</div>";
       }
 
