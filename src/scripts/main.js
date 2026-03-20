@@ -27,6 +27,7 @@
   var DIRECTIONS = data.DIRECTIONS || [];
   var TAB_TO_SECTION = data.TAB_TO_SECTION || {};
   var AGE_SLIDER_POINTS = data.AGE_SLIDER_POINTS || [9, 11, 13];
+  var FAQ_DATA = data.FAQ_DATA || [];
   var initialShift = SHIFTS[0] || { id: "shift-1", direction: "base" };
 
 
@@ -1014,6 +1015,54 @@
     );
   }
 
+  function renderFaqOverlay(container) {
+    if (!container) return;
+
+    var html = "";
+    for (var i = 0; i < FAQ_DATA.length; i += 1) {
+      var group = FAQ_DATA[i];
+      html += '<div class="ac-left-faq__gt">';
+      if (group.icon) {
+        html +=
+          '<img class="ac-icon ac-icon--sm" src="' +
+          group.icon +
+          '" alt="" aria-hidden="true"> ';
+      }
+      html += group.group + "</div>";
+
+      for (var j = 0; j < group.items.length; j += 1) {
+        var item = group.items[j];
+        html +=
+          '<div class="ac-left-faq__item">' +
+          '<div class="ac-left-faq__q">' +
+          item.q +
+          "</div>" +
+          '<div class="ac-left-faq__a">' +
+          item.a +
+          "</div>" +
+          "</div>";
+      }
+    }
+
+    container.innerHTML = html;
+  }
+
+  function renderLegacyFaqOverlay() {
+    var faqContainer = document.getElementById("faqContainer");
+    if (faqContainer) {
+      renderFaqOverlay(faqContainer);
+      return;
+    }
+
+    var legacyOverlay = document.getElementById("acLtFaq");
+    if (!legacyOverlay) return;
+
+    legacyOverlay.innerHTML = '<div class="ac-left-faq" id="faqContainer"></div>';
+    var mounted = document.getElementById("faqContainer");
+    if (!mounted) return;
+    renderFaqOverlay(mounted);
+  }
+
   function renderContentSections() {
     var program = document.getElementById("acSectionProgram");
     var format = document.getElementById("acSectionFormat");
@@ -1034,6 +1083,7 @@
     if (reviews) reviews.innerHTML = renderReviewsSectionMarkup();
     if (team) team.innerHTML = renderTeamSectionMarkup();
     if (faq) faq.innerHTML = renderFaqSectionMarkup();
+    renderLegacyFaqOverlay();
   }
 
   function renderSections() {
@@ -1501,6 +1551,21 @@
 
     if (event.target.closest('[data-action="team-next"]')) {
       setTeamPage(state.teamPage + 1);
+      return;
+    }
+
+    var faqOverlayItem = event.target.closest(".ac-left-faq__item");
+    if (faqOverlayItem) {
+      var faqScope = faqOverlayItem.closest(".ac-left-faq");
+      if (faqScope) {
+        var items = faqScope.querySelectorAll(".ac-left-faq__item");
+        for (var i = 0; i < items.length; i += 1) {
+          if (items[i] !== faqOverlayItem) {
+            items[i].classList.remove("is-open");
+          }
+        }
+      }
+      faqOverlayItem.classList.toggle("is-open");
       return;
     }
 
