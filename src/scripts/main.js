@@ -1879,10 +1879,12 @@
       '<button class="ac-audit-status is-on" type="button" data-action="audit-snap-toggle">SNAP 4PX</button>' +
       '<button class="ac-audit-status is-on" type="button" data-action="audit-normalize-toggle">NORM PARENT ON</button>' +
       '<button class="ac-audit-status" type="button" data-action="audit-apply-confirmed">APPLY CONFIRMED</button>' +
+      '<button class="ac-audit-status" type="button" data-action="audit-log-clear">CLEAR LOG</button>' +
       "</div>" +
       '<div class="ac-audit-control-panel__sub">Перетащите бейдж блока, затем отметьте статус привязки.</div>' +
       '<ol class="ac-audit-control-panel__moved"></ol>' +
-      '<pre class="ac-audit-control-panel__apply-log">Нет подтвержденных правок</pre>';
+      '<pre class="ac-audit-control-panel__apply-log">Нет подтвержденных правок</pre>' +
+      '<ol class="ac-audit-control-panel__journal"><li class="ac-audit-control-panel__empty">Журнал пуст</li></ol>';
 
     var stagePanel = document.createElement("aside");
     stagePanel.className = "ac-audit-stage-panel";
@@ -1940,6 +1942,7 @@
     var movedOrder = [];
     var movedMap = {};
     var statusFlow = ["draft", "aligned", "fixed"];
+    var changeLog = [];
 
     function toPercent(value, total) {
       if (!total) return "0.00%";
@@ -2187,6 +2190,13 @@
           '" type="button" data-action="audit-item-decision" data-index="' +
           String(record.index) +
           '" data-decision="reject">REJECT</button>' +
+          '<button class="ac-audit-status ac-audit-status--row" type="button" data-action="audit-item-undo" data-index="' +
+          String(record.index) +
+          '"' +
+          ((record.history && record.history.length) ? "" : " disabled") +
+          '>UNDO (' +
+          String((record.history && record.history.length) || 0) +
+          ")</button>" +
           "</div>" +
           '<input class="ac-audit-comment" type="text" data-action="audit-item-comment" data-index="' +
           String(record.index) +
@@ -2250,21 +2260,97 @@
       logNode.textContent = lines.join("\n");
     }
 
-    function upsertMovedRecord(item) {
+    function findItemByIndex(index) {
+      for (var fi = 0; fi < nodes.length; fi += 1) {
+        if (nodes[fi].index === index) return nodes[fi];
+      }
+      return null;
+    }
+
+    function renderChangeLog() {
+      var journal = controlPanel.querySelector(".ac-audit-control-panel__journal");
+      if (!journal) return;
+      if (!changeLog.length) {
+        journal.innerHTML = '<li class="ac-audit-control-panel__empty">Журнал пуст</li>';
+        return;
+      }
+
+      var html = "";
+      for (var li = changeLog.length - 1; li >= 0; li -= 1) {
+        var row = changeLog[li];
+        html +=
+          '<li class="ac-audit-log-item">#' +
+          String(row.index) +
+          " " +
+          row.label +
+          " · " +
+          row.kind +
+          " · " +
+          row.from +
+          " -> " +
+          row.to +
+          " · " +
+          row.parent +
+          "</li>";
+      }
+      journal.innerHTML = html;
+    }
+
+    function pushChangeLog(entry) {
+      changeLog.push(entry);
+      if (changeLog.length > 120) {
+        changeLog.shift();
+      }
+      renderChangeLog();
+    }
+
+    function upsertMovedRecord(item, options) {
+      var opts = options || {};
+      var recordHistory = opts.recordHistory === true;
       var anchor = auditRuntime.normalizeToParent ? readParentAnchor(item) : readAnchor(item);
       var index = item.index;
       if (!movedMap[index]) {
         movedOrder.push(index);
       }
       var prev = movedMap[index] || {};
+      var history = prev.history ? prev.history.slice() : [];
+      var prevDx = Math.round(prev.dx || 0);
+      var prevDy = Math.round(prev.dy || 0);
+      var nextDx = Math.round(item.offsetX || 0);
+      var nextDy = Math.round(item.offsetY || 0);
+      if (recordHistory && (nextDx !== prevDx || nextDy !== prevDy)) {
+        history.push({
+          dx: prevDx,
+          dy: prevDy,
+          parentSelector: prev.parentSelector || "viewport",
+          anchorX: prev.anchorX || "left",
+          anchorY: prev.anchorY || "top",
+          offsetX: Math.round(prev.offsetX || 0),
+          offsetY: Math.round(prev.offsetY || 0),
+          normX: prev.normX || "0.00%",
+          normY: prev.normY || "0.00%"
+        });
+        if (history.length > 30) {
+          history.shift();
+        }
+        pushChangeLog({
+          index: index,
+          label: item.label,
+          kind: "move",
+          from: String(prevDx) + "," + String(prevDy),
+          to: String(nextDx) + "," + String(nextDy),
+          parent: anchor.parentSelector || "viewport"
+        });
+      }
       movedMap[index] = {
         index: index,
         label: item.label,
-        dx: Math.round(item.offsetX || 0),
-        dy: Math.round(item.offsetY || 0),
+        dx: nextDx,
+        dy: nextDy,
         status: prev.status || "draft",
         decision: prev.decision || "hold",
         comment: prev.comment || "",
+        history: history,
         parentSelector: anchor.parentSelector || "viewport",
         anchorX: anchor.anchorX,
         anchorY: anchor.anchorY,
@@ -2362,7 +2448,7 @@
     document.addEventListener("mouseup", function () {
       if (!dragState) return;
       dragState.item.node.classList.remove("ac-audit-target--dragging");
-      upsertMovedRecord(dragState.item);
+      upsertMovedRecord(dragState.item, { recordHistory: true });
       dragState = null;
     });
 
@@ -2382,7 +2468,9 @@
         }
         movedOrder = [];
         movedMap = {};
+        changeLog = [];
         renderMovedList();
+        renderChangeLog();
         applyConfirmedChanges();
         return;
       }
@@ -2477,6 +2565,12 @@
         return;
       }
 
+      if (event.target.closest('[data-action="audit-log-clear"]')) {
+        changeLog = [];
+        renderChangeLog();
+        return;
+      }
+
       var statusBtn = event.target.closest('[data-action="audit-item-status"]');
       if (statusBtn) {
         var itemIndex = Number(statusBtn.getAttribute("data-index"));
@@ -2500,6 +2594,29 @@
         var decision = decisionBtn.getAttribute("data-decision") || "hold";
         if (!decisionIndex || !movedMap[decisionIndex]) return;
         movedMap[decisionIndex].decision = decision;
+        renderMovedList();
+        return;
+      }
+
+      var undoBtn = event.target.closest('[data-action="audit-item-undo"]');
+      if (undoBtn) {
+        var undoIndex = Number(undoBtn.getAttribute("data-index"));
+        var undoRecord = movedMap[undoIndex];
+        if (!undoIndex || !undoRecord || !undoRecord.history || !undoRecord.history.length) return;
+        var prevState = undoRecord.history.pop();
+        var targetItem = findItemByIndex(undoIndex);
+        if (!targetItem) return;
+        setNodeOffset(targetItem, prevState.dx, prevState.dy);
+        upsertMovedRecord(targetItem, { recordHistory: false });
+        movedMap[undoIndex].history = undoRecord.history;
+        pushChangeLog({
+          index: undoIndex,
+          label: targetItem.label,
+          kind: "undo",
+          from: String(undoRecord.dx) + "," + String(undoRecord.dy),
+          to: String(prevState.dx) + "," + String(prevState.dy),
+          parent: movedMap[undoIndex].parentSelector || "viewport"
+        });
         renderMovedList();
       }
     });
@@ -2562,6 +2679,7 @@
     syncGroupFilters();
     syncControlPanelState();
     renderMovedList();
+    renderChangeLog();
     auditRuntime.stageSync = renderStagePanel;
     renderStagePanel();
 
