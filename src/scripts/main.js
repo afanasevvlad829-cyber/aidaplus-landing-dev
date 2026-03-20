@@ -532,15 +532,8 @@
     var compactNav = document.getElementById("acCompactNav");
 
     if (!topNav || !compactNav) return;
-
-    if (state.mode === "full") {
-      topNav.innerHTML = '<div class="ac-container">' + buildMenuItems("full") + "</div>";
-      compactNav.innerHTML = "";
-      return;
-    }
-
-    compactNav.innerHTML = buildMenuItems("compact");
-    topNav.innerHTML = "";
+    topNav.innerHTML = '<div class="ac-container">' + buildMenuItems("full") + "</div>";
+    compactNav.innerHTML = "";
   }
 
   function renderInfoCard() {
