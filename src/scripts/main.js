@@ -7,6 +7,25 @@
   var HERO_SUBTITLE_STATIC = "Для детей 7–14 лет: свои IT‑проекты, бассейн и спорт каждый день, внутренняя экономика с лагерной валютой.";
   var ageSelectionConfirmed = false;
   var ageGateNudge = false;
+  var heroSlideTimer = null;
+  var heroSlideIndex = 0;
+  var HERO_SLIDE_INTERVAL_MS = 5200;
+  var SHIFT_PROMO_STORAGE_KEY = "acPromoV1";
+  var SHIFT_PRICE_CFG = {
+    initialMarkup: 0.2,
+    firstDiscMin: 0.04,
+    firstDiscMax: 0.05,
+    secondDiscMin: 0.02,
+    secondDiscMax: 0.03,
+    holdHours: 72
+  };
+  var SHIFT_PRICE_META = [
+    { date: "1–13 ИЮН", days: 13, seats: 4, finalPrice: 79000, badge: "ХИТ" },
+    { date: "15–27 ИЮН", days: 13, seats: 8, finalPrice: 95000, badge: "" },
+    { date: "1–13 АВГ", days: 13, seats: 10, finalPrice: 75000, badge: "" },
+    { date: "17–26 АВГ", days: 10, seats: 6, finalPrice: 79000, badge: "" }
+  ];
+  var shiftsShowAll = false;
   var auditRuntime = (window.AC_FEATURES && window.AC_FEATURES.auditRuntime) || {
     active: false,
     allowUiActions: false,
@@ -148,6 +167,233 @@
     return profile.benefits;
   }
 
+  function getHeroSlides() {
+    var fallback = "https://static.tildacdn.com/tild3130-3234-4630-b533-343030653636/photo_2024-02-04_171.jpeg";
+    var list = [fallback];
+    var seen = {};
+    seen[fallback] = true;
+    var photos = CONTENT_MAP.photos || [];
+    for (var i = 0; i < photos.length; i += 1) {
+      var src = photos[i] && photos[i].src;
+      if (!src || seen[src]) continue;
+      seen[src] = true;
+      list.push(src);
+      if (list.length >= 8) break;
+    }
+    return list;
+  }
+
+  function randomFloat(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function formatPriceNumber(value) {
+    return (Math.round(Number(value) || 0)).toLocaleString("ru-RU") + " ₽";
+  }
+
+  function generatePromoCode() {
+    return "AIDA-" + String(Math.floor(1000 + Math.random() * 9000));
+  }
+
+  function loadShiftPromo() {
+    try {
+      var raw = localStorage.getItem(SHIFT_PROMO_STORAGE_KEY);
+      if (!raw) return null;
+      var data = JSON.parse(raw);
+      if (!data || typeof data !== "object") return null;
+      if (data.status === "active" && Number(data.expiresAt || 0) > 0 && Number(data.expiresAt) <= Date.now()) {
+        localStorage.removeItem(SHIFT_PROMO_STORAGE_KEY);
+        return null;
+      }
+      return data;
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  function saveShiftPromo(promo) {
+    try {
+      localStorage.setItem(SHIFT_PROMO_STORAGE_KEY, JSON.stringify(promo));
+    } catch (_err) {
+      // ignore storage errors
+    }
+  }
+
+  function getShiftPriceMeta(shift, idx) {
+    var fallback = SHIFT_PRICE_META[idx] || SHIFT_PRICE_META[0];
+    var finalPrice = fallback.finalPrice;
+    var basePrice = Math.round(finalPrice * (1 + SHIFT_PRICE_CFG.initialMarkup));
+    return {
+      date: fallback.date,
+      days: fallback.days,
+      seats: fallback.seats,
+      badge: fallback.badge,
+      finalPrice: finalPrice,
+      basePrice: basePrice,
+      shiftName: shift.summary || shift.line
+    };
+  }
+
+  function getShiftPromoView(shiftId, meta) {
+    var promo = loadShiftPromo();
+    if (!promo || promo.shiftId !== shiftId) {
+      return {
+        stage: 0,
+        status: "draft",
+        price: meta.basePrice,
+        oldPrice: "",
+        code: "",
+        actionText: "Показать мою цену",
+        metaText: "Нажмите — найдём персональную цену"
+      };
+    }
+
+    var stage = Number(promo.priceStage || 0);
+    var status = String(promo.status || "draft");
+    var price = Number(promo.finalPrice || meta.basePrice);
+    var oldPrice = stage > 0 ? formatPriceNumber(meta.basePrice) : "";
+
+    if (status === "active") {
+      return {
+        stage: stage,
+        status: status,
+        price: price,
+        oldPrice: oldPrice,
+        code: String(promo.code || ""),
+        actionText: "Зафиксировано — бронировать",
+        metaText: "Промокод: " + String(promo.code || "")
+      };
+    }
+
+    if (stage >= 2) {
+      return {
+        stage: stage,
+        status: status,
+        price: price,
+        oldPrice: oldPrice,
+        code: String(promo.code || ""),
+        actionText: "Зафиксировать цену на 72 ч",
+        metaText: "Найдена лучшая цена"
+      };
+    }
+
+    if (stage === 1) {
+      return {
+        stage: stage,
+        status: status,
+        price: price,
+        oldPrice: oldPrice,
+        code: String(promo.code || ""),
+        actionText: "Улучшить цену ещё раз",
+        metaText: "Осталась 1 попытка"
+      };
+    }
+
+    return {
+      stage: 0,
+      status: "draft",
+      price: meta.basePrice,
+      oldPrice: "",
+      code: "",
+      actionText: "Показать мою цену",
+      metaText: "Нажмите — найдём персональную цену"
+    };
+  }
+
+  function applyShiftPriceStep(shiftId) {
+    var shift = findShiftById(shiftId);
+    var idx = SHIFTS.indexOf(shift);
+    if (!shift || idx < 0) return;
+
+    var meta = getShiftPriceMeta(shift, idx);
+    var promo = loadShiftPromo();
+    var same = promo && promo.shiftId === shiftId;
+    var stage = same ? Number(promo.priceStage || 0) : 0;
+    var status = same ? String(promo.status || "draft") : "draft";
+
+    if (status === "active") {
+      setOverlay("shifts", false);
+      setStep(SHIFTS.length - 1);
+      return;
+    }
+
+    var nextPromo = {
+      shiftId: shift.id,
+      shiftName: shift.summary || shift.line,
+      basePrice: meta.basePrice,
+      finalPrice: same ? Number(promo.finalPrice || meta.basePrice) : meta.basePrice,
+      code: same && promo.code ? String(promo.code) : generatePromoCode(),
+      priceStage: same ? stage : 0,
+      status: "draft",
+      createdAt: same && promo.createdAt ? Number(promo.createdAt) : Date.now(),
+      activatedAt: null,
+      expiresAt: null
+    };
+
+    if (stage <= 0) {
+      var firstDisc = randomFloat(SHIFT_PRICE_CFG.firstDiscMin, SHIFT_PRICE_CFG.firstDiscMax);
+      nextPromo.finalPrice = Math.round(meta.finalPrice * (1 - firstDisc));
+      nextPromo.priceStage = 1;
+    } else if (stage === 1) {
+      var secondDisc = randomFloat(SHIFT_PRICE_CFG.secondDiscMin, SHIFT_PRICE_CFG.secondDiscMax);
+      nextPromo.finalPrice = Math.max(
+        Math.round(Number(nextPromo.finalPrice) * (1 - secondDisc)),
+        Math.round(meta.finalPrice * 0.88)
+      );
+      nextPromo.priceStage = 2;
+    } else {
+      var nowTs = Date.now();
+      nextPromo.priceStage = 2;
+      nextPromo.status = "active";
+      nextPromo.activatedAt = nowTs;
+      nextPromo.expiresAt = nowTs + SHIFT_PRICE_CFG.holdHours * 3600000;
+    }
+
+    saveShiftPromo(nextPromo);
+    state.selectedShiftId = shift.id;
+    state.direction = shift.direction;
+    renderOverlays();
+  }
+
+  function stopHeroSlideshow() {
+    if (!heroSlideTimer) return;
+    clearInterval(heroSlideTimer);
+    heroSlideTimer = null;
+  }
+
+  function startHeroSlideshow() {
+    var baseLayer = document.querySelector(".ac-hero-right__bg--base");
+    var fadeLayer = document.querySelector(".ac-hero-right__bg--fade");
+    if (!baseLayer || !fadeLayer) return;
+
+    var slides = getHeroSlides();
+    if (!slides.length) return;
+
+    heroSlideIndex = clamp(heroSlideIndex, 0, slides.length - 1);
+    baseLayer.style.backgroundImage = 'url("' + slides[heroSlideIndex] + '")';
+    fadeLayer.style.backgroundImage = "";
+    fadeLayer.classList.remove("is-active");
+
+    if (slides.length < 2) return;
+    stopHeroSlideshow();
+
+    if (!fadeLayer.dataset.crossfadeBound) {
+      fadeLayer.addEventListener("transitionend", function (event) {
+        if (event.propertyName !== "opacity") return;
+        if (!fadeLayer.classList.contains("is-active")) return;
+        baseLayer.style.backgroundImage = fadeLayer.style.backgroundImage;
+        fadeLayer.classList.remove("is-active");
+      });
+      fadeLayer.dataset.crossfadeBound = "1";
+    }
+
+    heroSlideTimer = window.setInterval(function () {
+      var nextIndex = (heroSlideIndex + 1) % slides.length;
+      fadeLayer.style.backgroundImage = 'url("' + slides[nextIndex] + '")';
+      fadeLayer.classList.add("is-active");
+      heroSlideIndex = nextIndex;
+    }, HERO_SLIDE_INTERVAL_MS);
+  }
   function hasTab(tabKey) {
     for (var i = 0; i < TABS.length; i += 1) {
       if (TABS[i].key === tabKey) {
@@ -302,6 +548,7 @@
     if (state.direction === directionId) return;
 
     state.direction = directionId;
+    shiftsShowAll = false;
 
     renderOverlays();
 
@@ -316,6 +563,12 @@
     var changed = false;
 
     if (isOpen) {
+      if (name === "shifts") {
+        shiftsShowAll = false;
+        if (state.direction !== "all") {
+          state.direction = "all";
+        }
+      }
       if (state.photoLightboxIndex >= 0) {
         state.photoLightboxIndex = -1;
         changed = true;
@@ -1227,22 +1480,40 @@
         "</button>";
     }
 
+    var visibleShifts = shiftsShowAll || filtered.length <= 2 ? filtered : filtered.slice(0, 2);
     var listHtml = "";
-    for (var k = 0; k < filtered.length; k += 1) {
-      var shift = filtered[k];
+    for (var k = 0; k < visibleShifts.length; k += 1) {
+      var shift = visibleShifts[k];
+      var shiftIdx = SHIFTS.indexOf(shift);
+      var meta = getShiftPriceMeta(shift, shiftIdx);
+      var promoView = getShiftPromoView(shift.id, meta);
+
       listHtml +=
-        '<button class="ac-shift-item' +
+        '<article class="ac-shift-item' +
         (state.selectedShiftId === shift.id ? " is-active" : "") +
-        '" type="button" data-action="select-shift" data-shift-id="' +
-        shift.id +
         '">' +
-        '<div><div class="ac-shift-item__name">' +
-        shift.line +
+        '<button class="ac-shift-item__select" type="button" data-action="select-shift" data-shift-id="' + shift.id + '">' +
+        '<div class="ac-shift-item__name">' +
+        meta.date +
+        ' <span class="ac-shift-item__days">' + meta.days + " дн.</span>" +
+        (meta.badge ? '<span class="ac-shift-item__badge">' + meta.badge + "</span>" : "") +
         '</div><div class="ac-shift-item__meta">' +
         shift.summary +
-        "</div></div>" +
-        '<div class="ac-shift-item__price">' + CONTENT_MAP.ui.shiftPriceFrom + "</div>" +
-        "</button>";
+        '</div><div class="ac-shift-item__promo">' +
+        promoView.metaText +
+        "</div>" +
+        "</button>" +
+        '<div class="ac-shift-item__side">' +
+        (promoView.oldPrice ? '<div class="ac-shift-item__price-old">' + promoView.oldPrice + "</div>" : "") +
+        '<div class="ac-shift-item__price">' + formatPriceNumber(promoView.price) + "</div>" +
+        '<div class="ac-shift-item__seats">Осталось ' + meta.seats + " мест</div>" +
+        "</div>" +
+        '<div class="ac-shift-item__actions">' +
+        '<button class="ac-primary-btn ac-shift-price-btn" type="button" data-action="shift-price" data-shift-id="' + shift.id + '">' +
+        promoView.actionText +
+        "</button>" +
+        "</div>" +
+        "</article>";
     }
 
     var listClass = state.shiftView === "grid" ? " ac-shift-list--grid" : "";
@@ -1280,6 +1551,11 @@
       '">' +
       listHtml +
       "</div>" +
+      (filtered.length > 2
+        ? '<button class="ac-shift-more-btn" type="button" data-action="shift-show-more">' +
+          (shiftsShowAll ? "Скрыть дополнительные смены" : "Показать ещё 2 смены →") +
+          "</button>"
+        : "") +
       '<div class="ac-overlay-actions"><button class="ac-primary-btn" type="button" data-action="overlay-close">' +
       CONTENT_MAP.ui.confirm +
       "</button></div>" +
@@ -1482,6 +1758,19 @@
     var shiftButton = event.target.closest('[data-action="select-shift"]');
     if (shiftButton) {
       setSelectedShift(shiftButton.dataset.shiftId || SHIFTS[0].id);
+      return;
+    }
+
+    var shiftShowMore = event.target.closest('[data-action="shift-show-more"]');
+    if (shiftShowMore) {
+      shiftsShowAll = !shiftsShowAll;
+      renderOverlays();
+      return;
+    }
+
+    var shiftPriceButton = event.target.closest('[data-action="shift-price"]');
+    if (shiftPriceButton) {
+      applyShiftPriceStep(shiftPriceButton.dataset.shiftId || SHIFTS[0].id);
       return;
     }
 
