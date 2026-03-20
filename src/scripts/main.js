@@ -2,6 +2,12 @@
   "use strict";
 
   var MODE_KEY = "ac:mode";
+  var auditRuntime = {
+    active: false,
+    allowUiActions: false,
+    allowDrag: true,
+    snapGrid: 4
+  };
 
   var ICON_MAP = {
     close: "/assets/icons/close.svg",
@@ -1456,11 +1462,10 @@
   }
 
   function handleClick(event) {
-    if (document.body && document.body.classList.contains("ac-audit-mode")) {
-      var inAuditPanel = event.target.closest(".ac-audit-panel");
+    if (auditRuntime.active && !auditRuntime.allowUiActions) {
+      var inAuditControls = event.target.closest(".ac-audit-panel, .ac-audit-control-panel");
       var auditBadge = event.target.closest(".ac-audit-badge");
-
-      if (auditBadge || !inAuditPanel) {
+      if (auditBadge || !inAuditControls) {
         event.preventDefault();
         event.stopPropagation();
         return;
@@ -1595,6 +1600,15 @@
   }
 
   function handleInput(event) {
+    if (auditRuntime.active && !auditRuntime.allowUiActions) {
+      var inAuditControls = event.target.closest(".ac-audit-panel, .ac-audit-control-panel");
+      if (!inAuditControls) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+    }
+
     var ageInput = event.target.closest("#acAgeInput");
     if (!ageInput) return;
 
@@ -1805,6 +1819,10 @@
     }
 
     document.body.classList.add("ac-audit-mode");
+    auditRuntime.active = true;
+    auditRuntime.allowUiActions = false;
+    auditRuntime.allowDrag = true;
+    auditRuntime.snapGrid = 4;
 
     var panel = document.createElement("aside");
     panel.className = "ac-audit-panel";
@@ -1817,6 +1835,21 @@
       '<div class="ac-audit-panel__sub">Глобальная нумерация всех значимых блоков сайта</div>' +
       '<div class="ac-audit-groups"></div>' +
       '<ol class="ac-audit-panel__list"></ol>';
+
+    var controlPanel = document.createElement("aside");
+    controlPanel.className = "ac-audit-control-panel";
+    controlPanel.innerHTML =
+      '<div class="ac-audit-control-panel__toolbar">' +
+      '<div class="ac-audit-control-panel__head">Audit Actions</div>' +
+      '<button class="ac-audit-panel__toggle" type="button" data-action="audit-control-toggle" aria-label="Свернуть панель действий">Свернуть</button>' +
+      "</div>" +
+      '<div class="ac-audit-control-panel__statuses">' +
+      '<button class="ac-audit-status is-on" type="button" data-action="audit-ui-toggle">UI OFF</button>' +
+      '<button class="ac-audit-status is-on" type="button" data-action="audit-drag-toggle">DRAG ON</button>' +
+      '<button class="ac-audit-status is-on" type="button" data-action="audit-snap-toggle">SNAP 4PX</button>' +
+      "</div>" +
+      '<div class="ac-audit-control-panel__sub">Перетащите бейдж блока, затем отметьте статус привязки.</div>' +
+      '<ol class="ac-audit-control-panel__moved"></ol>';
 
     var groupsState = {};
     for (var g = 0; g < auditGroups.length; g += 1) {
@@ -1858,6 +1891,135 @@
       }
     }
 
+    var movedOrder = [];
+    var movedMap = {};
+    var statusFlow = ["draft", "aligned", "fixed"];
+
+    function toPercent(value, total) {
+      if (!total) return "0.00%";
+      return (Math.round((value / total) * 10000) / 100).toFixed(2) + "%";
+    }
+
+    function readAnchor(item) {
+      var rect = item.node.getBoundingClientRect();
+      var centerX = rect.left + rect.width / 2;
+      var centerY = rect.top + rect.height / 2;
+      var anchorX = centerX <= window.innerWidth / 2 ? "left" : "right";
+      var anchorY = centerY <= window.innerHeight / 2 ? "top" : "bottom";
+      var offsetX = anchorX === "left" ? rect.left : window.innerWidth - rect.right;
+      var offsetY = anchorY === "top" ? rect.top : window.innerHeight - rect.bottom;
+      return {
+        anchorX: anchorX,
+        anchorY: anchorY,
+        offsetX: Math.round(offsetX),
+        offsetY: Math.round(offsetY),
+        normX: toPercent(offsetX, window.innerWidth),
+        normY: toPercent(offsetY, window.innerHeight)
+      };
+    }
+
+    function normalizeToGrid(value) {
+      var grid = auditRuntime.snapGrid || 0;
+      if (!grid || grid < 1) return value;
+      return Math.round(value / grid) * grid;
+    }
+
+    function syncControlPanelState() {
+      var uiBtn = controlPanel.querySelector('[data-action="audit-ui-toggle"]');
+      var dragBtn = controlPanel.querySelector('[data-action="audit-drag-toggle"]');
+      var snapBtn = controlPanel.querySelector('[data-action="audit-snap-toggle"]');
+
+      if (uiBtn) {
+        uiBtn.classList.toggle("is-on", !auditRuntime.allowUiActions);
+        uiBtn.textContent = auditRuntime.allowUiActions ? "UI ON" : "UI OFF";
+      }
+
+      if (dragBtn) {
+        dragBtn.classList.toggle("is-on", auditRuntime.allowDrag);
+        dragBtn.textContent = auditRuntime.allowDrag ? "DRAG ON" : "DRAG OFF";
+      }
+
+      if (snapBtn) {
+        var snapOn = !!auditRuntime.snapGrid;
+        snapBtn.classList.toggle("is-on", snapOn);
+        snapBtn.textContent = snapOn ? "SNAP " + String(auditRuntime.snapGrid) + "PX" : "SNAP OFF";
+      }
+    }
+
+    function renderMovedList() {
+      var movedList = controlPanel.querySelector(".ac-audit-control-panel__moved");
+      if (!movedList) return;
+
+      if (!movedOrder.length) {
+        movedList.innerHTML = '<li class="ac-audit-control-panel__empty">Пока нет перетаскиваний</li>';
+        return;
+      }
+
+      var html = "";
+      for (var mm = 0; mm < movedOrder.length; mm += 1) {
+        var idx = movedOrder[mm];
+        var record = movedMap[idx];
+        if (!record) continue;
+        html +=
+          '<li class="ac-audit-moved-item">' +
+          '<div class="ac-audit-moved-item__title">#' +
+          String(record.index) +
+          " " +
+          record.label +
+          "</div>" +
+          '<div class="ac-audit-moved-item__meta">dx ' +
+          String(record.dx) +
+          "px · dy " +
+          String(record.dy) +
+          "px · " +
+          record.anchorX +
+          ":" +
+          String(record.offsetX) +
+          "px · " +
+          record.anchorY +
+          ":" +
+          String(record.offsetY) +
+          "px · " +
+          record.normX +
+          " / " +
+          record.normY +
+          "</div>" +
+          '<button class="ac-audit-status ac-audit-status--row' +
+          (record.status === "fixed" ? " is-fixed" : "") +
+          '" type="button" data-action="audit-item-status" data-index="' +
+          String(record.index) +
+          '">' +
+          "STATUS: " +
+          String(record.status).toUpperCase() +
+          "</button>" +
+          "</li>";
+      }
+
+      movedList.innerHTML = html;
+    }
+
+    function upsertMovedRecord(item) {
+      var anchor = readAnchor(item);
+      var index = item.index;
+      if (!movedMap[index]) {
+        movedOrder.push(index);
+      }
+      movedMap[index] = {
+        index: index,
+        label: item.label,
+        dx: Math.round(item.offsetX || 0),
+        dy: Math.round(item.offsetY || 0),
+        status: movedMap[index] ? movedMap[index].status : "draft",
+        anchorX: anchor.anchorX,
+        anchorY: anchor.anchorY,
+        offsetX: anchor.offsetX,
+        offsetY: anchor.offsetY,
+        normX: anchor.normX,
+        normY: anchor.normY
+      };
+      renderMovedList();
+    }
+
     function syncGroupFilters() {
       for (var n = 0; n < nodes.length; n += 1) {
         var visible = groupsState[nodes[n].group] !== false;
@@ -1895,6 +2057,7 @@
 
     function startDrag(event, item) {
       if (!item || !item.node) return;
+      if (!auditRuntime.allowDrag) return;
       if (event.button !== 0) return;
       event.preventDefault();
       event.stopPropagation();
@@ -1935,12 +2098,15 @@
         nextY -= projectedBottom - (window.innerHeight - margin);
       }
 
+      nextX = normalizeToGrid(nextX);
+      nextY = normalizeToGrid(nextY);
       setNodeOffset(dragState.item, nextX, nextY);
     });
 
     document.addEventListener("mouseup", function () {
       if (!dragState) return;
       dragState.item.node.classList.remove("ac-audit-target--dragging");
+      upsertMovedRecord(dragState.item);
       dragState = null;
     });
 
@@ -1958,6 +2124,9 @@
           setNodeOffset(nodes[rr], 0, 0);
           nodes[rr].node.classList.remove("ac-audit-target--active");
         }
+        movedOrder = [];
+        movedMap = {};
+        renderMovedList();
         return;
       }
 
@@ -2003,6 +2172,49 @@
       setActiveNode(targetNode);
     });
 
+    controlPanel.addEventListener("click", function (event) {
+      var toggleControls = event.target.closest('[data-action="audit-control-toggle"]');
+      if (toggleControls) {
+        var collapsed = controlPanel.classList.toggle("ac-audit-control-panel--collapsed");
+        toggleControls.textContent = collapsed ? "Развернуть" : "Свернуть";
+        toggleControls.setAttribute("aria-label", collapsed ? "Развернуть панель действий" : "Свернуть панель действий");
+        return;
+      }
+
+      if (event.target.closest('[data-action="audit-ui-toggle"]')) {
+        auditRuntime.allowUiActions = !auditRuntime.allowUiActions;
+        syncControlPanelState();
+        return;
+      }
+
+      if (event.target.closest('[data-action="audit-drag-toggle"]')) {
+        auditRuntime.allowDrag = !auditRuntime.allowDrag;
+        syncControlPanelState();
+        return;
+      }
+
+      if (event.target.closest('[data-action="audit-snap-toggle"]')) {
+        auditRuntime.snapGrid = auditRuntime.snapGrid ? 0 : 4;
+        syncControlPanelState();
+        return;
+      }
+
+      var statusBtn = event.target.closest('[data-action="audit-item-status"]');
+      if (!statusBtn) return;
+      var itemIndex = Number(statusBtn.getAttribute("data-index"));
+      if (!itemIndex || !movedMap[itemIndex]) return;
+      var current = movedMap[itemIndex].status || "draft";
+      var currentIdx = 0;
+      for (var sf = 0; sf < statusFlow.length; sf += 1) {
+        if (statusFlow[sf] === current) {
+          currentIdx = sf;
+          break;
+        }
+      }
+      movedMap[itemIndex].status = statusFlow[(currentIdx + 1) % statusFlow.length];
+      renderMovedList();
+    });
+
     for (var h = 0; h < nodes.length; h += 1) {
       (function (item) {
         if (item.badge) {
@@ -2026,7 +2238,23 @@
     }
 
     document.body.appendChild(panel);
+    document.body.appendChild(controlPanel);
     syncGroupFilters();
+    syncControlPanelState();
+    renderMovedList();
+
+    window.addEventListener("resize", function () {
+      if (!movedOrder.length) return;
+      for (var mr = 0; mr < movedOrder.length; mr += 1) {
+        var movedItemIndex = movedOrder[mr];
+        for (var mn = 0; mn < nodes.length; mn += 1) {
+          if (nodes[mn].index === movedItemIndex) {
+            upsertMovedRecord(nodes[mn]);
+            break;
+          }
+        }
+      }
+    });
   }
 
   function bootstrap() {
