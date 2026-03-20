@@ -65,8 +65,8 @@
   --size-38: 38px;
   --size-82: 82px;
   --size-close: 38px;
-  --hero-min-height: 700px;
-  --hero-min-height-mobile: 520px;
+  --hero-min-height: 620px;
+  --hero-min-height-mobile: 460px;
   --map-min-height: 210px;
   --video-min-height: 280px;
   --team-min-height: 260px;
@@ -519,7 +519,7 @@ body[data-mode="full"] .ac-top-nav .ac-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-2xl);
-  align-items: stretch;
+  align-items: start;
 }
 
 .ac-hero-left,
@@ -562,7 +562,6 @@ body[data-mode="full"] .ac-compact-nav {
   background: #f4f6fc;
   border-radius: var(--radius-lg);
   padding: var(--space-3xl);
-  min-height: 100%;
 }
 
 .ac-hero-title {
@@ -939,6 +938,9 @@ body[data-mode="full"] .ac-compact-nav {
   font-size: var(--font-size-lg);
   border-radius: 999px;
   box-shadow: 0 8px 22px rgba(255, 119, 0, 0.36);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
 .ac-primary-btn--intro {

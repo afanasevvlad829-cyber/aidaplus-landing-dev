@@ -1002,8 +1002,10 @@
     }
 
     if (status) {
+      var visualTotalSteps = 2;
+      var visualStep = state.step === 0 ? 1 : 2;
       status.textContent =
-        CONTENT_MAP.ui.stepLabel + " " + String(state.step + 1) + " " + CONTENT_MAP.ui.stepLabelDelimiter + " " + String(SHIFTS.length);
+        CONTENT_MAP.ui.stepLabel + " " + String(visualStep) + " " + CONTENT_MAP.ui.stepLabelDelimiter + " " + String(visualTotalSteps);
     }
 
     if (nextBtn) {
@@ -1018,7 +1020,12 @@
       } else if (state.step >= SHIFTS.length - 1) {
         nextBtn.classList.remove("ac-primary-btn--intro");
         nextBtn.classList.add("ac-primary-btn--cta");
-        nextBtn.textContent = CONTENT_MAP.ui.finalBookingCta;
+        nextBtn.innerHTML =
+          '<span>' +
+          CONTENT_MAP.ui.finalBookingCta +
+          '</span><img class="ac-icon ac-icon--sm" src="' +
+          ICON_MAP.chevronRight +
+          '" alt="" aria-hidden="true">';
         nextBtn.removeAttribute("aria-label");
       } else {
         nextBtn.classList.remove("ac-primary-btn--intro");
