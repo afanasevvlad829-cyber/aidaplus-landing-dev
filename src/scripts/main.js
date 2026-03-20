@@ -1456,6 +1456,17 @@
   }
 
   function handleClick(event) {
+    if (document.body && document.body.classList.contains("ac-audit-mode")) {
+      var inAuditPanel = event.target.closest(".ac-audit-panel");
+      var auditBadge = event.target.closest(".ac-audit-badge");
+
+      if (auditBadge || !inAuditPanel) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+    }
+
     var toggle = event.target.closest('[data-action="toggle-mode"]');
     if (toggle) {
       setMode(state.mode === "full" ? "compact" : "full");
@@ -1644,6 +1655,11 @@
       { group: "hero", selector: ".ac-hero-pill--right", label: "Hero Right: плашка AI-программы" },
 
       { group: "funnel", selector: ".ac-hero-overlay", label: "Funnel: контейнер" },
+      { group: "funnel", selector: ".ac-hero-right__bg", label: "Funnel: слой фона" },
+      { group: "funnel", selector: ".ac-hero-right__scrim", label: "Funnel: слой затемнения" },
+      { group: "funnel", selector: ".ac-funnel-body", label: "Funnel: слой контента" },
+      { group: "funnel", selector: ".ac-hero-grid", label: "Funnel: слой сетки" },
+      { group: "funnel", selector: ".ac-funnel-controls", label: "Funnel: слой контролов" },
       { group: "funnel", selector: "#acHeroOverlayTitle", label: "Funnel: заголовок" },
       { group: "funnel", selector: "#acProgramLine", label: "Funnel: строка программы" },
       { group: "funnel", selector: "#acProgramSummary", label: "Funnel: описание" },
