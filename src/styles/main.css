@@ -1859,6 +1859,102 @@ body.ac-audit-mode .ac-audit-target--hidden .ac-audit-badge {
   display: none;
 }
 
+.ac-audit-stage-panel {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 14px;
+  width: min(540px, 92vw);
+  max-height: min(46vh, 390px);
+  overflow: auto;
+  z-index: 9999;
+  background: rgba(14, 22, 36, 0.92);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 10px;
+  backdrop-filter: blur(8px);
+}
+
+.ac-audit-stage-panel__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ac-audit-stage-panel__head {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ac-audit-stage-panel__statuses {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.ac-audit-stage-panel__list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.ac-audit-stage {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.ac-audit-stage.is-active {
+  border-color: rgba(255, 159, 31, 0.9);
+  background: rgba(255, 159, 31, 0.2);
+}
+
+.ac-audit-stage.is-done {
+  border-color: rgba(52, 211, 153, 0.9);
+  background: rgba(52, 211, 153, 0.18);
+}
+
+.ac-audit-stage__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ac-audit-stage__code {
+  min-width: 30px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffb15a;
+}
+
+.ac-audit-stage__title {
+  font-size: 12px;
+}
+
+.ac-audit-stage__meta {
+  margin-top: 4px;
+  font-size: 11px;
+  opacity: 0.92;
+  line-height: 1.35;
+}
+
+.ac-audit-stage-panel--collapsed {
+  width: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+.ac-audit-stage-panel--collapsed .ac-audit-stage-panel__statuses,
+.ac-audit-stage-panel--collapsed .ac-audit-stage-panel__list {
+  display: none;
+}
+
 @media (max-width: 1700px) {
   .ac-audit-panel__list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1879,6 +1975,13 @@ body.ac-audit-mode .ac-audit-target--hidden .ac-audit-badge {
   .ac-audit-control-panel {
     left: 10px;
     right: 10px;
+    width: auto;
+  }
+
+  .ac-audit-stage-panel {
+    left: 10px;
+    right: 10px;
+    transform: none;
     width: auto;
   }
 

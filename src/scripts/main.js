@@ -6,7 +6,10 @@
     active: false,
     allowUiActions: false,
     allowDrag: true,
-    snapGrid: 4
+    snapGrid: 4,
+    lockUntilAge: true,
+    ageSelected: false,
+    stageSync: null
   };
 
   var ICON_MAP = {
@@ -523,6 +526,10 @@
     track("mode_changed", {
       mode: state.mode
     });
+
+    if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+      auditRuntime.stageSync();
+    }
   }
 
   function setActiveTab(tabKey) {
@@ -570,7 +577,10 @@
   }
 
   function setStep(nextStep) {
-    applyStepTransition(nextStep, true);
+    var changed = applyStepTransition(nextStep, true);
+    if (changed && auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+      auditRuntime.stageSync();
+    }
   }
 
   function setAge(nextAge) {
@@ -578,6 +588,9 @@
     if (safeAge === state.age) return;
 
     state.age = safeAge;
+    if (auditRuntime.active) {
+      auditRuntime.ageSelected = true;
+    }
 
     renderInfoCard();
 
@@ -585,6 +598,10 @@
       age: state.age,
       profile_id: findProfileByAge(state.age).id
     });
+
+    if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+      auditRuntime.stageSync();
+    }
   }
 
   function setShiftView(view) {
@@ -1463,9 +1480,18 @@
 
   function handleClick(event) {
     if (auditRuntime.active && !auditRuntime.allowUiActions) {
-      var inAuditControls = event.target.closest(".ac-audit-panel, .ac-audit-control-panel");
+      var inAuditControls = event.target.closest(".ac-audit-panel, .ac-audit-control-panel, .ac-audit-stage-panel");
       var auditBadge = event.target.closest(".ac-audit-badge");
       if (auditBadge || !inAuditControls) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+    }
+
+    if (auditRuntime.active && auditRuntime.allowUiActions && auditRuntime.lockUntilAge && !auditRuntime.ageSelected) {
+      var inAuditPanels = event.target.closest(".ac-audit-panel, .ac-audit-control-panel, .ac-audit-stage-panel");
+      if (!inAuditPanels) {
         event.preventDefault();
         event.stopPropagation();
         return;
@@ -1601,7 +1627,7 @@
 
   function handleInput(event) {
     if (auditRuntime.active && !auditRuntime.allowUiActions) {
-      var inAuditControls = event.target.closest(".ac-audit-panel, .ac-audit-control-panel");
+      var inAuditControls = event.target.closest(".ac-audit-panel, .ac-audit-control-panel, .ac-audit-stage-panel");
       if (!inAuditControls) {
         event.preventDefault();
         event.stopPropagation();
@@ -1823,6 +1849,8 @@
     auditRuntime.allowUiActions = false;
     auditRuntime.allowDrag = true;
     auditRuntime.snapGrid = 4;
+    auditRuntime.lockUntilAge = true;
+    auditRuntime.ageSelected = false;
 
     var panel = document.createElement("aside");
     panel.className = "ac-audit-panel";
@@ -1850,6 +1878,19 @@
       "</div>" +
       '<div class="ac-audit-control-panel__sub">Перетащите бейдж блока, затем отметьте статус привязки.</div>' +
       '<ol class="ac-audit-control-panel__moved"></ol>';
+
+    var stagePanel = document.createElement("aside");
+    stagePanel.className = "ac-audit-stage-panel";
+    stagePanel.innerHTML =
+      '<div class="ac-audit-stage-panel__toolbar">' +
+      '<div class="ac-audit-stage-panel__head">Site Stages</div>' +
+      '<button class="ac-audit-panel__toggle" type="button" data-action="audit-stage-toggle" aria-label="Свернуть стадии">Свернуть</button>' +
+      "</div>" +
+      '<div class="ac-audit-stage-panel__statuses">' +
+      '<button class="ac-audit-status is-on" type="button" data-action="audit-stage-lock-toggle">LOCK UNTIL AGE ON</button>' +
+      '<button class="ac-audit-status" type="button" data-action="audit-stage-reset">RESET STAGES</button>' +
+      "</div>" +
+      '<ol class="ac-audit-stage-panel__list"></ol>';
 
     var groupsState = {};
     for (var g = 0; g < auditGroups.length; g += 1) {
@@ -1944,6 +1985,86 @@
         snapBtn.classList.toggle("is-on", snapOn);
         snapBtn.textContent = snapOn ? "SNAP " + String(auditRuntime.snapGrid) + "PX" : "SNAP OFF";
       }
+    }
+
+    function renderStagePanel() {
+      var stageList = stagePanel.querySelector(".ac-audit-stage-panel__list");
+      var lockBtn = stagePanel.querySelector('[data-action="audit-stage-lock-toggle"]');
+      if (!stageList) return;
+
+      if (lockBtn) {
+        lockBtn.classList.toggle("is-on", auditRuntime.lockUntilAge);
+        lockBtn.textContent = auditRuntime.lockUntilAge ? "LOCK UNTIL AGE ON" : "LOCK UNTIL AGE OFF";
+      }
+
+      var isCompact = state.mode === "compact";
+      var stepNumber = state.step + 1;
+      var introStep = state.step === 0;
+      var ageReady = auditRuntime.ageSelected;
+      var lockActive = auditRuntime.lockUntilAge && !ageReady;
+      var lineText = "";
+      var lineNode = document.getElementById("acProgramLine");
+      if (lineNode) {
+        var lineClone = lineNode.cloneNode(true);
+        var badges = lineClone.querySelectorAll(".ac-audit-badge");
+        for (var bi = 0; bi < badges.length; bi += 1) {
+          if (badges[bi] && badges[bi].parentNode) {
+            badges[bi].parentNode.removeChild(badges[bi]);
+          }
+        }
+        lineText = (lineClone.textContent || "").trim();
+      }
+
+      var stages = [
+        { code: "S1", title: "Первый вход", meta: isCompact ? "Режим: Кратко" : "Режим: Подробно", active: true, done: isCompact },
+        {
+          code: "S2",
+          title: "Ожидание выбора возраста",
+          meta: introStep ? "Правый блок: " + (lineText || "Выберите возраст ребёнка") : "Этап интро пройден",
+          active: introStep,
+          done: ageReady
+        },
+        {
+          code: "S3",
+          title: "Разблокировка сценария",
+          meta: lockActive ? "Кнопки заблокированы до выбора возраста" : "Кнопки разблокированы",
+          active: !lockActive,
+          done: ageReady
+        },
+        {
+          code: "S4",
+          title: "Воронка шаги 1-4",
+          meta: "Текущий шаг: " + String(stepNumber) + " из 4",
+          active: ageReady,
+          done: stepNumber >= 4
+        }
+      ];
+
+      var html = "";
+      for (var si = 0; si < stages.length; si += 1) {
+        var stage = stages[si];
+        var cls = "ac-audit-stage";
+        if (stage.done) cls += " is-done";
+        else if (stage.active) cls += " is-active";
+        html +=
+          '<li class="' +
+          cls +
+          '">' +
+          '<div class="ac-audit-stage__row">' +
+          '<span class="ac-audit-stage__code">' +
+          stage.code +
+          "</span>" +
+          '<strong class="ac-audit-stage__title">' +
+          stage.title +
+          "</strong>" +
+          "</div>" +
+          '<div class="ac-audit-stage__meta">' +
+          stage.meta +
+          "</div>" +
+          "</li>";
+      }
+
+      stageList.innerHTML = html;
     }
 
     function renderMovedList() {
@@ -2215,6 +2336,28 @@
       renderMovedList();
     });
 
+    stagePanel.addEventListener("click", function (event) {
+      var toggleStages = event.target.closest('[data-action="audit-stage-toggle"]');
+      if (toggleStages) {
+        var collapsed = stagePanel.classList.toggle("ac-audit-stage-panel--collapsed");
+        toggleStages.textContent = collapsed ? "Развернуть" : "Свернуть";
+        toggleStages.setAttribute("aria-label", collapsed ? "Развернуть стадии" : "Свернуть стадии");
+        return;
+      }
+
+      if (event.target.closest('[data-action="audit-stage-lock-toggle"]')) {
+        auditRuntime.lockUntilAge = !auditRuntime.lockUntilAge;
+        renderStagePanel();
+        return;
+      }
+
+      if (event.target.closest('[data-action="audit-stage-reset"]')) {
+        auditRuntime.ageSelected = false;
+        setStep(0);
+        renderStagePanel();
+      }
+    });
+
     for (var h = 0; h < nodes.length; h += 1) {
       (function (item) {
         if (item.badge) {
@@ -2239,9 +2382,12 @@
 
     document.body.appendChild(panel);
     document.body.appendChild(controlPanel);
+    document.body.appendChild(stagePanel);
     syncGroupFilters();
     syncControlPanelState();
     renderMovedList();
+    auditRuntime.stageSync = renderStagePanel;
+    renderStagePanel();
 
     window.addEventListener("resize", function () {
       if (!movedOrder.length) return;
@@ -2254,6 +2400,7 @@
           }
         }
       }
+      renderStagePanel();
     });
   }
 
