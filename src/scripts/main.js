@@ -822,7 +822,29 @@
       }
     }
 
-    return '<div class="ac-menu ac-menu--' + variant + '">' + items + "</div>";
+    return (
+      '<div class="ac-menu-shell ac-menu-shell--' +
+      variant +
+      '">' +
+      '<div class="ac-menu ac-menu--' +
+      variant +
+      '">' +
+      items +
+      "</div>" +
+      '<div class="ac-menu-toggle-slot" data-menu-toggle-slot="' +
+      variant +
+      '"></div>' +
+      "</div>"
+    );
+  }
+
+  function mountToggleIntoMenu(root, variant) {
+    if (!root) return;
+    var toggle = document.getElementById("acViewToggle");
+    if (!toggle) return;
+    var slot = root.querySelector('[data-menu-toggle-slot="' + variant + '"]');
+    if (!slot) return;
+    slot.appendChild(toggle);
   }
 
   function renderMenu() {
@@ -834,11 +856,13 @@
     if (state.mode === "full") {
       topNav.innerHTML = '<div class="ac-container">' + buildMenuItems("full") + "</div>";
       compactNav.innerHTML = "";
+      mountToggleIntoMenu(topNav, "full");
       return;
     }
 
     compactNav.innerHTML = buildMenuItems("compact");
     topNav.innerHTML = "";
+    mountToggleIntoMenu(compactNav, "compact");
   }
 
   function renderInfoCard() {
