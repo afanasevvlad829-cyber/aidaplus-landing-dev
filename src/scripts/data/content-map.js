@@ -160,15 +160,18 @@
     videos: [
       {
         title: "За неделю в лагере ребёнок меняется больше, чем за год дома",
-        poster: "https://static.tildacdn.com/tild3130-3234-4630-b533-343030653636/photo_2024-02-04_171.jpeg"
+        poster: "https://static.tildacdn.com/tild3130-3234-4630-b533-343030653636/photo_2024-02-04_171.jpeg",
+        url: "https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/"
       },
       {
         title: "Зачем детям копить деньги в лагере?",
-        poster: "https://static.tildacdn.com/tild3031-3662-4930-b463-353632336564/img_DZVzy7hiSoR0c1MR.png"
+        poster: "https://static.tildacdn.com/tild3031-3662-4930-b463-353632336564/img_DZVzy7hiSoR0c1MR.png",
+        url: "https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/"
       },
       {
         title: "Ребёнок сам откажется от телефона за 3 дня?",
-        poster: "https://static.tildacdn.com/tild3865-3066-4131-b036-323163393864/photo_2024-02-04_161.jpeg"
+        poster: "https://static.tildacdn.com/tild3865-3066-4131-b036-323163393864/photo_2024-02-04_161.jpeg",
+        url: "https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/"
       }
     ],
     reviews: [

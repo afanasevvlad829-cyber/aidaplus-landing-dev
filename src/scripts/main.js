@@ -6,6 +6,7 @@
   var BUILD_TAG = "TECH v2026.03.20-07";
   var HERO_SUBTITLE_STATIC = "Для детей 7–14 лет: свои IT‑проекты, бассейн и спорт каждый день, внутренняя экономика с лагерной валютой.";
   var ageSelectionConfirmed = false;
+  var ageGateNudge = false;
   var auditRuntime = (window.AC_FEATURES && window.AC_FEATURES.auditRuntime) || {
     active: false,
     allowUiActions: false,
@@ -43,6 +44,7 @@
     },
     photoCategory: "all",
     photoPage: 0,
+    photoLightboxIndex: -1,
     videoPage: 0,
     reviewPage: 0,
     teamPage: 0,
@@ -85,6 +87,17 @@
 
   function hasOwn(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
+  }
+
+  function isAgeGateLocked() {
+    return !ageSelectionConfirmed;
+  }
+
+  function nudgeAgeSelection() {
+    if (!isAgeGateLocked()) return;
+    ageGateNudge = true;
+    renderInfoCard();
+    renderFunnel();
   }
 
   function findProfileByAge(age) {
@@ -216,11 +229,13 @@
   }
 
   function setAge(nextAge) {
+    var wasLocked = isAgeGateLocked();
     var safeAge = clamp(nextAge, 7, 14);
-    if (safeAge === state.age) return;
+    if (safeAge === state.age && !wasLocked) return;
 
     state.age = safeAge;
     ageSelectionConfirmed = true;
+    ageGateNudge = false;
     if (auditRuntime.active) {
       auditRuntime.ageSelected = true;
     }
@@ -232,6 +247,10 @@
       age: state.age,
       profile_id: findProfileByAge(state.age).id
     });
+
+    if (wasLocked && state.step === 0) {
+      applyStepTransition(1, true);
+    }
 
     if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
       auditRuntime.stageSync();
@@ -296,6 +315,10 @@
     var changed = false;
 
     if (isOpen) {
+      if (state.photoLightboxIndex >= 0) {
+        state.photoLightboxIndex = -1;
+        changed = true;
+      }
       for (var key in state.overlays) {
         if (!hasOwn(state.overlays, key)) continue;
         if (state.overlays[key]) {
@@ -325,6 +348,11 @@
 
   function closeAllOverlays() {
     var changed = false;
+
+    if (state.photoLightboxIndex >= 0) {
+      state.photoLightboxIndex = -1;
+      changed = true;
+    }
 
     for (var key in state.overlays) {
       if (!hasOwn(state.overlays, key)) continue;
@@ -362,6 +390,22 @@
 
     state.photoPage = safePage;
     renderSections();
+  }
+
+  function setPhotoLightbox(index) {
+    if (index < 0) {
+      state.photoLightboxIndex = -1;
+      renderOverlays();
+      return;
+    }
+
+    var items = getFilteredPhotos();
+    if (!items.length) return;
+
+    var safeIndex = clamp(index, 0, items.length - 1);
+    if (state.photoLightboxIndex === safeIndex) return;
+    state.photoLightboxIndex = safeIndex;
+    renderOverlays();
   }
 
   function setVideoPage(nextPage) {
@@ -509,6 +553,7 @@
     var ageLabel = document.getElementById("acAgeLabel");
     var ageText = document.getElementById("acAgeText");
     var ageInput = document.getElementById("acAgeInput");
+    var ageBlock = document.querySelector(".ac-age-block");
 
     if (title) title.textContent = profile.title;
     if (subtitle) subtitle.textContent = HERO_SUBTITLE_STATIC;
@@ -519,6 +564,9 @@
     }
     if (ageLabel) {
       ageLabel.textContent = ageSelectionConfirmed ? profile.ageText : CONTENT_MAP.ui.ageLabel;
+    }
+    if (ageBlock) {
+      ageBlock.classList.toggle("is-attention", isAgeGateLocked() || ageGateNudge);
     }
     var sliderValue = ageToSliderValue(state.age);
     if (ageInput && Number(ageInput.value) !== sliderValue) {
@@ -548,6 +596,7 @@
   function renderFunnel() {
     var shift = getCurrentShift();
     var isIntroStep = state.step === 0;
+    var gateLocked = isAgeGateLocked();
     var profile = findProfileByAge(state.age);
 
     var overlayTitle = document.getElementById("acHeroOverlayTitle");
@@ -567,10 +616,12 @@
     }
 
     if (isIntroStep) {
-      if (overlayTitle) overlayTitle.textContent = profile.ageText;
-      if (line) line.textContent = "Описание смены";
+      if (overlayTitle) overlayTitle.textContent = gateLocked ? "Выберите возраст ребёнка" : profile.ageText;
+      if (line) line.textContent = gateLocked ? "Передвиньте слайдер на карточке слева" : "Описание смены";
       if (summary) {
-        summary.textContent = profile.subtitle;
+        summary.textContent = gateLocked
+          ? "Нажмите подходящий возраст, чтобы открыть шаг 2 и доступ к остальным действиям."
+          : profile.subtitle;
       }
     } else {
       if (overlayTitle) overlayTitle.textContent = CONTENT_MAP.ui.heroOverlayTitle;
@@ -586,6 +637,8 @@
     }
 
     if (nextBtn) {
+      nextBtn.disabled = gateLocked;
+      nextBtn.setAttribute("aria-disabled", String(gateLocked));
       if (isIntroStep) {
         nextBtn.classList.add("ac-primary-btn--intro");
         nextBtn.classList.remove("ac-primary-btn--cta");
@@ -613,8 +666,9 @@
     }
 
     if (prevBtn) {
-      prevBtn.disabled = state.step === 0;
-      prevBtn.setAttribute("aria-disabled", String(state.step === 0));
+      var prevLocked = gateLocked || state.step === 0;
+      prevBtn.disabled = prevLocked;
+      prevBtn.setAttribute("aria-disabled", String(prevLocked));
     }
   }
 
@@ -742,7 +796,16 @@
 
     var images = "";
     for (var j = 0; j < pageItems.length; j += 1) {
-      images += '<img src="' + pageItems[j].src + '" alt="' + pageItems[j].alt + '">';
+      images +=
+        '<button class="ac-photo-thumb" type="button" data-action="photo-open" data-photo-index="' +
+        String(start + j) +
+        '" aria-label="Открыть фото">' +
+        '<img src="' +
+        pageItems[j].src +
+        '" alt="' +
+        pageItems[j].alt +
+        '">' +
+        "</button>";
     }
 
     return (
@@ -771,6 +834,16 @@
     );
   }
 
+  function rutubeVideoId(url) {
+    var match = String(url || "").match(/rutube\.ru\/(?:video|shorts)\/([a-z0-9]+)/i);
+    return match ? match[1] : "";
+  }
+
+  function rutubeEmbedUrl(url) {
+    var id = rutubeVideoId(url);
+    return id ? "https://rutube.ru/play/embed/" + id : "";
+  }
+
   function renderVideosSectionMarkup() {
     var start = state.videoPage * 3;
     var items = CONTENT_MAP.videos.slice(start, start + 3);
@@ -778,16 +851,26 @@
     var cards = "";
 
     for (var i = 0; i < items.length; i += 1) {
+      var embedUrl = rutubeEmbedUrl(items[i].url);
+      var mediaMarkup = embedUrl
+        ? '<iframe class="ac-video-card__frame" src="' +
+          embedUrl +
+          '" title="' +
+          items[i].title +
+          '" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'
+        : '<img class="ac-video-card__poster" src="' +
+          items[i].poster +
+          '" alt="' +
+          items[i].title +
+          '"><button class="ac-video-card__play" type="button" aria-label="' +
+          CONTENT_MAP.ui.watchVideoLabel +
+          '"><img class="ac-icon ac-icon--sm" src="' +
+          ICON_MAP.play +
+          '" alt="" aria-hidden="true"></button>';
       cards +=
-        '<article class="ac-video-card"><img class="ac-video-card__poster" src="' +
-        items[i].poster +
-        '" alt="' +
-        items[i].title +
-        '"><button class="ac-video-card__play" type="button" aria-label="' +
-        CONTENT_MAP.ui.watchVideoLabel +
-        '"><img class="ac-icon ac-icon--sm" src="' +
-        ICON_MAP.play +
-        '" alt="" aria-hidden="true"></button><p class="ac-video-card__caption">' +
+        '<article class="ac-video-card">' +
+        mediaMarkup +
+        '<p class="ac-video-card__caption">' +
         items[i].title +
         "</p></article>";
     }
@@ -822,7 +905,7 @@
 
     for (var i = 0; i < items.length; i += 1) {
       cards +=
-        '<article class="ac-card ac-review-card"><img class="ac-review-card__avatar" src="' +
+        '<article class="ac-card ac-review-card ac-card--team"><img class="ac-review-card__avatar" src="' +
         items[i].avatar +
         '" alt="' +
         items[i].name +
@@ -1052,11 +1135,15 @@
       "</button>" +
       "</div>" +
       '<p class="ac-overlay-meta">' + CONTENT_MAP.ui.contactMeta + "</p>" +
-      '<div class="ac-shift-list">' +
-      '<div class="ac-shift-item"><div><div class="ac-shift-item__name">' + CONTENT_MAP.ui.phoneLabel + '</div><div class="ac-shift-item__meta">+7 (968) 808-64-55</div></div></div>' +
-      '<div class="ac-shift-item"><div><div class="ac-shift-item__name">' + CONTENT_MAP.ui.telegramLabel + '</div><div class="ac-shift-item__meta">@aidacodit</div></div></div>' +
-      '<div class="ac-shift-item"><div><div class="ac-shift-item__name">' + CONTENT_MAP.ui.emailLabel + '</div><div class="ac-shift-item__meta">info@aidaplus.ru</div></div></div>' +
+      '<details class="ac-contact-dropdown" open>' +
+      '<summary>Каналы связи</summary>' +
+      '<div class="ac-contact-list">' +
+      '<a class="ac-contact-item" href="tel:+74951234567"><span class="ac-contact-item__dot">•</span><span><strong>Городской телефон</strong><small>+7 (495) 123-45-67</small></span></a>' +
+      '<a class="ac-contact-item" href="tel:+79688086455"><span class="ac-contact-item__dot">•</span><span><strong>Мобильный телефон</strong><small>+7 (968) 808-64-55</small></span></a>' +
+      '<a class="ac-contact-item" href="https://t.me/aidacodit" target="_blank" rel="noopener"><span class="ac-contact-item__dot">•</span><span><strong>Telegram</strong><small>@aidacodit</small></span></a>' +
+      '<a class="ac-contact-item" href="https://wa.me/79688086455" target="_blank" rel="noopener"><span class="ac-contact-item__dot">•</span><span><strong>WhatsApp</strong><small>Написать в WhatsApp</small></span></a>' +
       "</div>" +
+      "</details>" +
       '<div class="ac-overlay-actions"><button class="ac-btn-soft" type="button" data-action="overlay-close">' +
       CONTENT_MAP.ui.close +
       "</button></div>" +
@@ -1158,9 +1245,52 @@
     );
   }
 
+  function renderPhotoOverlay() {
+    var photos = getFilteredPhotos();
+    if (!photos.length) {
+      return "";
+    }
+    var current = clamp(state.photoLightboxIndex, 0, photos.length - 1);
+    var item = photos[current];
+    var disablePrev = current <= 0;
+    var disableNext = current >= photos.length - 1;
+
+    return (
+      '<div class="ac-overlay-backdrop" data-action="overlay-backdrop">' +
+      '<article class="ac-overlay-card ac-overlay-card--photo" role="dialog" aria-modal="true" aria-label="Просмотр фото">' +
+      '<div class="ac-overlay-head">' +
+      '<h3 class="ac-overlay-title">' + CONTENT_MAP.sectionTitles.photos + "</h3>" +
+      '<button class="ac-overlay-close" type="button" data-action="overlay-close" aria-label="' +
+      CONTENT_MAP.ui.closeAria +
+      '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.close + '" alt="" aria-hidden="true">' +
+      "</button>" +
+      "</div>" +
+      '<div class="ac-photo-lightbox">' +
+      '<button class="ac-nav-btn" type="button" data-action="photo-lightbox-prev" ' +
+      (disablePrev ? "disabled" : "") +
+      ' aria-label="' + CONTENT_MAP.ui.prev + '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronLeft + '" alt="" aria-hidden="true"></button>' +
+      '<img class="ac-photo-lightbox__image" src="' + item.src + '" alt="' + item.alt + '">' +
+      '<button class="ac-nav-btn" type="button" data-action="photo-lightbox-next" ' +
+      (disableNext ? "disabled" : "") +
+      ' aria-label="' + CONTENT_MAP.ui.next + '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronRight + '" alt="" aria-hidden="true"></button>' +
+      "</div>" +
+      "</article>" +
+      "</div>"
+    );
+  }
+
   function renderOverlays() {
     var overlayRoot = document.getElementById("acOverlayRoot");
     if (!overlayRoot) return;
+
+    if (state.photoLightboxIndex >= 0) {
+      overlayRoot.style.pointerEvents = "auto";
+      overlayRoot.innerHTML = renderPhotoOverlay();
+      return;
+    }
 
     if (state.overlays.contact) {
       overlayRoot.style.pointerEvents = "auto";
@@ -1222,6 +1352,17 @@
       if (!inAuditPanels) {
         event.preventDefault();
         event.stopPropagation();
+        return;
+      }
+    }
+
+    if (isAgeGateLocked()) {
+      var inAgeInput = event.target.closest("#acAgeInput, .ac-age-input");
+      var inAuditPanelsForGate = event.target.closest(".ac-audit-panel, .ac-audit-control-panel, .ac-audit-stage-panel");
+      if (!inAgeInput && !inAuditPanelsForGate) {
+        event.preventDefault();
+        event.stopPropagation();
+        nudgeAgeSelection();
         return;
       }
     }
@@ -1314,6 +1455,22 @@
 
     if (event.target.closest('[data-action="photo-next"]')) {
       setPhotoPage(state.photoPage + 1);
+      return;
+    }
+
+    var photoOpen = event.target.closest('[data-action="photo-open"]');
+    if (photoOpen) {
+      setPhotoLightbox(Number(photoOpen.dataset.photoIndex || 0));
+      return;
+    }
+
+    if (event.target.closest('[data-action="photo-lightbox-prev"]')) {
+      setPhotoLightbox(state.photoLightboxIndex - 1);
+      return;
+    }
+
+    if (event.target.closest('[data-action="photo-lightbox-next"]')) {
+      setPhotoLightbox(state.photoLightboxIndex + 1);
       return;
     }
 
