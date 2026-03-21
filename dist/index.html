@@ -1032,9 +1032,15 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
 .ac-funnel-controls {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: var(--space-10);
+  gap: var(--space-sm);
   align-items: center;
   padding: 0 var(--space-lg);
+}
+
+.ac-funnel-controls .ac-primary-btn {
+  grid-column: auto;
+  width: auto;
+  justify-self: end;
 }
 
 .ac-round-btn {
@@ -1121,6 +1127,7 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
   font-size: var(--font-size-12);
   font-weight: 600;
   color: rgba(245, 248, 255, 0.95);
+  justify-self: start;
 }
 
 .ac-primary-btn {
@@ -1404,6 +1411,8 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   position: relative;
   overflow: hidden;
   background: #000;
+  border-radius: var(--radius-lg);
+  border: var(--border-1) solid var(--ac-border);
 }
 
 .ac-video-card__open {
@@ -1432,15 +1441,19 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
 .ac-video-card__play {
   position: absolute;
-  inset: auto auto var(--space-lg) var(--space-lg);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: var(--space-4xl);
   height: var(--space-4xl);
   border-radius: 50%;
-  border: 0;
+  border: 2px solid rgba(255, 255, 255, 0.92);
   background: linear-gradient(120deg, var(--ac-accent), var(--ac-accent-strong));
   display: grid;
   place-items: center;
   cursor: grab;
+  z-index: 2;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
 .ac-video-card__caption {
@@ -1451,6 +1464,8 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   color: #fff;
   font-size: var(--font-size-body-sm);
   line-height: 1.35;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+  z-index: 2;
 }
 
 .ac-review-card {
@@ -2582,6 +2597,12 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   .ac-primary-btn {
     grid-column: 1 / -1;
     width: 100%;
+  }
+
+  .ac-funnel-controls .ac-primary-btn {
+    grid-column: auto;
+    width: auto;
+    justify-self: end;
   }
 
   .ac-social {
@@ -4824,6 +4845,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
     for (var i = 0; i < items.length; i += 1) {
       var embedUrl = rutubeEmbedUrl(items[i].url);
       var listIndex = start + i;
+      var posterSrc = String((mobileMedia && items[i].posterMobile) || items[i].poster || "");
       var mediaMarkup = "";
       if (embedUrl && !mobileMedia) {
         mediaMarkup =
@@ -4835,7 +4857,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
       } else {
         mediaMarkup =
           '<img class="ac-video-card__poster" src="' +
-          items[i].poster +
+          posterSrc +
           '" alt="' +
           items[i].title +
           '"><button class="ac-video-card__play" type="button" aria-label="' +

@@ -1993,6 +1993,7 @@
     for (var i = 0; i < items.length; i += 1) {
       var embedUrl = rutubeEmbedUrl(items[i].url);
       var listIndex = start + i;
+      var posterSrc = String((mobileMedia && items[i].posterMobile) || items[i].poster || "");
       var mediaMarkup = "";
       if (embedUrl && !mobileMedia) {
         mediaMarkup =
@@ -2004,7 +2005,7 @@
       } else {
         mediaMarkup =
           '<img class="ac-video-card__poster" src="' +
-          items[i].poster +
+          posterSrc +
           '" alt="' +
           items[i].title +
           '"><button class="ac-video-card__play" type="button" aria-label="' +
