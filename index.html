@@ -51,11 +51,21 @@
               <div class="ac-age-block__head">
                 <strong id="acAgeLabel"></strong>
                 <span id="acAgeText"></span>
+                <button
+                  id="acAgeReset"
+                  class="ac-age-reset"
+                  type="button"
+                  data-action="age-reset"
+                  aria-label="Сбросить выбранный возраст"
+                  hidden
+                >
+                  ×
+                </button>
               </div>
               <div class="ac-age-bar">
-                <input id="acAgeInput" class="ac-age-input" type="range" min="0" max="2" step="1" value="0" aria-label="Возраст ребенка">
+                <input id="acAgeInput" class="ac-age-input" type="range" min="0" max="3" step="1" value="0" aria-label="Возраст ребенка">
               </div>
-              <div class="ac-age-marks"><span>7-9</span><span>10-12</span><span>13-14</span></div>
+              <div class="ac-age-marks"><span>—</span><span>7-9</span><span>10-12</span><span>13-14</span></div>
               <div class="ac-social-row">
                 <a class="ac-social ac-social--vk" href="https://vk.com/aida_codit" target="_blank" rel="noopener">vk</a>
                 <a class="ac-social ac-social--tg" href="https://t.me/aidacodit" target="_blank" rel="noopener">tg</a>

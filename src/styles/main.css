@@ -539,6 +539,30 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
   overflow-wrap: anywhere;
 }
 
+.ac-age-reset {
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: var(--border-1) solid #d7deeb;
+  background: #fff;
+  color: #5f6c87;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.ac-age-reset:hover,
+.ac-age-reset:focus-visible {
+  border-color: #ef8300;
+  color: #dd7600;
+  background: #fff8eb;
+  outline: none;
+}
+
 .ac-age-bar {
   margin-top: var(--space-sm);
 }

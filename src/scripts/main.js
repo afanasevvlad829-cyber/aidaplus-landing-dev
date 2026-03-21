@@ -156,14 +156,17 @@
   }
 
   function sliderValueToAge(sliderValue) {
-    var index = clamp(Math.round(sliderValue), 0, AGE_SLIDER_POINTS.length - 1);
+    var safeValue = clamp(Math.round(sliderValue), 0, AGE_SLIDER_POINTS.length);
+    if (safeValue === 0) return null;
+    var index = safeValue - 1;
     return AGE_SLIDER_POINTS[index];
   }
 
   function ageToSliderValue(age) {
-    if (age <= 9) return 0;
-    if (age <= 12) return 1;
-    return 2;
+    if (!ageSelectionConfirmed) return 0;
+    if (age <= 9) return 1;
+    if (age <= 12) return 2;
+    return 3;
   }
 
   function findShiftById(shiftId) {
@@ -190,15 +193,11 @@
   }
 
   function getHeroBenefits() {
-    var profile = findProfileByAge(state.age);
-    if (state.step === 0) {
-      return profile.benefits;
+    var baseProfile = AGE_PROFILES[0] || findProfileByAge(state.age);
+    if (baseProfile && baseProfile.benefits && baseProfile.benefits.length) {
+      return baseProfile.benefits;
     }
-    var shift = getCurrentShift();
-    if (shift && shift.benefits && shift.benefits.length) {
-      return shift.benefits;
-    }
-    return profile.benefits;
+    return [];
   }
 
   function getHeroSlides() {
@@ -618,6 +617,11 @@
   }
 
   function setAge(nextAge) {
+    if (!Number.isFinite(nextAge) || nextAge < 7) {
+      resetAgeSelection();
+      return;
+    }
+
     var wasLocked = isAgeGateLocked();
     var safeAge = clamp(nextAge, 7, 14);
     if (safeAge === state.age && !wasLocked) return;
@@ -641,6 +645,36 @@
     if (wasLocked && state.step === 0) {
       applyStepTransition(1, true);
     }
+
+    if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+      auditRuntime.stageSync();
+    }
+  }
+
+  function resetAgeSelection() {
+    ageSelectionConfirmed = false;
+    ageGateNudge = false;
+    state.age = 9;
+    state.step = 0;
+    state.selectedShiftId = initialShift.id;
+    state.direction = initialShift.direction;
+    shiftsShowAll = false;
+    shiftCalendar.open = false;
+    shiftCalendar.shiftId = "";
+
+    try {
+      localStorage.removeItem(AGE_KEY);
+    } catch (_errAgeReset) {
+      // ignore storage errors
+    }
+
+    if (auditRuntime.active) {
+      auditRuntime.ageSelected = false;
+    }
+
+    closeAllOverlays();
+    renderInfoCard();
+    renderFunnel();
 
     if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
       auditRuntime.stageSync();
@@ -1009,6 +1043,7 @@
     var ageLabel = document.getElementById("acAgeLabel");
     var ageText = document.getElementById("acAgeText");
     var ageInput = document.getElementById("acAgeInput");
+    var ageReset = document.getElementById("acAgeReset");
     var ageBlock = document.querySelector(".ac-age-block");
 
     if (title) title.textContent = profile.title;
@@ -1020,6 +1055,9 @@
     }
     if (ageLabel) {
       ageLabel.textContent = ageSelectionConfirmed ? profile.ageText : CONTENT_MAP.ui.ageLabel;
+    }
+    if (ageReset) {
+      ageReset.hidden = !ageSelectionConfirmed;
     }
     if (ageBlock) {
       ageBlock.classList.toggle("is-attention", isAgeGateLocked() || ageGateNudge);
@@ -1072,11 +1110,11 @@
     }
 
     if (isIntroStep) {
-      if (overlayTitle) overlayTitle.textContent = gateLocked ? "Выберите возраст ребёнка" : profile.ageText;
-      if (line) line.textContent = gateLocked ? "Передвиньте слайдер на карточке слева" : "Описание смены";
+      if (overlayTitle) overlayTitle.textContent = "Выберите смены";
+      if (line) line.textContent = "Передвиньте слайдер в блоке возраста";
       if (summary) {
         summary.textContent = gateLocked
-          ? "Нажмите подходящий возраст, чтобы открыть шаг 2 и доступ к остальным действиям."
+          ? "Выберите возраст ребёнка, чтобы открыть смены и остальные действия."
           : profile.subtitle;
       }
     } else {
@@ -1999,6 +2037,12 @@
     if (contactButton) {
       clearContactCloseTimer();
       setOverlay("contact", !state.overlays.contact);
+      return;
+    }
+
+    var ageResetButton = event.target.closest('[data-action="age-reset"]');
+    if (ageResetButton) {
+      resetAgeSelection();
       return;
     }
 
