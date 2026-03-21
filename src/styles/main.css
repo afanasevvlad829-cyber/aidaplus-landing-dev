@@ -1018,9 +1018,15 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
 .ac-funnel-controls {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: var(--space-10);
+  gap: var(--space-sm);
   align-items: center;
   padding: 0 var(--space-lg);
+}
+
+.ac-funnel-controls .ac-primary-btn {
+  grid-column: auto;
+  width: auto;
+  justify-self: end;
 }
 
 .ac-round-btn {
@@ -1107,6 +1113,7 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
   font-size: var(--font-size-12);
   font-weight: 600;
   color: rgba(245, 248, 255, 0.95);
+  justify-self: start;
 }
 
 .ac-primary-btn {
@@ -2568,6 +2575,12 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   .ac-primary-btn {
     grid-column: 1 / -1;
     width: 100%;
+  }
+
+  .ac-funnel-controls .ac-primary-btn {
+    grid-column: auto;
+    width: auto;
+    justify-self: end;
   }
 
   .ac-social {
