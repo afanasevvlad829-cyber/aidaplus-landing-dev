@@ -340,7 +340,14 @@
         return;
       }
       if (state.overlays.shifts) {
-        renderOverlays();
+        var ttlText = "Действует: " + formatPromoTtl(promo.expiresAt || 0);
+        var ttlNodes = document.querySelectorAll(".ac-shift-item__promo-ttl");
+        for (var i = 0; i < ttlNodes.length; i += 1) {
+          var node = ttlNodes[i];
+          if (!node) continue;
+          if (String(node.textContent || "").indexOf("Действует:") !== 0) continue;
+          node.textContent = ttlText;
+        }
       }
     }, 1000);
   }
