@@ -46,6 +46,7 @@
                 <span class="ac-hero-motto__text">Мы не играем в игры - мы их создаём</span>
               </div>
             </div>
+            <section id="acPromoPinned" class="ac-promo-pinned" hidden></section>
 
             <div class="ac-age-block">
               <div class="ac-age-block__head">
@@ -114,6 +115,17 @@
               <h2 id="acHeroOverlayTitle"></h2>
               <div id="acProgramLine" class="ac-hero-overlay__line"></div>
               <p id="acProgramSummary"></p>
+              <form id="acBookingForm" class="ac-booking-form" hidden>
+                <label class="ac-booking-form__label" for="acBookingName">Как к вам обращаться</label>
+                <input id="acBookingName" class="ac-booking-form__input" type="text" placeholder="Например, Саша" autocomplete="name">
+                <label class="ac-booking-form__label" for="acBookingPhone">Ваш телефон</label>
+                <input id="acBookingPhone" class="ac-booking-form__input" type="tel" inputmode="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel">
+                <label class="ac-booking-form__label" for="acBookingShift">Выбранная смена</label>
+                <input id="acBookingShift" class="ac-booking-form__input" type="text" readonly>
+                <label class="ac-booking-form__label" for="acBookingPromo">Промокод</label>
+                <input id="acBookingPromo" class="ac-booking-form__input" type="text" readonly>
+                <button class="ac-primary-btn ac-booking-form__submit" type="button" data-action="booking-submit">Отправить заявку</button>
+              </form>
               <div class="ac-hero-grid">
                 <div class="ac-hero-grid__item"><img class="ac-icon ac-icon--sm" src="/assets/icons/med.svg" alt="" aria-hidden="true"><span class="ac-hero-grid__copy"><strong id="acHeroSafetyMedTitle"></strong><small id="acHeroSafetyMedDesc"></small></span></div>
                 <div class="ac-hero-grid__item"><img class="ac-icon ac-icon--sm" src="/assets/icons/lock.svg" alt="" aria-hidden="true"><span class="ac-hero-grid__copy"><strong id="acHeroSafetyLockTitle"></strong><small id="acHeroSafetyLockDesc"></small></span></div>

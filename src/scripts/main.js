@@ -13,6 +13,7 @@
   var HERO_SLIDE_INTERVAL_MS = 5200;
   var CONTACT_AUTO_CLOSE_MS = 1000;
   var SHIFT_PROMO_STORAGE_KEY = "acPromoV1";
+  var BOOKING_LEAD_STORAGE_KEY = "acBookingLeadV1";
   var SHIFT_PRICE_CFG = {
     initialMarkup: 0.2,
     firstDiscMin: 0.04,
@@ -121,6 +122,25 @@
       return null;
     } catch (_err) {
       return null;
+    }
+  }
+
+  function loadBookingLead() {
+    try {
+      var raw = localStorage.getItem(BOOKING_LEAD_STORAGE_KEY);
+      if (!raw) return null;
+      var lead = JSON.parse(raw);
+      return lead && typeof lead === "object" ? lead : null;
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  function saveBookingLead(lead) {
+    try {
+      localStorage.setItem(BOOKING_LEAD_STORAGE_KEY, JSON.stringify(lead));
+    } catch (_err) {
+      // ignore storage errors
     }
   }
 
@@ -460,6 +480,41 @@
     var minutes = Math.floor((totalSeconds % 3600) / 60);
     var seconds = totalSeconds % 60;
     return String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
+  }
+
+  function formatPhoneInput(raw) {
+    var digits = String(raw || "").replace(/\D/g, "");
+    if (digits.charAt(0) === "8") {
+      digits = "7" + digits.slice(1);
+    }
+    if (digits.charAt(0) !== "7") {
+      digits = "7" + digits;
+    }
+    digits = digits.slice(0, 11);
+
+    var p1 = digits.slice(1, 4);
+    var p2 = digits.slice(4, 7);
+    var p3 = digits.slice(7, 9);
+    var p4 = digits.slice(9, 11);
+
+    var out = "+7";
+    out += " (" + p1 + (p1.length < 3 ? "" : ")");
+    if (p2) out += " " + p2;
+    if (p3) out += "-" + p3;
+    if (p4) out += "-" + p4;
+    return out;
+  }
+
+  function normalizePhone(raw) {
+    var digits = String(raw || "").replace(/\D/g, "");
+    if (digits.charAt(0) === "8") digits = "7" + digits.slice(1);
+    if (digits.length === 10) digits = "7" + digits;
+    return digits.slice(0, 11);
+  }
+
+  function isValidPhone(raw) {
+    var digits = normalizePhone(raw);
+    return digits.length === 11 && digits.charAt(0) === "7";
   }
 
   function getPromoRemainingMs(promo) {
@@ -1180,6 +1235,7 @@
     var ageInput = document.getElementById("acAgeInput");
     var ageReset = document.getElementById("acAgeReset");
     var ageBlock = document.querySelector(".ac-age-block");
+    var promoPinned = document.getElementById("acPromoPinned");
 
     if (title) title.textContent = compactModel && compactModel.title ? compactModel.title : profile.title;
     if (subtitle) subtitle.textContent = compactModel && compactModel.subtitle ? compactModel.subtitle : HERO_SUBTITLE_STATIC;
@@ -1233,17 +1289,61 @@
       }
       benefits.innerHTML = benefitHtml;
     }
+
+    if (promoPinned) {
+      var promo = loadShiftPromo();
+      var isActivePromo = promo && promo.status === "active" && getPromoRemainingMs(promo) > 0;
+      if (!isActivePromo) {
+        promoPinned.hidden = true;
+        promoPinned.innerHTML = "";
+      } else {
+        var promoShift = findExactShiftById(promo.shiftId);
+        var promoMeta = null;
+        if (promoShift) {
+          var promoIdx = SHIFTS.indexOf(promoShift);
+          if (promoIdx >= 0) {
+            promoMeta = getShiftPriceMeta(promoShift, promoIdx);
+          }
+        }
+        var shiftTitle = promoMeta
+          ? promoMeta.date + " • " + promoMeta.days + " дн. • " + (promoShift ? promoShift.summary : "")
+          : (promo.shiftName || "Выбранная смена");
+        promoPinned.hidden = false;
+        promoPinned.innerHTML =
+          '<p class="ac-promo-pinned__title">Цена зафиксирована для вас</p>' +
+          '<p class="ac-promo-pinned__meta">' +
+          shiftTitle +
+          " · " +
+          formatPriceNumber(promo.finalPrice || 0) +
+          "</p>" +
+          '<p class="ac-promo-pinned__meta">Промокод: ' +
+          (promo.code || "AIDA-0000") +
+          " · действует: " +
+          formatPromoTtl(promo.expiresAt || 0) +
+          "</p>" +
+          '<button class="ac-promo-pinned__cta" type="button" data-action="resume-booking">Продолжить бронирование</button>';
+      }
+    }
   }
 
   function renderFunnel() {
     var shift = getCurrentShift();
     var isIntroStep = state.step === 0;
+    var isBookingStep = state.step === SHIFTS.length - 1;
     var gateLocked = isAgeGateLocked();
     var profile = findProfileByAge(state.age);
+    var promo = loadShiftPromo();
 
     var overlayTitle = document.getElementById("acHeroOverlayTitle");
     var line = document.getElementById("acProgramLine");
     var summary = document.getElementById("acProgramSummary");
+    var heroGrid = document.querySelector(".ac-hero-grid");
+    var bookingForm = document.getElementById("acBookingForm");
+    var bookingName = document.getElementById("acBookingName");
+    var bookingPhone = document.getElementById("acBookingPhone");
+    var bookingShift = document.getElementById("acBookingShift");
+    var bookingPromo = document.getElementById("acBookingPromo");
+    var bookingSubmit = bookingForm ? bookingForm.querySelector('[data-action="booking-submit"]') : null;
     var status = document.getElementById("acStepStatus");
     var nextBtn = document.getElementById("acStepNextBtn");
     var prevBtn = document.querySelector('[data-action="step-prev"]');
@@ -1255,32 +1355,75 @@
     }
     if (heroRight) {
       heroRight.classList.toggle("is-intro", isIntroStep && state.mode === "compact");
+      heroRight.classList.toggle("ac-booking-step", isBookingStep);
     }
 
     if (isIntroStep) {
       if (overlayTitle) overlayTitle.textContent = "Выберите смены";
       if (line) line.textContent = "Передвиньте слайдер в блоке возраста";
       if (summary) {
+        summary.style.display = "";
         summary.textContent = gateLocked
           ? "Выберите возраст ребёнка, чтобы открыть смены и остальные действия."
           : profile.subtitle;
       }
+      if (heroGrid) heroGrid.style.display = "";
+      if (bookingForm) bookingForm.hidden = true;
+    } else if (isBookingStep) {
+      if (overlayTitle) overlayTitle.textContent = "Оставьте заявку — мы перезвоним";
+      if (line) line.textContent = "Как к вам обратиться";
+      if (summary) {
+        summary.textContent = "";
+        summary.style.display = "none";
+      }
+      if (heroGrid) heroGrid.style.display = "none";
+      if (bookingForm) {
+        var bookingLead = loadBookingLead() || {};
+        var selectedShift = findShiftById(state.selectedShiftId);
+        var shiftIdx = SHIFTS.indexOf(selectedShift);
+        var shiftMeta = shiftIdx >= 0 ? getShiftPriceMeta(selectedShift, shiftIdx) : null;
+        bookingForm.hidden = false;
+        if (bookingName && !bookingName.value) {
+          bookingName.value = String(bookingLead.name || "");
+        }
+        if (bookingPhone && !bookingPhone.value) {
+          bookingPhone.value = bookingLead.phone ? formatPhoneInput(bookingLead.phone) : "";
+        }
+        if (bookingShift) {
+          bookingShift.value = shiftMeta
+            ? shiftMeta.date + " • " + shiftMeta.days + " дн. • " + selectedShift.summary
+            : selectedShift.summary;
+        }
+        if (bookingPromo) {
+          bookingPromo.value = promo && promo.code ? String(promo.code) : "";
+        }
+        if (bookingSubmit) {
+          bookingSubmit.disabled = !!bookingLead.submitted || !isValidPhone(bookingPhone ? bookingPhone.value : "");
+          bookingSubmit.textContent = bookingLead.submitted ? "Заявка отправлена" : "Отправить заявку";
+        }
+      }
     } else {
       if (overlayTitle) overlayTitle.textContent = CONTENT_MAP.ui.heroOverlayTitle;
       if (line) line.textContent = shift.line;
-      if (summary) summary.textContent = shift.summary;
+      if (summary) {
+        summary.textContent = shift.summary;
+        summary.style.display = "";
+      }
+      if (heroGrid) heroGrid.style.display = "";
+      if (bookingForm) bookingForm.hidden = true;
     }
 
     if (status) {
-      var visualTotalSteps = 2;
-      var visualStep = state.step === 0 ? 1 : 2;
+      var visualTotalSteps = isBookingStep ? 3 : 2;
+      var visualStep = state.step === 0 ? 1 : (isBookingStep ? 3 : 2);
       status.textContent =
         CONTENT_MAP.ui.stepLabel + " " + String(visualStep) + " " + CONTENT_MAP.ui.stepLabelDelimiter + " " + String(visualTotalSteps);
     }
 
     if (nextBtn) {
-      nextBtn.disabled = gateLocked;
-      nextBtn.setAttribute("aria-disabled", String(gateLocked));
+      nextBtn.disabled = gateLocked || isBookingStep;
+      nextBtn.setAttribute("aria-disabled", String(gateLocked || isBookingStep));
+      nextBtn.hidden = isBookingStep;
       if (isIntroStep) {
         nextBtn.classList.add("ac-primary-btn--intro");
         nextBtn.classList.remove("ac-primary-btn--cta");
@@ -1306,6 +1449,7 @@
       var prevLocked = gateLocked || state.step === 0;
       prevBtn.disabled = prevLocked;
       prevBtn.setAttribute("aria-disabled", String(prevLocked));
+      prevBtn.hidden = isBookingStep;
     }
   }
 
@@ -2186,6 +2330,12 @@
       return;
     }
 
+    var resumeBooking = event.target.closest('[data-action="resume-booking"]');
+    if (resumeBooking) {
+      setStep(SHIFTS.length - 1);
+      return;
+    }
+
     var contactButton = event.target.closest('[data-action="open-contact"]');
     if (contactButton) {
       clearContactCloseTimer();
@@ -2296,6 +2446,41 @@
       return;
     }
 
+    var bookingSubmit = event.target.closest('[data-action="booking-submit"]');
+    if (bookingSubmit) {
+      var bookingName = document.getElementById("acBookingName");
+      var bookingPhone = document.getElementById("acBookingPhone");
+      var bookingShift = document.getElementById("acBookingShift");
+      var bookingPromo = document.getElementById("acBookingPromo");
+      var phoneRaw = bookingPhone ? bookingPhone.value : "";
+      var normalizedPhone = normalizePhone(phoneRaw);
+      if (!isValidPhone(phoneRaw)) {
+        if (bookingPhone) {
+          bookingPhone.focus();
+          bookingPhone.style.borderColor = "#ef8300";
+        }
+        return;
+      }
+
+      if (bookingPhone) {
+        bookingPhone.style.borderColor = "";
+      }
+
+      saveBookingLead({
+        name: bookingName ? String(bookingName.value || "").trim() : "",
+        phone: normalizedPhone,
+        shiftId: state.selectedShiftId,
+        shiftText: bookingShift ? String(bookingShift.value || "") : "",
+        promoCode: bookingPromo ? String(bookingPromo.value || "") : "",
+        submitted: true,
+        submittedAt: Date.now()
+      });
+
+      bookingSubmit.disabled = true;
+      bookingSubmit.textContent = "Заявка отправлена";
+      return;
+    }
+
     var photoCategoryButton = event.target.closest('[data-action="photo-cat"]');
     if (photoCategoryButton) {
       setPhotoCategory(photoCategoryButton.dataset.photoCat || "all");
@@ -2387,6 +2572,19 @@
         event.stopPropagation();
         return;
       }
+    }
+
+    var bookingPhone = event.target.closest("#acBookingPhone");
+    if (bookingPhone) {
+      bookingPhone.value = formatPhoneInput(bookingPhone.value);
+      bookingPhone.style.borderColor = isValidPhone(bookingPhone.value) ? "" : "#ef8300";
+
+      var bookingSubmit = document.querySelector('[data-action="booking-submit"]');
+      var bookingLead = loadBookingLead() || {};
+      if (bookingSubmit) {
+        bookingSubmit.disabled = !!bookingLead.submitted || !isValidPhone(bookingPhone.value);
+      }
+      return;
     }
 
     var ageInput = event.target.closest("#acAgeInput");
