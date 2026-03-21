@@ -1,0 +1,51 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Arial;}}
+\f0\fs24
+\b Отчёт по резервному копированию (ветка codex/recover-28e531d)\b0\par
+Дата: 2026-03-21 (MSK)\par
+\par
+\b 1. Текущее состояние GitHub\b0\par
+- Рабочая ветка: codex/recover-28e531d\par
+- Актуальный commit рабочей ветки: 4ab8d40\par
+- Ветка автоснапшотов GitHub: codex/autobackup-full\par
+- Актуальный commit автоснапшотов: 8dbf14d\par
+\par
+\b 2. Настроенное расписание\b0\par
+- Файловые полные бэкапы: каждый 1 час\par
+  (launchd service: com.aidaplus.autobackup)\par
+- Полная выгрузка в GitHub: ежедневно в 03:00 MSK\par
+  (launchd service: com.aidaplus.github-autobackup)\par
+- Ежедневный отчёт: ежедневно в 00:00 MSK\par
+  (launchd service: com.aidaplus.backup-daily-report)\par
+\par
+\b 3. Где смотреть журналы\b0\par
+- Файловые бэкапы (человеческий отчёт, RU):\par
+  /Users/vladimirafanasev/Backups/aidaplus-dev/logs/file_backup_journal_ru.md\par
+- GitHub выгрузки (человеческий отчёт, RU):\par
+  /Users/vladimirafanasev/Backups/aidaplus-dev/logs/github_autobackup_journal_ru.md\par
+- Суточный сводный отчёт (00:00):\par
+  /Users/vladimirafanasev/Backups/aidaplus-dev/logs/backup_daily_report_ru.md\par
+\par
+\b 4. Последние фактические записи\b0\par
+- Последняя GitHub-выгрузка: 2026-03-21 08:00:18 MSK\par
+  commit: 8dbf14d\par
+- Последний успешный файловый бэкап: 2026-03-21 07:59:24 MSK\par
+\par
+\b 5. Текущие объёмы (по ежедневному отчёту)\b0\par
+- Файловых архивов: 5\par
+- Git bundle: 5\par
+- Объём файловых архивов: 449.5 MiB\par
+- Объём git bundle: 439.3 MiB\par
+- Общий объём: 888.8 MiB\par
+\par
+\b 6. Кандидаты на очистку\b0\par
+Очистка НЕ выполняется автоматически.\par
+Отчёт в 00:00 показывает:\par
+- архивы старше 14 дней\par
+- топ-10 самых крупных архивов\par
+\par
+\b 7. Важно\b0\par
+- Этот отчёт сохранён в репозитории и ветке разработки.\par
+- На сайт не публикуется.\par
+\par
+}
