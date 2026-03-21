@@ -54,6 +54,19 @@
   var AGE_SLIDER_POINTS = data.AGE_SLIDER_POINTS || [9, 11, 13];
   var FAQ_DATA = data.FAQ_DATA || [];
   var initialShift = SHIFTS[0] || { id: "shift-1", direction: "base" };
+  var UI_ICON = {
+    about: "/assets/aida-logo-small.png",
+    ai: "/assets/icons/sparkles.svg",
+    location: "/assets/icons/map-pinned.svg",
+    photos: "/assets/icons/images.svg",
+    video: "/assets/icons/circle-play.svg",
+    faq: "/assets/icons/help-circle.svg",
+    reviews: "/assets/icons/star.svg",
+    team: "/assets/icons/users.svg",
+    code: "/assets/icons/code-xml.svg",
+    economy: "/assets/icons/coins.svg",
+    pool: "/assets/icons/waves.svg"
+  };
 
 
   var state = {
@@ -215,7 +228,17 @@
   function getHeroBenefits() {
     var baseProfile = AGE_PROFILES[0] || findProfileByAge(state.age);
     if (baseProfile && baseProfile.benefits && baseProfile.benefits.length) {
-      return baseProfile.benefits;
+      var normalized = [];
+      for (var i = 0; i < baseProfile.benefits.length; i += 1) {
+        var benefit = baseProfile.benefits[i] || {};
+        var text = String(benefit.text || "");
+        var icon = String(benefit.icon || "");
+        if (i === 0 || /IT|проект|python|web|код/i.test(text)) icon = UI_ICON.code;
+        if (i === 1 || /эконом|валют|бюджет|монет/i.test(text)) icon = UI_ICON.economy;
+        if (i === 2 || /бассейн|вода|плав/i.test(text)) icon = UI_ICON.pool;
+        normalized.push({ icon: icon, text: text });
+      }
+      return normalized;
     }
     return [];
   }
@@ -224,12 +247,24 @@
     return String(text || "").replace(/^[^A-Za-zА-Яа-я0-9]+(?:\s+)?/, "");
   }
 
+  function getMenuIcon(tabKey, fallback) {
+    if (tabKey === "info") return UI_ICON.about;
+    if (tabKey === "aiprogram") return UI_ICON.ai;
+    if (tabKey === "location") return UI_ICON.location;
+    if (tabKey === "photo") return UI_ICON.photos;
+    if (tabKey === "video") return UI_ICON.video;
+    if (tabKey === "faq") return UI_ICON.faq;
+    if (tabKey === "reviews") return UI_ICON.reviews;
+    if (tabKey === "team") return UI_ICON.team;
+    return fallback || UI_ICON.ai;
+  }
+
   function getCompactTabModel(profile) {
     if (state.mode !== "compact") return null;
     if (state.activeTab === "info") return null;
 
     var sectionTitles = CONTENT_MAP.sectionTitles || {};
-    var defaultIcon = ICON_MAP.check || ICON_MAP.sparkle || ICON_MAP.robot || "";
+    var defaultIcon = UI_ICON.ai;
     var model = null;
 
     if (state.activeTab === "aiprogram") {
@@ -240,7 +275,7 @@
         var stat = aiStats[i];
         if (!stat || !stat.value) continue;
         aiBenefits.push({
-          icon: ICON_MAP.sparkle || defaultIcon,
+          icon: UI_ICON.ai,
           text: stat.value + " " + stripLeadingMarker(stat.label)
         });
       }
@@ -256,13 +291,13 @@
       var locationBenefits = [];
       for (var w = 0; w < where.length && locationBenefits.length < 2; w += 1) {
         locationBenefits.push({
-          icon: ICON_MAP.pool || defaultIcon,
+          icon: UI_ICON.location,
           text: stripLeadingMarker(where[w])
         });
       }
       for (var n = 0; n < nearby.length && locationBenefits.length < 4; n += 1) {
         locationBenefits.push({
-          icon: ICON_MAP.check || defaultIcon,
+          icon: UI_ICON.pool,
           text: stripLeadingMarker(nearby[n])
         });
       }
@@ -277,7 +312,7 @@
       var photoBenefits = [];
       for (var p = 0; p < categories.length && photoBenefits.length < 4; p += 1) {
         photoBenefits.push({
-          icon: ICON_MAP.search || defaultIcon,
+          icon: UI_ICON.photos,
           text: categories[p].label
         });
       }
@@ -292,7 +327,7 @@
       var videoBenefits = [];
       for (var v = 0; v < videos.length && videoBenefits.length < 3; v += 1) {
         videoBenefits.push({
-          icon: ICON_MAP.play || defaultIcon,
+          icon: UI_ICON.video,
           text: videos[v].title
         });
       }
@@ -307,7 +342,7 @@
       var faqBenefits = [];
       for (var f = 0; f < faqMedicine.length && faqBenefits.length < 4; f += 1) {
         faqBenefits.push({
-          icon: ICON_MAP.clipboard || defaultIcon,
+          icon: UI_ICON.faq,
           text: faqMedicine[f]
         });
       }
@@ -322,7 +357,7 @@
       var reviewBenefits = [];
       for (var r = 0; r < reviews.length && reviewBenefits.length < 3; r += 1) {
         reviewBenefits.push({
-          icon: ICON_MAP.fire || defaultIcon,
+          icon: UI_ICON.reviews,
           text: reviews[r].name + " — " + reviews[r].meta
         });
       }
@@ -338,7 +373,7 @@
       var teamBenefits = [];
       for (var t = 0; t < team.length && teamBenefits.length < 3; t += 1) {
         teamBenefits.push({
-          icon: ICON_MAP.check || defaultIcon,
+          icon: UI_ICON.team,
           text: team[t].name + " — " + team[t].role
         });
       }
@@ -1148,6 +1183,7 @@
       var tab = TABS[i];
       var isActive = tab.key === state.activeTab;
       var activeClass = isActive ? " is-active" : "";
+      var iconSrc = getMenuIcon(tab.key, tab.icon);
 
       if (variant === "compact") {
         items +=
@@ -1163,7 +1199,7 @@
           tab.label +
           '">' +
           '<img class="ac-icon" src="' +
-          tab.icon +
+          iconSrc +
           '" alt="" aria-hidden="true">' +
           "</a>";
       } else {
@@ -1176,7 +1212,7 @@
           tab.key +
           '">' +
           '<img class="ac-icon ac-icon--sm" src="' +
-          tab.icon +
+          iconSrc +
           '" alt="" aria-hidden="true">' +
           "<span>" +
           tab.label +
