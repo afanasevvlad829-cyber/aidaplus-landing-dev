@@ -2,6 +2,7 @@
   "use strict";
 
   var MODE_KEY = "ac:mode";
+  var AGE_KEY = "ac:age";
   var TECH_BADGE_DISMISSED_KEY = "ac:tech-badge-dismissed";
   var BUILD_TAG = "TECH v2026.03.20-07";
   var HERO_SUBTITLE_STATIC = "Для детей 7–14 лет: свои IT‑проекты, бассейн и спорт каждый день, внутренняя экономика с лагерной валютой.";
@@ -86,6 +87,26 @@
   function persistMode(mode) {
     try {
       localStorage.setItem(MODE_KEY, mode);
+    } catch (_err) {
+      // ignore storage errors
+    }
+  }
+
+  function getStoredAgeValue() {
+    try {
+      var raw = localStorage.getItem(AGE_KEY);
+      if (!raw) return null;
+      var value = Number(raw);
+      if (!Number.isFinite(value)) return null;
+      return clamp(Math.round(value), 7, 14);
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  function persistAge(age) {
+    try {
+      localStorage.setItem(AGE_KEY, String(clamp(Number(age) || 7, 7, 14)));
     } catch (_err) {
       // ignore storage errors
     }
@@ -440,6 +461,7 @@
     var nextPromo = {
       shiftId: shift.id,
       shiftName: shift.summary || shift.line,
+      age: clamp(Number((same && promo && promo.age) || state.age || 7), 7, 14),
       basePrice: meta.basePrice,
       finalPrice: same ? Number(promo.finalPrice || meta.basePrice) : meta.basePrice,
       code: same && promo.code ? String(promo.code) : generatePromoCode(),
@@ -603,6 +625,7 @@
     state.age = safeAge;
     ageSelectionConfirmed = true;
     ageGateNudge = false;
+    persistAge(safeAge);
     if (auditRuntime.active) {
       auditRuntime.ageSelected = true;
     }
@@ -1869,10 +1892,34 @@
   function hydratePromoState() {
     var promo = loadShiftPromo();
     if (!promo || !promo.shiftId) return;
+    if (Number(promo.age) >= 7 && Number(promo.age) <= 14) {
+      state.age = clamp(Number(promo.age), 7, 14);
+      ageSelectionConfirmed = true;
+      persistAge(state.age);
+      if (auditRuntime.active) {
+        auditRuntime.ageSelected = true;
+      }
+    }
     var shift = findExactShiftById(promo.shiftId);
     if (!shift) return;
     state.selectedShiftId = shift.id;
     state.direction = shift.direction;
+    if (state.step === 0 && ageSelectionConfirmed) {
+      state.step = 1;
+    }
+  }
+
+  function hydrateAgeState() {
+    var storedAge = getStoredAgeValue();
+    if (!storedAge) return;
+    state.age = storedAge;
+    ageSelectionConfirmed = true;
+    if (state.step === 0) {
+      state.step = 1;
+    }
+    if (auditRuntime.active) {
+      auditRuntime.ageSelected = true;
+    }
   }
 
   function openTabTarget(tabElement) {
@@ -3260,6 +3307,7 @@
   }
 
   function bootstrap() {
+    hydrateAgeState();
     hydratePromoState();
     renderLayout();
     renderStaticLabels();
