@@ -1,0 +1,11 @@
+:root {
+  --ac-bg: #f6f7fb;
+  --ac-surface: #ffffff;
+  --ac-text: #111827;
+  --ac-muted: #6b7280;
+  --ac-primary: #ff7700;
+  --ac-primary-strong: #e36400;
+  --ac-border: #e5e7eb;
+  --ac-shadow: 0 20px 45px rgba(15, 23, 42, 0.1);
+  --ac-radius: 18px;
+}

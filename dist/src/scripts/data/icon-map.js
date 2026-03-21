@@ -1,0 +1,22 @@
+export const ICON_MAP = {
+  close: "/assets/icons/lucide/x.svg",
+  chevronLeft: "/assets/icons/lucide/chevron-left.svg",
+  chevronRight: "/assets/icons/lucide/chevron-right.svg",
+  play: "/assets/icons/lucide/circle-play.svg",
+  robot: "/assets/icons/lucide/bot.svg",
+  pool: "/assets/icons/lucide/waves.svg",
+  food: "/assets/icons/lucide/utensils-crossed.svg",
+  med: "/assets/icons/lucide/heart-pulse.svg",
+  search: "/assets/icons/lucide/search.svg",
+  clipboard: "/assets/icons/lucide/clipboard-list.svg",
+  refresh: "/assets/icons/lucide/sparkles.svg",
+  fire: "/assets/icons/lucide/message-square-quote.svg",
+  sparkle: "/assets/icons/lucide/sparkles.svg",
+  money: "/assets/icons/lucide/coins.svg",
+  lock: "/assets/icons/lucide/shield-check.svg",
+  check: "/assets/icons/lucide/users.svg",
+  phoneCity: "/assets/icons/lucide/phone.svg",
+  phoneMobile: "/assets/icons/lucide/smartphone.svg",
+  telegram: "/assets/icons/lucide/send.svg",
+  whatsapp: "/assets/icons/lucide/message-circle.svg"
+};

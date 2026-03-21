@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AidaCamp — страница замен иконок</title>
+  <style>
+    :root {
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --line:#e6e8ef;
+      --text:#111827;
+      --muted:#667085;
+      --brand:#ff7700;
+      --shadow:0 16px 40px rgba(15,23,42,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255,119,0,.07), transparent 22%),
+        var(--bg);
+    }
+    .wrap{width:min(1280px,calc(100% - 32px));margin:28px auto 56px}
+    .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .hero{padding:30px;margin-bottom:18px}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;
+      background:#fff3e8;color:#9a3412;font-size:12px;font-weight:800;
+      letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px;
+    }
+    h1{margin:0 0 10px;font-size:clamp(28px,4vw,46px);line-height:1.05;letter-spacing:-.03em}
+    .lead{margin:0;color:var(--muted);font-size:17px;line-height:1.6;max-width:980px}
+    .meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+    .meta .item{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fbfcff}
+    .item .n{font-size:28px;font-weight:800;letter-spacing:-.03em}
+    .item .t{margin-top:4px;color:var(--muted);font-size:13px}
+    .card{padding:22px 24px}
+    h2{margin:0 0 14px;font-size:24px;line-height:1.1}
+    .sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+    table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+    th,td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+    th{background:#f9fafb;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#475467}
+    tr:last-child td{border-bottom:none}
+    td{font-size:14px;line-height:1.55}
+    .old-icon,.new-icon{
+      width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;
+      border:1px solid var(--line);background:#fff;
+    }
+    .old-icon{font-size:20px}
+    .new-icon{background:#fff8ef;border-color:#ffd8b5}
+    .new-icon img{width:22px;height:22px;display:block}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;color:#475467}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+    .list{margin:0;padding-left:18px}
+    .list li{margin:8px 0;line-height:1.6}
+    .footer{margin-top:18px;font-size:13px;color:var(--muted);line-height:1.6}
+    @media (max-width: 980px) {
+      .meta,.grid{grid-template-columns:1fr}
+    }
+    @media (max-width: 680px) {
+      .wrap{width:min(1280px,calc(100% - 20px));margin-top:18px}
+      .hero,.card{padding:18px}
+      table,thead,tbody,tr,th,td{display:block}
+      thead{display:none}
+      tr{border-bottom:1px solid var(--line)}
+      td{border:none;padding:8px 0}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">AidaCamp · icon migration sheet</div>
+      <h1>Страница замен иконок</h1>
+      <p class="lead">
+        Ниже собрана удобная страница для контроля миграции иконок: что было, что стало и в каком контексте это используется на сайте.
+        Логика страницы — не просто показать пары old/new, а дать контекст, где именно иконка живёт: controls, popups, safety blocks, reviews, video, CTA и runtime‑элементы.
+      </p>
+      <div class="meta">
+        <div class="item"><div class="n">16</div><div class="t">основных замен в системе</div></div>
+        <div class="item"><div class="n">1</div><div class="t">единый SVG‑стиль вместо emoji/text icons</div></div>
+        <div class="item"><div class="n">HTML</div><div class="t">формат для визуальной проверки и ревью</div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Таблица замен</h2>
+      <div class="sub">
+        Колонка <strong>«Было»</strong> показывает исходный символ или emoji. Колонка <strong>«Стало»</strong> показывает соответствующий SVG-файл из набора
+        <span class="mono">/assets/icons/</span>. Контекст нужен, чтобы быстро понять, где проверять это в интерфейсе.
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Было</th>
+            <th>Стало</th>
+            <th>SVG-файл</th>
+            <th>Контекст</th>
+            <th>Описание</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+<td><span class="old-icon">✕</span></td>
+<td><span class="new-icon"><img src="assets/icons/close.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/close.svg</span></td>
+<td><strong>Кнопки закрытия</strong></td>
+<td>Модалки и overlay: карточка смены, баннер возврата, fix modal, exit/revisit modal, media lightbox, popups.</td>
+</tr>
+<tr>
+<td><span class="old-icon">←</span></td>
+<td><span class="new-icon"><img src="assets/icons/chevron-left.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/chevron-left.svg</span></td>
+<td><strong>Навигация назад</strong></td>
+<td>Кнопки previous в каруселях, lightbox, reviews/team/video, а также hint/навигация в hero.</td>
+</tr>
+<tr>
+<td><span class="old-icon">→</span></td>
+<td><span class="new-icon"><img src="assets/icons/chevron-right.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/chevron-right.svg</span></td>
+<td><strong>Навигация вперёд</strong></td>
+<td>Кнопки next, CTA с переходом к сменам и ценам, переход к бронированию.</td>
+</tr>
+<tr>
+<td><span class="old-icon">▶</span></td>
+<td><span class="new-icon"><img src="assets/icons/play.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/play.svg</span></td>
+<td><strong>Видео и плейсхолдеры</strong></td>
+<td>Rutube/video cards, lightbox preview, блоки “Скоро” и play-overlay на карточках видео.</td>
+</tr>
+<tr>
+<td><span class="old-icon">🤖</span></td>
+<td><span class="new-icon"><img src="assets/icons/robot.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/robot.svg</span></td>
+<td><strong>AI‑программы и AI-блоки</strong></td>
+<td>Бейдж “AI‑программы июнь”, карточки программы, data objects с AI/ботами.</td>
+</tr>
+<tr>
+<td><span class="old-icon">🏊</span></td>
+<td><span class="new-icon"><img src="assets/icons/pool.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/pool.svg</span></td>
+<td><strong>Бассейн / активность</strong></td>
+<td>Safety block, included/features, left facts, photo categories, карточки смен.</td>
+</tr>
+<tr>
+<td><span class="old-icon">🍽 / 🍽️</span></td>
+<td><span class="new-icon"><img src="assets/icons/food.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/food.svg</span></td>
+<td><strong>Питание</strong></td>
+<td>Safety block, included/features, photo categories, карточки смен.</td>
+</tr>
+<tr>
+<td><span class="old-icon">🏥</span></td>
+<td><span class="new-icon"><img src="assets/icons/med.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/med.svg</span></td>
+<td><strong>Медицина</strong></td>
+<td>Safety block, FAQ groups, included/features, карточки смен.</td>
+</tr>
+<tr>
+<td><span class="old-icon">🔍</span></td>
+<td><span class="new-icon"><img src="assets/icons/search.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/search.svg</span></td>
+<td><strong>Поиск / проверка</strong></td>
+<td>Статусы проверки мест, всплывающие проверки, runtime-loading messages.</td>
+</tr>
+<tr>
+<td><span class="old-icon">📋</span></td>
+<td><span class="new-icon"><img src="assets/icons/clipboard.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/clipboard.svg</span></td>
+<td><strong>Списки / подбор</strong></td>
+<td>Runtime loading messages, карточки/подбор мест, элементы “ищем свободные места”.</td>
+</tr>
+<tr>
+<td><span class="old-icon">🔄</span></td>
+<td><span class="new-icon"><img src="assets/icons/refresh.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/refresh.svg</span></td>
+<td><strong>Обновление / проверка</strong></td>
+<td>Runtime status messages при проверке отказов и неоплат.</td>
+</tr>
+<tr>
+<td><span class="old-icon">🔥</span></td>
+<td><span class="new-icon"><img src="assets/icons/fire-hit.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/fire-hit.svg</span></td>
+<td><strong>ХИТ / лучший оффер</strong></td>
+<td>Priority label “ХИТ”, промо-бейджи и highlighted shift states.</td>
+</tr>
+<tr>
+<td><span class="old-icon">✨</span></td>
+<td><span class="new-icon"><img src="assets/icons/sparkle.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/sparkle.svg</span></td>
+<td><strong>Лучшая цена / highlight</strong></td>
+<td>Best-price labels, promo meta, messages “Найдена лучшая цена”.</td>
+</tr>
+<tr>
+<td><span class="old-icon">💰</span></td>
+<td><span class="new-icon"><img src="assets/icons/money.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/money.svg</span></td>
+<td><strong>Цена / стоимость</strong></td>
+<td>Строки с ценой в promo text, runtime price messages, price-related badges.</td>
+</tr>
+<tr>
+<td><span class="old-icon">🔒</span></td>
+<td><span class="new-icon"><img src="assets/icons/lock.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/lock.svg</span></td>
+<td><strong>Фиксация цены / безопасность</strong></td>
+<td>Fix modal, exit/revisit CTA, safety block, banner/lock-related prompts.</td>
+</tr>
+<tr>
+<td><span class="old-icon">✅</span></td>
+<td><span class="new-icon"><img src="assets/icons/check.svg" alt=""></span></td>
+<td><span class="mono">/assets/icons/check.svg</span></td>
+<td><strong>Успех / скопировано</strong></td>
+<td>Success state в fix modal, copied state для кодов/купонов, confirmation messages.</td>
+</tr>
+        </tbody>
+      </table>
+
+      <div class="grid">
+        <div class="card" style="padding:18px">
+          <h2 style="font-size:20px">Как проверять визуально</h2>
+          <ul class="list">
+            <li>Все close / prev / next / play должны быть в одном stroke-стиле.</li>
+            <li>В safety block больше не должно быть emoji типа 🏥 🔒 🍽️ 🏊.</li>
+            <li>В CTA и кнопках не должно остаться текстовых стрелок <span class="mono">← →</span>.</li>
+            <li>В promo / best-price / price runtime‑строках не должно быть 🔥 ✨ 💰 как обычного текста-иконки.</li>
+            <li>В video / lightbox / reviews / team sliders не должно быть текстовых символов и битых картинок.</li>
+          </ul>
+        </div>
+
+        <div class="card" style="padding:18px">
+          <h2 style="font-size:20px">Где это обычно встречается</h2>
+          <ul class="list">
+            <li><strong>index.html</strong> — статическая разметка hero, popups, safety, FAQ groups, buttons.</li>
+            <li><strong>src/scripts/main.js</strong> — runtime вставки: reviews arrows, team arrows, lightbox, Rutube/video play, copied states.</li>
+            <li><strong>src/styles/main.css</strong> — базовый размер и выравнивание через <span class="mono">.ac-icon</span>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer">
+        Эта страница сделана как контрольный лист для ревью после миграции. Её удобно открыть рядом с сайтом и глазами сверить,
+        что в интерфейсе больше не осталось смешения emoji, text-symbol controls и SVG.
+      </div>
+    </section>
+  </div>
+</body>
+</html>

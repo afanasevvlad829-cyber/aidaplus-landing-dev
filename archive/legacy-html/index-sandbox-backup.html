@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AidaPlus Dev</title>
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="dev-shell">
+    <header class="dev-header">
+      <div>
+        <p class="eyebrow">AidaPlus / Dev Sandbox</p>
+        <h1>Песочница лендинга запущена</h1>
+        <p class="lead">
+          Здесь будем нормально разрабатывать лендинг, не трогая аналитику и боевой контур.
+        </p>
+      </div>
+      <nav class="dev-nav">
+        <a href="#status">Статус</a>
+        <a href="#checks">Проверки</a>
+        <a href="#next">Дальше</a>
+      </nav>
+    </header>
+
+    <main class="dev-main">
+      <section class="card" id="status">
+        <h2>Статус окружения</h2>
+        <ul class="status-list">
+          <li><strong>Домен:</strong> <span id="domain-value">—</span></li>
+          <li><strong>User Agent:</strong> <span id="ua-value">—</span></li>
+          <li><strong>Время загрузки:</strong> <span id="time-value">—</span></li>
+          <li><strong>JS:</strong> <span class="ok">подключён</span></li>
+          <li><strong>CSS:</strong> <span class="ok">подключён</span></li>
+        </ul>
+      </section>
+
+      <section class="card" id="checks">
+        <h2>Быстрые проверки</h2>
+        <div class="checks">
+          <button class="btn" id="btn-localstorage">Проверить localStorage</button>
+          <button class="btn" id="btn-fetch-media">Проверить /media</button>
+          <button class="btn" id="btn-clear">Сбросить dev-state</button>
+        </div>
+        <pre class="console" id="dev-console">Готово к проверкам…</pre>
+      </section>
+
+      <section class="card" id="next">
+        <h2>Следующий шаг</h2>
+        <ol class="next-list">
+          <li>Переносим актуальный лендинг в этот проект.</li>
+          <li>Разносим код на HTML / CSS / JS.</li>
+          <li>Проверяем подгрузку media, попапы, localStorage и карточки смен уже на домене.</li>
+          <li>После утверждения собираем финальный файл под Tilda.</li>
+        </ol>
+      </section>
+    </main>
+  </div>
+
+  <script src="/script.js"></script>
+</body>
+</html>

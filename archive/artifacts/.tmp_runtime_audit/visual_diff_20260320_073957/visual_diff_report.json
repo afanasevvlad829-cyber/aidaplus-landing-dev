@@ -1,0 +1,174 @@
+{
+  "output_dir": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957",
+  "old_full_numbered": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_full_numbered.png",
+  "new_full_numbered": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_full_numbered.png",
+  "per_block_comparison": [
+    {
+      "block": "1 — TopNav",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_01.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_01.png",
+      "status": "partial",
+      "differences": [
+        "Есть отличия в spacing/типографике/плотности",
+        "Навигационный ритм и компоновка шапки отличаются"
+      ]
+    },
+    {
+      "block": "2 — Hero",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_02.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_02.png",
+      "status": "partial",
+      "differences": [
+        "Высота блока заметно отличается",
+        "Есть отличия в spacing/типографике/плотности"
+      ]
+    },
+    {
+      "block": "3 — Funnel",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_03.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_03.png",
+      "status": "mismatch",
+      "differences": [
+        "Сильное визуальное расхождение по структуре/стилю",
+        "Фаннел и правая hero-панель отличаются по плотности"
+      ]
+    },
+    {
+      "block": "4 — Directions / Cards",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_04.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_04.png",
+      "status": "mismatch",
+      "differences": [
+        "Высота блока заметно отличается",
+        "Сильное визуальное расхождение по структуре/стилю"
+      ]
+    },
+    {
+      "block": "5 — Photo",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_05.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_05.png",
+      "status": "mismatch",
+      "differences": [
+        "Высота блока заметно отличается",
+        "Сильное визуальное расхождение по структуре/стилю"
+      ]
+    },
+    {
+      "block": "6 — Video",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_06.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_06.png",
+      "status": "mismatch",
+      "differences": [
+        "Высота блока заметно отличается",
+        "Сильное визуальное расхождение по структуре/стилю"
+      ]
+    },
+    {
+      "block": "7 — Reviews",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_07.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_07.png",
+      "status": "match",
+      "differences": [
+        "Высота блока заметно отличается"
+      ]
+    },
+    {
+      "block": "8 — Team",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_08.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_08.png",
+      "status": "partial",
+      "differences": [
+        "Высота блока заметно отличается",
+        "Есть отличия в spacing/типографике/плотности"
+      ]
+    },
+    {
+      "block": "9 — FAQ",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_09.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_09.png",
+      "status": "match",
+      "differences": [
+        "Высота блока заметно отличается"
+      ]
+    },
+    {
+      "block": "10 — Footer",
+      "old_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/old_block_10.png",
+      "new_image": "/Users/vladimirafanasev/aidaplus-dev/.tmp_runtime_audit/visual_diff_20260320_073957/new_block_10.png",
+      "status": "match",
+      "differences": [
+        "Высота блока заметно отличается"
+      ]
+    }
+  ],
+  "summary_table": [
+    {
+      "block": 1,
+      "name": "TopNav",
+      "status": "partial"
+    },
+    {
+      "block": 2,
+      "name": "Hero",
+      "status": "partial"
+    },
+    {
+      "block": 3,
+      "name": "Funnel",
+      "status": "mismatch"
+    },
+    {
+      "block": 4,
+      "name": "Directions / Cards",
+      "status": "mismatch"
+    },
+    {
+      "block": 5,
+      "name": "Photo",
+      "status": "mismatch"
+    },
+    {
+      "block": 6,
+      "name": "Video",
+      "status": "mismatch"
+    },
+    {
+      "block": 7,
+      "name": "Reviews",
+      "status": "match"
+    },
+    {
+      "block": 8,
+      "name": "Team",
+      "status": "partial"
+    },
+    {
+      "block": 9,
+      "name": "FAQ",
+      "status": "match"
+    },
+    {
+      "block": 10,
+      "name": "Footer",
+      "status": "match"
+    }
+  ],
+  "priority": {
+    "high_priority": [
+      "3 — Funnel",
+      "4 — Directions / Cards",
+      "5 — Photo",
+      "6 — Video"
+    ],
+    "medium_priority": [
+      "1 — TopNav",
+      "2 — Hero",
+      "8 — Team"
+    ],
+    "low_priority": [
+      "7 — Reviews",
+      "9 — FAQ",
+      "10 — Footer"
+    ]
+  }
+}

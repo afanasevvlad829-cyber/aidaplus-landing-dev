@@ -1,0 +1,9 @@
+{
+  "name": "aidacamp-architecture-next",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build:single": "node ./scripts/build-single.mjs"
+  }
+}
