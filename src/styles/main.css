@@ -1922,10 +1922,19 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   background: #fff;
   color: #2c354d;
   padding: var(--space-sm) var(--space-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   font: inherit;
   font-size: var(--font-size-body-sm);
   font-weight: 700;
   cursor: pointer;
+}
+
+.ac-shift-more-btn__icon {
+  width: 16px;
+  height: 16px;
 }
 
 .ac-shift-more-btn:hover,

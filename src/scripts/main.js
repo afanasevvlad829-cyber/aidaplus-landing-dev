@@ -1793,7 +1793,11 @@
       "</div>" +
       (allShifts.length > 2
         ? '<button class="ac-shift-more-btn" type="button" data-action="shift-show-more">' +
-          (shiftsShowAll ? "Скрыть дополнительные смены" : "Показать ещё 2 смены →") +
+          (shiftsShowAll
+            ? "Скрыть дополнительные смены"
+            : 'Показать ещё 2 смены <img class="ac-icon ac-icon--sm ac-shift-more-btn__icon" src="' +
+              ICON_MAP.chevronRight +
+              '" alt="" aria-hidden="true">') +
           "</button>"
         : "") +
       "</article>" +
