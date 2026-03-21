@@ -706,6 +706,10 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
   transition: opacity 160ms ease-out, transform 160ms ease-out;
 }
 
+.ac-contact-menu[hidden] {
+  display: none !important;
+}
+
 .ac-contact-panel.is-open .ac-contact-menu {
   opacity: 1;
   transform: translateY(0);
