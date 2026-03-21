@@ -1266,14 +1266,14 @@
   }
 
   function persistShiftSelectionSnapshot() {
-    if (!ageSelectionConfirmed) return;
+    if (!ageSelectionConfirmed) return null;
 
     var shift = findShiftById(state.selectedShiftId);
     var idx = SHIFTS.indexOf(shift);
-    if (!shift || idx < 0) return;
+    if (!shift || idx < 0) return null;
 
     var lead = loadBookingLead() || {};
-    if (lead.submitted) return;
+    if (lead.submitted) return null;
 
     var meta = getShiftPriceMeta(shift, idx);
     var promo = loadShiftPromo();
@@ -1289,7 +1289,7 @@
     }
     var discount = Math.max(0, basePrice - finalPrice);
 
-    saveBookingLead({
+    var snapshot = {
       name: String(lead.name || ""),
       phone: String(lead.phone || ""),
       shiftId: shift.id,
@@ -1305,7 +1305,9 @@
       submittedAt: 0,
       age: state.age,
       expiresAt: samePromo ? Number(promo.expiresAt || 0) : 0
-    });
+    };
+    saveBookingLead(snapshot);
+    return snapshot;
   }
 
   function stopHeroSlideshow() {
@@ -1642,6 +1644,7 @@
   function closeAllOverlays() {
     var changed = false;
     var hadShiftsOverlay = !!state.overlays.shifts;
+    var draftLead = null;
     shiftCalendar.open = false;
     shiftCalendar.shiftId = "";
 
@@ -1663,11 +1666,32 @@
     }
 
     if (changed) {
+      if (hadShiftsOverlay) {
+        draftLead = persistShiftSelectionSnapshot();
+      }
       clearContactCloseTimer();
       renderLayout();
       renderOverlays();
-      if (hadShiftsOverlay) {
-        persistShiftSelectionSnapshot();
+      if (hadShiftsOverlay && draftLead && !draftLead.submitted) {
+        sendLeadNotification("booking_draft_saved", {
+          lead_type: "booking_draft",
+          status: "draft",
+          phone: String(draftLead.phone || ""),
+          name: String(draftLead.name || ""),
+          shift_id: String(draftLead.shiftId || ""),
+          shift_text: String(draftLead.shiftText || ""),
+          price_text: String(draftLead.priceText || ""),
+          price_base: Number(draftLead.priceBase || 0),
+          price_final: Number(draftLead.priceFinal || 0),
+          discount_value: Number(draftLead.discountValue || 0),
+          promo_code: String(draftLead.promoCode || ""),
+          age: Number(draftLead.age || state.age || 0),
+          source: "overlay_close"
+        });
+      }
+      if (hadShiftsOverlay && ageSelectionConfirmed) {
+        applyStepTransition(SHIFTS.length - 1, false);
+        return;
       }
       renderFunnel();
     }
@@ -2227,6 +2251,7 @@
       if (bookingForm) {
         var bookingLead = loadBookingLead() || {};
         var isBookingSubmitted = !!bookingLead.submitted;
+        var hasDraftResume = !!(resumePromoContext && !resumePromoContext.submitted);
         var selectedShift = findShiftById(state.selectedShiftId);
         var shiftSummary = selectedShift ? selectedShift.summary : "";
         var shiftIdx = SHIFTS.indexOf(selectedShift);
@@ -2235,8 +2260,10 @@
         var priceFinal = promo ? Number(promo.finalPrice || priceBase) : priceBase;
         var discount = Math.max(0, priceBase - priceFinal);
         if (line) {
-          line.style.display = isBookingSubmitted ? "" : "none";
-          line.textContent = isBookingSubmitted ? "Мы перезвоним и подтвердим бронирование" : "";
+          line.style.display = (isBookingSubmitted || hasDraftResume) ? "" : "none";
+          line.textContent = isBookingSubmitted
+            ? "Мы перезвоним и подтвердим бронирование"
+            : (hasDraftResume ? "Продолжить бронирование" : "");
         }
         bookingForm.hidden = false;
         if (bookingFixedCard) {
