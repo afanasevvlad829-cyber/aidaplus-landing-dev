@@ -2413,6 +2413,48 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
     min-height: var(--hero-min-height-mobile);
   }
 
+  .ac-contact-panel {
+    top: var(--space-md);
+    left: var(--space-md);
+    max-width: calc(42% - var(--space-sm));
+  }
+
+  .ac-contact-panel .ac-hero-pill--left {
+    min-height: 44px;
+    padding: 0 var(--space-md);
+    font-size: var(--font-size-16);
+  }
+
+  .ac-hero-pill--right {
+    top: var(--space-md);
+    right: var(--space-md);
+    min-height: 44px;
+    max-width: calc(56% - var(--space-sm));
+    padding: 0 var(--space-md);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    justify-content: center;
+  }
+
+  .ac-hero-overlay {
+    top: 76px;
+    left: var(--space-md);
+    right: var(--space-md);
+    bottom: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .ac-funnel-body {
+    display: grid;
+    align-content: end;
+    gap: var(--space-sm);
+    min-height: 0;
+  }
+
   .ac-menu-item--full {
     font-size: var(--font-size-chip);
     padding: 0 var(--space-md);
@@ -2434,8 +2476,25 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
     grid-template-columns: 1fr;
   }
 
+  .ac-hero-grid__item {
+    min-height: 70px;
+    padding: var(--space-sm) var(--space-md);
+  }
+
   .ac-funnel-controls {
     grid-template-columns: var(--funnel-leading-col) 1fr;
+    gap: var(--space-sm);
+    align-items: center;
+  }
+
+  .ac-step-status {
+    white-space: nowrap;
+  }
+
+  .ac-funnel-controls .ac-primary-btn--cta {
+    height: 44px;
+    font-size: var(--font-size-base);
+    padding: 0 var(--space-md);
   }
 
   .ac-primary-btn {
@@ -2456,6 +2515,20 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
   .ac-footer__inner {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .ac-hero-right {
+    min-height: clamp(560px, 84vh, 700px);
+  }
+
+  .ac-hero-overlay h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .ac-hero-overlay p {
+    margin-bottom: var(--space-sm);
   }
 }
 
