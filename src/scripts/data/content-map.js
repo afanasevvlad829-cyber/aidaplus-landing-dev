@@ -40,7 +40,7 @@
       contactTitle: "Связаться с нами",
       shiftsTitle: "Смены и цены",
       shiftsMeta: "Выберите смену по возрасту и направлению.",
-      techBadge: "TECH v2026.03.18-01",
+      techBadge: "TECH v2026.03.21-01",
       modeCompactLabel: "Кратко",
       modeFullLabel: "Подробно",
       brandSub: "IT-лагерь 7-14 лет",
@@ -347,7 +347,7 @@
       direction: "base",
       line: "7-9 лет",
       summary: "Визуальное программирование, первые игры, логика.",
-      nextCta: "Уточнить формат",
+      nextCta: "Смотреть даты и цены смен",
       benefits: [
         { icon: ICON_MAP.robot, text: "Визуальные IT-проекты по уровню ребёнка" },
         { icon: ICON_MAP.money, text: "Первые шаги во внутренней экономике" },
@@ -359,7 +359,7 @@
       direction: "web",
       line: "10-12 лет",
       summary: "Python, веб-проекты и командные мини-спринты.",
-      nextCta: "Проверить безопасность",
+      nextCta: "Смотреть даты и цены смен",
       benefits: [
         { icon: ICON_MAP.robot, text: "Python + веб-проекты в мини-командах" },
         { icon: ICON_MAP.money, text: "Игровая экономика: роли, бюджет, решения" },
@@ -371,7 +371,7 @@
       direction: "ai",
       line: "13-14 лет",
       summary: "AI-практика, анализ данных, проектная защита.",
-      nextCta: "Выбрать смену",
+      nextCta: "Смотреть даты и цены смен",
       benefits: [
         { icon: ICON_MAP.robot, text: "AI-кейсы, аналитика и защита проекта" },
         { icon: ICON_MAP.money, text: "Управление ресурсами в проектной команде" },
