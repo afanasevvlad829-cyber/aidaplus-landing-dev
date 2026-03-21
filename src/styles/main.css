@@ -821,6 +821,15 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
   color: rgba(255, 255, 255, 0.94);
 }
 
+/* Dark hero area uses raster/inline SVG assets with dark strokes.
+   Normalize icon contrast here to keep controls readable on dark backgrounds. */
+.ac-hero-overlay .ac-icon,
+.ac-hero-grid__item .ac-icon,
+.ac-funnel-controls .ac-icon {
+  filter: brightness(0) invert(1);
+  opacity: 0.96;
+}
+
 .ac-funnel-controls {
   display: grid;
   grid-template-columns: var(--size-36) 1fr auto;
