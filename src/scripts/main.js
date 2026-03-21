@@ -200,6 +200,138 @@
     return [];
   }
 
+  function stripLeadingMarker(text) {
+    return String(text || "").replace(/^[^A-Za-zА-Яа-я0-9]+(?:\s+)?/, "");
+  }
+
+  function getCompactTabModel(profile) {
+    if (state.mode !== "compact") return null;
+    if (state.activeTab === "info") return null;
+
+    var sectionTitles = CONTENT_MAP.sectionTitles || {};
+    var defaultIcon = ICON_MAP.check || ICON_MAP.sparkle || ICON_MAP.robot || "";
+    var model = null;
+
+    if (state.activeTab === "aiprogram") {
+      var aiStats = CONTENT_MAP.aiStats || [];
+      var lead = aiStats[0] || {};
+      var aiBenefits = [];
+      for (var i = 1; i < aiStats.length && aiBenefits.length < 4; i += 1) {
+        var stat = aiStats[i];
+        if (!stat || !stat.value) continue;
+        aiBenefits.push({
+          icon: ICON_MAP.sparkle || defaultIcon,
+          text: stat.value + " " + stripLeadingMarker(stat.label)
+        });
+      }
+      model = {
+        title: sectionTitles.ai || "AI-программы",
+        subtitle: lead.text || "AI-практика и проекты каждый день.",
+        progress: lead.value && lead.label ? lead.value + " " + stripLeadingMarker(lead.label) : "",
+        benefits: aiBenefits
+      };
+    } else if (state.activeTab === "location") {
+      var where = (CONTENT_MAP.location && CONTENT_MAP.location.where) || [];
+      var nearby = (CONTENT_MAP.location && CONTENT_MAP.location.nearby) || [];
+      var locationBenefits = [];
+      for (var w = 0; w < where.length && locationBenefits.length < 2; w += 1) {
+        locationBenefits.push({
+          icon: ICON_MAP.pool || defaultIcon,
+          text: stripLeadingMarker(where[w])
+        });
+      }
+      for (var n = 0; n < nearby.length && locationBenefits.length < 4; n += 1) {
+        locationBenefits.push({
+          icon: ICON_MAP.check || defaultIcon,
+          text: stripLeadingMarker(nearby[n])
+        });
+      }
+      model = {
+        title: sectionTitles.location || "Локация",
+        subtitle: "Где проходит смена и что рядом.",
+        progress: "",
+        benefits: locationBenefits
+      };
+    } else if (state.activeTab === "photo") {
+      var categories = CONTENT_MAP.photoCategories || [];
+      var photoBenefits = [];
+      for (var p = 0; p < categories.length && photoBenefits.length < 4; p += 1) {
+        photoBenefits.push({
+          icon: ICON_MAP.search || defaultIcon,
+          text: categories[p].label
+        });
+      }
+      model = {
+        title: sectionTitles.photos || "Фото лагеря",
+        subtitle: "Реальные фото лагеря по категориям.",
+        progress: (CONTENT_MAP.photos || []).length + " фото в галерее",
+        benefits: photoBenefits
+      };
+    } else if (state.activeTab === "video") {
+      var videos = CONTENT_MAP.videos || [];
+      var videoBenefits = [];
+      for (var v = 0; v < videos.length && videoBenefits.length < 3; v += 1) {
+        videoBenefits.push({
+          icon: ICON_MAP.play || defaultIcon,
+          text: videos[v].title
+        });
+      }
+      model = {
+        title: sectionTitles.video || "Видео",
+        subtitle: "Вертикальные видео из лагеря.",
+        progress: "",
+        benefits: videoBenefits
+      };
+    } else if (state.activeTab === "faq") {
+      var faqMedicine = (CONTENT_MAP.faqItems && CONTENT_MAP.faqItems.medicine) || [];
+      var faqBenefits = [];
+      for (var f = 0; f < faqMedicine.length && faqBenefits.length < 4; f += 1) {
+        faqBenefits.push({
+          icon: ICON_MAP.clipboard || defaultIcon,
+          text: faqMedicine[f]
+        });
+      }
+      model = {
+        title: sectionTitles.faq || "FAQ",
+        subtitle: "Частые вопросы родителей о лагере.",
+        progress: "",
+        benefits: faqBenefits
+      };
+    } else if (state.activeTab === "reviews") {
+      var reviews = CONTENT_MAP.reviews || [];
+      var reviewBenefits = [];
+      for (var r = 0; r < reviews.length && reviewBenefits.length < 3; r += 1) {
+        reviewBenefits.push({
+          icon: ICON_MAP.fire || defaultIcon,
+          text: reviews[r].name + " — " + reviews[r].meta
+        });
+      }
+      model = {
+        title: sectionTitles.reviews || "Отзывы родителей",
+        subtitle: "Реальные отзывы о сменах.",
+        progress: "",
+        benefits: reviewBenefits
+      };
+    } else if (state.activeTab === "team") {
+      var team = CONTENT_MAP.team || [];
+      var teamBenefits = [];
+      for (var t = 0; t < team.length && teamBenefits.length < 3; t += 1) {
+        teamBenefits.push({
+          icon: ICON_MAP.check || defaultIcon,
+          text: team[t].name + " — " + team[t].role
+        });
+      }
+      model = {
+        title: sectionTitles.team || "Команда",
+        subtitle: "Педагоги и наставники лагеря.",
+        progress: "",
+        benefits: teamBenefits
+      };
+    }
+
+    return model;
+  }
+
   function getHeroSlides() {
     var fallback = "https://static.tildacdn.com/tild3130-3234-4630-b533-343030653636/photo_2024-02-04_171.jpeg";
     var list = [fallback];
@@ -570,6 +702,7 @@
     state.activeTab = tabKey;
 
     renderMenu();
+    renderInfoCard();
     renderSections();
 
     track("tab_changed", {
@@ -1034,7 +1167,8 @@
 
   function renderInfoCard() {
     var profile = findProfileByAge(state.age);
-    var heroBenefits = getHeroBenefits();
+    var compactModel = getCompactTabModel(profile);
+    var heroBenefits = compactModel && compactModel.benefits && compactModel.benefits.length ? compactModel.benefits : getHeroBenefits();
 
     var title = document.getElementById("acHeroTitle");
     var subtitle = document.getElementById("acHeroSubtitle");
@@ -1046,9 +1180,13 @@
     var ageReset = document.getElementById("acAgeReset");
     var ageBlock = document.querySelector(".ac-age-block");
 
-    if (title) title.textContent = profile.title;
-    if (subtitle) subtitle.textContent = HERO_SUBTITLE_STATIC;
-    if (progress) progress.textContent = profile.progress;
+    if (title) title.textContent = compactModel && compactModel.title ? compactModel.title : profile.title;
+    if (subtitle) subtitle.textContent = compactModel && compactModel.subtitle ? compactModel.subtitle : HERO_SUBTITLE_STATIC;
+    if (progress) {
+      var progressText = compactModel ? String(compactModel.progress || "") : profile.progress;
+      progress.textContent = progressText;
+      progress.style.display = progressText ? "" : "none";
+    }
     if (ageText) {
       ageText.textContent = profile.ageText;
       ageText.style.display = ageSelectionConfirmed ? "none" : "";
@@ -1581,14 +1719,14 @@
     var sections = document.querySelectorAll(".ac-section");
     for (var i = 0; i < sections.length; i += 1) {
       sections[i].classList.remove("ac-section--focus");
-      if (state.mode === "compact" && targetId) {
-        sections[i].hidden = sections[i].id !== targetId;
+      if (state.mode === "compact") {
+        sections[i].hidden = true;
       } else {
         sections[i].hidden = false;
       }
     }
 
-    if (!targetId) return;
+    if (!targetId || state.mode === "compact") return;
 
     var targetSection = document.getElementById(targetId);
     if (targetSection) {
