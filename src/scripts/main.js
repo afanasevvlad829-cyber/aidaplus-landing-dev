@@ -387,24 +387,37 @@
     if (state.activeTab === "info") return null;
 
     var sectionTitles = CONTENT_MAP.sectionTitles || {};
-    var defaultIcon = UI_ICON.ai;
+    var maxItems = 4;
     var model = null;
+    var i;
+
+    function pushBenefit(list, icon, text) {
+      if (list.length >= maxItems) return;
+      var safe = String(text || "").trim();
+      if (!safe) return;
+      list.push({
+        icon: icon,
+        text: safe
+      });
+    }
 
     if (state.activeTab === "aiprogram") {
       var aiStats = CONTENT_MAP.aiStats || [];
       var lead = aiStats[0] || {};
       var aiBenefits = [];
-      for (var i = 1; i < aiStats.length && aiBenefits.length < 4; i += 1) {
+      var aiCopy = CONTENT_MAP.aiCopy || [];
+
+      for (i = 1; i < aiStats.length && aiBenefits.length < maxItems; i += 1) {
         var stat = aiStats[i];
         if (!stat || !stat.value) continue;
-        aiBenefits.push({
-          icon: UI_ICON.ai,
-          text: stat.value + " " + stripLeadingMarker(stat.label)
-        });
+        pushBenefit(aiBenefits, UI_ICON.ai, stat.value + " " + stripLeadingMarker(stat.label));
+      }
+      for (i = 0; i < aiCopy.length && aiBenefits.length < maxItems; i += 1) {
+        pushBenefit(aiBenefits, UI_ICON.code, aiCopy[i]);
       }
       model = {
         title: sectionTitles.ai || "AI-программы",
-        subtitle: lead.text || "AI-практика и проекты каждый день.",
+        subtitle: lead.text || (aiCopy[0] || ""),
         progress: lead.value && lead.label ? lead.value + " " + stripLeadingMarker(lead.label) : "",
         benefits: aiBenefits
       };
@@ -412,81 +425,72 @@
       var where = (CONTENT_MAP.location && CONTENT_MAP.location.where) || [];
       var nearby = (CONTENT_MAP.location && CONTENT_MAP.location.nearby) || [];
       var locationBenefits = [];
-      for (var w = 0; w < where.length && locationBenefits.length < 2; w += 1) {
-        locationBenefits.push({
-          icon: UI_ICON.location,
-          text: stripLeadingMarker(where[w])
-        });
+      for (i = 0; i < where.length && locationBenefits.length < maxItems; i += 1) {
+        pushBenefit(locationBenefits, UI_ICON.location, stripLeadingMarker(where[i]));
       }
-      for (var n = 0; n < nearby.length && locationBenefits.length < 4; n += 1) {
-        locationBenefits.push({
-          icon: UI_ICON.pool,
-          text: stripLeadingMarker(nearby[n])
-        });
+      for (i = 0; i < nearby.length && locationBenefits.length < maxItems; i += 1) {
+        pushBenefit(locationBenefits, UI_ICON.pool, stripLeadingMarker(nearby[i]));
       }
       model = {
         title: sectionTitles.location || "Локация",
-        subtitle: "Где проходит смена и что рядом.",
-        progress: "",
+        subtitle: CONTENT_MAP.ui.locationWhereTitle || "Где проходит смена",
+        progress: (where[0] ? stripLeadingMarker(where[0]) : ""),
         benefits: locationBenefits
       };
     } else if (state.activeTab === "photo") {
       var categories = CONTENT_MAP.photoCategories || [];
       var photoBenefits = [];
-      for (var p = 0; p < categories.length && photoBenefits.length < 4; p += 1) {
-        photoBenefits.push({
-          icon: UI_ICON.photos,
-          text: categories[p].label
-        });
+      for (i = 0; i < categories.length && photoBenefits.length < maxItems; i += 1) {
+        pushBenefit(photoBenefits, UI_ICON.photos, categories[i].label);
       }
       model = {
         title: sectionTitles.photos || "Фото лагеря",
-        subtitle: "Реальные фото лагеря по категориям.",
+        subtitle: "Галерея по категориям",
         progress: (CONTENT_MAP.photos || []).length + " фото в галерее",
         benefits: photoBenefits
       };
     } else if (state.activeTab === "video") {
       var videos = CONTENT_MAP.videos || [];
       var videoBenefits = [];
-      for (var v = 0; v < videos.length && videoBenefits.length < 3; v += 1) {
-        videoBenefits.push({
-          icon: UI_ICON.video,
-          text: videos[v].title
-        });
+      for (i = 0; i < videos.length && videoBenefits.length < maxItems; i += 1) {
+        pushBenefit(videoBenefits, UI_ICON.video, videos[i].title);
       }
       model = {
         title: sectionTitles.video || "Видео",
-        subtitle: "Вертикальные видео из лагеря.",
-        progress: "",
+        subtitle: videos[0] ? videos[0].title : "Видео из лагеря",
+        progress: videos.length + " видео",
         benefits: videoBenefits
       };
     } else if (state.activeTab === "faq") {
-      var faqMedicine = (CONTENT_MAP.faqItems && CONTENT_MAP.faqItems.medicine) || [];
+      var faqItemsByCat = CONTENT_MAP.faqItems || {};
+      var faqList = faqItemsByCat[state.faqCategory] || faqItemsByCat.medicine || [];
+      var faqTabs = CONTENT_MAP.faqTabs || [];
+      var activeFaqTabLabel = "";
+      for (i = 0; i < faqTabs.length; i += 1) {
+        if (faqTabs[i].id === state.faqCategory) {
+          activeFaqTabLabel = faqTabs[i].label;
+          break;
+        }
+      }
       var faqBenefits = [];
-      for (var f = 0; f < faqMedicine.length && faqBenefits.length < 4; f += 1) {
-        faqBenefits.push({
-          icon: UI_ICON.faq,
-          text: faqMedicine[f]
-        });
+      for (i = 0; i < faqList.length && faqBenefits.length < maxItems; i += 1) {
+        pushBenefit(faqBenefits, UI_ICON.faq, faqList[i]);
       }
       model = {
         title: sectionTitles.faq || "FAQ",
-        subtitle: "Частые вопросы родителей о лагере.",
-        progress: "",
+        subtitle: activeFaqTabLabel || "Частые вопросы",
+        progress: faqList.length + " вопросов",
         benefits: faqBenefits
       };
     } else if (state.activeTab === "reviews") {
       var reviews = CONTENT_MAP.reviews || [];
       var reviewBenefits = [];
-      for (var r = 0; r < reviews.length && reviewBenefits.length < 3; r += 1) {
-        reviewBenefits.push({
-          icon: UI_ICON.reviews,
-          text: reviews[r].name + " — " + reviews[r].meta
-        });
+      for (i = 0; i < reviews.length && reviewBenefits.length < maxItems; i += 1) {
+        pushBenefit(reviewBenefits, UI_ICON.reviews, reviews[i].name + " — " + reviews[i].meta);
       }
       model = {
         title: sectionTitles.reviews || "Отзывы родителей",
-        subtitle: "Реальные отзывы о сменах.",
+        subtitle: "Реальные отзывы родителей",
         progress: (CONTENT_MAP.ui && CONTENT_MAP.ui.yandexReviewsLabel) || "",
         progressLink: (CONTENT_MAP.ui && CONTENT_MAP.ui.yandexReviewsUrl) || "",
         benefits: reviewBenefits
@@ -494,16 +498,13 @@
     } else if (state.activeTab === "team") {
       var team = CONTENT_MAP.team || [];
       var teamBenefits = [];
-      for (var t = 0; t < team.length && teamBenefits.length < 3; t += 1) {
-        teamBenefits.push({
-          icon: UI_ICON.team,
-          text: team[t].name + " — " + team[t].role
-        });
+      for (i = 0; i < team.length && teamBenefits.length < maxItems; i += 1) {
+        pushBenefit(teamBenefits, UI_ICON.team, team[i].name + " — " + team[i].role);
       }
       model = {
         title: sectionTitles.team || "Команда",
-        subtitle: "Педагоги и наставники лагеря.",
-        progress: "",
+        subtitle: "Педагоги и наставники лагеря",
+        progress: team.length + " человек в команде",
         benefits: teamBenefits
       };
     }
