@@ -1640,7 +1640,7 @@
     var assignments = [
       ["acBrandSub", CONTENT_MAP.ui.brandSub],
       ["acAgeLabel", CONTENT_MAP.ui.ageLabel],
-      ["acHeroContactLabel", CONTENT_MAP.ui.heroContactLabel],
+      ["acHeroContactLabel", "Связаться"],
       ["acHeroCampaignLabel", CONTENT_MAP.ui.heroCampaignLabel],
       ["acHeroOverlayTitle", CONTENT_MAP.ui.heroOverlayTitle],
       ["acHeroSafetyMedTitle", CONTENT_MAP.ui.heroSafetyMedTitle],
