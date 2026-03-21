@@ -2630,7 +2630,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   align-items: stretch;
   border-color: #efca93;
   background: #fff8eb;
-  min-height: 194px;
+  min-height: 0;
   height: auto;
 }
 
@@ -2878,10 +2878,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 }
 
 .ac-shift-item__promo-live.is-placeholder {
-  opacity: 0;
-  border-color: transparent;
-  background: transparent;
-  pointer-events: none;
+  display: none;
 }
 
 .ac-shift-item__promo-code {
