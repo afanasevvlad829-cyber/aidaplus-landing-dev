@@ -3896,6 +3896,8 @@
 
     var shiftCalendarToggle = event.target.closest('[data-action="shift-calendar-toggle"]');
     if (shiftCalendarToggle) {
+      event.preventDefault();
+      event.stopPropagation();
       var calendarShiftId = shiftCalendarToggle.dataset.shiftId || "";
       if (shiftCalendar.open && shiftCalendar.shiftId === calendarShiftId) {
         shiftCalendar.open = false;
@@ -3910,6 +3912,8 @@
 
     var shiftCalendarClose = event.target.closest('[data-action="shift-calendar-close"]');
     if (shiftCalendarClose) {
+      event.preventDefault();
+      event.stopPropagation();
       shiftCalendar.open = false;
       shiftCalendar.shiftId = "";
       renderOverlays();
@@ -3918,6 +3922,14 @@
 
     var shiftPriceButton = event.target.closest('[data-action="shift-price"]');
     if (shiftPriceButton) {
+      if (
+        event.target.closest(".ac-shift-item__date-icon") ||
+        event.target.closest(".ac-shift-calendar") ||
+        event.target.closest('[data-action="shift-calendar-toggle"]') ||
+        event.target.closest('[data-action="shift-calendar-close"]')
+      ) {
+        return;
+      }
       shiftCalendar.open = false;
       shiftCalendar.shiftId = "";
       applyShiftPriceStep(shiftPriceButton.dataset.shiftId || SHIFTS[0].id);

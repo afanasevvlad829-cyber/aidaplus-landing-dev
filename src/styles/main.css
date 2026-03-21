@@ -2632,6 +2632,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   background: #fff8eb;
   min-height: 0;
   height: auto;
+  overflow: hidden;
 }
 
 .ac-shift-item__select {
@@ -2927,17 +2928,20 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 }
 
 .ac-shift-calendar {
-  position: absolute;
-  top: 4px;
-  right: 0;
+  position: relative;
+  top: auto;
+  right: auto;
   left: auto;
-  width: min(320px, calc(100vw - 64px));
+  width: 100%;
+  max-width: 100%;
   border: var(--border-1) solid #d7deeb;
   border-radius: var(--radius-md);
   background: #fff;
   box-shadow: 0 20px 36px rgba(24, 36, 64, 0.2);
   padding: var(--space-md);
   z-index: 6;
+  margin-top: var(--space-xs);
+  box-sizing: border-box;
 }
 
 .ac-shift-calendar__head {
@@ -3128,11 +3132,8 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   }
 
   .ac-shift-calendar {
-    top: auto;
-    right: auto;
-    left: 0;
-    bottom: calc(100% + 8px);
-    width: min(320px, calc(100vw - 56px));
+    width: 100%;
+    max-width: 100%;
   }
 
   .ac-shift-item__actions {
