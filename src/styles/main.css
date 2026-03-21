@@ -1836,9 +1836,10 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
 .ac-shift-calendar {
   position: absolute;
-  top: 6px;
-  left: calc(100% + 10px);
-  width: min(320px, calc(100vw - 48px));
+  top: 4px;
+  right: 0;
+  left: auto;
+  width: min(320px, calc(100vw - 64px));
   border: var(--border-1) solid #d7deeb;
   border-radius: var(--radius-md);
   background: #fff;
@@ -2009,6 +2010,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
   .ac-shift-calendar {
     top: auto;
+    right: auto;
     left: 0;
     bottom: calc(100% + 8px);
     width: min(320px, calc(100vw - 56px));
