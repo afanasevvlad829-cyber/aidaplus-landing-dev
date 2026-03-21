@@ -84,6 +84,7 @@
     photoCategory: "all",
     photoPage: 0,
     photoLightboxIndex: -1,
+    videoLightboxIndex: -1,
     videoPage: 0,
     reviewPage: 0,
     teamPage: 0,
@@ -1099,6 +1100,10 @@
         state.photoLightboxIndex = -1;
         changed = true;
       }
+      if (state.videoLightboxIndex >= 0) {
+        state.videoLightboxIndex = -1;
+        changed = true;
+      }
       for (var key in state.overlays) {
         if (!hasOwn(state.overlays, key)) continue;
         if (state.overlays[key]) {
@@ -1140,6 +1145,10 @@
 
     if (state.photoLightboxIndex >= 0) {
       state.photoLightboxIndex = -1;
+      changed = true;
+    }
+    if (state.videoLightboxIndex >= 0) {
+      state.videoLightboxIndex = -1;
       changed = true;
     }
 
@@ -1206,7 +1215,7 @@
 
   function setPhotoPage(nextPage) {
     var items = getFilteredPhotos();
-    var maxPage = Math.max(0, Math.ceil(items.length / 4) - 1);
+    var maxPage = Math.max(0, Math.ceil(items.length / getMediaPageSize("photo")) - 1);
     var safePage = clamp(nextPage, 0, maxPage);
     if (safePage === state.photoPage) return;
 
@@ -1230,8 +1239,39 @@
     renderOverlays();
   }
 
+  function setVideoLightbox(index) {
+    if (index < 0) {
+      state.videoLightboxIndex = -1;
+      renderOverlays();
+      return;
+    }
+
+    var items = CONTENT_MAP.videos || [];
+    if (!items.length) return;
+
+    var safeIndex = clamp(index, 0, items.length - 1);
+    if (state.videoLightboxIndex === safeIndex) return;
+    state.videoLightboxIndex = safeIndex;
+    renderOverlays();
+  }
+
+  function isMobileMediaLayout() {
+    return window.innerWidth <= 980;
+  }
+
+  function getMediaPageSize(kind) {
+    if (!isMobileMediaLayout()) {
+      if (kind === "photo") return 4;
+      if (kind === "video") return 3;
+      if (kind === "review") return 4;
+      if (kind === "team") return 4;
+      return 4;
+    }
+    return 1;
+  }
+
   function setVideoPage(nextPage) {
-    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.videos.length / 3) - 1);
+    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.videos.length / getMediaPageSize("video")) - 1);
     var safePage = clamp(nextPage, 0, maxPage);
     if (safePage === state.videoPage) return;
 
@@ -1240,7 +1280,7 @@
   }
 
   function setReviewPage(nextPage) {
-    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.reviews.length / 4) - 1);
+    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.reviews.length / getMediaPageSize("review")) - 1);
     var safePage = clamp(nextPage, 0, maxPage);
     if (safePage === state.reviewPage) return;
 
@@ -1249,7 +1289,7 @@
   }
 
   function setTeamPage(nextPage) {
-    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.team.length / 4) - 1);
+    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.team.length / getMediaPageSize("team")) - 1);
     var safePage = clamp(nextPage, 0, maxPage);
     if (safePage === state.teamPage) return;
 
@@ -1757,9 +1797,14 @@
     }
 
     var photos = getFilteredPhotos();
-    var start = state.photoPage * 4;
-    var pageItems = photos.slice(start, start + 4);
-    var maxPage = Math.max(0, Math.ceil(photos.length / 4) - 1);
+    var perPage = getMediaPageSize("photo");
+    var maxPage = Math.max(0, Math.ceil(photos.length / perPage) - 1);
+    var safePage = clamp(state.photoPage, 0, maxPage);
+    if (safePage !== state.photoPage) {
+      state.photoPage = safePage;
+    }
+    var start = safePage * perPage;
+    var pageItems = photos.slice(start, start + perPage);
 
     var images = "";
     for (var j = 0; j < pageItems.length; j += 1) {
@@ -1782,7 +1827,7 @@
       categories +
       '</div><div class="ac-media-row">' +
       '<button class="ac-nav-btn" type="button" data-action="photo-prev" ' +
-      (state.photoPage <= 0 ? "disabled" : "") +
+      (safePage <= 0 ? "disabled" : "") +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -1792,7 +1837,7 @@
       images +
       '</div>' +
       '<button class="ac-nav-btn" type="button" data-action="photo-next" ' +
-      (state.photoPage >= maxPage ? "disabled" : "") +
+      (safePage >= maxPage ? "disabled" : "") +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -1812,28 +1857,46 @@
   }
 
   function renderVideosSectionMarkup() {
-    var start = state.videoPage * 3;
-    var items = CONTENT_MAP.videos.slice(start, start + 3);
-    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.videos.length / 3) - 1);
+    var perPage = getMediaPageSize("video");
+    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.videos.length / perPage) - 1);
+    var safePage = clamp(state.videoPage, 0, maxPage);
+    if (safePage !== state.videoPage) {
+      state.videoPage = safePage;
+    }
+    var start = safePage * perPage;
+    var items = CONTENT_MAP.videos.slice(start, start + perPage);
     var cards = "";
+    var mobileMedia = isMobileMediaLayout();
 
     for (var i = 0; i < items.length; i += 1) {
       var embedUrl = rutubeEmbedUrl(items[i].url);
-      var mediaMarkup = embedUrl
-        ? '<iframe class="ac-video-card__frame" src="' +
+      var listIndex = start + i;
+      var mediaMarkup = "";
+      if (embedUrl && !mobileMedia) {
+        mediaMarkup =
+          '<iframe class="ac-video-card__frame" src="' +
           embedUrl +
           '" title="' +
           items[i].title +
-          '" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'
-        : '<img class="ac-video-card__poster" src="' +
+          '" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+      } else {
+        mediaMarkup =
+          '<img class="ac-video-card__poster" src="' +
           items[i].poster +
           '" alt="' +
           items[i].title +
           '"><button class="ac-video-card__play" type="button" aria-label="' +
           CONTENT_MAP.ui.watchVideoLabel +
+          '" data-action="video-open" data-video-index="' +
+          String(listIndex) +
           '"><img class="ac-icon ac-icon--sm" src="' +
           ICON_MAP.play +
-          '" alt="" aria-hidden="true"></button>';
+          '" alt="" aria-hidden="true"></button><button class="ac-video-card__open" type="button" aria-label="' +
+          CONTENT_MAP.ui.watchVideoLabel +
+          '" data-action="video-open" data-video-index="' +
+          String(listIndex) +
+          '"></button>';
+      }
       cards +=
         '<article class="ac-video-card">' +
         mediaMarkup +
@@ -1847,7 +1910,7 @@
       CONTENT_MAP.sectionTitles.video +
       '</h2><div class="ac-media-row">' +
       '<button class="ac-nav-btn" type="button" data-action="video-prev" ' +
-      (state.videoPage <= 0 ? "disabled" : "") +
+      (safePage <= 0 ? "disabled" : "") +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -1855,7 +1918,7 @@
       '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--3 ac-video-grid">' +
       cards +
       '</div><button class="ac-nav-btn" type="button" data-action="video-next" ' +
-      (state.videoPage >= maxPage ? "disabled" : "") +
+      (safePage >= maxPage ? "disabled" : "") +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -1865,9 +1928,14 @@
   }
 
   function renderReviewsSectionMarkup() {
-    var start = state.reviewPage * 4;
-    var items = CONTENT_MAP.reviews.slice(start, start + 4);
-    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.reviews.length / 4) - 1);
+    var perPage = getMediaPageSize("review");
+    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.reviews.length / perPage) - 1);
+    var safePage = clamp(state.reviewPage, 0, maxPage);
+    if (safePage !== state.reviewPage) {
+      state.reviewPage = safePage;
+    }
+    var start = safePage * perPage;
+    var items = CONTENT_MAP.reviews.slice(start, start + perPage);
     var cards = "";
 
     for (var i = 0; i < items.length; i += 1) {
@@ -1890,7 +1958,7 @@
       CONTENT_MAP.sectionTitles.reviews +
       '</h2><div class="ac-media-row">' +
       '<button class="ac-nav-btn" type="button" data-action="reviews-prev" ' +
-      (state.reviewPage <= 0 ? "disabled" : "") +
+      (safePage <= 0 ? "disabled" : "") +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -1898,7 +1966,7 @@
       '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--4">' +
       cards +
       '</div><button class="ac-nav-btn" type="button" data-action="reviews-next" ' +
-      (state.reviewPage >= maxPage ? "disabled" : "") +
+      (safePage >= maxPage ? "disabled" : "") +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -1913,9 +1981,14 @@
   }
 
   function renderTeamSectionMarkup() {
-    var start = state.teamPage * 4;
-    var items = CONTENT_MAP.team.slice(start, start + 4);
-    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.team.length / 4) - 1);
+    var perPage = getMediaPageSize("team");
+    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.team.length / perPage) - 1);
+    var safePage = clamp(state.teamPage, 0, maxPage);
+    if (safePage !== state.teamPage) {
+      state.teamPage = safePage;
+    }
+    var start = safePage * perPage;
+    var items = CONTENT_MAP.team.slice(start, start + perPage);
     var cards = "";
 
     for (var i = 0; i < items.length; i += 1) {
@@ -1938,7 +2011,7 @@
       CONTENT_MAP.sectionTitles.team +
       '</h2><div class="ac-media-row">' +
       '<button class="ac-nav-btn" type="button" data-action="team-prev" ' +
-      (state.teamPage <= 0 ? "disabled" : "") +
+      (safePage <= 0 ? "disabled" : "") +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -1946,7 +2019,7 @@
       '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--4">' +
       cards +
       '</div><button class="ac-nav-btn" type="button" data-action="team-next" ' +
-      (state.teamPage >= maxPage ? "disabled" : "") +
+      (safePage >= maxPage ? "disabled" : "") +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -2408,6 +2481,54 @@
     );
   }
 
+  function renderVideoOverlay() {
+    var videos = CONTENT_MAP.videos || [];
+    if (!videos.length) {
+      return "";
+    }
+    var current = clamp(state.videoLightboxIndex, 0, videos.length - 1);
+    var item = videos[current];
+    var disablePrev = current <= 0;
+    var disableNext = current >= videos.length - 1;
+    var embedUrl = rutubeEmbedUrl(item.url);
+    var mediaMarkup = embedUrl
+      ? '<iframe class="ac-video-lightbox__frame" src="' +
+        embedUrl +
+        '" title="' +
+        item.title +
+        '" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'
+      : '<img class="ac-video-lightbox__image" src="' + item.poster + '" alt="' + item.title + '">';
+
+    return (
+      '<div class="ac-overlay-backdrop" data-action="overlay-backdrop">' +
+      '<article class="ac-overlay-card ac-overlay-card--photo ac-overlay-card--video" role="dialog" aria-modal="true" aria-label="Просмотр видео">' +
+      '<div class="ac-overlay-head">' +
+      '<h3 class="ac-overlay-title">' + CONTENT_MAP.sectionTitles.video + "</h3>" +
+      '<button class="ac-overlay-close" type="button" data-action="overlay-close" aria-label="' +
+      CONTENT_MAP.ui.closeAria +
+      '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.close + '" alt="" aria-hidden="true">' +
+      "</button>" +
+      "</div>" +
+      '<div class="ac-photo-lightbox ac-video-lightbox">' +
+      '<button class="ac-nav-btn" type="button" data-action="video-lightbox-prev" ' +
+      (disablePrev ? "disabled" : "") +
+      ' aria-label="' + CONTENT_MAP.ui.prev + '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronLeft + '" alt="" aria-hidden="true"></button>' +
+      '<div class="ac-video-lightbox__stage">' +
+      mediaMarkup +
+      '<p class="ac-video-lightbox__caption">' + item.title + "</p>" +
+      "</div>" +
+      '<button class="ac-nav-btn" type="button" data-action="video-lightbox-next" ' +
+      (disableNext ? "disabled" : "") +
+      ' aria-label="' + CONTENT_MAP.ui.next + '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronRight + '" alt="" aria-hidden="true"></button>' +
+      "</div>" +
+      "</article>" +
+      "</div>"
+    );
+  }
+
   function renderOverlays() {
     var overlayRoot = document.getElementById("acOverlayRoot");
     if (!overlayRoot) return;
@@ -2415,6 +2536,12 @@
     if (state.photoLightboxIndex >= 0) {
       overlayRoot.style.pointerEvents = "auto";
       overlayRoot.innerHTML = renderPhotoOverlay();
+      return;
+    }
+
+    if (state.videoLightboxIndex >= 0) {
+      overlayRoot.style.pointerEvents = "auto";
+      overlayRoot.innerHTML = renderVideoOverlay();
       return;
     }
 
@@ -2773,6 +2900,22 @@
 
     if (event.target.closest('[data-action="video-next"]')) {
       setVideoPage(state.videoPage + 1);
+      return;
+    }
+
+    var videoOpen = event.target.closest('[data-action="video-open"]');
+    if (videoOpen) {
+      setVideoLightbox(Number(videoOpen.dataset.videoIndex || 0));
+      return;
+    }
+
+    if (event.target.closest('[data-action="video-lightbox-prev"]')) {
+      setVideoLightbox(state.videoLightboxIndex - 1);
+      return;
+    }
+
+    if (event.target.closest('[data-action="video-lightbox-next"]')) {
+      setVideoLightbox(state.videoLightboxIndex + 1);
       return;
     }
 
