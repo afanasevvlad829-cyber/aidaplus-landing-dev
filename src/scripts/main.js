@@ -157,6 +157,15 @@
     }
   }
 
+  function clearBookingStatus() {
+    try {
+      localStorage.removeItem(SHIFT_PROMO_STORAGE_KEY);
+      localStorage.removeItem(BOOKING_LEAD_STORAGE_KEY);
+    } catch (_err) {
+      // ignore storage errors
+    }
+  }
+
   var track = (window.AC_FEATURES && window.AC_FEATURES.track) || function () {};
 
   function clamp(value, min, max) {
@@ -1346,6 +1355,9 @@
           : (promo.shiftName || "Выбранная смена");
         promoPinned.hidden = false;
         promoPinned.innerHTML =
+          '<button class="ac-promo-pinned__close" type="button" data-action="promo-reset" aria-label="Сбросить статус бронирования">' +
+          '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.close + '" alt="" aria-hidden="true">' +
+          "</button>" +
           '<p class="ac-promo-pinned__title">Цена зафиксирована для вас</p>' +
           '<p class="ac-promo-pinned__meta">' +
           shiftTitle +
@@ -1406,8 +1418,8 @@
       if (heroGrid) heroGrid.style.display = "";
       if (bookingForm) bookingForm.hidden = true;
     } else if (isBookingStep) {
-      if (overlayTitle) overlayTitle.textContent = "Оставьте заявку — мы перезвоним";
-      if (line) line.textContent = "Как к вам обратиться";
+      if (overlayTitle) overlayTitle.textContent = "Отправьте заявку";
+      if (line) line.textContent = "Мы перезвоним и подтвердим бронирование";
       if (summary) {
         summary.textContent = "";
         summary.style.display = "none";
@@ -2369,6 +2381,19 @@
     var resumeBooking = event.target.closest('[data-action="resume-booking"]');
     if (resumeBooking) {
       setStep(SHIFTS.length - 1);
+      return;
+    }
+
+    var promoReset = event.target.closest('[data-action="promo-reset"]');
+    if (promoReset) {
+      clearBookingStatus();
+      setOverlay("shifts", false);
+      if (state.step === SHIFTS.length - 1) {
+        setStep(isAgeGateLocked() ? 0 : 1);
+      } else {
+        renderInfoCard();
+        renderFunnel();
+      }
       return;
     }
 
