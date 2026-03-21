@@ -706,7 +706,9 @@
       '<div class="ac-shift-calendar" data-shift-calendar-root="' + shiftId + '">' +
       '<div class="ac-shift-calendar__head">' +
       '<strong>Календарь смены</strong>' +
-      '<button class="ac-shift-calendar__close" type="button" data-action="shift-calendar-close" aria-label="Закрыть календарь">×</button>' +
+      '<button class="ac-shift-calendar__close" type="button" data-action="shift-calendar-close" aria-label="Закрыть календарь">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.close + '" alt="" aria-hidden="true">' +
+      "</button>" +
       "</div>" +
       '<div class="ac-shift-calendar__month">' + meta.monthLabel + "</div>" +
       '<div class="ac-shift-calendar__weekdays">' + weekdayCells + "</div>" +

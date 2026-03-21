@@ -2732,6 +2732,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   grid-template-rows: auto auto auto auto;
   gap: 8px;
   position: relative;
+  overflow: hidden;
 }
 
 .ac-shift-item--featured__right.is-phone-gate {
@@ -2928,20 +2929,18 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 }
 
 .ac-shift-calendar {
-  position: relative;
-  top: auto;
-  right: auto;
-  left: auto;
+  position: static;
   width: 100%;
   max-width: 100%;
   border: var(--border-1) solid #d7deeb;
   border-radius: var(--radius-md);
   background: #fff;
-  box-shadow: 0 20px 36px rgba(24, 36, 64, 0.2);
+  box-shadow: 0 10px 20px rgba(24, 36, 64, 0.14);
   padding: var(--space-md);
-  z-index: 6;
+  z-index: 1;
   margin-top: var(--space-xs);
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .ac-shift-calendar__head {
@@ -2966,6 +2965,14 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   color: #5f6c87;
   line-height: 1;
   cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+}
+
+.ac-shift-calendar__close .ac-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .ac-shift-calendar__month {
@@ -2984,7 +2991,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
 .ac-shift-calendar__weekdays span {
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
   color: #8a94ab;
 }
 
@@ -2995,13 +3002,13 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 }
 
 .ac-shift-calendar__day {
-  height: 30px;
-  border-radius: 9px;
+  height: 26px;
+  border-radius: 8px;
   border: var(--border-1) solid #dfe6f1;
   background: #fff;
   display: grid;
   place-items: center;
-  font-size: 13px;
+  font-size: 12px;
   color: #38445f;
 }
 
