@@ -116,15 +116,24 @@
               <div id="acProgramLine" class="ac-hero-overlay__line"></div>
               <p id="acProgramSummary"></p>
               <form id="acBookingForm" class="ac-booking-form" hidden>
+                <div id="acBookingPromoNotice" class="ac-booking-form__notice" hidden></div>
                 <label class="ac-booking-form__label" for="acBookingName">Ваше имя</label>
                 <input id="acBookingName" class="ac-booking-form__input" type="text" placeholder="Например, Саша" autocomplete="name">
                 <label class="ac-booking-form__label" for="acBookingPhone">Ваш телефон</label>
                 <input id="acBookingPhone" class="ac-booking-form__input" type="tel" inputmode="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel">
                 <label class="ac-booking-form__label" for="acBookingShift">Выбранная смена</label>
                 <input id="acBookingShift" class="ac-booking-form__input" type="text" readonly>
+                <label class="ac-booking-form__label" for="acBookingPrice">Цена со скидкой</label>
+                <input id="acBookingPrice" class="ac-booking-form__input" type="text" readonly>
+                <label class="ac-booking-form__label" for="acBookingDiscount">Ваша скидка</label>
+                <input id="acBookingDiscount" class="ac-booking-form__input" type="text" readonly>
                 <label class="ac-booking-form__label" for="acBookingPromo">Промокод</label>
                 <input id="acBookingPromo" class="ac-booking-form__input" type="text" readonly>
-                <button class="ac-primary-btn ac-booking-form__submit" type="button" data-action="booking-submit">Отправить заявку</button>
+                <label class="ac-booking-form__consent">
+                  <input id="acBookingConsent" type="checkbox">
+                  <span>Согласен(на) на обработку персональных данных</span>
+                </label>
+                <button class="ac-primary-btn ac-booking-form__submit" type="button" data-action="booking-submit">Забронировать</button>
               </form>
               <div class="ac-hero-grid">
                 <div class="ac-hero-grid__item"><img class="ac-icon ac-icon--sm" src="/assets/icons/heart-pulse.svg" alt="" aria-hidden="true"><span class="ac-hero-grid__copy"><strong id="acHeroSafetyMedTitle"></strong><small id="acHeroSafetyMedDesc"></small></span></div>

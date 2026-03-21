@@ -526,6 +526,26 @@
     return String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
   }
 
+  function formatPromoDeadline(expiresAt) {
+    var ts = Number(expiresAt || 0);
+    if (!ts) return "";
+    try {
+      return new Date(ts).toLocaleString("ru-RU", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    } catch (_err) {
+      return "";
+    }
+  }
+
+  function formatPromoDeadlineLine(expiresAt) {
+    return "Действует до " + formatPromoDeadline(expiresAt) + " · осталось " + formatPromoTtl(expiresAt);
+  }
+
   function formatPhoneInput(raw) {
     var digits = String(raw || "").replace(/\D/g, "");
     if (digits.charAt(0) === "8") {
@@ -559,6 +579,11 @@
   function isValidPhone(raw) {
     var digits = normalizePhone(raw);
     return digits.length === 11 && digits.charAt(0) === "7";
+  }
+
+  function canSubmitBooking(phoneValue, consentChecked, submitted) {
+    if (submitted) return false;
+    return isValidPhone(phoneValue) && !!consentChecked;
   }
 
   function getPromoRemainingMs(promo) {
@@ -601,6 +626,13 @@
           node.textContent = ttlText;
         }
       }
+
+      var pinnedTtlNodes = document.querySelectorAll(".ac-promo-pinned__ttl");
+      for (var j = 0; j < pinnedTtlNodes.length; j += 1) {
+        var pinnedNode = pinnedTtlNodes[j];
+        if (!pinnedNode) continue;
+        pinnedNode.textContent = formatPromoDeadlineLine(promo.expiresAt || 0);
+      }
     }, 1000);
   }
 
@@ -614,7 +646,8 @@
         oldPrice: "",
         code: "",
         actionText: "Показать мою цену",
-        metaText: "Нажмите — найдём персональную цену"
+        metaText: "Нажмите — найдём персональную цену",
+        pendingPhone: ""
       };
     }
 
@@ -622,6 +655,20 @@
     var status = String(promo.status || "draft");
     var price = Number(promo.finalPrice || meta.basePrice);
     var oldPrice = stage > 0 ? formatPriceNumber(meta.basePrice) : "";
+
+    if (status === "phone_gate") {
+      return {
+        stage: stage,
+        status: status,
+        price: price,
+        oldPrice: oldPrice,
+        code: String(promo.code || ""),
+        actionText: "Зафиксировать цену",
+        metaText: "Введите телефон для фиксации на 72 часа",
+        pendingPhone: String(promo.pendingPhone || ""),
+        promoTtl: "Будет рассчитано после фиксации"
+      };
+    }
 
     if (status === "active") {
       return {
@@ -632,7 +679,9 @@
         code: String(promo.code || ""),
         actionText: "Зафиксировано — бронировать",
         metaText: "Промокод: " + String(promo.code || ""),
-        promoTtl: formatPromoTtl(promo.expiresAt || 0)
+        promoTtl: formatPromoTtl(promo.expiresAt || 0),
+        deadlineText: formatPromoDeadlineLine(promo.expiresAt || 0),
+        pendingPhone: String(promo.phone || "")
       };
     }
 
@@ -645,7 +694,8 @@
         code: String(promo.code || ""),
         actionText: "Зафиксировать цену на 72 ч",
         metaText: "Найдена лучшая цена",
-        promoTtl: "Активируется после фиксации"
+        promoTtl: "Активируется после фиксации",
+        pendingPhone: String(promo.pendingPhone || "")
       };
     }
 
@@ -657,7 +707,8 @@
         oldPrice: oldPrice,
         code: String(promo.code || ""),
         actionText: "Улучшить цену ещё раз",
-        metaText: "Осталась 1 попытка"
+        metaText: "Проверяем бронирование, ищем отказы...",
+        pendingPhone: ""
       };
     }
 
@@ -668,7 +719,8 @@
       oldPrice: "",
       code: "",
       actionText: "Показать мою цену",
-      metaText: "Нажмите — найдём персональную цену"
+      metaText: "Нажмите — найдём персональную цену",
+      pendingPhone: ""
     };
   }
 
@@ -689,6 +741,11 @@
       return;
     }
 
+    if (status === "phone_gate") {
+      renderOverlays();
+      return;
+    }
+
     var nextPromo = {
       shiftId: shift.id,
       shiftName: shift.summary || shift.line,
@@ -698,6 +755,8 @@
       code: same && promo.code ? String(promo.code) : generatePromoCode(),
       priceStage: same ? stage : 0,
       status: "draft",
+      pendingPhone: same && promo.pendingPhone ? String(promo.pendingPhone) : "",
+      phone: same && promo.phone ? String(promo.phone) : "",
       createdAt: same && promo.createdAt ? Number(promo.createdAt) : Date.now(),
       activatedAt: null,
       expiresAt: null
@@ -715,17 +774,55 @@
       );
       nextPromo.priceStage = 2;
     } else {
-      var nowTs = Date.now();
       nextPromo.priceStage = 2;
-      nextPromo.status = "active";
-      nextPromo.activatedAt = nowTs;
-      nextPromo.expiresAt = nowTs + SHIFT_PRICE_CFG.holdHours * 3600000;
+      nextPromo.status = "phone_gate";
+      nextPromo.activatedAt = null;
+      nextPromo.expiresAt = null;
     }
 
     saveShiftPromo(nextPromo);
     state.selectedShiftId = shift.id;
     state.direction = shift.direction;
     renderOverlays();
+  }
+
+  function finalizeShiftPromo(shiftId, rawPhone) {
+    var shift = findShiftById(shiftId);
+    var idx = SHIFTS.indexOf(shift);
+    if (!shift || idx < 0) return false;
+
+    var promo = loadShiftPromo();
+    if (!promo || promo.shiftId !== shiftId) return false;
+
+    var normalizedPhone = normalizePhone(rawPhone);
+    if (!isValidPhone(normalizedPhone)) return false;
+
+    var meta = getShiftPriceMeta(shift, idx);
+    var nowTs = Date.now();
+    promo.status = "active";
+    promo.priceStage = Math.max(2, Number(promo.priceStage || 2));
+    promo.pendingPhone = normalizedPhone;
+    promo.phone = normalizedPhone;
+    promo.activatedAt = nowTs;
+    promo.expiresAt = nowTs + SHIFT_PRICE_CFG.holdHours * 3600000;
+    promo.finalPrice = Number(promo.finalPrice || meta.finalPrice || meta.basePrice);
+    saveShiftPromo(promo);
+
+    saveBookingLead({
+      name: "",
+      phone: normalizedPhone,
+      shiftId: shift.id,
+      shiftText: meta.date + " • " + meta.days + " дн. • " + shift.summary,
+      promoCode: String(promo.code || ""),
+      submitted: false,
+      submittedAt: 0
+    });
+
+    state.selectedShiftId = shift.id;
+    state.direction = shift.direction;
+    setOverlay("shifts", false);
+    setStep(SHIFTS.length - 1);
+    return true;
   }
 
   function stopHeroSlideshow() {
@@ -818,6 +915,15 @@
 
     state.step = safeStep;
     var shift = getCurrentShift();
+    if (safeStep === SHIFTS.length - 1) {
+      var promoForBooking = loadShiftPromo();
+      if (promoForBooking && promoForBooking.status === "active") {
+        var promoShift = findShiftById(promoForBooking.shiftId);
+        if (promoShift) {
+          shift = promoShift;
+        }
+      }
+    }
     state.selectedShiftId = shift.id;
     state.direction = shift.direction;
 
@@ -1366,8 +1472,8 @@
           "</p>" +
           '<p class="ac-promo-pinned__meta">Промокод: ' +
           (promo.code || "AIDA-0000") +
-          " · действует: " +
-          formatPromoTtl(promo.expiresAt || 0) +
+          '</p><p class="ac-promo-pinned__meta ac-promo-pinned__ttl">' +
+          formatPromoDeadlineLine(promo.expiresAt || 0) +
           "</p>" +
           '<button class="ac-promo-pinned__cta" type="button" data-action="resume-booking">Продолжить бронирование</button>';
       }
@@ -1390,7 +1496,11 @@
     var bookingName = document.getElementById("acBookingName");
     var bookingPhone = document.getElementById("acBookingPhone");
     var bookingShift = document.getElementById("acBookingShift");
+    var bookingPrice = document.getElementById("acBookingPrice");
+    var bookingDiscount = document.getElementById("acBookingDiscount");
     var bookingPromo = document.getElementById("acBookingPromo");
+    var bookingConsent = document.getElementById("acBookingConsent");
+    var bookingNotice = document.getElementById("acBookingPromoNotice");
     var bookingSubmit = bookingForm ? bookingForm.querySelector('[data-action="booking-submit"]') : null;
     var status = document.getElementById("acStepStatus");
     var nextBtn = document.getElementById("acStepNextBtn");
@@ -1428,26 +1538,54 @@
       if (bookingForm) {
         var bookingLead = loadBookingLead() || {};
         var selectedShift = findShiftById(state.selectedShiftId);
+        var shiftSummary = selectedShift ? selectedShift.summary : "";
         var shiftIdx = SHIFTS.indexOf(selectedShift);
         var shiftMeta = shiftIdx >= 0 ? getShiftPriceMeta(selectedShift, shiftIdx) : null;
+        var priceBase = shiftMeta ? Number(shiftMeta.basePrice || 0) : 0;
+        var priceFinal = promo ? Number(promo.finalPrice || priceBase) : priceBase;
+        var discount = Math.max(0, priceBase - priceFinal);
         bookingForm.hidden = false;
+        if (bookingNotice) {
+          if (promo && promo.status === "active") {
+            bookingNotice.hidden = false;
+            bookingNotice.textContent = "Цена зафиксирована: " + formatPromoDeadlineLine(promo.expiresAt || 0);
+          } else {
+            bookingNotice.hidden = true;
+            bookingNotice.textContent = "";
+          }
+        }
         if (bookingName && !bookingName.value) {
           bookingName.value = String(bookingLead.name || "");
         }
         if (bookingPhone && !bookingPhone.value) {
-          bookingPhone.value = bookingLead.phone ? formatPhoneInput(bookingLead.phone) : "";
+          bookingPhone.value = bookingLead.phone
+            ? formatPhoneInput(bookingLead.phone)
+            : (promo && promo.phone ? formatPhoneInput(promo.phone) : "");
         }
         if (bookingShift) {
           bookingShift.value = shiftMeta
-            ? shiftMeta.date + " • " + shiftMeta.days + " дн. • " + selectedShift.summary
-            : selectedShift.summary;
+            ? shiftMeta.date + " • " + shiftMeta.days + " дн. • " + shiftSummary
+            : shiftSummary;
+        }
+        if (bookingPrice) {
+          bookingPrice.value = formatPriceNumber(priceFinal);
+        }
+        if (bookingDiscount) {
+          bookingDiscount.value = discount > 0 ? ("− " + formatPriceNumber(discount)) : "—";
         }
         if (bookingPromo) {
           bookingPromo.value = promo && promo.code ? String(promo.code) : "";
         }
+        if (bookingConsent) {
+          bookingConsent.checked = !!bookingLead.consent;
+        }
         if (bookingSubmit) {
-          bookingSubmit.disabled = !!bookingLead.submitted || !isValidPhone(bookingPhone ? bookingPhone.value : "");
-          bookingSubmit.textContent = bookingLead.submitted ? "Заявка отправлена" : "Отправить заявку";
+          bookingSubmit.disabled = !canSubmitBooking(
+            bookingPhone ? bookingPhone.value : "",
+            bookingConsent ? bookingConsent.checked : false,
+            !!bookingLead.submitted
+          );
+          bookingSubmit.textContent = bookingLead.submitted ? "Заявка отправлена" : "Забронировать";
         }
       }
     } else {
@@ -2101,13 +2239,15 @@
       var actionClass = "ac-shift-price-btn";
       if (promoView.status === "active") {
         actionClass += " is-fixed";
+      } else if (promoView.status === "phone_gate") {
+        actionClass += " is-fix";
       } else if (promoView.stage >= 2) {
         actionClass += " is-fix";
       } else if (promoView.stage === 1) {
         actionClass += " is-upgrade";
       }
 
-      var showOccupancy = promoView.stage > 0 || promoView.status === "active";
+      var showOccupancy = promoView.stage > 0 || promoView.status === "active" || promoView.status === "phone_gate";
       var occupancyTitle = showOccupancy ? "Смена заполнена" : "Проверяем заполненность смены...";
       var occupancyPercent = showOccupancy ? meta.occupancyPercent : 0;
       var occupancyLine = showOccupancy ? meta.occupancyLine : "забронировано —";
@@ -2118,6 +2258,8 @@
           '<div class="ac-shift-item__promo-code">' + (promoView.code || "") + "</div>" +
           '<div class="ac-shift-item__promo-ttl">Действует: ' + (promoView.promoTtl || "00:00:00") + "</div>" +
           "</div>";
+      } else if (promoView.status === "phone_gate") {
+        promoMarkup = "";
       } else if (promoView.stage >= 2) {
         promoMarkup =
           '<div class="ac-shift-item__promo-live">' +
@@ -2129,6 +2271,16 @@
           '<div class="ac-shift-item__promo-live is-placeholder" aria-hidden="true">' +
           '<div class="ac-shift-item__promo-code">AIDA-0000</div>' +
           '<div class="ac-shift-item__promo-ttl">Действует: 00:00:00</div>' +
+          "</div>";
+      }
+
+      var phoneGateMarkup = "";
+      if (promoView.status === "phone_gate") {
+        phoneGateMarkup =
+          '<div class="ac-shift-item__phone-gate">' +
+          '<input id="acShiftFixPhone" class="ac-shift-item__phone-input" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" value="' +
+          formatPhoneInput(promoView.pendingPhone || "") +
+          '">' +
           "</div>";
       }
 
@@ -2152,17 +2304,23 @@
         "</div>" +
         '<div class="ac-shift-item__occupancy-meta">' + occupancyLine + "</div>" +
         "</div>" +
+        '<div class="ac-shift-item__meta-hint">' + (promoView.metaText || "") + "</div>" +
         "</div>" +
-        '<div class="ac-shift-item--featured__right">' +
+        '<div class="ac-shift-item--featured__right' + (promoView.status === "phone_gate" ? " is-phone-gate" : "") + '">' +
         '<div class="ac-shift-item__price-caption">Цена подтверждена для вас</div>' +
         '<div class="ac-shift-item__price-shell">' +
         '<div class="ac-shift-item__price-old' + (promoView.oldPrice ? "" : " is-empty") + '">' + (promoView.oldPrice || "—") + "</div>" +
         '<div class="ac-shift-item__price">' + formatPriceNumber(promoView.price) + "</div>" +
         "</div>" +
         promoMarkup +
-        '<button class="ac-primary-btn ' + actionClass + '" type="button" data-action="shift-price" data-shift-id="' + shift.id + '">' +
+        phoneGateMarkup +
+        '<div class="ac-shift-item__actions">' +
+        '<button class="ac-primary-btn ' + actionClass + '" type="button" data-action="' +
+        (promoView.status === "phone_gate" ? "shift-fix" : "shift-price") +
+        '" data-shift-id="' + shift.id + '">' +
         promoView.actionText +
         "</button>" +
+        "</div>" +
         (shiftCalendar.open && shiftCalendar.shiftId === shift.id ? buildShiftCalendarMarkup(meta, shift.id) : "") +
         "</div>" +
         "</article>"
@@ -2287,7 +2445,14 @@
     if (!shift) return;
     state.selectedShiftId = shift.id;
     state.direction = shift.direction;
-    if (state.step === 0 && ageSelectionConfirmed) {
+    if (promo.status === "active") {
+      var lead = loadBookingLead() || {};
+      if (!lead.submitted) {
+        state.step = SHIFTS.length - 1;
+      } else if (state.step === 0 && ageSelectionConfirmed) {
+        state.step = 1;
+      }
+    } else if (state.step === 0 && ageSelectionConfirmed) {
       state.step = 1;
     }
   }
@@ -2507,11 +2672,32 @@
       return;
     }
 
+    var shiftFixButton = event.target.closest('[data-action="shift-fix"]');
+    if (shiftFixButton) {
+      var shiftId = shiftFixButton.dataset.shiftId || SHIFTS[0].id;
+      var fixPhone = document.getElementById("acShiftFixPhone");
+      var rawPhone = fixPhone ? fixPhone.value : "";
+      if (!isValidPhone(rawPhone)) {
+        if (fixPhone) {
+          fixPhone.focus();
+          fixPhone.style.borderColor = "#ef8300";
+        }
+        return;
+      }
+      if (fixPhone) {
+        fixPhone.style.borderColor = "";
+      }
+      finalizeShiftPromo(shiftId, rawPhone);
+      return;
+    }
+
     var bookingSubmit = event.target.closest('[data-action="booking-submit"]');
     if (bookingSubmit) {
       var bookingName = document.getElementById("acBookingName");
       var bookingPhone = document.getElementById("acBookingPhone");
+      var bookingConsent = document.getElementById("acBookingConsent");
       var bookingShift = document.getElementById("acBookingShift");
+      var bookingPrice = document.getElementById("acBookingPrice");
       var bookingPromo = document.getElementById("acBookingPromo");
       var phoneRaw = bookingPhone ? bookingPhone.value : "";
       var normalizedPhone = normalizePhone(phoneRaw);
@@ -2520,6 +2706,10 @@
           bookingPhone.focus();
           bookingPhone.style.borderColor = "#ef8300";
         }
+        return;
+      }
+      if (bookingConsent && !bookingConsent.checked) {
+        bookingConsent.focus();
         return;
       }
 
@@ -2532,7 +2722,9 @@
         phone: normalizedPhone,
         shiftId: state.selectedShiftId,
         shiftText: bookingShift ? String(bookingShift.value || "") : "",
+        priceText: bookingPrice ? String(bookingPrice.value || "") : "",
         promoCode: bookingPromo ? String(bookingPromo.value || "") : "",
+        consent: !!(bookingConsent && bookingConsent.checked),
         submitted: true,
         submittedAt: Date.now()
       });
@@ -2642,8 +2834,40 @@
 
       var bookingSubmit = document.querySelector('[data-action="booking-submit"]');
       var bookingLead = loadBookingLead() || {};
+      var bookingConsent = document.getElementById("acBookingConsent");
       if (bookingSubmit) {
-        bookingSubmit.disabled = !!bookingLead.submitted || !isValidPhone(bookingPhone.value);
+        bookingSubmit.disabled = !canSubmitBooking(
+          bookingPhone.value,
+          bookingConsent ? bookingConsent.checked : false,
+          !!bookingLead.submitted
+        );
+      }
+      return;
+    }
+
+    var bookingConsentInput = event.target.closest("#acBookingConsent");
+    if (bookingConsentInput) {
+      var submitButton = document.querySelector('[data-action="booking-submit"]');
+      var leadState = loadBookingLead() || {};
+      var phoneInput = document.getElementById("acBookingPhone");
+      if (submitButton) {
+        submitButton.disabled = !canSubmitBooking(
+          phoneInput ? phoneInput.value : "",
+          bookingConsentInput.checked,
+          !!leadState.submitted
+        );
+      }
+      return;
+    }
+
+    var shiftFixPhone = event.target.closest("#acShiftFixPhone");
+    if (shiftFixPhone) {
+      shiftFixPhone.value = formatPhoneInput(shiftFixPhone.value);
+      shiftFixPhone.style.borderColor = isValidPhone(shiftFixPhone.value) ? "" : "#ef8300";
+      var promoState = loadShiftPromo();
+      if (promoState && promoState.status === "phone_gate") {
+        promoState.pendingPhone = normalizePhone(shiftFixPhone.value);
+        saveShiftPromo(promoState);
       }
       return;
     }
