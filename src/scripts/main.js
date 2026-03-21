@@ -14,6 +14,8 @@
   var CONTACT_AUTO_CLOSE_MS = 1000;
   var SHIFT_PROMO_STORAGE_KEY = "acPromoV1";
   var BOOKING_LEAD_STORAGE_KEY = "acBookingLeadV1";
+  var GEO_CACHE_KEY = "acGeoSnapshotV1";
+  var GEO_CACHE_TTL_MS = 24 * 3600 * 1000;
   var SHIFT_PRICE_CFG = {
     initialMarkup: 0.2,
     firstDiscMin: 0.04,
@@ -32,6 +34,7 @@
   var shiftCalendar = { open: false, shiftId: "" };
   var promoTicker = null;
   var contactCloseTimer = null;
+  var geoLookupPromise = null;
   var auditRuntime = (window.AC_FEATURES && window.AC_FEATURES.auditRuntime) || {
     active: false,
     allowUiActions: false,
@@ -168,6 +171,116 @@
   }
 
   var track = (window.AC_FEATURES && window.AC_FEATURES.track) || function () {};
+  var notifyLead = (window.AC_FEATURES && window.AC_FEATURES.notifyLead) || function () {
+    return Promise.resolve(false);
+  };
+
+  function loadGeoCache() {
+    try {
+      var raw = localStorage.getItem(GEO_CACHE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object") return null;
+      if (Number(parsed.ts || 0) + GEO_CACHE_TTL_MS <= Date.now()) return null;
+      return parsed.data || null;
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  function saveGeoCache(data) {
+    try {
+      localStorage.setItem(GEO_CACHE_KEY, JSON.stringify({
+        ts: Date.now(),
+        data: data || null
+      }));
+    } catch (_err) {
+      // ignore storage errors
+    }
+  }
+
+  function fetchGeoSnapshot() {
+    var cached = loadGeoCache();
+    if (cached) {
+      return Promise.resolve(cached);
+    }
+
+    if (geoLookupPromise) {
+      return geoLookupPromise;
+    }
+
+    if (!window.fetch) {
+      return Promise.resolve(null);
+    }
+
+    geoLookupPromise = window.fetch("https://ipapi.co/json/", {
+      method: "GET",
+      headers: {
+        Accept: "application/json"
+      }
+    }).then(function (response) {
+      if (!response || !response.ok) return null;
+      return response.json();
+    }).then(function (raw) {
+      if (!raw || typeof raw !== "object") return null;
+      var snapshot = {
+        ip: String(raw.ip || ""),
+        city: String(raw.city || ""),
+        region: String(raw.region || ""),
+        country: String(raw.country_name || raw.country || ""),
+        timezone: String(raw.timezone || "")
+      };
+      saveGeoCache(snapshot);
+      return snapshot;
+    }).catch(function () {
+      return null;
+    }).then(function (data) {
+      geoLookupPromise = null;
+      return data;
+    });
+
+    return geoLookupPromise;
+  }
+
+  function sendLeadNotification(eventName, payload) {
+    var safePayload = payload && typeof payload === "object" ? payload : {};
+    var startedAt = Date.now();
+    var base = {
+      app: "aidacamp-landing",
+      mode: state.mode,
+      active_tab: state.activeTab,
+      step: state.step + 1,
+      sent_at_ts: startedAt,
+      sent_at_iso: new Date(startedAt).toISOString(),
+      sent_at_local: new Date(startedAt).toLocaleString("ru-RU"),
+      user_agent: String((window.navigator && window.navigator.userAgent) || "")
+    };
+    var merged = {};
+    var key;
+    for (key in base) {
+      if (hasOwn(base, key)) merged[key] = base[key];
+    }
+    for (key in safePayload) {
+      if (hasOwn(safePayload, key)) merged[key] = safePayload[key];
+    }
+
+    fetchGeoSnapshot().then(function (geo) {
+      if (geo) {
+        merged.ip = geo.ip || "";
+        merged.city = geo.city || "";
+        merged.region = geo.region || "";
+        merged.country = geo.country || "";
+        merged.timezone = geo.timezone || "";
+      }
+      return notifyLead(eventName, merged);
+    }).catch(function () {
+      try {
+        notifyLead(eventName, merged);
+      } catch (_err) {
+        // noop
+      }
+    });
+  }
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -817,6 +930,21 @@
       promoCode: String(promo.code || ""),
       submitted: false,
       submittedAt: 0
+    });
+
+    sendLeadNotification("promo_fixed", {
+      lead_type: "pre_fixation_72h",
+      status: "preliminary",
+      phone: normalizedPhone,
+      shift_id: shift.id,
+      shift_name: shift.summary || shift.line || "",
+      shift_direction: shift.direction || "",
+      shift_date: meta.date,
+      shift_days: meta.days,
+      price_final: promo.finalPrice,
+      promo_code: String(promo.code || ""),
+      promo_expires_at_ts: Number(promo.expiresAt || 0),
+      promo_expires_at_local: formatPromoDeadline(promo.expiresAt || 0)
     });
 
     state.selectedShiftId = shift.id;
@@ -2854,6 +2982,31 @@
         consent: !!(bookingConsent && bookingConsent.checked),
         submitted: true,
         submittedAt: Date.now()
+      });
+
+      var bookingShiftItem = findShiftById(state.selectedShiftId);
+      var bookingShiftIdx = SHIFTS.indexOf(bookingShiftItem);
+      var bookingShiftMeta = bookingShiftIdx >= 0
+        ? getShiftPriceMeta(bookingShiftItem, bookingShiftIdx)
+        : null;
+      var bookingPromoState = loadShiftPromo();
+      sendLeadNotification("booking_submitted", {
+        lead_type: "booking_final",
+        status: "final",
+        phone: normalizedPhone,
+        name: bookingName ? String(bookingName.value || "").trim() : "",
+        shift_id: state.selectedShiftId,
+        shift_name: bookingShiftItem ? (bookingShiftItem.summary || bookingShiftItem.line || "") : "",
+        shift_direction: bookingShiftItem ? (bookingShiftItem.direction || "") : "",
+        shift_text: bookingShift ? String(bookingShift.value || "") : "",
+        shift_date: bookingShiftMeta ? bookingShiftMeta.date : "",
+        shift_days: bookingShiftMeta ? bookingShiftMeta.days : 0,
+        price_text: bookingPrice ? String(bookingPrice.value || "") : "",
+        promo_code: bookingPromo ? String(bookingPromo.value || "") : "",
+        promo_status: bookingPromoState ? String(bookingPromoState.status || "") : "",
+        promo_expires_at_ts: bookingPromoState ? Number(bookingPromoState.expiresAt || 0) : 0,
+        promo_expires_at_local: bookingPromoState ? formatPromoDeadline(bookingPromoState.expiresAt || 0) : "",
+        consent: !!(bookingConsent && bookingConsent.checked)
       });
 
       bookingSubmit.disabled = true;
