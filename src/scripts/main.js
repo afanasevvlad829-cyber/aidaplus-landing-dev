@@ -1673,7 +1673,6 @@
     var bookingSubmit = bookingForm ? bookingForm.querySelector('[data-action="booking-submit"]') : null;
     var status = document.getElementById("acStepStatus");
     var nextBtn = document.getElementById("acStepNextBtn");
-    var prevBtn = document.querySelector('[data-action="step-prev"]');
     var overlay = document.querySelector(".ac-hero-overlay");
     var heroRight = document.querySelector(".ac-hero-right");
 
@@ -1800,12 +1799,6 @@
       }
     }
 
-    if (prevBtn) {
-      var prevLocked = gateLocked || state.step === 0;
-      prevBtn.disabled = prevLocked;
-      prevBtn.setAttribute("aria-disabled", String(prevLocked));
-      prevBtn.hidden = isBookingStep;
-    }
   }
 
   function getFilteredPhotos() {
@@ -2836,12 +2829,6 @@
       return;
     }
 
-    var prevStep = event.target.closest('[data-action="step-prev"]');
-    if (prevStep) {
-      setStep(state.step - 1);
-      return;
-    }
-
     var nextStep = event.target.closest('[data-action="step-next"]');
     if (nextStep) {
       if (state.step > 0) {
@@ -3278,7 +3265,6 @@
       { group: "funnel", selector: "#acProgramLine", label: "Funnel: строка программы" },
       { group: "funnel", selector: "#acProgramSummary", label: "Funnel: описание" },
       { group: "funnel", selector: ".ac-hero-grid__item", label: "Funnel: карточка безопасности", all: true },
-      { group: "funnel", selector: ".ac-funnel-controls [data-action='step-prev']", label: "Funnel: кнопка назад" },
       { group: "funnel", selector: "#acStepStatus", label: "Funnel: статус шага" },
       { group: "funnel", selector: ".ac-funnel-controls [data-action='step-next']", label: "Funnel: кнопка далее/цены" },
 

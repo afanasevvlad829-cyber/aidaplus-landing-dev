@@ -1017,7 +1017,7 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
 
 .ac-funnel-controls {
   display: grid;
-  grid-template-columns: var(--size-36) 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: var(--space-10);
   align-items: center;
   padding: 0 var(--space-lg);
@@ -2547,7 +2547,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   }
 
   body[data-mode="compact"] .ac-hero-right:not(.is-intro) .ac-funnel-controls {
-    grid-template-columns: var(--funnel-leading-col) 1fr;
+    grid-template-columns: 1fr;
     gap: var(--space-sm);
     align-items: center;
   }

@@ -1031,7 +1031,7 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
 
 .ac-funnel-controls {
   display: grid;
-  grid-template-columns: var(--size-36) 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: var(--space-10);
   align-items: center;
   padding: 0 var(--space-lg);
@@ -2561,7 +2561,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   }
 
   body[data-mode="compact"] .ac-hero-right:not(.is-intro) .ac-funnel-controls {
-    grid-template-columns: var(--funnel-leading-col) 1fr;
+    grid-template-columns: 1fr;
     gap: var(--space-sm);
     align-items: center;
   }
@@ -2754,9 +2754,6 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
               </div>
             </div>
             <div class="ac-funnel-controls">
-              <button class="ac-round-btn" type="button" data-action="step-prev" aria-label="Предыдущий шаг">
-                <img class="ac-icon ac-icon--sm" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true">
-              </button>
               <span id="acStepStatus" class="ac-step-status"></span>
               <button id="acStepNextBtn" class="ac-primary-btn" type="button" data-action="step-next"></button>
             </div>
@@ -4507,7 +4504,6 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
     var bookingSubmit = bookingForm ? bookingForm.querySelector('[data-action="booking-submit"]') : null;
     var status = document.getElementById("acStepStatus");
     var nextBtn = document.getElementById("acStepNextBtn");
-    var prevBtn = document.querySelector('[data-action="step-prev"]');
     var overlay = document.querySelector(".ac-hero-overlay");
     var heroRight = document.querySelector(".ac-hero-right");
 
@@ -4634,12 +4630,6 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
       }
     }
 
-    if (prevBtn) {
-      var prevLocked = gateLocked || state.step === 0;
-      prevBtn.disabled = prevLocked;
-      prevBtn.setAttribute("aria-disabled", String(prevLocked));
-      prevBtn.hidden = isBookingStep;
-    }
   }
 
   function getFilteredPhotos() {
@@ -5670,12 +5660,6 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
       return;
     }
 
-    var prevStep = event.target.closest('[data-action="step-prev"]');
-    if (prevStep) {
-      setStep(state.step - 1);
-      return;
-    }
-
     var nextStep = event.target.closest('[data-action="step-next"]');
     if (nextStep) {
       if (state.step > 0) {
@@ -6112,7 +6096,6 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
       { group: "funnel", selector: "#acProgramLine", label: "Funnel: строка программы" },
       { group: "funnel", selector: "#acProgramSummary", label: "Funnel: описание" },
       { group: "funnel", selector: ".ac-hero-grid__item", label: "Funnel: карточка безопасности", all: true },
-      { group: "funnel", selector: ".ac-funnel-controls [data-action='step-prev']", label: "Funnel: кнопка назад" },
       { group: "funnel", selector: "#acStepStatus", label: "Funnel: статус шага" },
       { group: "funnel", selector: ".ac-funnel-controls [data-action='step-next']", label: "Funnel: кнопка далее/цены" },
 
