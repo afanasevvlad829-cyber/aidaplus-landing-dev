@@ -1231,11 +1231,14 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 }
 
 .ac-video-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-md);
 }
 
 .ac-video-card {
-  min-height: var(--video-min-height);
+  min-height: 0;
+  aspect-ratio: 9 / 16;
+  max-height: 520px;
   position: relative;
   overflow: hidden;
   background: #000;
@@ -1280,16 +1283,18 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 }
 
 .ac-review-card {
-  text-align: left;
+  text-align: center;
 }
 
 .ac-review-card__avatar {
-  width: 100%;
-  max-height: 220px;
-  min-height: 220px;
-  border-radius: var(--radius-md);
+  width: 64px;
+  height: 64px;
+  max-width: 64px;
+  min-width: 64px;
+  border-radius: 50%;
   object-fit: cover;
   display: block;
+  border: var(--border-1) solid #dbe1ef;
   margin: 0 auto var(--space-sm);
 }
 
@@ -2144,6 +2149,10 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
   .ac-grid--4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ac-video-grid {
+    grid-template-columns: 1fr;
   }
 
   .ac-hero-grid {
