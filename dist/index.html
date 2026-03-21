@@ -2203,8 +2203,29 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
     display: none;
   }
 
+  .ac-top-nav {
+    height: auto;
+    overflow: visible;
+  }
+
   .ac-top-nav .ac-container {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    height: auto;
     padding-right: var(--topnav-right-safe-md);
+    padding-bottom: var(--space-xs);
+  }
+
+  .ac-top-nav .ac-menu--full {
+    flex-wrap: wrap;
+    white-space: normal;
+    overflow: visible;
+    row-gap: var(--space-xs);
+  }
+
+  .ac-top-nav .ac-menu--full .ac-mode-toggle {
+    margin-left: 0;
+    margin-inline-start: auto;
   }
 }
 
