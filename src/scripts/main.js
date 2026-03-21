@@ -4,6 +4,7 @@
   var MODE_KEY = "ac:mode";
   var AGE_KEY = "ac:age";
   var TECH_BADGE_DISMISSED_KEY = "ac:tech-badge-dismissed";
+  var techBadgeDismissedInSession = false;
   var BUILD_TAG = "TECH v2026.03.21-01";
   var HERO_SUBTITLE_STATIC = "Для детей 7–14 лет: свои IT‑проекты, бассейн и спорт каждый день, внутренняя экономика с лагерной валютой.";
   var ageSelectionConfirmed = false;
@@ -22,6 +23,7 @@
     firstDiscMax: 0.05,
     secondDiscMin: 0.02,
     secondDiscMax: 0.03,
+    checkDurationMs: 6800,
     holdHours: 72
   };
   var SHIFT_PRICE_META = [
@@ -92,6 +94,12 @@
     reviewPage: 0,
     teamPage: 0,
     faqCategory: "medicine"
+  };
+  var mediaSwapDir = {
+    photo: 0,
+    video: 0,
+    review: 0,
+    team: 0
   };
 
   function getInitialMode() {
@@ -512,6 +520,71 @@
     return model;
   }
 
+  function splitCompactBenefitText(text) {
+    var safe = String(text || "").trim();
+    if (!safe) return { title: "", desc: "" };
+    var parts = safe.split(/\s+[—-]\s+/);
+    if (parts.length > 1) {
+      return {
+        title: parts.shift(),
+        desc: parts.join(" — ")
+      };
+    }
+    return { title: safe, desc: "" };
+  }
+
+  function applyDefaultHeroGridContent(heroGrid) {
+    if (!heroGrid) return;
+    var items = heroGrid.querySelectorAll(".ac-hero-grid__item");
+    var defaults = [
+      { icon: "/assets/icons/heart-pulse.svg", title: CONTENT_MAP.ui.heroSafetyMedTitle, desc: CONTENT_MAP.ui.heroSafetyMedDesc },
+      { icon: "/assets/icons/shield-check.svg", title: CONTENT_MAP.ui.heroSafetyLockTitle, desc: CONTENT_MAP.ui.heroSafetyLockDesc },
+      { icon: "/assets/icons/utensils-crossed.svg", title: CONTENT_MAP.ui.heroSafetyFoodTitle, desc: CONTENT_MAP.ui.heroSafetyFoodDesc },
+      { icon: UI_ICON.pool, title: CONTENT_MAP.ui.heroSafetyPoolTitle, desc: CONTENT_MAP.ui.heroSafetyPoolDesc }
+    ];
+    for (var i = 0; i < items.length; i += 1) {
+      var item = items[i];
+      var cfg = defaults[i] || defaults[defaults.length - 1];
+      var icon = item.querySelector(".ac-icon");
+      var strong = item.querySelector("strong");
+      var small = item.querySelector("small");
+      item.hidden = false;
+      item.classList.remove("is-compact-single");
+      if (icon && cfg.icon) icon.setAttribute("src", cfg.icon);
+      if (strong) strong.textContent = String(cfg.title || "");
+      if (small) {
+        small.textContent = String(cfg.desc || "");
+        small.style.display = "";
+      }
+    }
+  }
+
+  function applyCompactHeroGridContent(heroGrid, compactModel) {
+    if (!heroGrid) return;
+    var items = heroGrid.querySelectorAll(".ac-hero-grid__item");
+    var benefits = (compactModel && compactModel.benefits) ? compactModel.benefits : [];
+    for (var i = 0; i < items.length; i += 1) {
+      var item = items[i];
+      var benefit = benefits[i];
+      if (!benefit) {
+        item.hidden = true;
+        continue;
+      }
+      var split = splitCompactBenefitText(benefit.text);
+      var icon = item.querySelector(".ac-icon");
+      var strong = item.querySelector("strong");
+      var small = item.querySelector("small");
+      item.hidden = false;
+      item.classList.toggle("is-compact-single", !split.desc);
+      if (icon && benefit.icon) icon.setAttribute("src", benefit.icon);
+      if (strong) strong.textContent = split.title;
+      if (small) {
+        small.textContent = split.desc;
+        small.style.display = split.desc ? "" : "none";
+      }
+    }
+  }
+
   function getHeroSlides() {
     var fallback = "https://static.tildacdn.com/tild3130-3234-4630-b533-343030653636/photo_2024-02-04_171.jpeg";
     var list = [fallback];
@@ -534,6 +607,16 @@
 
   function formatPriceNumber(value) {
     return (Math.round(Number(value) || 0)).toLocaleString("ru-RU") + " ₽";
+  }
+
+  function parsePriceValue(value) {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return Math.max(0, Math.round(value));
+    }
+    var digits = String(value || "").replace(/\D/g, "");
+    if (!digits) return 0;
+    var parsed = Number(digits);
+    return Number.isFinite(parsed) ? Math.max(0, Math.round(parsed)) : 0;
   }
 
   function generatePromoCode() {
@@ -661,6 +744,153 @@
     return "Действует до " + formatPromoDeadline(expiresAt) + " · осталось " + formatPromoTtl(expiresAt);
   }
 
+  function buildBookingFixedCardMarkup(options) {
+    var shiftMeta = options && options.shiftMeta ? options.shiftMeta : null;
+    var shiftSummary = options && options.shiftSummary ? String(options.shiftSummary) : "";
+    var promo = options && options.promo ? options.promo : null;
+    var age = clamp(Number(options && options.age), 7, 14);
+    var profile = findProfileByAge(age);
+    var ageLabel = profile.min + "-" + profile.max;
+    var priceBase = Math.max(0, Number(options && options.priceBase));
+    var priceFinal = Math.max(0, Number(options && options.priceFinal));
+    var discount = Math.max(0, priceBase - priceFinal);
+    var shiftLine = shiftMeta
+      ? (shiftMeta.date + " • " + shiftMeta.days + " дн. • " + shiftSummary)
+      : shiftSummary;
+    var promoCode = promo && promo.code ? String(promo.code) : "—";
+    var deadline = promo && promo.expiresAt ? formatPromoDeadlineLine(promo.expiresAt) : "";
+
+    return (
+      '<article class="ac-booking-fixed__card">' +
+      '<button class="ac-booking-fixed__close" type="button" data-action="promo-reset" aria-label="Отказаться от брони">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.close + '" alt="" aria-hidden="true">' +
+      "</button>" +
+      '<p class="ac-booking-fixed__title">Цена зафиксирована для вас</p>' +
+      '<p class="ac-booking-fixed__meta">' + shiftLine + "</p>" +
+      '<div class="ac-booking-fixed__grid">' +
+      '<div class="ac-booking-fixed__age"><span>Возраст</span><strong>' + ageLabel + "</strong></div>" +
+      '<div class="ac-booking-fixed__prices">' +
+      '<div class="ac-booking-fixed__price-row"><span>Полная стоимость</span><strong class="is-old">' + formatPriceNumber(priceBase) + "</strong></div>" +
+      '<div class="ac-booking-fixed__price-row"><span>Стоимость со скидкой</span><strong>' + formatPriceNumber(priceFinal) + "</strong></div>" +
+      '<div class="ac-booking-fixed__price-row"><span>Ваша скидка</span><strong class="is-discount">' + (discount > 0 ? ("− " + formatPriceNumber(discount)) : "—") + "</strong></div>" +
+      "</div>" +
+      "</div>" +
+      '<p class="ac-booking-fixed__promo">Промокод: ' + promoCode + "</p>" +
+      (deadline ? ('<p class="ac-booking-fixed__ttl">' + deadline + "</p>") : "") +
+      "</article>"
+    );
+  }
+
+  function getResumePromoContext() {
+    var promo = loadShiftPromo();
+    if (promo && promo.shiftId) {
+      var status = String(promo.status || "draft");
+      var stage = Number(promo.priceStage || 0);
+      if (status !== "active" && stage < 1) {
+        promo = null;
+      }
+    } else {
+      promo = null;
+    }
+
+    if (promo) {
+      var shift = findExactShiftById(promo.shiftId);
+      if (shift) {
+        var shiftIdx = SHIFTS.indexOf(shift);
+        if (shiftIdx >= 0) {
+          var meta = getShiftPriceMeta(shift, shiftIdx);
+          var basePrice = Number(promo.basePrice || meta.basePrice || 0);
+          var finalPrice = Number(promo.finalPrice || basePrice || 0);
+          if (!Number.isFinite(finalPrice) || finalPrice <= 0) {
+            finalPrice = basePrice;
+          }
+
+          var discount = Math.max(0, basePrice - finalPrice);
+          var ageValue = clamp(Number(promo.age || state.age || 7), 7, 14);
+          var ageProfile = findProfileByAge(ageValue);
+          var isActive = String(promo.status || "draft") === "active" && getPromoRemainingMs(promo) > 0;
+
+          return {
+            shiftId: shift.id,
+            shiftLine: meta.date + " • " + meta.days + " дн. • " + (shift.summary || shift.line || ""),
+            ageLabel: ageProfile.min + "-" + ageProfile.max,
+            basePrice: basePrice,
+            finalPrice: finalPrice,
+            discount: discount,
+            code: String(promo.code || ""),
+            isActive: isActive,
+            ttlText: isActive ? formatPromoDeadlineLine(promo.expiresAt || 0) : "",
+            ctaMode: isActive ? "booking" : "shift",
+            ctaText: "Продолжить бронирование",
+            hintText: isActive
+              ? "Цена сохранена за вами."
+              : "Вы остановились на подборе цены. Можно продолжить и завершить бронирование.",
+            submitted: false
+          };
+        }
+      }
+    }
+
+    var lead = loadBookingLead();
+    if (!lead || !lead.shiftId) return null;
+
+    var leadShift = findExactShiftById(String(lead.shiftId));
+    if (!leadShift) return null;
+
+    var leadIdx = SHIFTS.indexOf(leadShift);
+    if (leadIdx < 0) return null;
+
+    var leadMeta = getShiftPriceMeta(leadShift, leadIdx);
+    var leadBasePrice = parsePriceValue(lead.priceBase || leadMeta.basePrice || 0);
+    if (!leadBasePrice) leadBasePrice = Number(leadMeta.basePrice || 0);
+    var leadFinalPrice = parsePriceValue(lead.priceFinal || lead.priceText || leadBasePrice);
+    if (!leadFinalPrice) leadFinalPrice = leadBasePrice;
+    if (leadBasePrice > 0 && leadFinalPrice > leadBasePrice) {
+      leadFinalPrice = leadBasePrice;
+    }
+    var leadDiscount = Math.max(0, leadBasePrice - leadFinalPrice);
+    var leadAge = clamp(Number(lead.age || state.age || 7), 7, 14);
+    var leadProfile = findProfileByAge(leadAge);
+    var leadSubmitted = !!lead.submitted;
+
+    return {
+      shiftId: leadShift.id,
+      shiftLine: String(lead.shiftText || (leadMeta.date + " • " + leadMeta.days + " дн. • " + (leadShift.summary || leadShift.line || ""))),
+      ageLabel: leadProfile.min + "-" + leadProfile.max,
+      basePrice: leadBasePrice,
+      finalPrice: leadFinalPrice,
+      discount: leadDiscount,
+      code: String(lead.promoCode || ""),
+      isActive: false,
+      ttlText: "",
+      ctaMode: "booking",
+      ctaText: "Продолжить бронирование",
+      hintText: leadSubmitted
+        ? "Заявка уже отправлена. Можно открыть бронь и проверить данные."
+        : "Бронь сохранена. Можно продолжить и завершить оформление.",
+      submitted: leadSubmitted
+    };
+  }
+
+  function buildHeroResumeCardMarkup(context) {
+    return (
+      '<article class="ac-booking-fixed__card ac-booking-fixed__card--resume-only">' +
+      '<button class="ac-booking-fixed__close" type="button" data-action="promo-reset" aria-label="Сбросить выбранную бронь">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.close + '" alt="" aria-hidden="true">' +
+      "</button>" +
+      '<p class="ac-booking-fixed__title">' + (context.submitted ? "Ваша бронь сохранена" : "Продолжить бронирование") + "</p>" +
+      '<p class="ac-booking-fixed__meta">' + String(context.shiftLine || "") + "</p>" +
+      '<p class="ac-booking-fixed__meta">Возраст: ' + String(context.ageLabel || "") + "</p>" +
+      '<p class="ac-booking-fixed__meta">Цена: ' + formatPriceNumber(context.finalPrice || 0) + "</p>" +
+      (context.code ? ('<p class="ac-booking-fixed__promo">Промокод: ' + context.code + "</p>") : "") +
+      (context.hintText ? ('<p class="ac-booking-fixed__ttl">' + context.hintText + "</p>") : "") +
+      '<button class="ac-primary-btn ac-booking-fixed__cta" type="button" data-action="resume-booking" data-resume-mode="' + context.ctaMode + '">' +
+      String(context.ctaText || "Продолжить бронирование") +
+      "</button>" +
+      "</article>"
+    );
+  }
+
   function formatPhoneInput(raw) {
     var digits = String(raw || "").replace(/\D/g, "");
     if (digits.charAt(0) === "8") {
@@ -696,14 +926,36 @@
     return digits.length === 11 && digits.charAt(0) === "7";
   }
 
+  function dismissTechBadge() {
+    var techBadge = document.getElementById("acTechBadge");
+    if (techBadge) {
+      techBadge.hidden = true;
+    }
+    techBadgeDismissedInSession = true;
+    try {
+      localStorage.setItem(TECH_BADGE_DISMISSED_KEY, "1");
+    } catch (_errTechBadge) {
+      // ignore storage errors
+    }
+  }
+
   function canSubmitBooking(phoneValue, consentChecked, submitted) {
     if (submitted) return false;
-    return isValidPhone(phoneValue) && !!consentChecked;
+    return isValidPhone(phoneValue);
   }
 
   function getPromoRemainingMs(promo) {
     if (!promo || promo.status !== "active") return 0;
     return Math.max(0, Number(promo.expiresAt || 0) - Date.now());
+  }
+
+  function getPriceSearchProgress(promo) {
+    if (!promo || promo.status !== "checking_first") return 100;
+    var startedAt = Number(promo.checkStartedAt || 0);
+    var duration = Math.max(1200, Number(promo.checkDurationMs || SHIFT_PRICE_CFG.checkDurationMs || 4200));
+    if (!startedAt) return 0;
+    var elapsed = Math.max(0, Date.now() - startedAt);
+    return clamp(Math.round((elapsed / duration) * 100), 0, 100);
   }
 
   function stopPromoTicker() {
@@ -716,7 +968,19 @@
     if (promoTicker) return;
     promoTicker = setInterval(function () {
       var promo = loadShiftPromo();
-      if (!promo || promo.status !== "active") {
+      if (!promo) {
+        stopPromoTicker();
+        return;
+      }
+      if (promo.status === "checking_first") {
+        if (!state.overlays.shifts) {
+          stopPromoTicker();
+          return;
+        }
+        renderOverlays();
+        return;
+      }
+      if (promo.status !== "active") {
         stopPromoTicker();
         return;
       }
@@ -748,7 +1012,7 @@
         if (!pinnedNode) continue;
         pinnedNode.textContent = formatPromoDeadlineLine(promo.expiresAt || 0);
       }
-    }, 1000);
+    }, 250);
   }
 
   function getShiftPromoView(shiftId, meta) {
@@ -771,6 +1035,36 @@
     var price = Number(promo.finalPrice || meta.basePrice);
     var oldPrice = stage > 0 ? formatPriceNumber(meta.basePrice) : "";
 
+    if (status === "checking_first") {
+      var searchProgress = getPriceSearchProgress(promo);
+      if (searchProgress >= 100) {
+        promo.status = "draft";
+        promo.priceStage = Math.max(1, Number(promo.priceStage || 1));
+        promo.finalPrice = Number(promo.nextPrice || promo.finalPrice || meta.basePrice);
+        promo.checkStartedAt = 0;
+        promo.checkDurationMs = 0;
+        promo.nextPrice = 0;
+        saveShiftPromo(promo);
+        stage = Number(promo.priceStage || 1);
+        status = String(promo.status || "draft");
+        price = Number(promo.finalPrice || meta.basePrice);
+        oldPrice = stage > 0 ? formatPriceNumber(meta.basePrice) : "";
+      } else {
+        return {
+          stage: 0,
+          status: status,
+          price: Number(meta.basePrice || 0),
+          oldPrice: "",
+          code: String(promo.code || ""),
+          actionText: "Ищем лучшую цену...",
+          actionDisabled: true,
+          metaText: "",
+          searchProgress: searchProgress,
+          pendingPhone: ""
+        };
+      }
+    }
+
     if (status === "phone_gate") {
       return {
         stage: stage,
@@ -779,7 +1073,7 @@
         oldPrice: oldPrice,
         code: String(promo.code || ""),
         actionText: "Зафиксировать цену",
-        metaText: "Введите телефон для фиксации на 72 часа",
+        metaText: "Введите телефон и зафиксируйте, пожалуйста, цену.",
         pendingPhone: String(promo.pendingPhone || ""),
         promoTtl: "Будет рассчитано после фиксации"
       };
@@ -792,8 +1086,8 @@
         price: price,
         oldPrice: oldPrice,
         code: String(promo.code || ""),
-        actionText: "Зафиксировано — бронировать",
-        metaText: "Промокод: " + String(promo.code || ""),
+        actionText: "Получить новую цену",
+        metaText: "Текущая цена зафиксирована. Можно пересчитать заново.",
         promoTtl: formatPromoTtl(promo.expiresAt || 0),
         deadlineText: formatPromoDeadlineLine(promo.expiresAt || 0),
         pendingPhone: String(promo.phone || "")
@@ -821,8 +1115,8 @@
         price: price,
         oldPrice: oldPrice,
         code: String(promo.code || ""),
-        actionText: "Улучшить цену ещё раз",
-        metaText: "Проверяем бронирование, ищем отказы...",
+        actionText: "Ой! Можно улучшить цену ещё раз",
+        metaText: "Найдена персональная цена",
         pendingPhone: ""
       };
     }
@@ -849,16 +1143,22 @@
     var same = promo && promo.shiftId === shiftId;
     var stage = same ? Number(promo.priceStage || 0) : 0;
     var status = same ? String(promo.status || "draft") : "draft";
+    var isRestartingFromActive = same && status === "active";
 
-    if (status === "active") {
-      setOverlay("shifts", false);
-      setStep(SHIFTS.length - 1);
+    if (status === "phone_gate" || status === "checking_first") {
+      renderOverlays();
       return;
     }
 
-    if (status === "phone_gate") {
-      renderOverlays();
-      return;
+    if (isRestartingFromActive) {
+      same = false;
+      stage = 0;
+      status = "draft";
+      try {
+        localStorage.removeItem(BOOKING_LEAD_STORAGE_KEY);
+      } catch (_errBookingReset) {
+        // ignore storage errors
+      }
     }
 
     var nextPromo = {
@@ -879,8 +1179,12 @@
 
     if (stage <= 0) {
       var firstDisc = randomFloat(SHIFT_PRICE_CFG.firstDiscMin, SHIFT_PRICE_CFG.firstDiscMax);
-      nextPromo.finalPrice = Math.round(meta.finalPrice * (1 - firstDisc));
-      nextPromo.priceStage = 1;
+      nextPromo.finalPrice = meta.basePrice;
+      nextPromo.nextPrice = Math.round(meta.finalPrice * (1 - firstDisc));
+      nextPromo.priceStage = 0;
+      nextPromo.status = "checking_first";
+      nextPromo.checkStartedAt = Date.now();
+      nextPromo.checkDurationMs = Number(SHIFT_PRICE_CFG.checkDurationMs || 4200);
     } else if (stage === 1) {
       var secondDisc = randomFloat(SHIFT_PRICE_CFG.secondDiscMin, SHIFT_PRICE_CFG.secondDiscMax);
       nextPromo.finalPrice = Math.max(
@@ -888,7 +1192,11 @@
         Math.round(meta.finalPrice * 0.88)
       );
       nextPromo.priceStage = 2;
+      nextPromo.status = "phone_gate";
+      nextPromo.activatedAt = null;
+      nextPromo.expiresAt = null;
     } else {
+      // Legacy fallback for older saved states.
       nextPromo.priceStage = 2;
       nextPromo.status = "phone_gate";
       nextPromo.activatedAt = null;
@@ -955,6 +1263,49 @@
     return true;
   }
 
+  function persistShiftSelectionSnapshot() {
+    if (!ageSelectionConfirmed) return;
+
+    var shift = findShiftById(state.selectedShiftId);
+    var idx = SHIFTS.indexOf(shift);
+    if (!shift || idx < 0) return;
+
+    var lead = loadBookingLead() || {};
+    if (lead.submitted) return;
+
+    var meta = getShiftPriceMeta(shift, idx);
+    var promo = loadShiftPromo();
+    var samePromo = !!(promo && promo.shiftId === shift.id);
+
+    var basePrice = Number(meta.basePrice || 0);
+    var finalPrice = samePromo ? Number(promo.finalPrice || basePrice) : basePrice;
+    if (!Number.isFinite(finalPrice) || finalPrice <= 0) {
+      finalPrice = basePrice;
+    }
+    if (finalPrice > basePrice && basePrice > 0) {
+      finalPrice = basePrice;
+    }
+    var discount = Math.max(0, basePrice - finalPrice);
+
+    saveBookingLead({
+      name: String(lead.name || ""),
+      phone: String(lead.phone || ""),
+      shiftId: shift.id,
+      shiftText: meta.date + " • " + meta.days + " дн. • " + (shift.summary || shift.line || ""),
+      priceText: formatPriceNumber(finalPrice),
+      priceBase: basePrice,
+      priceFinal: finalPrice,
+      discountText: discount > 0 ? ("− " + formatPriceNumber(discount)) : "—",
+      discountValue: discount,
+      promoCode: samePromo && promo.code ? String(promo.code) : "",
+      consent: !!lead.consent,
+      submitted: false,
+      submittedAt: 0,
+      age: state.age,
+      expiresAt: samePromo ? Number(promo.expiresAt || 0) : 0
+    });
+  }
+
   function stopHeroSlideshow() {
     if (!heroSlideTimer) return;
     clearInterval(heroSlideTimer);
@@ -964,33 +1315,49 @@
   function startHeroSlideshow() {
     var baseLayer = document.querySelector(".ac-hero-right__bg--base");
     var fadeLayer = document.querySelector(".ac-hero-right__bg--fade");
-    if (!baseLayer || !fadeLayer) return;
+    var singleLayer = document.querySelector(".ac-hero-right__bg");
+    if ((!baseLayer || !fadeLayer) && !singleLayer) return;
 
     var slides = getHeroSlides();
     if (!slides.length) return;
 
     heroSlideIndex = clamp(heroSlideIndex, 0, slides.length - 1);
-    baseLayer.style.backgroundImage = 'url("' + slides[heroSlideIndex] + '")';
-    fadeLayer.style.backgroundImage = "";
-    fadeLayer.classList.remove("is-active");
+    if (baseLayer && fadeLayer) {
+      baseLayer.style.backgroundImage = 'url("' + slides[heroSlideIndex] + '")';
+      fadeLayer.style.backgroundImage = "";
+      fadeLayer.classList.remove("is-active");
+    } else if (singleLayer) {
+      singleLayer.style.backgroundImage = 'url("' + slides[heroSlideIndex] + '")';
+    }
 
     if (slides.length < 2) return;
     stopHeroSlideshow();
 
-    if (!fadeLayer.dataset.crossfadeBound) {
-      fadeLayer.addEventListener("transitionend", function (event) {
-        if (event.propertyName !== "opacity") return;
-        if (!fadeLayer.classList.contains("is-active")) return;
-        baseLayer.style.backgroundImage = fadeLayer.style.backgroundImage;
-        fadeLayer.classList.remove("is-active");
-      });
-      fadeLayer.dataset.crossfadeBound = "1";
+    if (baseLayer && fadeLayer) {
+      if (!fadeLayer.dataset.crossfadeBound) {
+        fadeLayer.addEventListener("transitionend", function (event) {
+          if (event.propertyName !== "opacity") return;
+          if (!fadeLayer.classList.contains("is-active")) return;
+          baseLayer.style.backgroundImage = fadeLayer.style.backgroundImage;
+          fadeLayer.classList.remove("is-active");
+        });
+        fadeLayer.dataset.crossfadeBound = "1";
+      }
+
+      heroSlideTimer = window.setInterval(function () {
+        var nextIndex = (heroSlideIndex + 1) % slides.length;
+        fadeLayer.style.backgroundImage = 'url("' + slides[nextIndex] + '")';
+        fadeLayer.classList.add("is-active");
+        heroSlideIndex = nextIndex;
+      }, HERO_SLIDE_INTERVAL_MS);
+      return;
     }
 
     heroSlideTimer = window.setInterval(function () {
       var nextIndex = (heroSlideIndex + 1) % slides.length;
-      fadeLayer.style.backgroundImage = 'url("' + slides[nextIndex] + '")';
-      fadeLayer.classList.add("is-active");
+      if (singleLayer) {
+        singleLayer.style.backgroundImage = 'url("' + slides[nextIndex] + '")';
+      }
       heroSlideIndex = nextIndex;
     }, HERO_SLIDE_INTERVAL_MS);
   }
@@ -1012,6 +1379,8 @@
 
     renderLayout();
     renderMenu();
+    renderInfoCard();
+    renderFunnel();
     renderSections();
 
     track("mode_changed", {
@@ -1030,6 +1399,7 @@
 
     renderMenu();
     renderInfoCard();
+    renderFunnel();
     renderSections();
 
     track("tab_changed", {
@@ -1269,6 +1639,7 @@
 
   function closeAllOverlays() {
     var changed = false;
+    var hadShiftsOverlay = !!state.overlays.shifts;
     shiftCalendar.open = false;
     shiftCalendar.shiftId = "";
 
@@ -1293,6 +1664,10 @@
       clearContactCloseTimer();
       renderLayout();
       renderOverlays();
+      if (hadShiftsOverlay) {
+        persistShiftSelectionSnapshot();
+      }
+      renderFunnel();
     }
   }
 
@@ -1340,6 +1715,7 @@
     state.photoCategory = categoryId;
     state.photoPage = 0;
     renderSections();
+    renderInfoCard();
   }
 
   function setPhotoPage(nextPage) {
@@ -1348,8 +1724,10 @@
     var safePage = clamp(nextPage, 0, maxPage);
     if (safePage === state.photoPage) return;
 
+    mediaSwapDir.photo = safePage > state.photoPage ? 1 : -1;
     state.photoPage = safePage;
     renderSections();
+    mediaSwapDir.photo = 0;
   }
 
   function setPhotoLightbox(index) {
@@ -1399,38 +1777,80 @@
     return 1;
   }
 
+  function getCompactVideoPageSize() {
+    return window.innerWidth <= 980 ? 1 : 2;
+  }
+
+  function getCompactReviewPageSize() {
+    return window.innerWidth <= 980 ? 1 : 3;
+  }
+
+  function getCompactTeamPageSize() {
+    return window.innerWidth <= 980 ? 1 : 3;
+  }
+
   function setVideoPage(nextPage) {
-    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.videos.length / getMediaPageSize("video")) - 1);
+    var perPage = (state.mode === "compact" && state.activeTab === "video")
+      ? getCompactVideoPageSize()
+      : getMediaPageSize("video");
+    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.videos.length / perPage) - 1);
     var safePage = clamp(nextPage, 0, maxPage);
     if (safePage === state.videoPage) return;
 
+    mediaSwapDir.video = safePage > state.videoPage ? 1 : -1;
     state.videoPage = safePage;
     renderSections();
+    renderInfoCard();
+    mediaSwapDir.video = 0;
   }
 
   function setReviewPage(nextPage) {
-    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.reviews.length / getMediaPageSize("review")) - 1);
+    var perPage = (state.mode === "compact" && state.activeTab === "reviews")
+      ? getCompactReviewPageSize()
+      : getMediaPageSize("review");
+    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.reviews.length / perPage) - 1);
     var safePage = clamp(nextPage, 0, maxPage);
     if (safePage === state.reviewPage) return;
 
+    mediaSwapDir.review = safePage > state.reviewPage ? 1 : -1;
     state.reviewPage = safePage;
     renderSections();
+    renderInfoCard();
+    mediaSwapDir.review = 0;
   }
 
   function setTeamPage(nextPage) {
-    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.team.length / getMediaPageSize("team")) - 1);
+    var perPage = (state.mode === "compact" && state.activeTab === "team")
+      ? getCompactTeamPageSize()
+      : getMediaPageSize("team");
+    var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.team.length / perPage) - 1);
     var safePage = clamp(nextPage, 0, maxPage);
     if (safePage === state.teamPage) return;
 
+    mediaSwapDir.team = safePage > state.teamPage ? 1 : -1;
     state.teamPage = safePage;
     renderSections();
+    renderInfoCard();
+    mediaSwapDir.team = 0;
+  }
+
+  function mediaSwapClass(kind) {
+    var dir = Number(mediaSwapDir[kind] || 0);
+    if (!dir) return "";
+    var className = " ac-page-swap " + (dir > 0 ? "ac-page-swap--next" : "ac-page-swap--prev");
+    if (kind === "review") {
+      className += " ac-page-swap--reviews";
+    }
+    return className;
   }
 
   function setFaqCategory(categoryId) {
-    if (!hasOwn(CONTENT_MAP.faqItems, categoryId) || state.faqCategory === categoryId) return;
+    var faqItems = CONTENT_MAP.faqItems || {};
+    if (!hasOwn(faqItems, categoryId) || state.faqCategory === categoryId) return;
 
     state.faqCategory = categoryId;
     renderSections();
+    renderInfoCard();
   }
 
   function renderLayout() {
@@ -1545,6 +1965,14 @@
     var profile = findProfileByAge(state.age);
     var compactModel = getCompactTabModel(profile);
     var heroBenefits = compactModel && compactModel.benefits && compactModel.benefits.length ? compactModel.benefits : getHeroBenefits();
+    var showAgeBlock = !(state.mode === "compact" && state.activeTab !== "info");
+    var isCompactAiTab = state.mode === "compact" && state.activeTab === "aiprogram";
+    var isCompactPhotoTab = state.mode === "compact" && state.activeTab === "photo";
+    var isCompactVideoTab = state.mode === "compact" && state.activeTab === "video";
+    var isCompactFaqTab = state.mode === "compact" && state.activeTab === "faq";
+    var isCompactReviewsTab = state.mode === "compact" && state.activeTab === "reviews";
+    var isCompactTeamTab = state.mode === "compact" && state.activeTab === "team";
+    var isCompactCustomCard = isCompactAiTab || isCompactPhotoTab || isCompactVideoTab || isCompactFaqTab || isCompactReviewsTab || isCompactTeamTab;
 
     var title = document.getElementById("acHeroTitle");
     var subtitle = document.getElementById("acHeroSubtitle");
@@ -1556,22 +1984,35 @@
     var ageReset = document.getElementById("acAgeReset");
     var ageBlock = document.querySelector(".ac-age-block");
     var promoPinned = document.getElementById("acPromoPinned");
+    var heroBenefitsRow = document.querySelector(".ac-hero-benefits-row");
+    var heroMotto = document.querySelector(".ac-hero-motto");
 
-    if (title) title.textContent = compactModel && compactModel.title ? compactModel.title : profile.title;
-    if (subtitle) subtitle.textContent = compactModel && compactModel.subtitle ? compactModel.subtitle : HERO_SUBTITLE_STATIC;
+    if (title) {
+      title.textContent = compactModel && compactModel.title ? compactModel.title : profile.title;
+      title.style.display = isCompactCustomCard ? "none" : "";
+    }
+    if (subtitle) {
+      subtitle.textContent = compactModel && compactModel.subtitle ? compactModel.subtitle : HERO_SUBTITLE_STATIC;
+      subtitle.style.display = isCompactCustomCard ? "none" : "";
+    }
     if (progress) {
       var progressText = compactModel ? String(compactModel.progress || "") : profile.progress;
-      if (compactModel && compactModel.progressLink && progressText) {
-        progress.innerHTML =
-          '<a class="ac-reviews-yandex-link" href="' +
-          compactModel.progressLink +
-          '" target="_blank" rel="noopener">' +
-          progressText +
-          "</a>";
+      if (compactModel || isCompactCustomCard) {
+        progress.textContent = "";
+        progress.style.display = "none";
       } else {
-        progress.textContent = progressText;
+        if (compactModel && compactModel.progressLink && progressText) {
+          progress.innerHTML =
+            '<a class="ac-reviews-yandex-link" href="' +
+            compactModel.progressLink +
+            '" target="_blank" rel="noopener">' +
+            progressText +
+            "</a>";
+        } else {
+          progress.textContent = progressText;
+        }
+        progress.style.display = progressText ? "" : "none";
       }
-      progress.style.display = progressText ? "" : "none";
     }
     if (ageText) {
       ageText.textContent = ageSelectionConfirmed ? "" : "Передвиньте слайдер, чтобы выбрать возраст";
@@ -1584,6 +2025,7 @@
       ageReset.hidden = !ageSelectionConfirmed;
     }
     if (ageBlock) {
+      ageBlock.hidden = !showAgeBlock;
       ageBlock.classList.toggle("is-attention", isAgeGateLocked() || ageGateNudge);
     }
     var sliderValue = ageToSliderValue(state.age);
@@ -1593,59 +2035,87 @@
 
     if (benefits) {
       var benefitHtml = "";
-      for (var i = 0; i < heroBenefits.length; i += 1) {
-        var benefit = heroBenefits[i];
-        benefitHtml +=
-          "<li>" +
-          '<span class="ac-benefit-icon">' +
-          '<img class="ac-icon ac-icon--sm" src="' +
-          benefit.icon +
-          '" alt="" aria-hidden="true">' +
-          "</span>" +
-          "<span>" +
-          benefit.text +
-          "</span>" +
-          "</li>";
+      if (isCompactAiTab) {
+        benefits.classList.add("is-compact-ai");
+        benefits.classList.remove("is-compact-photo");
+        benefits.classList.remove("is-compact-video");
+        benefits.classList.remove("is-compact-faq");
+        benefitHtml = buildCompactAiHeroMarkup();
+      } else if (isCompactPhotoTab) {
+        benefits.classList.remove("is-compact-ai");
+        benefits.classList.add("is-compact-photo");
+        benefits.classList.remove("is-compact-video");
+        benefits.classList.remove("is-compact-faq");
+        benefitHtml = buildCompactPhotoHeroMarkup();
+      } else if (isCompactVideoTab) {
+        benefits.classList.remove("is-compact-ai");
+        benefits.classList.remove("is-compact-photo");
+        benefits.classList.add("is-compact-video");
+        benefits.classList.remove("is-compact-faq");
+        benefitHtml = buildCompactVideoHeroMarkup();
+      } else if (isCompactFaqTab) {
+        benefits.classList.remove("is-compact-ai");
+        benefits.classList.remove("is-compact-photo");
+        benefits.classList.remove("is-compact-video");
+        benefits.classList.add("is-compact-faq");
+        benefits.classList.remove("is-compact-reviews");
+        benefitHtml = buildCompactFaqHeroMarkup();
+      } else if (isCompactReviewsTab) {
+        benefits.classList.remove("is-compact-ai");
+        benefits.classList.remove("is-compact-photo");
+        benefits.classList.remove("is-compact-video");
+        benefits.classList.remove("is-compact-faq");
+        benefits.classList.add("is-compact-reviews");
+        benefits.classList.remove("is-compact-team");
+        benefitHtml = buildCompactReviewsHeroMarkup();
+      } else if (isCompactTeamTab) {
+        benefits.classList.remove("is-compact-ai");
+        benefits.classList.remove("is-compact-photo");
+        benefits.classList.remove("is-compact-video");
+        benefits.classList.remove("is-compact-faq");
+        benefits.classList.remove("is-compact-reviews");
+        benefits.classList.add("is-compact-team");
+        benefitHtml = buildCompactTeamHeroMarkup();
+      } else {
+        benefits.classList.remove("is-compact-ai");
+        benefits.classList.remove("is-compact-photo");
+        benefits.classList.remove("is-compact-video");
+        benefits.classList.remove("is-compact-faq");
+        benefits.classList.remove("is-compact-reviews");
+        benefits.classList.remove("is-compact-team");
+        for (var i = 0; i < heroBenefits.length; i += 1) {
+          var benefit = heroBenefits[i];
+          benefitHtml +=
+            "<li>" +
+            '<span class="ac-benefit-icon">' +
+            '<img class="ac-icon ac-icon--sm" src="' +
+            benefit.icon +
+            '" alt="" aria-hidden="true">' +
+            "</span>" +
+            "<span>" +
+            benefit.text +
+            "</span>" +
+            "</li>";
+        }
       }
       benefits.innerHTML = benefitHtml;
     }
 
+    if (heroBenefitsRow) {
+      heroBenefitsRow.classList.toggle("is-compact-ai", isCompactAiTab);
+      heroBenefitsRow.classList.toggle("is-compact-photo", isCompactPhotoTab);
+      heroBenefitsRow.classList.toggle("is-compact-video", isCompactVideoTab);
+      heroBenefitsRow.classList.toggle("is-compact-faq", isCompactFaqTab);
+      heroBenefitsRow.classList.toggle("is-compact-reviews", isCompactReviewsTab);
+      heroBenefitsRow.classList.toggle("is-compact-team", isCompactTeamTab);
+    }
+    if (heroMotto) {
+      heroMotto.hidden = !!compactModel || isCompactCustomCard;
+    }
+
     if (promoPinned) {
-      var promo = loadShiftPromo();
-      var isActivePromo = promo && promo.status === "active" && getPromoRemainingMs(promo) > 0;
-      if (!isActivePromo) {
-        promoPinned.hidden = true;
-        promoPinned.innerHTML = "";
-      } else {
-        var promoShift = findExactShiftById(promo.shiftId);
-        var promoMeta = null;
-        if (promoShift) {
-          var promoIdx = SHIFTS.indexOf(promoShift);
-          if (promoIdx >= 0) {
-            promoMeta = getShiftPriceMeta(promoShift, promoIdx);
-          }
-        }
-        var shiftTitle = promoMeta
-          ? promoMeta.date + " • " + promoMeta.days + " дн. • " + (promoShift ? promoShift.summary : "")
-          : (promo.shiftName || "Выбранная смена");
-        promoPinned.hidden = false;
-        promoPinned.innerHTML =
-          '<button class="ac-promo-pinned__close" type="button" data-action="promo-reset" aria-label="Сбросить статус бронирования">' +
-          '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.close + '" alt="" aria-hidden="true">' +
-          "</button>" +
-          '<p class="ac-promo-pinned__title">Цена зафиксирована для вас</p>' +
-          '<p class="ac-promo-pinned__meta">' +
-          shiftTitle +
-          " · " +
-          formatPriceNumber(promo.finalPrice || 0) +
-          "</p>" +
-          '<p class="ac-promo-pinned__meta">Промокод: ' +
-          (promo.code || "AIDA-0000") +
-          '</p><p class="ac-promo-pinned__meta ac-promo-pinned__ttl">' +
-          formatPromoDeadlineLine(promo.expiresAt || 0) +
-          "</p>" +
-          '<button class="ac-promo-pinned__cta" type="button" data-action="resume-booking">Продолжить бронирование</button>';
-      }
+      promoPinned.hidden = true;
+      promoPinned.innerHTML = "";
     }
   }
 
@@ -1655,6 +2125,9 @@
     var isBookingStep = state.step === SHIFTS.length - 1;
     var gateLocked = isAgeGateLocked();
     var profile = findProfileByAge(state.age);
+    var compactTabModel = getCompactTabModel(profile);
+    var useCompactTabContentInRight = false;
+    var isCompactTabContent = useCompactTabContentInRight && state.mode === "compact" && !!compactTabModel;
     var promo = loadShiftPromo();
 
     var overlayTitle = document.getElementById("acHeroOverlayTitle");
@@ -1668,6 +2141,8 @@
     var bookingPrice = document.getElementById("acBookingPrice");
     var bookingDiscount = document.getElementById("acBookingDiscount");
     var bookingPromo = document.getElementById("acBookingPromo");
+    var bookingFixedCard = document.getElementById("acBookingFixedCard");
+    var resumeCard = document.getElementById("acHeroResumeCard");
     var bookingConsent = document.getElementById("acBookingConsent");
     var bookingNotice = document.getElementById("acBookingPromoNotice");
     var bookingSubmit = bookingForm ? bookingForm.querySelector('[data-action="booking-submit"]') : null;
@@ -1675,18 +2150,59 @@
     var nextBtn = document.getElementById("acStepNextBtn");
     var overlay = document.querySelector(".ac-hero-overlay");
     var heroRight = document.querySelector(".ac-hero-right");
+    var resumePromoContext = getResumePromoContext();
+
+    if (resumeCard) {
+      resumeCard.hidden = true;
+      resumeCard.innerHTML = "";
+    }
+
+    var introLockedState = isIntroStep && gateLocked;
 
     if (overlay) {
       overlay.classList.toggle("is-intro", isIntroStep);
+      overlay.classList.toggle("is-compact-tab-content", isCompactTabContent);
     }
     if (heroRight) {
-      heroRight.classList.toggle("is-intro", isIntroStep && state.mode === "compact");
+      heroRight.classList.toggle("is-intro", introLockedState);
       heroRight.classList.toggle("ac-booking-step", isBookingStep);
     }
 
+    if (isCompactTabContent) {
+      if (overlayTitle) overlayTitle.textContent = compactTabModel.title || "";
+      if (line) {
+        line.style.display = compactTabModel.progress ? "" : "none";
+        line.textContent = compactTabModel.progress || "";
+      }
+      if (summary) {
+        summary.style.display = compactTabModel.subtitle ? "" : "none";
+        summary.textContent = compactTabModel.subtitle || "";
+      }
+      if (heroGrid) {
+        heroGrid.style.display = "";
+        applyCompactHeroGridContent(heroGrid, compactTabModel);
+      }
+      if (bookingForm) bookingForm.hidden = true;
+      if (bookingFixedCard) {
+        bookingFixedCard.hidden = true;
+        bookingFixedCard.innerHTML = "";
+      }
+      if (status) status.hidden = true;
+      if (nextBtn) nextBtn.hidden = true;
+      return;
+    }
+
+    if (heroGrid) {
+      applyDefaultHeroGridContent(heroGrid);
+    }
+    if (status) status.hidden = false;
+
     if (isIntroStep) {
-      if (overlayTitle) overlayTitle.textContent = "Выберите смены";
-      if (line) line.textContent = "Передвиньте слайдер в блоке возраста";
+      if (overlayTitle) overlayTitle.textContent = CONTENT_MAP.ui.heroOverlayTitle;
+      if (line) {
+        line.style.display = "none";
+        line.textContent = "";
+      }
       if (summary) {
         summary.style.display = "";
         summary.textContent = gateLocked
@@ -1695,9 +2211,12 @@
       }
       if (heroGrid) heroGrid.style.display = "";
       if (bookingForm) bookingForm.hidden = true;
+      if (bookingFixedCard) {
+        bookingFixedCard.hidden = true;
+        bookingFixedCard.innerHTML = "";
+      }
     } else if (isBookingStep) {
       if (overlayTitle) overlayTitle.textContent = "Отправьте заявку";
-      if (line) line.textContent = "Мы перезвоним и подтвердим бронирование";
       if (summary) {
         summary.textContent = "";
         summary.style.display = "none";
@@ -1705,6 +2224,7 @@
       if (heroGrid) heroGrid.style.display = "none";
       if (bookingForm) {
         var bookingLead = loadBookingLead() || {};
+        var isBookingSubmitted = !!bookingLead.submitted;
         var selectedShift = findShiftById(state.selectedShiftId);
         var shiftSummary = selectedShift ? selectedShift.summary : "";
         var shiftIdx = SHIFTS.indexOf(selectedShift);
@@ -1712,15 +2232,30 @@
         var priceBase = shiftMeta ? Number(shiftMeta.basePrice || 0) : 0;
         var priceFinal = promo ? Number(promo.finalPrice || priceBase) : priceBase;
         var discount = Math.max(0, priceBase - priceFinal);
+        if (line) {
+          line.style.display = isBookingSubmitted ? "" : "none";
+          line.textContent = isBookingSubmitted ? "Мы перезвоним и подтвердим бронирование" : "";
+        }
         bookingForm.hidden = false;
-        if (bookingNotice) {
+        if (bookingFixedCard) {
           if (promo && promo.status === "active") {
-            bookingNotice.hidden = false;
-            bookingNotice.textContent = "Цена зафиксирована: " + formatPromoDeadlineLine(promo.expiresAt || 0);
+            bookingFixedCard.hidden = false;
+            bookingFixedCard.innerHTML = buildBookingFixedCardMarkup({
+              shiftMeta: shiftMeta,
+              shiftSummary: shiftSummary,
+              promo: promo,
+              age: state.age,
+              priceBase: priceBase,
+              priceFinal: priceFinal
+            });
           } else {
-            bookingNotice.hidden = true;
-            bookingNotice.textContent = "";
+            bookingFixedCard.hidden = true;
+            bookingFixedCard.innerHTML = "";
           }
+        }
+        if (bookingNotice) {
+          bookingNotice.hidden = true;
+          bookingNotice.textContent = "";
         }
         if (bookingName && !bookingName.value) {
           bookingName.value = String(bookingLead.name || "");
@@ -1747,24 +2282,45 @@
         if (bookingConsent) {
           bookingConsent.checked = !!bookingLead.consent;
         }
+        var bookingEditableFields = bookingForm.querySelectorAll(
+          '[for="acBookingPhone"], #acBookingPhone, [for="acBookingName"], #acBookingName, .ac-booking-form__consent, [data-action="booking-submit"]'
+        );
+        for (var bf = 0; bf < bookingEditableFields.length; bf += 1) {
+          bookingEditableFields[bf].hidden = isBookingSubmitted;
+        }
         if (bookingSubmit) {
           bookingSubmit.disabled = !canSubmitBooking(
             bookingPhone ? bookingPhone.value : "",
             bookingConsent ? bookingConsent.checked : false,
-            !!bookingLead.submitted
+            isBookingSubmitted
           );
-          bookingSubmit.textContent = bookingLead.submitted ? "Заявка отправлена" : "Забронировать";
+          bookingSubmit.textContent = isBookingSubmitted ? "Заявка отправлена" : "Забронировать";
         }
       }
     } else {
       if (overlayTitle) overlayTitle.textContent = CONTENT_MAP.ui.heroOverlayTitle;
-      if (line) line.textContent = shift.line;
+      if (line) {
+        line.style.display = "";
+        line.textContent = shift.line;
+      }
       if (summary) {
         summary.textContent = shift.summary;
         summary.style.display = "";
       }
       if (heroGrid) heroGrid.style.display = "";
       if (bookingForm) bookingForm.hidden = true;
+      if (bookingFixedCard) {
+        bookingFixedCard.hidden = true;
+        bookingFixedCard.innerHTML = "";
+      }
+    }
+
+    if (resumeCard) {
+      var showResumeCard = !!resumePromoContext && !isBookingStep;
+      resumeCard.hidden = !showResumeCard;
+      resumeCard.innerHTML = showResumeCard
+        ? buildHeroResumeCardMarkup(resumePromoContext)
+        : "";
     }
 
     if (status) {
@@ -1814,6 +2370,345 @@
       }
     }
     return result;
+  }
+
+  function getPhotoCategoryIcon(categoryId) {
+    if (categoryId === "all") return "/assets/icons/images.svg";
+    if (categoryId === "food") return ICON_MAP.food;
+    if (categoryId === "sport") return ICON_MAP.fire;
+    if (categoryId === "pool") return "/assets/icons/waves.svg";
+    if (categoryId === "study") return "/assets/icons/code-xml.svg";
+    return "/assets/icons/images.svg";
+  }
+
+  function getFaqTabIcon(categoryId) {
+    if (categoryId === "medicine") return ICON_MAP.med;
+    if (categoryId === "security") return ICON_MAP.lock;
+    if (categoryId === "food") return ICON_MAP.food;
+    if (categoryId === "living") return "/assets/icons/check.svg";
+    if (categoryId === "communication") return "/assets/icons/phone-mobile.svg";
+    if (categoryId === "organization") return ICON_MAP.clipboard;
+    if (categoryId === "other") return "/assets/icons/help-circle.svg";
+    return "/assets/icons/help-circle.svg";
+  }
+
+  function getFaqAnswerMap() {
+    var answers = {};
+    for (var i = 0; i < FAQ_DATA.length; i += 1) {
+      var group = FAQ_DATA[i];
+      if (!group || !group.items) continue;
+      for (var j = 0; j < group.items.length; j += 1) {
+        var item = group.items[j];
+        if (!item || !item.q || !item.a) continue;
+        answers[String(item.q)] = String(item.a);
+      }
+    }
+    return answers;
+  }
+
+  function buildCompactAiHeroMarkup() {
+    var stats = CONTENT_MAP.aiStats || [];
+    var copy = CONTENT_MAP.aiCopy || [];
+    if (!stats.length) return "";
+
+    var lead = stats[0] || {};
+    var leadValue = String(lead.value || "");
+    var leadText = String(lead.text || lead.label || "");
+
+    var miniStatsHtml = "";
+    for (var i = 1; i < stats.length; i += 1) {
+      var stat = stats[i] || {};
+      miniStatsHtml +=
+        '<article class="ac-compact-ai__mini">' +
+        '<div class="ac-compact-ai__mini-value">' + String(stat.value || "") + "</div>" +
+        '<div class="ac-compact-ai__mini-label">' + String(stat.label || "") + "</div>" +
+        "</article>";
+    }
+
+    var copyHtml = "";
+    for (var j = 0; j < copy.length; j += 1) {
+      copyHtml += "<p>" + String(copy[j] || "") + "</p>";
+    }
+
+    return (
+      '<li class="ac-compact-ai__lead">' +
+      '<div class="ac-compact-ai__lead-value">' + leadValue + "</div>" +
+      '<p class="ac-compact-ai__lead-text">' + leadText + "</p>" +
+      "</li>" +
+      '<li class="ac-compact-ai__stats">' + miniStatsHtml + "</li>" +
+      '<li class="ac-compact-ai__copy">' + copyHtml + "</li>"
+    );
+  }
+
+  function buildCompactPhotoHeroMarkup() {
+    var categories = CONTENT_MAP.photoCategories || [];
+    var photos = getFilteredPhotos();
+    var tabsHtml = "";
+    var gridHtml = "";
+    var i;
+
+    for (i = 0; i < categories.length; i += 1) {
+      var category = categories[i] || {};
+      var categoryId = String(category.id || "");
+      var categoryLabel = String(category.label || "");
+      if (!categoryId || !categoryLabel) continue;
+      tabsHtml +=
+        '<button class="ac-filter-chip ac-filter-chip--compact-photo' +
+        (state.photoCategory === categoryId ? " is-active" : "") +
+        '" type="button" data-action="photo-cat" data-photo-cat="' +
+        categoryId +
+        '">' +
+        categoryLabel +
+        "</button>";
+    }
+
+    for (i = 0; i < photos.length; i += 1) {
+      var photo = photos[i] || {};
+      var photoSrc = String(photo.src || "");
+      if (!photoSrc) continue;
+      gridHtml +=
+        '<button class="ac-compact-photo__thumb" type="button" data-action="photo-open" data-photo-index="' +
+        i +
+        '">' +
+        '<img src="' +
+        photoSrc +
+        '" alt="' +
+        String(photo.alt || "Фото лагеря") +
+        '">' +
+        "</button>";
+    }
+
+    if (!gridHtml) {
+      gridHtml = '<p class="ac-compact-photo__empty">Фото по этой теме скоро появятся.</p>';
+    }
+
+    return (
+      '<li class="ac-compact-photo">' +
+      '<div class="ac-compact-photo__tabs">' +
+      tabsHtml +
+      "</div>" +
+      '<div class="ac-compact-photo__grid-wrap">' +
+      '<div class="ac-compact-photo__grid">' +
+      gridHtml +
+      "</div>" +
+      "</div>" +
+      "</li>"
+    );
+  }
+
+  function buildCompactVideoHeroMarkup() {
+    var videos = CONTENT_MAP.videos || [];
+    var perPage = getCompactVideoPageSize();
+    var maxPage = Math.max(0, Math.ceil(videos.length / perPage) - 1);
+    var safePage = clamp(state.videoPage, 0, maxPage);
+    if (safePage !== state.videoPage) {
+      state.videoPage = safePage;
+    }
+    var start = safePage * perPage;
+    var pageItems = videos.slice(start, start + perPage);
+    var cardsHtml = "";
+
+    for (var i = 0; i < pageItems.length; i += 1) {
+      var item = pageItems[i] || {};
+      var listIndex = start + i;
+      var posterSrc = String(item.poster || item.posterMobile || "");
+      cardsHtml +=
+        '<article class="ac-compact-video__card">' +
+        '<button class="ac-compact-video__media" type="button" data-action="video-open" data-video-index="' +
+        listIndex +
+        '" aria-label="' +
+        CONTENT_MAP.ui.watchVideoLabel +
+        '">' +
+        '<img class="ac-compact-video__poster" src="' +
+        posterSrc +
+        '" alt="' +
+        String(item.title || "Видео из лагеря") +
+        '">' +
+        '<span class="ac-compact-video__play"><img class="ac-icon ac-icon--sm" src="' +
+        ICON_MAP.play +
+        '" alt="" aria-hidden="true"></span>' +
+        "</button>" +
+        '<p class="ac-compact-video__caption">' +
+        String(item.title || "") +
+        "</p>" +
+        "</article>";
+    }
+
+    return (
+      '<li class="ac-compact-video">' +
+      '<div class="ac-compact-video__grid' + mediaSwapClass("video") + '">' + cardsHtml + "</div>" +
+      '<div class="ac-compact-video__nav">' +
+      '<button class="ac-nav-btn" type="button" data-action="video-prev" ' +
+      (safePage <= 0 ? "disabled" : "") +
+      ' aria-label="' +
+      CONTENT_MAP.ui.prev +
+      '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronLeft + '" alt="" aria-hidden="true"></button>' +
+      '<button class="ac-nav-btn" type="button" data-action="video-next" ' +
+      (safePage >= maxPage ? "disabled" : "") +
+      ' aria-label="' +
+      CONTENT_MAP.ui.next +
+      '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronRight + '" alt="" aria-hidden="true"></button>' +
+      "</div>" +
+      "</li>"
+    );
+  }
+
+  function buildCompactFaqHeroMarkup() {
+    var faqTabs = CONTENT_MAP.faqTabs || [];
+    var faqItemsByCategory = CONTENT_MAP.faqItems || {};
+    var answers = getFaqAnswerMap();
+    var groupsHtml = "";
+
+    for (var i = 0; i < faqTabs.length; i += 1) {
+      var tab = faqTabs[i] || {};
+      var tabId = String(tab.id || "");
+      var tabLabel = String(tab.label || "");
+      if (!tabId || !tabLabel) continue;
+      var items = faqItemsByCategory[tabId] || [];
+      var questionsHtml = "";
+      var isActiveGroup = tabId === state.faqCategory;
+
+      for (var j = 0; j < items.length; j += 1) {
+        var question = String(items[j] || "");
+        if (!question) continue;
+        var answer = String(answers[question] || "");
+        var isOpen = isActiveGroup && j === 0 && !!answer;
+        questionsHtml +=
+          '<article class="ac-compact-faq__question' + (isOpen ? " is-open" : "") + '">' +
+          '<div class="ac-compact-faq__q">' + question + "</div>" +
+          (isOpen ? ('<div class="ac-compact-faq__a">' + answer + "</div>") : "") +
+          "</article>";
+      }
+
+      groupsHtml +=
+        '<section class="ac-compact-faq__group">' +
+        '<button class="ac-compact-faq__group-head" type="button" data-action="faq-cat" data-faq-cat="' +
+        tabId +
+        '">' +
+        '<img class="ac-icon ac-icon--sm" src="' +
+        getFaqTabIcon(tabId) +
+        '" alt="" aria-hidden="true">' +
+        '<span>' +
+        tabLabel +
+        "</span>" +
+        "</button>" +
+        '<div class="ac-compact-faq__questions">' +
+        questionsHtml +
+        "</div>" +
+        "</section>";
+    }
+
+    return (
+      '<li class="ac-compact-faq">' +
+      groupsHtml +
+      "</li>"
+    );
+  }
+
+  function buildCompactReviewsHeroMarkup() {
+    var reviews = CONTENT_MAP.reviews || [];
+    var perPage = getCompactReviewPageSize();
+    var maxPage = Math.max(0, Math.ceil(reviews.length / perPage) - 1);
+    var safePage = clamp(state.reviewPage, 0, maxPage);
+    if (safePage !== state.reviewPage) {
+      state.reviewPage = safePage;
+    }
+    var start = safePage * perPage;
+    var items = reviews.slice(start, start + perPage);
+    var cardsHtml = "";
+
+    for (var i = 0; i < items.length; i += 1) {
+      var item = items[i] || {};
+      cardsHtml +=
+        '<article class="ac-card ac-review-card ac-compact-reviews__card">' +
+        '<img class="ac-review-card__avatar" src="' + String(item.avatar || "") + '" alt="' + String(item.name || "") + '">' +
+        '<p class="ac-review-card__quote">“' + String(item.quote || "") + '”</p>' +
+        '<div class="ac-review-card__name">' + String(item.name || "") + "</div>" +
+        '<div class="ac-review-card__meta">' + String(item.meta || "") + "</div>" +
+        '<div class="ac-review-card__stars">★★★★★</div>' +
+        "</article>";
+    }
+
+    return (
+      '<li class="ac-compact-reviews">' +
+      '<div class="ac-compact-reviews__grid' + mediaSwapClass("review") + '">' +
+      cardsHtml +
+      "</div>" +
+      '<div class="ac-compact-reviews__footer">' +
+      '<div class="ac-compact-reviews__nav">' +
+      '<button class="ac-nav-btn" type="button" data-action="reviews-prev" ' +
+      (safePage <= 0 ? "disabled" : "") +
+      ' aria-label="' +
+      CONTENT_MAP.ui.prev +
+      '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronLeft + '" alt="" aria-hidden="true"></button>' +
+      '<button class="ac-nav-btn" type="button" data-action="reviews-next" ' +
+      (safePage >= maxPage ? "disabled" : "") +
+      ' aria-label="' +
+      CONTENT_MAP.ui.next +
+      '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronRight + '" alt="" aria-hidden="true"></button>' +
+      "</div>" +
+      '<a class="ac-reviews-yandex-link ac-compact-reviews__link" href="' +
+      (((CONTENT_MAP.ui && CONTENT_MAP.ui.yandexReviewsUrl) || "https://yandex.ru/maps/org/aydakemp/35558479035/reviews/")) +
+      '" target="_blank" rel="noopener">' +
+      "Смотреть на Яндекс Картах" +
+      "</a>" +
+      "</div>" +
+      "</li>"
+    );
+  }
+
+  function buildCompactTeamHeroMarkup() {
+    var team = CONTENT_MAP.team || [];
+    var perPage = getCompactTeamPageSize();
+    var maxPage = Math.max(0, Math.ceil(team.length / perPage) - 1);
+    var safePage = clamp(state.teamPage, 0, maxPage);
+    if (safePage !== state.teamPage) {
+      state.teamPage = safePage;
+    }
+    var start = safePage * perPage;
+    var items = team.slice(start, start + perPage);
+    var cardsHtml = "";
+    var bookUrl = (CONTENT_MAP.ui && CONTENT_MAP.ui.programmingBookUrl) || "https://www.codims.ru/python-book";
+
+    for (var i = 0; i < items.length; i += 1) {
+      var member = items[i] || {};
+      cardsHtml +=
+        '<article class="ac-card ac-team-card ac-compact-team__card">' +
+        '<img class="ac-team-card__avatar" src="' + String(member.avatar || "") + '" alt="' + String(member.name || "") + '">' +
+        '<h3>' + String(member.name || "") + "</h3>" +
+        '<p class="ac-team-card__role">' + String(member.role || "") + "</p>" +
+        '<p>' + String(member.bio || "") + "</p>" +
+        "</article>";
+    }
+
+    return (
+      '<li class="ac-compact-team">' +
+      '<div class="ac-compact-team__grid' + mediaSwapClass("team") + '">' +
+      cardsHtml +
+      "</div>" +
+      '<div class="ac-compact-team__nav">' +
+      '<button class="ac-nav-btn" type="button" data-action="team-prev" ' +
+      (safePage <= 0 ? "disabled" : "") +
+      ' aria-label="' +
+      CONTENT_MAP.ui.prev +
+      '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronLeft + '" alt="" aria-hidden="true"></button>' +
+      '<button class="ac-nav-btn" type="button" data-action="team-next" ' +
+      (safePage >= maxPage ? "disabled" : "") +
+      ' aria-label="' +
+      CONTENT_MAP.ui.next +
+      '">' +
+      '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronRight + '" alt="" aria-hidden="true"></button>' +
+      "</div>" +
+      '<div class="ac-compact-team__link-row">' +
+      '<a class="ac-compact-team__link" href="' + bookUrl + '" target="_blank" rel="noopener">Учебник по программированию</a>' +
+      "</div>" +
+      "</li>"
+    );
   }
 
   function renderProgramSectionMarkup() {
@@ -1914,7 +2809,11 @@
         '" type="button" data-action="photo-cat" data-photo-cat="' +
         category.id +
         '">' +
+        '<img class="ac-icon ac-icon--sm" src="' +
+        getPhotoCategoryIcon(category.id) +
+        '" alt="" aria-hidden="true"><span>' +
         category.label +
+        "</span>" +
         "</button>";
     }
 
@@ -1955,7 +2854,7 @@
       '"><img class="ac-icon ac-icon--sm" src="' +
       ICON_MAP.chevronLeft +
       '" alt="" aria-hidden="true"></button>' +
-      '<div class="ac-photo-strip">' +
+      '<div class="ac-photo-strip' + mediaSwapClass("photo") + '">' +
       images +
       '</div>' +
       '<button class="ac-nav-btn" type="button" data-action="photo-next" ' +
@@ -1991,35 +2890,29 @@
     var mobileMedia = isMobileMediaLayout();
 
     for (var i = 0; i < items.length; i += 1) {
-      var embedUrl = rutubeEmbedUrl(items[i].url);
       var listIndex = start + i;
-      var posterSrc = String((mobileMedia && items[i].posterMobile) || items[i].poster || "");
-      var mediaMarkup = "";
-      if (embedUrl && !mobileMedia) {
-        mediaMarkup =
-          '<iframe class="ac-video-card__frame" src="' +
-          embedUrl +
-          '" title="' +
-          items[i].title +
-          '" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
-      } else {
-        mediaMarkup =
-          '<img class="ac-video-card__poster" src="' +
-          posterSrc +
-          '" alt="' +
-          items[i].title +
-          '"><button class="ac-video-card__play" type="button" aria-label="' +
-          CONTENT_MAP.ui.watchVideoLabel +
-          '" data-action="video-open" data-video-index="' +
-          String(listIndex) +
-          '"><img class="ac-icon ac-icon--sm" src="' +
-          ICON_MAP.play +
-          '" alt="" aria-hidden="true"></button><button class="ac-video-card__open" type="button" aria-label="' +
-          CONTENT_MAP.ui.watchVideoLabel +
-          '" data-action="video-open" data-video-index="' +
-          String(listIndex) +
-          '"></button>';
-      }
+      var posterSrc = String(
+        (mobileMedia && items[i].posterMobile) ||
+        items[i].poster ||
+        items[i].posterMobile ||
+        ""
+      );
+      var mediaMarkup =
+        '<img class="ac-video-card__poster" src="' +
+        posterSrc +
+        '" alt="' +
+        items[i].title +
+        '"><button class="ac-video-card__play" type="button" aria-label="' +
+        CONTENT_MAP.ui.watchVideoLabel +
+        '" data-action="video-open" data-video-index="' +
+        String(listIndex) +
+        '"><img class="ac-icon ac-icon--sm" src="' +
+        ICON_MAP.play +
+        '" alt="" aria-hidden="true"></button><button class="ac-video-card__open" type="button" aria-label="' +
+        CONTENT_MAP.ui.watchVideoLabel +
+        '" data-action="video-open" data-video-index="' +
+        String(listIndex) +
+        '"></button>';
       cards +=
         '<article class="ac-video-card">' +
         mediaMarkup +
@@ -2038,7 +2931,7 @@
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
       ICON_MAP.chevronLeft +
-      '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--3 ac-video-grid">' +
+      '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--3 ac-video-grid' + mediaSwapClass("video") + '">' +
       cards +
       '</div><button class="ac-nav-btn" type="button" data-action="video-next" ' +
       (safePage >= maxPage ? "disabled" : "") +
@@ -2079,14 +2972,14 @@
     return (
       '<h2>' +
       CONTENT_MAP.sectionTitles.reviews +
-      '</h2><div class="ac-media-row">' +
+      '</h2><div class="ac-media-row ac-media-row--reviews">' +
       '<button class="ac-nav-btn" type="button" data-action="reviews-prev" ' +
       (safePage <= 0 ? "disabled" : "") +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
       ICON_MAP.chevronLeft +
-      '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--4">' +
+      '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--4 ac-grid--reviews' + mediaSwapClass("review") + '">' +
       cards +
       '</div><button class="ac-nav-btn" type="button" data-action="reviews-next" ' +
       (safePage >= maxPage ? "disabled" : "") +
@@ -2139,7 +3032,7 @@
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
       ICON_MAP.chevronLeft +
-      '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--4">' +
+      '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--4 ac-team-grid' + mediaSwapClass("team") + '">' +
       cards +
       '</div><button class="ac-nav-btn" type="button" data-action="team-next" ' +
       (safePage >= maxPage ? "disabled" : "") +
@@ -2152,23 +3045,41 @@
   }
 
   function renderFaqSectionMarkup() {
+    var faqTabs = CONTENT_MAP.faqTabs || [];
+    var faqItemsByCategory = CONTENT_MAP.faqItems || {};
+    if (!faqTabs.length || !hasOwn(faqItemsByCategory, state.faqCategory)) {
+      state.faqCategory = faqTabs.length ? faqTabs[0].id : "medicine";
+    }
+
     var tabs = "";
-    for (var i = 0; i < CONTENT_MAP.faqTabs.length; i += 1) {
-      var tab = CONTENT_MAP.faqTabs[i];
+    for (var i = 0; i < faqTabs.length; i += 1) {
+      var tab = faqTabs[i];
       tabs +=
         '<button class="ac-filter-chip' +
         (state.faqCategory === tab.id ? " is-active" : "") +
         '" type="button" data-action="faq-cat" data-faq-cat="' +
         tab.id +
         '">' +
+        '<img class="ac-icon ac-icon--sm" src="' +
+        getFaqTabIcon(tab.id) +
+        '" alt="" aria-hidden="true"><span>' +
         tab.label +
+        "</span>" +
         "</button>";
     }
 
-    var items = CONTENT_MAP.faqItems[state.faqCategory] || CONTENT_MAP.faqItems.medicine;
+    var items = faqItemsByCategory[state.faqCategory] || faqItemsByCategory.medicine || [];
+    var answerMap = getFaqAnswerMap();
     var list = "";
     for (var j = 0; j < items.length; j += 1) {
-      list += '<details class="ac-faq-item"><summary>' + items[j] + "</summary></details>";
+      var q = String(items[j] || "");
+      var a = String(answerMap[q] || "");
+      list +=
+        '<details class="ac-faq-item"><summary>' +
+        q +
+        "</summary>" +
+        (a ? ('<div class="ac-faq-item__answer">' + a + "</div>") : "") +
+        "</details>";
     }
 
     return (
@@ -2290,11 +3201,11 @@
   function renderStaticLabels() {
     var techBadge = document.getElementById("acTechBadge");
     if (techBadge) {
-      var dismissed = false;
+      var dismissed = techBadgeDismissedInSession;
       try {
-        dismissed = localStorage.getItem(TECH_BADGE_DISMISSED_KEY) === "1";
+        dismissed = dismissed || localStorage.getItem(TECH_BADGE_DISMISSED_KEY) === "1";
       } catch (_errDismiss) {
-        dismissed = false;
+        dismissed = dismissed || false;
       }
 
       var now = new Date();
@@ -2314,6 +3225,14 @@
         '" alt="" aria-hidden="true">' +
         "</button>";
       techBadge.hidden = dismissed;
+      var techBadgeCloseButton = techBadge.querySelector('[data-action="tech-badge-close"]');
+      if (techBadgeCloseButton) {
+        techBadgeCloseButton.addEventListener("click", function (event) {
+          dismissTechBadge();
+          event.preventDefault();
+          event.stopPropagation();
+        });
+      }
     }
 
     var assignments = [
@@ -2433,8 +3352,10 @@
 
     function renderFeaturedShiftItem(shift, meta, promoView) {
       var actionClass = "ac-shift-price-btn";
-      if (promoView.status === "active") {
-        actionClass += " is-fixed";
+      if (promoView.status === "checking_first") {
+        actionClass += " is-processing";
+      } else if (promoView.status === "active") {
+        actionClass += " is-recalc";
       } else if (promoView.status === "phone_gate") {
         actionClass += " is-fix";
       } else if (promoView.stage >= 2) {
@@ -2443,10 +3364,45 @@
         actionClass += " is-upgrade";
       }
 
-      var showOccupancy = promoView.stage > 0 || promoView.status === "active" || promoView.status === "phone_gate";
-      var occupancyTitle = showOccupancy ? "Смена заполнена" : "Проверяем заполненность смены...";
+      var showOccupancy = promoView.stage >= 1 && promoView.status !== "checking_first";
+      var occupancyTitle = showOccupancy ? "Смена заполнена" : "";
       var occupancyPercent = showOccupancy ? meta.occupancyPercent : 0;
-      var occupancyLine = showOccupancy ? meta.occupancyLine : "забронировано —";
+      var occupancyLine = showOccupancy ? meta.occupancyLine : "";
+      var searchProgress = clamp(Number(promoView.searchProgress || 0), 0, 100);
+      var showSearchChecklist = promoView.status === "checking_first" || promoView.stage >= 1;
+      var showRejectStatus = promoView.status === "checking_first";
+      var status1Done = promoView.status !== "checking_first" || searchProgress >= 22;
+      var status2Done = promoView.status !== "checking_first" || searchProgress >= 58;
+      var phoneGateLeftMarkup = "";
+      if (promoView.status === "phone_gate") {
+        phoneGateLeftMarkup =
+          '<div class="ac-shift-item__phone-gate">' +
+          '<label class="ac-shift-item__phone-label" for="acShiftFixPhone">' +
+          "Чтобы мы вас запомнили, введите телефон и зафиксируйте, пожалуйста, цену." +
+          "</label>" +
+          '<input id="acShiftFixPhone" class="ac-shift-item__phone-input" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" value="' +
+          formatPhoneInput(promoView.pendingPhone || "") +
+          '">' +
+          "</div>";
+      }
+      var searchChecklistMarkup = "";
+      if (showSearchChecklist) {
+        searchChecklistMarkup =
+          '<div class="ac-shift-item__search">' +
+          '<div class="ac-shift-item__search-status' + (status1Done ? " is-done" : " is-active") + '">' +
+          "Проверяем наличие мест" +
+          "</div>" +
+          '<div class="ac-shift-item__search-status' + (status2Done ? " is-done" : " is-active") + '">' +
+          "Проверяем предварительное бронирование" +
+          "</div>" +
+          (showRejectStatus
+            ? '<div class="ac-shift-item__search-status is-active">Ищем отказы</div>'
+            : "") +
+          (promoView.status === "checking_first"
+            ? '<div class="ac-shift-item__search-progress"><span style="width:' + searchProgress + '%;"></span></div>'
+            : "") +
+          "</div>";
+      }
       var promoMarkup = "";
       if (promoView.status === "active") {
         promoMarkup =
@@ -2470,16 +3426,6 @@
           "</div>";
       }
 
-      var phoneGateMarkup = "";
-      if (promoView.status === "phone_gate") {
-        phoneGateMarkup =
-          '<div class="ac-shift-item__phone-gate">' +
-          '<input id="acShiftFixPhone" class="ac-shift-item__phone-input" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" value="' +
-          formatPhoneInput(promoView.pendingPhone || "") +
-          '">' +
-          "</div>";
-      }
-
       return (
         '<article class="ac-shift-item ac-shift-item--featured is-active">' +
         '<div class="ac-shift-item--featured__left">' +
@@ -2492,28 +3438,33 @@
         "</button>" +
         "</div>" +
         '<div class="ac-shift-item__meta">' + shift.summary + "</div>" +
-        '<div class="ac-shift-item__occupancy">' +
-        '<div class="ac-shift-item__occupancy-title">' + occupancyTitle + "</div>" +
-        '<div class="ac-shift-item__occupancy-kpi">' +
-        '<strong>' + occupancyPercent + "%</strong>" +
-        '<div class="ac-shift-item__occupancy-bar"><span style="width:' + occupancyPercent + '%;"></span></div>' +
-        "</div>" +
-        '<div class="ac-shift-item__occupancy-meta">' + occupancyLine + "</div>" +
-        "</div>" +
+        phoneGateLeftMarkup +
+        searchChecklistMarkup +
+        (showOccupancy
+          ? ('<div class="ac-shift-item__occupancy">' +
+            '<div class="ac-shift-item__occupancy-title">' + occupancyTitle + "</div>" +
+            '<div class="ac-shift-item__occupancy-kpi">' +
+            '<strong>' + occupancyPercent + "%</strong>" +
+            '<div class="ac-shift-item__occupancy-bar"><span class="is-animated" style="width:' + occupancyPercent + '%;"></span></div>' +
+            "</div>" +
+            '<div class="ac-shift-item__occupancy-meta">' + occupancyLine + "</div>" +
+            "</div>")
+          : "") +
         '<div class="ac-shift-item__meta-hint">' + (promoView.metaText || "") + "</div>" +
         "</div>" +
-        '<div class="ac-shift-item--featured__right' + (promoView.status === "phone_gate" ? " is-phone-gate" : "") + '">' +
+        '<div class="ac-shift-item--featured__right">' +
         '<div class="ac-shift-item__price-caption">Цена подтверждена для вас</div>' +
         '<div class="ac-shift-item__price-shell">' +
         '<div class="ac-shift-item__price-old' + (promoView.oldPrice ? "" : " is-empty") + '">' + (promoView.oldPrice || "—") + "</div>" +
         '<div class="ac-shift-item__price">' + formatPriceNumber(promoView.price) + "</div>" +
         "</div>" +
         promoMarkup +
-        phoneGateMarkup +
         '<div class="ac-shift-item__actions">' +
         '<button class="ac-primary-btn ' + actionClass + '" type="button" data-action="' +
         (promoView.status === "phone_gate" ? "shift-fix" : "shift-price") +
-        '" data-shift-id="' + shift.id + '">' +
+        '" data-shift-id="' + shift.id + '"' +
+        (promoView.actionDisabled ? ' disabled aria-disabled="true"' : "") +
+        ">" +
         promoView.actionText +
         "</button>" +
         "</div>" +
@@ -2695,14 +3646,33 @@
     if (!shift) return;
     state.selectedShiftId = shift.id;
     state.direction = shift.direction;
-    if (promo.status === "active") {
-      var lead = loadBookingLead() || {};
-      if (!lead.submitted) {
-        state.step = SHIFTS.length - 1;
-      } else if (state.step === 0 && ageSelectionConfirmed) {
-        state.step = 1;
+    if (state.step === 0 && ageSelectionConfirmed) {
+      state.step = 1;
+    }
+  }
+
+  function hydrateBookingLeadState() {
+    var lead = loadBookingLead();
+    if (!lead || typeof lead !== "object") return;
+
+    if (Number(lead.age) >= 7 && Number(lead.age) <= 14) {
+      state.age = clamp(Number(lead.age), 7, 14);
+      ageSelectionConfirmed = true;
+      persistAge(state.age);
+      if (auditRuntime.active) {
+        auditRuntime.ageSelected = true;
       }
-    } else if (state.step === 0 && ageSelectionConfirmed) {
+    }
+
+    if (lead.shiftId) {
+      var shift = findExactShiftById(String(lead.shiftId));
+      if (shift) {
+        state.selectedShiftId = shift.id;
+        state.direction = shift.direction;
+      }
+    }
+
+    if (state.step === 0 && ageSelectionConfirmed) {
       state.step = 1;
     }
   }
@@ -2734,15 +3704,7 @@
   function handleClick(event) {
     var techBadgeClose = event.target.closest('[data-action="tech-badge-close"]');
     if (techBadgeClose) {
-      var techBadge = document.getElementById("acTechBadge");
-      if (techBadge) {
-        techBadge.hidden = true;
-      }
-      try {
-        localStorage.setItem(TECH_BADGE_DISMISSED_KEY, "1");
-      } catch (_errTechBadge) {
-        // ignore storage errors
-      }
+      dismissTechBadge();
       event.preventDefault();
       event.stopPropagation();
       return;
@@ -2795,12 +3757,57 @@
 
     var resumeBooking = event.target.closest('[data-action="resume-booking"]');
     if (resumeBooking) {
-      setStep(SHIFTS.length - 1);
+      var resumePromo = loadShiftPromo();
+      if (resumePromo && resumePromo.shiftId) {
+        var resumeShift = findExactShiftById(resumePromo.shiftId);
+        if (resumeShift) {
+          state.selectedShiftId = resumeShift.id;
+          state.direction = resumeShift.direction;
+        }
+      } else {
+        var resumeLead = loadBookingLead();
+        if (resumeLead && resumeLead.shiftId) {
+          var leadShift = findExactShiftById(String(resumeLead.shiftId));
+          if (leadShift) {
+            state.selectedShiftId = leadShift.id;
+            state.direction = leadShift.direction;
+          }
+        }
+      }
+      var resumeMode = String(resumeBooking.getAttribute("data-resume-mode") || "");
+      if (resumeMode === "shift") {
+        setOverlay("shifts", true);
+      } else {
+        setStep(SHIFTS.length - 1);
+      }
       return;
     }
 
     var promoReset = event.target.closest('[data-action="promo-reset"]');
     if (promoReset) {
+      var promoBeforeReset = loadShiftPromo();
+      var bookingLeadBeforeReset = loadBookingLead() || {};
+      var allowReset = true;
+      if (promoBeforeReset) {
+        allowReset = window.confirm("Вы хотите отказаться от брони?");
+      }
+      if (!allowReset) {
+        return;
+      }
+      if (promoBeforeReset) {
+        sendLeadNotification("promo_cancelled", {
+          lead_type: "booking_cancelled",
+          status: "cancelled",
+          phone: String(bookingLeadBeforeReset.phone || promoBeforeReset.phone || ""),
+          name: String(bookingLeadBeforeReset.name || ""),
+          shift_id: String(promoBeforeReset.shiftId || ""),
+          shift_name: String(promoBeforeReset.shiftName || ""),
+          price_final: Number(promoBeforeReset.finalPrice || 0),
+          promo_code: String(promoBeforeReset.code || ""),
+          promo_expires_at_ts: Number(promoBeforeReset.expiresAt || 0),
+          promo_expires_at_local: formatPromoDeadline(promoBeforeReset.expiresAt || 0)
+        });
+      }
       clearBookingStatus();
       setOverlay("shifts", false);
       if (state.step === SHIFTS.length - 1) {
@@ -2809,6 +3816,7 @@
         renderInfoCard();
         renderFunnel();
       }
+      window.alert("Бронь отменена");
       return;
     }
 
@@ -2940,8 +3948,10 @@
       var bookingName = document.getElementById("acBookingName");
       var bookingPhone = document.getElementById("acBookingPhone");
       var bookingConsent = document.getElementById("acBookingConsent");
+      var bookingNotice = document.getElementById("acBookingPromoNotice");
       var bookingShift = document.getElementById("acBookingShift");
       var bookingPrice = document.getElementById("acBookingPrice");
+      var bookingDiscount = document.getElementById("acBookingDiscount");
       var bookingPromo = document.getElementById("acBookingPromo");
       var phoneRaw = bookingPhone ? bookingPhone.value : "";
       var normalizedPhone = normalizePhone(phoneRaw);
@@ -2953,6 +3963,7 @@
         return;
       }
       if (bookingConsent && !bookingConsent.checked) {
+        alert("Пожалуйста, согласитесь с обработкой персональных данных.");
         bookingConsent.focus();
         return;
       }
@@ -2961,24 +3972,34 @@
         bookingPhone.style.borderColor = "";
       }
 
-      saveBookingLead({
-        name: bookingName ? String(bookingName.value || "").trim() : "",
-        phone: normalizedPhone,
-        shiftId: state.selectedShiftId,
-        shiftText: bookingShift ? String(bookingShift.value || "") : "",
-        priceText: bookingPrice ? String(bookingPrice.value || "") : "",
-        promoCode: bookingPromo ? String(bookingPromo.value || "") : "",
-        consent: !!(bookingConsent && bookingConsent.checked),
-        submitted: true,
-        submittedAt: Date.now()
-      });
-
       var bookingShiftItem = findShiftById(state.selectedShiftId);
       var bookingShiftIdx = SHIFTS.indexOf(bookingShiftItem);
       var bookingShiftMeta = bookingShiftIdx >= 0
         ? getShiftPriceMeta(bookingShiftItem, bookingShiftIdx)
         : null;
       var bookingPromoState = loadShiftPromo();
+      var basePrice = bookingShiftMeta ? Number(bookingShiftMeta.basePrice || 0) : 0;
+      var finalPrice = bookingPromoState ? Number(bookingPromoState.finalPrice || basePrice) : basePrice;
+      var discountAmount = Math.max(0, basePrice - finalPrice);
+
+      saveBookingLead({
+        name: bookingName ? String(bookingName.value || "").trim() : "",
+        phone: normalizedPhone,
+        shiftId: state.selectedShiftId,
+        shiftText: bookingShift ? String(bookingShift.value || "") : "",
+        priceText: bookingPrice ? String(bookingPrice.value || "") : "",
+        priceBase: basePrice,
+        priceFinal: finalPrice,
+        discountText: bookingDiscount ? String(bookingDiscount.value || "") : "",
+        discountValue: discountAmount,
+        promoCode: bookingPromo ? String(bookingPromo.value || "") : "",
+        consent: !!(bookingConsent && bookingConsent.checked),
+        submitted: true,
+        submittedAt: Date.now(),
+        age: state.age,
+        expiresAt: bookingPromoState ? Number(bookingPromoState.expiresAt || 0) : 0
+      });
+
       sendLeadNotification("booking_submitted", {
         lead_type: "booking_final",
         status: "final",
@@ -3000,6 +4021,12 @@
 
       bookingSubmit.disabled = true;
       bookingSubmit.textContent = "Заявка отправлена";
+      if (bookingNotice) {
+        bookingNotice.hidden = false;
+        bookingNotice.textContent = "Ваша бронь оформлена, ждите подтверждения от менеджера.";
+      }
+      renderInfoCard();
+      renderFunnel();
       return;
     }
 
@@ -4273,6 +5300,7 @@
   function bootstrap() {
     hydrateAgeState();
     hydratePromoState();
+    hydrateBookingLeadState();
     renderLayout();
     renderStaticLabels();
     renderMenu();
@@ -4281,6 +5309,7 @@
     renderSections();
     renderFooter();
     renderOverlays();
+    startHeroSlideshow();
 
     var storedMode = getStoredMode();
     track("page_loaded", {
