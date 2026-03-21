@@ -1073,7 +1073,7 @@
           ICON_MAP.chevronRight +
           '" alt="" aria-hidden="true">';
         nextBtn.setAttribute("aria-label", "Следующий шаг");
-      } else if (state.step >= SHIFTS.length - 1) {
+      } else {
         nextBtn.classList.remove("ac-primary-btn--intro");
         nextBtn.classList.add("ac-primary-btn--cta");
         nextBtn.innerHTML =
@@ -1082,11 +1082,6 @@
           '</span><img class="ac-icon ac-icon--sm" src="' +
           ICON_MAP.chevronRight +
           '" alt="" aria-hidden="true">';
-        nextBtn.removeAttribute("aria-label");
-      } else {
-        nextBtn.classList.remove("ac-primary-btn--intro");
-        nextBtn.classList.remove("ac-primary-btn--cta");
-        nextBtn.textContent = shift.nextCta;
         nextBtn.removeAttribute("aria-label");
       }
     }
@@ -1966,7 +1961,7 @@
 
     var nextStep = event.target.closest('[data-action="step-next"]');
     if (nextStep) {
-      if (state.step >= SHIFTS.length - 1) {
+      if (state.step > 0) {
         if (state.overlays.shifts) {
           return;
         }
