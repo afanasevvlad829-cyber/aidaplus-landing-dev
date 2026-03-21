@@ -42,7 +42,7 @@ echo "$TS_HUMAN created file backup: $FILE_ARCHIVE" >> "$LOG"
 {
   echo "## $TS_HUMAN"
   echo "- Статус: выполнен полный файловый бэкап."
-  echo "- Архив проекта: \\`$FILE_ARCHIVE\\` ($(human "$FILE_SIZE"))"
-  echo "- Git bundle: \\`$GIT_BUNDLE\\` ($(human "$BUNDLE_SIZE"))"
+  echo "- Архив проекта: \`$FILE_ARCHIVE\` ($(human "$FILE_SIZE"))"
+  echo "- Git bundle: \`$GIT_BUNDLE\` ($(human "$BUNDLE_SIZE"))"
   echo
 } >> "$JOURNAL_RU"
