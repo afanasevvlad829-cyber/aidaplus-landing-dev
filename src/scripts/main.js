@@ -309,7 +309,8 @@
       model = {
         title: sectionTitles.reviews || "Отзывы родителей",
         subtitle: "Реальные отзывы о сменах.",
-        progress: "",
+        progress: (CONTENT_MAP.ui && CONTENT_MAP.ui.yandexReviewsLabel) || "",
+        progressLink: (CONTENT_MAP.ui && CONTENT_MAP.ui.yandexReviewsUrl) || "",
         benefits: reviewBenefits
       };
     } else if (state.activeTab === "team") {
@@ -1184,11 +1185,20 @@
     if (subtitle) subtitle.textContent = compactModel && compactModel.subtitle ? compactModel.subtitle : HERO_SUBTITLE_STATIC;
     if (progress) {
       var progressText = compactModel ? String(compactModel.progress || "") : profile.progress;
-      progress.textContent = progressText;
+      if (compactModel && compactModel.progressLink && progressText) {
+        progress.innerHTML =
+          '<a class="ac-reviews-yandex-link" href="' +
+          compactModel.progressLink +
+          '" target="_blank" rel="noopener">' +
+          progressText +
+          "</a>";
+      } else {
+        progress.textContent = progressText;
+      }
       progress.style.display = progressText ? "" : "none";
     }
     if (ageText) {
-      ageText.textContent = profile.ageText;
+      ageText.textContent = ageSelectionConfirmed ? "" : "Передвиньте слайдер, чтобы выбрать возраст";
       ageText.style.display = ageSelectionConfirmed ? "none" : "";
     }
     if (ageLabel) {
@@ -1563,7 +1573,12 @@
       CONTENT_MAP.ui.next +
       '"><img class="ac-icon ac-icon--sm" src="' +
       ICON_MAP.chevronRight +
-      '" alt="" aria-hidden="true"></button></div>'
+      '" alt="" aria-hidden="true"></button></div>' +
+      '<div class="ac-reviews-link-row"><a class="ac-reviews-yandex-link" href="' +
+      (((CONTENT_MAP.ui && CONTENT_MAP.ui.yandexReviewsUrl) || "https://yandex.ru/maps/org/aydakemp/35558479035/reviews/")) +
+      '" target="_blank" rel="noopener">' +
+      (((CONTENT_MAP.ui && CONTENT_MAP.ui.yandexReviewsLabel) || "Отзывы на Яндекс Картах")) +
+      "</a></div>"
     );
   }
 

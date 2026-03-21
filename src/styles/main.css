@@ -555,6 +555,10 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
   cursor: pointer;
 }
 
+.ac-age-reset[hidden] {
+  display: none !important;
+}
+
 .ac-age-reset:hover,
 .ac-age-reset:focus-visible {
   border-color: #ef8300;
@@ -630,6 +634,7 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
 .ac-social--yt { background: #f94123; }
 .ac-social--ig { background: linear-gradient(120deg, #f7bd3f, #ce37b8); }
 .ac-social--dz { background: #f3ae1a; }
+.ac-social--fb { background: #1877f2; }
 
 .ac-hero-right {
   position: relative;
@@ -1320,6 +1325,36 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   color: #ef8300;
   font-size: var(--font-size-chip);
   letter-spacing: var(--space-2xs);
+}
+
+.ac-reviews-link-row {
+  margin-top: var(--space-md);
+  display: flex;
+  justify-content: center;
+}
+
+.ac-reviews-yandex-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: var(--chip-height);
+  padding: 0 var(--space-lg);
+  border-radius: var(--radius-pill);
+  border: var(--border-1) solid #dce2ee;
+  background: #fff;
+  color: #2f3a56;
+  text-decoration: none;
+  font-size: var(--font-size-chip);
+  font-weight: 700;
+  transition: border-color 140ms ease-out, color 140ms ease-out, background-color 140ms ease-out;
+}
+
+.ac-reviews-yandex-link:hover,
+.ac-reviews-yandex-link:focus-visible {
+  border-color: #ef8300;
+  color: #dd7600;
+  background: #fff8eb;
+  outline: none;
 }
 
 .ac-team-card {
