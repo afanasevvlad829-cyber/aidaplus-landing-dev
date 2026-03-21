@@ -2399,6 +2399,10 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
     min-height: var(--hero-min-height-mobile);
   }
 
+  body[data-mode="compact"] .ac-hero-right:not(.is-intro) {
+    min-height: clamp(620px, 78vh, 760px);
+  }
+
   .ac-contact-panel {
     top: var(--space-md);
     left: var(--space-md);
@@ -2425,7 +2429,7 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   }
 
   .ac-hero-overlay {
-    top: 76px;
+    top: clamp(88px, 11vh, 112px);
     left: var(--space-md);
     right: var(--space-md);
     bottom: var(--space-md);
@@ -2463,8 +2467,18 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   }
 
   .ac-hero-grid__item {
-    min-height: 70px;
-    padding: var(--space-sm) var(--space-md);
+    min-height: clamp(62px, 8.2vh, 74px);
+    padding: clamp(8px, 1.8vw, 10px) clamp(10px, 2.4vw, 12px);
+  }
+
+  .ac-hero-grid__copy strong {
+    font-size: clamp(20px, 5vw, 28px);
+    line-height: 1.15;
+  }
+
+  .ac-hero-grid__copy small {
+    font-size: clamp(14px, 3.9vw, 18px);
+    line-height: 1.2;
   }
 
   .ac-funnel-controls {
@@ -2479,8 +2493,11 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
 
   .ac-funnel-controls .ac-primary-btn--cta {
     height: 44px;
-    font-size: var(--font-size-base);
-    padding: 0 var(--space-md);
+    font-size: clamp(14px, 4vw, 18px);
+    padding: 0 clamp(10px, 2.8vw, 16px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .ac-primary-btn {
