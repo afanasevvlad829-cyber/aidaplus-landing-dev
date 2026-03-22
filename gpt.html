@@ -495,6 +495,210 @@
       letter-spacing:.08em;
     }
 
+    .photo-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+    }
+
+    .photo-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:#fff;
+      min-height:180px;
+      box-shadow:var(--shadow);
+    }
+
+    .photo-card img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      aspect-ratio: 4 / 3;
+    }
+
+    .photo-badge{
+      position:absolute;
+      left:10px;
+      bottom:10px;
+      padding:6px 9px;
+      border-radius:999px;
+      background:rgba(17,24,39,.76);
+      color:#fff;
+      font-size:11px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      backdrop-filter:blur(8px);
+    }
+
+    .video-list{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+    }
+
+    .video-card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:var(--shadow);
+      display:grid;
+      gap:12px;
+    }
+
+    .video-poster{
+      min-height:150px;
+      border-radius:16px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,138,0,.18), transparent 28%),
+        linear-gradient(135deg,#dfe7f3,#a9b8cb 50%,#6f829a);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .video-poster::after{
+      content:"VIDEO";
+      position:absolute;
+      left:12px;
+      bottom:12px;
+      color:#fff;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.14em;
+      opacity:.92;
+    }
+
+    .video-play{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .video-play span{
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      background:rgba(255,255,255,.92);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--accent);
+      font-size:22px;
+      box-shadow:0 14px 28px rgba(20,29,45,.14);
+    }
+
+    .video-card h4{
+      margin:0;
+      font-size:16px;
+      line-height:1.35;
+      letter-spacing:-.01em;
+    }
+
+    .video-card a{
+      text-decoration:none;
+    }
+
+    .contacts-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .contact-link{
+      display:grid;
+      justify-items:center;
+      gap:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      padding:16px;
+      text-align:center;
+      text-decoration:none;
+      color:var(--text);
+      box-shadow:var(--shadow);
+    }
+
+    .contact-link:hover,
+    .social-link:hover,
+    .video-card:hover,
+    .photo-card:hover{
+      transform:translateY(-2px);
+      transition:.2s ease;
+    }
+
+    .contact-link .contact-icon{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:#fff1df;
+      color:#d66a00;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      font-weight:800;
+    }
+
+    .contact-link strong{
+      display:block;
+      font-size:14px;
+    }
+
+    .contact-link span{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .socials-grid{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:10px;
+    }
+
+    .social-link{
+      display:grid;
+      justify-items:center;
+      align-content:center;
+      gap:8px;
+      min-height:92px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      text-decoration:none;
+      color:var(--text);
+      box-shadow:var(--shadow);
+      padding:10px 8px;
+    }
+
+    .social-glyph{
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      background:#f5f7fb;
+      border:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:13px;
+      font-weight:800;
+      text-transform:uppercase;
+    }
+
+    .social-link span{
+      font-size:11px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
     .team-grid{
       display:grid;
       grid-template-columns:repeat(3,1fr);
@@ -880,7 +1084,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.4 (patch-04)
+    v0.0.5 (patch-05)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -978,20 +1182,14 @@
 
           <section class="section-card" id="section-photos">
             <h3>Фото</h3>
-            <div class="slot-grid">
-              <div class="slot">Photo 1</div>
-              <div class="slot">Photo 2</div>
-              <div class="slot">Photo 3</div>
-            </div>
+            <p style="margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.55;">Актуальная подборка фотографий из текущего сайта.</p>
+            <div class="photo-grid" id="photoGrid"></div>
           </section>
 
           <section class="section-card" id="section-videos">
             <h3>Видео</h3>
-            <div class="slot-grid">
-              <div class="slot">Video 1</div>
-              <div class="slot">Video 2</div>
-              <div class="slot">Video 3</div>
-            </div>
+            <p style="margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.55;">Короткие видео с текущего сайта: про изменения ребёнка, внутреннюю экономику и отказ от телефона.</p>
+            <div class="video-list" id="videoList"></div>
           </section>
 
           <section class="section-card" id="section-reviews">
@@ -1053,24 +1251,8 @@
 
           <section class="section-card" id="section-contacts">
             <h3>Контакты и соцсети</h3>
-            <div class="contacts-row">
-              <div class="contact-card">
-                <div class="contact-icon">✈</div>
-                <strong>Telegram</strong>
-              </div>
-              <div class="contact-card">
-                <div class="contact-icon">W</div>
-                <strong>WhatsApp</strong>
-              </div>
-              <div class="contact-card">
-                <div class="contact-icon">☎</div>
-                <strong>Телефон</strong>
-              </div>
-              <div class="contact-card">
-                <div class="contact-icon">@</div>
-                <strong>Email</strong>
-              </div>
-            </div>
+            <div class="contacts-grid" id="contactsGrid"></div>
+            <div class="socials-grid" id="socialsGrid"></div>
           </section>
 
           <footer>
@@ -1198,6 +1380,48 @@
       {id:'shift-3',title:'3 смена',dates:'16 июня — 23 июня',price:65000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
       {id:'shift-4',title:'4 смена',dates:'10 июня — 23 июня',price:95000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'}
     ];
+
+    const mediaContent = {
+      photos: [
+        {cat:'all',src:'https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg',alt:'all'},
+        {cat:'all',src:'https://static.tildacdn.com/tild6436-6337-4466-b637-623363613935/photo.jpg',alt:'all'},
+        {cat:'all',src:'https://static.tildacdn.com/tild6666-3333-4534-a639-386666343634/photo_2025-06-14_08-.jpg',alt:'all'},
+        {cat:'all',src:'https://static.tildacdn.com/tild6336-6536-4238-a436-303937666565/photo_2025-06-17_13-.jpg',alt:'all'},
+        {cat:'study',src:'https://static.tildacdn.com/tild3263-3537-4961-b536-363837386238/IMG_1543.JPG',alt:'study'},
+        {cat:'food',src:'https://static.tildacdn.com/tild6330-6330-4664-b762-666363643137/photo_2025-06-14_08-.jpg',alt:'food'},
+        {cat:'food',src:'https://static.tildacdn.com/tild3864-3738-4763-b633-303434303665/photo_2025-06-14_08-.jpg',alt:'food'},
+        {cat:'food',src:'https://static.tildacdn.com/tild3134-3366-4638-b331-366662396639/photo.jpg',alt:'food'},
+        {cat:'study',src:'https://static.tildacdn.com/tild3066-3464-4137-a537-626336356335/photo_2025-06-14_08-.jpg',alt:'study'},
+        {cat:'study',src:'https://static.tildacdn.com/tild3637-6139-4636-b261-386434323832/photo_2025-06-14_08-.jpg',alt:'study'},
+        {cat:'study',src:'https://static.tildacdn.com/tild6266-6134-4235-b166-393766376531/photo_2025-06-14_08-.jpg',alt:'study'},
+        {cat:'study',src:'https://static.tildacdn.com/tild3238-6633-4862-a535-373731303734/photo_2025-06-14_08-.jpg',alt:'study'},
+        {cat:'pool',src:'https://static.tildacdn.com/tild6135-3464-4332-b565-386630323830/photo_2025-06-14_08-.jpg',alt:'pool'},
+        {cat:'pool',src:'https://static.tildacdn.com/tild3932-3632-4530-b038-613561623337/photo_2025-06-14_08-.jpg',alt:'pool'},
+        {cat:'sport',src:'https://static.tildacdn.com/tild3639-3532-4334-b035-316562666439/photo.jpg',alt:'sport'},
+        {cat:'sport',src:'https://static.tildacdn.com/tild3963-3938-4335-b335-656531616265/photo_2025-06-14_07-.jpg',alt:'sport'},
+        {cat:'sport',src:'https://static.tildacdn.com/tild6538-6438-4432-b737-313138346237/photo_2025-06-14_08-.jpg',alt:'sport'}
+      ],
+      videos: [
+        {title:'За неделю в лагере ребёнок меняется больше, чем за год дома',url:'https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/'},
+        {title:'Зачем детям копить деньги в лагере?',url:'https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/'},
+        {title:'Ребёнок сам откажется от телефона за 3 дня?',url:'https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/'}
+      ],
+      contacts: [
+        {label:'city_phone',href:'tel:+74951234567',text:'+7 (495) 123-45-67'},
+        {label:'mobile_phone',href:'tel:+79688086455',text:'+7 (968) 808-64-55'},
+        {label:'whatsapp',href:'https://wa.me/79688086455',text:'WhatsApp'},
+        {label:'telegram',href:'https://t.me/proga_school',text:'@proga_school'}
+      ],
+      socials: [
+        {key:'vk',href:'https://vk.com/aida_codit',label:'vk'},
+        {key:'ig',href:'https://www.instagram.com/',label:'ig'},
+        {key:'yt',href:'https://www.youtube.com/channel/UCavd6BfrYQ32HQX_S4iZ02g',label:'yt'},
+        {key:'fb',href:'https://www.facebook.com/',label:'fb'},
+        {key:'dz',href:'https://dzen.ru/',label:'dz'},
+        {key:'yp',href:'https://yappy.media/',label:'yp'},
+        {key:'in',href:'https://www.linkedin.com/',label:'in'}
+      ]
+    };
 
     const STORAGE_KEY = 'aidacamp_proto_state_v3';
 
@@ -1460,6 +1684,57 @@
       `).join('');
     }
 
+    function iconGlyph(label){
+      const map = {
+        city_phone:'☎',
+        mobile_phone:'📱',
+        whatsapp:'W',
+        telegram:'✈'
+      };
+      return map[label] || '•';
+    }
+
+    function renderMediaSections(){
+      const photoGrid = document.getElementById('photoGrid');
+      const videoList = document.getElementById('videoList');
+      const contactsGrid = document.getElementById('contactsGrid');
+      const socialsGrid = document.getElementById('socialsGrid');
+
+      photoGrid.innerHTML = mediaContent.photos.map(item => `
+        <div class="photo-card">
+          <img src="${item.src}" alt="${item.alt}">
+          <div class="photo-badge">${item.cat}</div>
+        </div>
+      `).join('');
+
+      videoList.innerHTML = mediaContent.videos.map(item => `
+        <div class="video-card">
+          <a href="${item.url}" target="_blank" rel="noopener noreferrer">
+            <div class="video-poster">
+              <div class="video-play"><span>▶</span></div>
+            </div>
+          </a>
+          <h4>${item.title}</h4>
+          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="cta-main" style="text-align:center;text-decoration:none;">Смотреть видео</a>
+        </div>
+      `).join('');
+
+      contactsGrid.innerHTML = mediaContent.contacts.map(item => `
+        <a class="contact-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
+          <div class="contact-icon">${iconGlyph(item.label)}</div>
+          <strong>${item.text}</strong>
+          <span>${item.label.replace('_',' ')}</span>
+        </a>
+      `).join('');
+
+      socialsGrid.innerHTML = mediaContent.socials.map(item => `
+        <a class="social-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
+          <div class="social-glyph">${item.label}</div>
+          <span>${item.key}</span>
+        </a>
+      `).join('');
+    }
+
     function renderAll(){
       renderShiftOptions('desktopShiftOptions');
       renderShiftOptions('mobileShiftOptions');
@@ -1683,6 +1958,7 @@
     renderShiftOptions('desktopShiftOptions');
     renderShiftOptions('mobileShiftOptions');
     renderShiftCards();
+    renderMediaSections();
     renderSummary();
     renderBookingPanels();
     switchView(state.view || 'desktop');
