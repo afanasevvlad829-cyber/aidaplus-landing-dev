@@ -797,6 +797,7 @@
       border-radius:20px;
       padding:16px;
       text-align:center;
+      box-shadow:var(--shadow);
     }
 
     .team-avatar{
@@ -805,6 +806,15 @@
       border-radius:50%;
       margin:0 auto 12px;
       background:linear-gradient(135deg,#ffd8b3,#ffb15e);
+      overflow:hidden;
+      border:1px solid var(--line);
+    }
+
+    .team-avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
     }
 
     .team-card strong{
@@ -817,6 +827,133 @@
       color:var(--muted);
       font-size:13px;
       line-height:1.45;
+    }
+
+    .team-role{
+      display:block;
+      color:#111827;
+      font-size:13px;
+      font-weight:700;
+      line-height:1.45;
+      margin-bottom:8px;
+    }
+
+    .trust-callout{
+      margin-bottom:14px;
+      border-radius:22px;
+      padding:18px;
+      border:1px solid var(--line);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,138,0,.12), transparent 24%),
+        linear-gradient(135deg,#fff8f0,#ffffff);
+      box-shadow:var(--shadow);
+    }
+
+    .trust-callout h4{
+      margin:0 0 8px;
+      font-size:22px;
+      letter-spacing:-.03em;
+      line-height:1.15;
+    }
+
+    .trust-callout p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .book-card{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:14px;
+      align-items:center;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:22px;
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+
+    .book-card h4{
+      margin:0 0 6px;
+      font-size:18px;
+      letter-spacing:-.02em;
+    }
+
+    .book-card p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .faq-groups{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .faq-group{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:20px;
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+
+    .faq-group-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .faq-icon{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      background:#fff1df;
+      color:#d66a00;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      flex:0 0 auto;
+    }
+
+    .faq-group-head strong{
+      font-size:16px;
+      letter-spacing:-.01em;
+    }
+
+    .faq-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .faq-line{
+      padding:12px 14px;
+      border-radius:16px;
+      background:#fafbfd;
+      border:1px solid #eef1f5;
+    }
+
+    .faq-line strong{
+      display:block;
+      margin-bottom:6px;
+      font-size:14px;
+      line-height:1.45;
+    }
+
+    .faq-line span{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
     }
 
     .faq-grid{
@@ -1147,6 +1284,9 @@
       .video-feature{
         grid-template-columns:1fr;
       }
+      .book-card{
+        grid-template-columns:1fr;
+      }
     }
 
     @media (max-width: 820px){
@@ -1183,7 +1323,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.7 (patch-07)
+    v0.0.8 (patch-08b)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -1316,41 +1456,26 @@
 
           <section class="section-card" id="section-faq">
             <h3>FAQ</h3>
-            <div class="faq-grid">
-              <div class="faq-item">
-                <strong>Как проходит бронирование?</strong>
-                <span>Вы выбираете возраст и смену, мы можем закрепить более выгодную цену, затем вы отправляете заявку — и мы подтверждаем бронь вручную.</span>
-              </div>
-              <div class="faq-item">
-                <strong>Нужно ли платить сразу?</strong>
-                <span>Нет. Сначала вы оставляете заявку, потом мы связываемся с вами.</span>
-              </div>
-              <div class="faq-item">
-                <strong>Что входит в программу?</strong>
-                <span>IT-проекты, бассейн, спорт, внутренняя экономика, командная работа и защита результата.</span>
-              </div>
-            </div>
+            <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.55;">Собрали ключевые вопросы родителей по медицине, безопасности, питанию, проживанию и связи.</p>
+            <div class="faq-groups" id="faqGroups"></div>
           </section>
 
           <section class="section-card" id="section-team">
             <h3>Команда</h3>
-            <div class="team-grid">
-              <div class="team-card">
-                <div class="team-avatar"></div>
-                <strong>Дарья Афанасьева</strong>
-                <span>Основатель и идеолог лагеря</span>
-              </div>
-              <div class="team-card">
-                <div class="team-avatar"></div>
-                <strong>Никита</strong>
-                <span>Преподаватель Python и проектной работы</span>
-              </div>
-              <div class="team-card">
-                <div class="team-avatar"></div>
-                <strong>Александр</strong>
-                <span>Наставник по Scratch, играм и командным задачам</span>
-              </div>
+            <div class="trust-callout">
+              <h4>Преподаватели, которые пишут учебники — а не пересказывают их</h4>
+              <p>Команда лагеря не только ведёт занятия, но и создаёт собственные учебные материалы и игровые методики. Это видно и по урокам, и по проектам детей, и по авторской книге по Python.</p>
             </div>
+
+            <div class="book-card">
+              <div>
+                <h4>Книга по Python от команды</h4>
+                <p>Отдельный trust-маркер: собственный учебный материал команды, который можно показать родителям как доказательство экспертизы.</p>
+              </div>
+              <a class="inline-link-btn primary" id="bookLinkBtn" href="#" target="_blank" rel="noopener noreferrer">Смотреть книгу</a>
+            </div>
+
+            <div class="team-grid" id="teamGrid"></div>
           </section>
 
           <section class="section-card" id="section-contacts">
@@ -1486,6 +1611,96 @@
     ];
 
     const mediaContent = {
+      references: {
+        yandexReviewsLabel: 'Отзывы на Яндекс Картах',
+        yandexReviewsUrl: 'https://yandex.ru/maps/org/aydakemp/35558479035/reviews/',
+        locationMapUrl: 'https://yandex.ru/map-widget/v1/?ll=36.719422%2C55.261573&z=15&pt=36.719422,55.261573,pm2rdm',
+        programmingBookUrl: 'https://www.codims.ru/python-book'
+      },
+      faq: [
+        {
+          group:'Медицина',
+          icon:'/assets/icons/med.svg',
+          items:[
+            {q:'Есть ли медик в лагере?',a:'Медработник на территории 24/7 всю смену.'},
+            {q:'Что если ребёнок заболеет?',a:'Медик осматривает, при необходимости вызывает скорую. Вы получите звонок сразу.'},
+            {q:'Можно давать лекарства?',a:'Передайте медику с инструкцией — будет выдавать по расписанию.'}
+          ]
+        },
+        {
+          group:'Безопасность',
+          icon:'/assets/icons/lock.svg',
+          items:[
+            {q:'Территория закрыта?',a:'Да, огорожена, КПП с охраной. Посторонние не допускаются.'},
+            {q:'Сколько детей на вожатого?',a:'Не более 8–10 детей, вожатые работают в парах.'}
+          ]
+        },
+        {
+          group:'Питание',
+          icon:'/assets/icons/food.svg',
+          items:[
+            {q:'Сколько раз кормят?',a:'5 раз в день: завтрак, второй завтрак, обед, полдник, ужин. Всё горячее.'},
+            {q:'Учитываются аллергии?',a:'Да. В лагере гипоаллергенная среда: минимум растений, которые вызывают аллергию.'}
+          ]
+        },
+        {
+          group:'Проживание',
+          icon:'/assets/icons/check.svg',
+          items:[
+            {q:'Сколько детей в комнате?',a:'2–4 человека, все удобства на этаже.'}
+          ]
+        },
+        {
+          group:'Связь',
+          icon:'/assets/icons/phone-mobile.svg',
+          items:[
+            {q:'Будет ли телефон у ребёнка?',a:'Лагерь «без телефонов». Сдаётся на хранение, звонки родителям 1–2 раза в день.'},
+            {q:'Как следить что происходит?',a:'Родительский Telegram-чат, фото каждый день.'}
+          ]
+        }
+      ],
+      team: [
+        {
+          teamId:'team_01',
+          bindKey:'дарья_афанасьева',
+          fio:'Дарья Афанасьева',
+          role:'основатель и вдохновитель АйДаКемп',
+          avatarUrl:'https://static.tildacdn.com/tild3633-3838-4462-a338-336166376565/photo.png',
+          bio:'предприниматель в сфере детского IT-образования и мама подростка, которая строит лагерь таким, каким сама хотела бы видеть обучение своего ребёнка.'
+        },
+        {
+          teamId:'team_02',
+          bindKey:'никита_брагин',
+          fio:'Никита Брагин',
+          role:'преподаватель Scratch, Minecraft и Python',
+          avatarUrl:'https://static.tildacdn.com/tild3830-6337-4038-b634-333236613738/photo.png',
+          bio:'автор учебника по разработке игр; специализируется на геймдеве и помогает детям создавать собственные игровые миры.'
+        },
+        {
+          teamId:'team_03',
+          bindKey:'александр_ташкин',
+          fio:'Александр Ташкин',
+          role:'преподаватель Scratch, Minecraft и Python',
+          avatarUrl:'https://static.tildacdn.com/tild3639-3337-4636-a233-306337633035/photo.png',
+          bio:'соавтор учебника по разработке игр; умеет зажигать интерес к программированию через практические задачи и командные проекты.'
+        },
+        {
+          teamId:'team_04',
+          bindKey:'омар_алхамви',
+          fio:'Омар Алхамви',
+          role:'преподаватель Python и нейросетей',
+          avatarUrl:'https://static.tildacdn.com/tild3737-3334-4538-a139-656430373836/photo.png',
+          bio:'работает со старшими и продвинутыми группами, часть занятий ведёт на английском и показывает, как применять AI в реальных проектах.'
+        },
+        {
+          teamId:'team_05',
+          bindKey:'дарья_воронцова',
+          fio:'Дарья Воронцова',
+          role:'преподаватель Python и Scratch',
+          avatarUrl:'https://static.tildacdn.com/tild3931-6630-4534-b239-373333393430/ChatGPT_Image_18__20.png',
+          bio:'помогает детям легко войти в программирование через игры, логику и первые самостоятельные программы.'
+        }
+      ],
       photos: [
         {cat:'all',src:'https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg',alt:'all'},
         {cat:'all',src:'https://static.tildacdn.com/tild6436-6337-4466-b637-623363613935/photo.jpg',alt:'all'},
@@ -1798,11 +2013,23 @@
       return map[label] || '•';
     }
 
+    function faqGlyph(iconPath, groupName){
+      if(iconPath && iconPath.includes('med')) return 'MED';
+      if(iconPath && iconPath.includes('lock')) return 'SAFE';
+      if(iconPath && iconPath.includes('food')) return 'FOOD';
+      if(iconPath && iconPath.includes('check')) return 'ROOM';
+      if(iconPath && iconPath.includes('phone')) return 'CALL';
+      return groupName.slice(0,3).toUpperCase();
+    }
+
     function renderMediaSections(){
       const photoGrid = document.getElementById('photoGrid');
       const videoList = document.getElementById('videoList');
       const contactsGrid = document.getElementById('contactsGrid');
       const socialsGrid = document.getElementById('socialsGrid');
+      const faqGroups = document.getElementById('faqGroups');
+      const teamGrid = document.getElementById('teamGrid');
+      const bookLinkBtn = document.getElementById('bookLinkBtn');
 
       photoGrid.innerHTML = mediaContent.photos.map((item, idx) => `
         <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}">
@@ -1832,6 +2059,8 @@
         mainVideoBox.href = mediaContent.videos[0].url;
       }
 
+      bookLinkBtn.href = mediaContent.references.programmingBookUrl;
+
       contactsGrid.innerHTML = mediaContent.contacts.map(item => `
         <a class="contact-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
           <div class="contact-icon">${iconGlyph(item.label)}</div>
@@ -1845,6 +2074,34 @@
           <div class="social-glyph">${item.label}</div>
           <span>${item.key}</span>
         </a>
+      `).join('');
+
+      faqGroups.innerHTML = mediaContent.faq.map(group => `
+        <div class="faq-group">
+          <div class="faq-group-head">
+            <div class="faq-icon">${faqGlyph(group.icon, group.group)}</div>
+            <strong>${group.group}</strong>
+          </div>
+          <div class="faq-list">
+            ${group.items.map(item => `
+              <div class="faq-line">
+                <strong>${item.q}</strong>
+                <span>${item.a}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      teamGrid.innerHTML = mediaContent.team.map(item => `
+        <div class="team-card">
+          <div class="team-avatar">
+            <img src="${item.avatarUrl}" alt="${item.fio}">
+          </div>
+          <strong>${item.fio}</strong>
+          <span class="team-role">${item.role}</span>
+          <span>${item.bio}</span>
+        </div>
       `).join('');
     }
 
