@@ -126,6 +126,12 @@
       color:#fff;
     }
 
+    .mobile-hero{
+      min-height:unset;
+      padding:18px 16px 20px;
+      border-radius:30px;
+    }
+
     .hero-topbar{
       display:flex;
       align-items:center;
@@ -219,11 +225,22 @@
       max-width:760px;
     }
 
+    .mobile-hero .hero-content h2{
+      font-size:28px;
+      line-height:1.1;
+      max-width:none;
+    }
+
     .hero-sub{
       color:rgba(255,255,255,.84);
       font-size:17px;
       line-height:1.5;
       margin-bottom:20px;
+    }
+
+    .mobile-hero .hero-sub{
+      font-size:15px;
+      margin-bottom:16px;
     }
 
     .hero-slogan{
@@ -244,6 +261,16 @@
       flex-wrap:wrap;
       gap:10px;
       margin-top:16px;
+    }
+
+    .mobile-hero .hero-proofline{
+      gap:8px;
+      margin-top:14px;
+    }
+
+    .mobile-hero .hero-proofline span{
+      font-size:11px;
+      padding:7px 9px;
     }
 
     .hero-proofline span{
@@ -308,6 +335,29 @@
       color:#fff;
     }
 
+    .mobile-booking-card{
+      position:static !important;
+      width:100% !important;
+      margin-top:18px;
+      padding:18px;
+      border-radius:24px;
+      background:rgba(12,17,24,.78);
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter:blur(18px);
+      box-shadow:0 22px 60px rgba(0,0,0,.30);
+    }
+
+    .mobile-booking-card h3{
+      font-size:20px;
+      margin:0 0 8px;
+    }
+
+    .mobile-booking-card p{
+      font-size:13px;
+      line-height:1.5;
+      margin:0 0 14px;
+    }
+
     .hero-booking-card h3{
       margin:0 0 8px;
       font-size:21px;
@@ -336,6 +386,11 @@
       background:rgba(255,255,255,.06);
       color:rgba(255,255,255,.54);
       border:1px solid rgba(255,255,255,.08);
+    }
+
+    .mobile-booking-card .booking-step{
+      font-size:10px;
+      padding:8px 4px;
     }
 
     .booking-step.active{
@@ -384,6 +439,21 @@
       border:1px solid transparent;
     }
 
+    .mobile-booking-card .shift-option{
+      padding:11px 12px;
+      border-radius:16px;
+    }
+
+    .mobile-booking-card .shift-option strong{
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .mobile-booking-card .shift-option small{
+      font-size:11px;
+      line-height:1.4;
+    }
+
     .shift-option:hover{
       transform:translateY(-1px);
       box-shadow:0 10px 24px rgba(20,29,45,.08);
@@ -417,6 +487,11 @@
       margin-bottom:13px;
     }
 
+    .mobile-booking-card .booking-price-box{
+      border-radius:16px;
+      padding:13px 13px 12px;
+    }
+
     .booking-price-head{
       display:flex;
       justify-content:space-between;
@@ -438,11 +513,19 @@
       color:#fff;
     }
 
+    .mobile-booking-card .booking-price-main{
+      font-size:17px;
+    }
+
     .booking-price-main.big{
       font-size:24px;
       font-weight:900;
       color:#fff3e0;
       letter-spacing:-.03em;
+    }
+
+    .mobile-booking-card .booking-price-main.big{
+      font-size:21px;
     }
 
     .booking-code-line{
@@ -483,6 +566,12 @@
       transition:transform .15s ease, box-shadow .15s ease;
     }
 
+    .mobile-booking-card .cta-main{
+      padding:15px 16px;
+      font-size:15px;
+      border-radius:15px;
+    }
+
     .cta-main:hover{
       transform:translateY(-2px) scale(1.01);
       box-shadow:0 22px 55px rgba(255,122,0,.55);
@@ -501,6 +590,11 @@
       text-align:center;
     }
 
+    .mobile-booking-card .cta-subtext{
+      font-size:11px;
+      margin-top:7px;
+    }
+
     .trust-mini{
       margin-top:15px;
       display:flex;
@@ -510,10 +604,21 @@
       color:rgba(255,255,255,.65);
     }
 
+    .mobile-booking-card .trust-mini{
+      gap:8px;
+      margin-top:12px;
+      font-size:11px;
+    }
+
     .trust-mini span{
       background:rgba(255,255,255,.08);
       padding:5px 9px;
       border-radius:10px;
+    }
+
+    .mobile-booking-card .trust-mini span{
+      padding:5px 8px;
+      border-radius:9px;
     }
 
     .under-cta{
@@ -1613,6 +1718,28 @@
       .summary-right{
         justify-content:space-between;
       }
+
+      .hero-topbar{
+        margin-bottom:18px;
+      }
+
+      .hero-tag{
+        margin-bottom:14px;
+      }
+
+      .feature-row{
+        gap:8px;
+      }
+
+      .feature-pill{
+        min-width:unset;
+        width:calc(50% - 4px);
+        padding:10px 11px;
+      }
+
+      .occupancy-badge{
+        margin-top:14px;
+      }
     }
   </style>
 </head>
@@ -1632,7 +1759,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.16 (patch-14)
+    v0.0.17 (patch-15)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -1920,7 +2047,7 @@
 
     <div id="mobileView" class="hidden">
       <div class="screen" style="max-width:520px;margin:0 auto;">
-        <div class="hero-shell">
+        <div class="hero-shell mobile-hero">
           <div class="hero-topbar">
             <div class="brand">
               <span class="brand-logo" aria-hidden="true">
@@ -1944,8 +2071,12 @@
 
           <div class="hero-content" style="max-width:100%;">
             <div class="hero-tag">IT-лагерь для детей 7–14 лет</div>
-            <h2 style="font-size:24px;">AiDaCamp — лагерь, где дети создают, а не потребляют</h2>
+            <h2 style="font-size:24px;">Лагерь, где ребёнок создаёт, а не потребляет</h2>
             <div class="hero-sub">Без телефонов • Программирование • Спорт • Живая атмосфера</div>
+
+            <div class="hero-slogan">
+              Мы не играем в игры — мы их создаём
+            </div>
 
             <div class="feature-row">
               <div class="feature-pill"><strong>IT-проекты</strong>Scratch и Python</div>
@@ -1955,7 +2086,13 @@
 
             <div class="occupancy-badge" id="mobileOccupancyBadge">⚡ 65% мест уже занято</div>
 
-            <div class="hero-booking-card" style="position:static;width:100%;margin-top:18px;">
+            <div class="hero-proofline">
+              <span>● проекты за смену</span>
+              <span>● бассейн каждый день</span>
+              <span>● своя программа</span>
+            </div>
+
+            <div class="hero-booking-card mobile-booking-card" style="position:static;width:100%;margin-top:18px;">
               <div class="booking-steps" id="mobileBookingSteps">
                 <div class="booking-step active">Возраст</div>
                 <div class="booking-step">Смена</div>
@@ -1974,8 +2111,13 @@
               <div id="mobileBookingInfo" style="margin-bottom:12px;"></div>
               <div id="mobileShiftOptions"></div>
 
-              <button class="cta-main" id="mobileStartBtn">Сначала выберите смену</button>
-              <div class="under-cta" id="mobileBookingHint">Покажем актуальные условия и остаток мест</div>
+              <button class="cta-main" id="mobileStartBtn">Забронировать место →</button>
+              <div class="cta-subtext" id="mobileBookingHint">Без оплаты • Ответим в течение 5 минут</div>
+              <div class="trust-mini">
+                <span>45 мест в смене</span>
+                <span>IT + спорт</span>
+                <span>Без гаджетов</span>
+              </div>
             </div>
           </div>
         </div>
