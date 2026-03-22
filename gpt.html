@@ -85,6 +85,38 @@
       background:linear-gradient(135deg,var(--accent),var(--accent-2));
       color:#fff;
     }
+
+    .mobile-mode-wrap{
+      display:flex;
+      justify-content:center;
+      margin:0 0 14px;
+    }
+
+    .mobile-mode-switch{
+      display:flex;
+      gap:8px;
+      padding:8px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      box-shadow:var(--shadow);
+    }
+
+    .mobile-mode-btn{
+      border:none;
+      border-radius:999px;
+      padding:10px 14px;
+      background:transparent;
+      color:var(--text);
+      font-weight:700;
+      font-size:13px;
+      cursor:pointer;
+    }
+
+    .mobile-mode-btn.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+    }
     .switch-btn{
       border:none;
       border-radius:999px;
@@ -115,6 +147,10 @@
 
     .compact-mode .hero-shell{
       min-height:560px;
+    }
+
+    .mobile-compact-mode .mobile-body-sections{
+      display:none !important;
     }
 
     .compact-trust-entry{
@@ -653,6 +689,43 @@
       color:rgba(255,255,255,.78);
       font-size:12px;
       line-height:1.5;
+    }
+
+    .selected-age-chip{
+      display:none;
+      align-items:center;
+      gap:10px;
+      margin:0 0 12px;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      width:max-content;
+      max-width:100%;
+    }
+
+    .selected-age-chip.visible{
+      display:inline-flex;
+    }
+
+    .selected-age-chip button{
+      border:none;
+      width:24px;
+      height:24px;
+      border-radius:8px;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
+    .age-tabs.hidden{
+      display:none !important;
     }
     .age-tab{
       flex:1;
@@ -2263,7 +2336,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.21 (patch-19)
+    v0.0.22 (patch-20)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -2362,8 +2435,12 @@
             <p id="desktopBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
             <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
+            <div class="selected-age-chip" id="desktopAgeChip">
+              <span id="desktopAgeChipText">Возраст: —</span>
+              <button type="button" onclick="resetAgeSelection()">×</button>
+            </div>
             <div class="age-tabs" id="desktopAgeTabs">
-              <button class="age-tab active" data-age="7-9">7–9 лет</button>
+              <button class="age-tab" data-age="7-9">7–9 лет</button>
               <button class="age-tab" data-age="10-12">10–12 лет</button>
               <button class="age-tab" data-age="13-14">13–14 лет</button>
             </div>
@@ -2577,6 +2654,13 @@
     </div>
 
     <div id="mobileView" class="hidden">
+      <div class="mobile-mode-wrap">
+        <div class="mobile-mode-switch">
+          <button class="mobile-mode-btn active" id="mobileFullModeBtn">Полная версия</button>
+          <button class="mobile-mode-btn" id="mobileCompactModeBtn">Сокращённая версия</button>
+        </div>
+      </div>
+
       <div class="screen" style="max-width:520px;margin:0 auto;">
         <div class="hero-shell mobile-hero">
           <div class="hero-topbar">
@@ -2597,7 +2681,7 @@
               </span>
               AiDaCamp
             </div>
-            <button class="menu-pill" onclick="switchView('desktop')">Полная версия</button>
+            <button class="menu-pill" type="button">Mobile</button>
           </div>
 
           <div class="hero-content" style="max-width:100%;">
@@ -2634,8 +2718,12 @@
               <p id="mobileBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
               <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
+              <div class="selected-age-chip" id="mobileAgeChip">
+                <span id="mobileAgeChipText">Возраст: —</span>
+                <button type="button" onclick="resetAgeSelection()">×</button>
+              </div>
               <div class="age-tabs" id="mobileAgeTabs">
-                <button class="age-tab active" data-age="7-9">7–9 лет</button>
+                <button class="age-tab" data-age="7-9">7–9 лет</button>
                 <button class="age-tab" data-age="10-12">10–12 лет</button>
                 <button class="age-tab" data-age="13-14">13–14 лет</button>
               </div>
@@ -2660,6 +2748,28 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="mobile-body-sections" style="padding:18px;display:grid;gap:14px;">
+          <section class="section-card">
+            <h3>О лагере</h3>
+            <p>AiDaCamp — это формат, где ребёнок не просто занят, а реально создаёт: проекты, друзья, спорт, защита результатов и среда без бессмысленного скроллинга.</p>
+          </section>
+
+          <section class="section-card">
+            <h3>Фото</h3>
+            <div class="compact-panel-photo-grid" id="mobileInlinePhotoGrid"></div>
+          </section>
+
+          <section class="section-card">
+            <h3>Видео</h3>
+            <div class="compact-panel-video-list" id="mobileInlineVideoList"></div>
+          </section>
+
+          <section class="section-card">
+            <h3>Отзывы</h3>
+            <div class="compact-panel-review-list" id="mobileInlineReviewsList"></div>
+          </section>
         </div>
       </div>
     </div>
@@ -2944,6 +3054,7 @@
 
     let timerId = null;
     state.desktopMode = state.desktopMode || 'full';
+    state.mobileMode = state.mobileMode || 'full';
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
 
     function persist(){
@@ -3089,6 +3200,13 @@
       return !!state.ageSelected;
     }
 
+    function ageLabel(value){
+      if(value === '7-9') return '7–9 лет';
+      if(value === '10-12') return '10–12 лет';
+      if(value === '13-14') return '13–14 лет';
+      return '—';
+    }
+
     function isOfferActive(){
       return !!(state.expiresAt && Date.now() < state.expiresAt);
     }
@@ -3188,17 +3306,26 @@
       const shiftList = document.getElementById(`${prefix}ShiftList`);
       const hint = document.getElementById(`${prefix}GuidedHint`);
       const ctaWrap = document.getElementById(`${prefix}CtaWrap`);
+      const ageTabs = document.getElementById(`${prefix}AgeTabs`);
+      const ageChip = document.getElementById(`${prefix}AgeChip`);
+      const ageChipText = document.getElementById(`${prefix}AgeChipText`);
 
-      if(!shiftList || !hint || !ctaWrap) return;
+      if(!shiftList || !hint || !ctaWrap || !ageTabs || !ageChip || !ageChipText) return;
 
       shiftList.classList.remove('disabled','highlight');
       ctaWrap.classList.remove('highlight');
+      ageTabs.classList.remove('hidden');
+      ageChip.classList.remove('visible');
 
       if(!hasSelectedAge()){
         shiftList.classList.add('disabled');
         hint.textContent = 'Сначала выберите возраст ребёнка. Это нужно, чтобы показать подходящие смены.';
         return;
       }
+
+      ageChipText.textContent = `Возраст: ${ageLabel(state.age)}`;
+      ageChip.classList.add('visible');
+      ageTabs.classList.add('hidden');
 
       if(hasSelectedAge() && !state.shiftId){
         shiftList.classList.add('highlight');
@@ -3320,10 +3447,29 @@
       persist();
     }
 
+    function applyMobileMode(){
+      const mobileView = document.getElementById('mobileView');
+      const fullBtn = document.getElementById('mobileFullModeBtn');
+      const compactBtn = document.getElementById('mobileCompactModeBtn');
+      if(!mobileView || !fullBtn || !compactBtn) return;
+
+      mobileView.classList.toggle('mobile-compact-mode', state.mobileMode === 'compact');
+      fullBtn.classList.toggle('active', state.mobileMode === 'full');
+      compactBtn.classList.toggle('active', state.mobileMode === 'compact');
+    }
+
+    function switchMobileMode(mode){
+      state.mobileMode = mode;
+      applyMobileMode();
+      persist();
+    }
+
     document.getElementById('desktopBtn').addEventListener('click', () => switchView('desktop'));
     document.getElementById('mobileBtn').addEventListener('click', () => switchView('mobile'));
     document.getElementById('fullModeBtn').addEventListener('click', () => switchDesktopMode('full'));
     document.getElementById('compactModeBtn').addEventListener('click', () => switchDesktopMode('compact'));
+    document.getElementById('mobileFullModeBtn').addEventListener('click', () => switchMobileMode('full'));
+    document.getElementById('mobileCompactModeBtn').addEventListener('click', () => switchMobileMode('compact'));
 
     document.querySelectorAll('[data-ctp-tab]').forEach(btn => {
       btn.addEventListener('click', () => setCompactTrustTab(btn.dataset.ctpTab));
@@ -3361,6 +3507,27 @@
           persist();
         });
       });
+    }
+
+    function resetAgeSelection(){
+      state.age = null;
+      state.ageSelected = false;
+      state.shiftId = null;
+      state.basePrice = null;
+      state.offerPrice = null;
+      state.code = null;
+      state.expiresAt = null;
+      state.offerStage = 0;
+
+      ['desktopAgeTabs','mobileAgeTabs'].forEach(id => {
+        const root = document.getElementById(id);
+        if(root){
+          root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
+        }
+      });
+
+      renderAll();
+      persist();
     }
 
     bindAgeTabs('desktopAgeTabs');
@@ -3545,9 +3712,20 @@
       const compactPhotoGrid = document.getElementById('compactPhotoGrid');
       const compactVideoList = document.getElementById('compactVideoList');
       const compactReviewsList = document.getElementById('compactReviewsList');
+      const mobileInlinePhotoGrid = document.getElementById('mobileInlinePhotoGrid');
+      const mobileInlineVideoList = document.getElementById('mobileInlineVideoList');
+      const mobileInlineReviewsList = document.getElementById('mobileInlineReviewsList');
 
       if (compactPhotoGrid) {
         compactPhotoGrid.innerHTML = mediaContent.photos.slice(0,8).map(item => `
+          <div class="compact-panel-photo">
+            <img src="${item.src}" alt="${item.alt}">
+          </div>
+        `).join('');
+      }
+
+      if (mobileInlinePhotoGrid) {
+        mobileInlinePhotoGrid.innerHTML = mediaContent.photos.slice(0,4).map(item => `
           <div class="compact-panel-photo">
             <img src="${item.src}" alt="${item.alt}">
           </div>
@@ -3564,8 +3742,27 @@
         `).join('');
       }
 
+      if (mobileInlineVideoList) {
+        mobileInlineVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
+          <div class="compact-panel-video-card">
+            <h4>${item.title}</h4>
+            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
+            <a class="compact-panel-link" href="${item.url}" target="_blank" rel="noopener noreferrer">Смотреть видео</a>
+          </div>
+        `).join('');
+      }
+
       if (compactReviewsList) {
         compactReviewsList.innerHTML = mediaContent.reviews.map(item => `
+          <div class="compact-panel-review-card">
+            <strong>${item.name}</strong>
+            <span>${item.quote}</span>
+          </div>
+        `).join('');
+      }
+
+      if (mobileInlineReviewsList) {
+        mobileInlineReviewsList.innerHTML = mediaContent.reviews.slice(0,3).map(item => `
           <div class="compact-panel-review-card">
             <strong>${item.name}</strong>
             <span>${item.quote}</span>
@@ -3842,6 +4039,7 @@
     renderBookingPanels();
     switchView(state.view || 'desktop');
     applyDesktopMode();
+    applyMobileMode();
 
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();
