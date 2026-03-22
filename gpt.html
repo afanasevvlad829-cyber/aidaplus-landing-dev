@@ -785,7 +785,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.2 (patch-02)
+    v0.0.3 (patch-03)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -844,8 +844,8 @@
 
           <!-- @block:booking-card -->
           <div class="hero-booking-card">
-            <h3>Ближайшие смены</h3>
-            <p>Выберите возраст — покажем подходящие даты и свободные места.</p>
+            <h3 id="desktopBookingTitle">Выберите смену</h3>
+            <p id="desktopBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
             <div class="age-tabs" id="desktopAgeTabs">
               <button class="age-tab active" data-age="7-9">7–9 лет</button>
@@ -853,10 +853,11 @@
               <button class="age-tab" data-age="13-14">13–14 лет</button>
             </div>
 
+            <div id="desktopBookingInfo" style="margin-bottom:12px;"></div>
             <div id="desktopShiftOptions"></div>
 
-            <button class="cta-main" id="desktopStartBtn">Забронировать место →</button>
-            <div class="under-cta">○ Ответим в течение 5 минут</div>
+            <button class="cta-main" id="desktopStartBtn">Сначала выберите смену</button>
+            <div class="under-cta" id="desktopBookingHint">Покажем актуальные условия и остаток мест</div>
           </div>
           <!-- /@block:booking-card -->
         </div>
@@ -1017,8 +1018,8 @@
             <div class="occupancy-badge" id="mobileOccupancyBadge">⚡ 65% мест уже занято</div>
 
             <div class="hero-booking-card" style="position:static;width:100%;margin-top:18px;">
-              <h3>Выбрать смену</h3>
-              <p>Укажите возраст — покажем подходящие даты и свободные места.</p>
+              <h3 id="mobileBookingTitle">Выберите смену</h3>
+              <p id="mobileBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
               <div class="age-tabs" id="mobileAgeTabs">
                 <button class="age-tab active" data-age="7-9">7–9 лет</button>
@@ -1026,10 +1027,11 @@
                 <button class="age-tab" data-age="13-14">13–14 лет</button>
               </div>
 
+              <div id="mobileBookingInfo" style="margin-bottom:12px;"></div>
               <div id="mobileShiftOptions"></div>
 
-              <button class="cta-main" id="mobileStartBtn">Забронировать место →</button>
-              <div class="under-cta">○ Ответим в течение 5 минут</div>
+              <button class="cta-main" id="mobileStartBtn">Сначала выберите смену</button>
+              <div class="under-cta" id="mobileBookingHint">Покажем актуальные условия и остаток мест</div>
             </div>
           </div>
         </div>
@@ -1110,6 +1112,132 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
+    function getSelectedShift(){
+      return state.shiftId ? shifts.find(s => s.id === state.shiftId) : null;
+    }
+
+    function isOfferActive(){
+      return !!(state.expiresAt && Date.now() < state.expiresAt);
+    }
+
+    function getVisiblePrice(){
+      const shift = getSelectedShift();
+      if(state.offerPrice) return state.offerPrice;
+      if(state.basePrice) return state.basePrice;
+      return shift ? shift.price : null;
+    }
+
+    function getPrimaryActionState(){
+      const shift = getSelectedShift();
+      if(!shift){
+        return {
+          text:'Сначала выберите смену',
+          disabled:true,
+          hint:'Покажем актуальные условия и остаток мест'
+        };
+      }
+
+      if(state.offerStage === 0){
+        return {
+          text:'Проверить условия',
+          disabled:false,
+          hint:'Сначала покажем актуальную цену и попробуем закрепить лучшую'
+        };
+      }
+
+      if(state.offerStage === 1 && isOfferActive()){
+        return {
+          text:'Улучшить условия ещё раз',
+          disabled:false,
+          hint:'Можно попробовать получить ещё более выгодную цену'
+        };
+      }
+
+      if(state.offerStage >= 1){
+        return {
+          text:'Оформить заявку',
+          disabled:false,
+          hint:'Цена и код бронирования уже сохранены'
+        };
+      }
+
+      return {
+        text:'Оформить заявку',
+        disabled:false,
+        hint:'Продолжить оформление'
+      };
+    }
+
+    function formatRemaining(diff){
+      if(diff <= 0) return '';
+      const h = Math.floor(diff / (1000 * 60 * 60));
+      const m = Math.floor((diff / (1000 * 60)) % 60);
+      return `Действует ${h}ч ${m}м`;
+    }
+
+    function renderBookingInfo(targetInfoId, targetTitleId, targetLeadId, targetBtnId, targetHintId){
+      const info = document.getElementById(targetInfoId);
+      const title = document.getElementById(targetTitleId);
+      const lead = document.getElementById(targetLeadId);
+      const btn = document.getElementById(targetBtnId);
+      const hint = document.getElementById(targetHintId);
+      const shift = getSelectedShift();
+      const action = getPrimaryActionState();
+
+      btn.textContent = action.text;
+      btn.disabled = !!action.disabled;
+      hint.textContent = action.hint;
+
+      if(!shift){
+        title.textContent = 'Выберите смену';
+        lead.textContent = 'Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.';
+        info.innerHTML = '';
+        return;
+      }
+
+      const currentPrice = formatPrice(shift.price);
+      const visiblePrice = formatPrice(getVisiblePrice());
+      const timerText = isOfferActive() ? formatRemaining(state.expiresAt - Date.now()) : '';
+
+      title.textContent = state.offerPrice ? 'Ваша цена готова' : 'Смена выбрана';
+      lead.textContent = `${shift.title} · ${shift.dates}`;
+
+      info.innerHTML = `
+        <div style="border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);padding:12px 12px 10px;">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
+            <div>
+              <div style="font-size:12px;color:rgba(255,255,255,.68);margin-bottom:4px;">Текущая цена</div>
+              <div style="font-size:18px;font-weight:800;letter-spacing:-.02em;">${currentPrice}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:12px;color:rgba(255,255,255,.68);margin-bottom:4px;">${state.offerPrice ? 'Ваша цена' : 'После проверки'}</div>
+              <div style="font-size:22px;font-weight:900;letter-spacing:-.03em;color:#fff3e0;">${visiblePrice}</div>
+            </div>
+          </div>
+          ${state.code ? `<div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,.68);">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
+          ${timerText ? `<div style="margin-top:8px;font-size:12px;color:#ffd9ae;font-weight:800;">${timerText}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function renderBookingPanels(){
+      renderBookingInfo(
+        'desktopBookingInfo',
+        'desktopBookingTitle',
+        'desktopBookingLead',
+        'desktopStartBtn',
+        'desktopBookingHint'
+      );
+
+      renderBookingInfo(
+        'mobileBookingInfo',
+        'mobileBookingTitle',
+        'mobileBookingLead',
+        'mobileStartBtn',
+        'mobileBookingHint'
+      );
+    }
+
     function switchView(view){
       state.view = view;
       document.getElementById('desktopBtn').classList.toggle('active', view === 'desktop');
@@ -1164,7 +1292,7 @@
         <div class="shift-option ${state.shiftId === s.id ? 'active' : ''}" data-id="${s.id}">
           <div>
             <strong>${s.dates}</strong>
-            <small>${s.title}</small>
+            <small>${s.title} · ${formatPrice(s.price)}</small>
           </div>
           <div class="shift-price-chip">${s.left} мест</div>
         </div>
@@ -1187,6 +1315,12 @@
       `).join('');
     }
 
+    function renderAll(){
+      renderShiftOptions('desktopShiftOptions');
+      renderShiftOptions('mobileShiftOptions');
+      renderSummary();
+    }
+
     function selectShift(id){
       const shift = shifts.find(s => s.id === id);
       state.shiftId = id;
@@ -1197,7 +1331,23 @@
       state.offerStage = 0;
       renderAll();
       persist();
-      openOfferCheck();
+    }
+
+    function handlePrimaryCTA(){
+      const action = getPrimaryActionState();
+      if(action.disabled) return;
+
+      if(state.offerStage === 0){
+        openOfferCheck();
+        return;
+      }
+
+      if(state.offerStage === 1 && isOfferActive()){
+        openOfferCheck();
+        return;
+      }
+
+      openForm();
     }
 
     function openOfferCheck(){
@@ -1253,11 +1403,13 @@
 
       startTimer();
       renderSummary();
+      renderBookingPanels();
     }
 
     function saveOfferAndClose(){
       document.getElementById('offerOverlay').classList.add('hidden');
       renderSummary();
+      renderBookingPanels();
     }
 
     function startTimer(){
@@ -1276,12 +1428,11 @@
           persist();
           if(offerTimer) offerTimer.textContent = '';
           if(summaryTimer) summaryTimer.textContent = '';
+          renderBookingPanels();
           return;
         }
 
-        const h = Math.floor(diff / (1000 * 60 * 60));
-        const m = Math.floor((diff / (1000 * 60)) % 60);
-        const text = `Действует ${h}ч ${m}м`;
+        const text = formatRemaining(diff);
 
         if(offerTimer) offerTimer.textContent = text;
         if(summaryTimer) summaryTimer.textContent = text;
@@ -1304,6 +1455,7 @@
       document.getElementById('summaryPrice').textContent = formatPrice(price);
 
       bar.classList.remove('hidden');
+      renderBookingPanels();
     }
 
     function openForm(){
@@ -1375,25 +1527,18 @@
     });
 
     document.getElementById('desktopStartBtn').addEventListener('click', () => {
-      if(!state.shiftId){
-        selectShift(shifts[0].id);
-      } else {
-        openForm();
-      }
+      handlePrimaryCTA();
     });
 
     document.getElementById('mobileStartBtn').addEventListener('click', () => {
-      if(!state.shiftId){
-        selectShift(shifts[0].id);
-      } else {
-        openForm();
-      }
+      handlePrimaryCTA();
     });
 
     renderShiftOptions('desktopShiftOptions');
     renderShiftOptions('mobileShiftOptions');
     renderShiftCards();
     renderSummary();
+    renderBookingPanels();
     switchView(state.view || 'desktop');
 
     if(state.expiresAt && Date.now() < state.expiresAt){
