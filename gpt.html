@@ -613,10 +613,46 @@
       color:#fff;
     }
 
+    .booking-step.pulse{
+      box-shadow:0 0 0 4px rgba(255,138,0,.14);
+      animation:stepPulse 1.6s ease-in-out infinite;
+    }
+
     .age-tabs{
       display:flex;
       gap:8px;
       margin-bottom:14px;
+    }
+
+    .guided-label{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin:0 0 8px;
+      font-size:12px;
+      font-weight:800;
+      color:rgba(255,255,255,.86);
+      letter-spacing:.02em;
+    }
+
+    .guided-dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--accent-2);
+      flex:0 0 auto;
+      box-shadow:0 0 0 4px rgba(255,159,47,.12);
+    }
+
+    .guided-callout{
+      margin:0 0 12px;
+      padding:11px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      color:rgba(255,255,255,.78);
+      font-size:12px;
+      line-height:1.5;
     }
     .age-tab{
       flex:1;
@@ -652,6 +688,36 @@
       cursor:pointer;
       border:1px solid transparent;
       transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .shift-list.disabled{
+      position:relative;
+      opacity:.52;
+      pointer-events:none;
+      filter:saturate(.85);
+    }
+
+    .shift-list.highlight{
+      border-radius:18px;
+      box-shadow:0 0 0 4px rgba(255,138,0,.10);
+      padding:4px;
+      margin:-4px 0 0;
+    }
+
+    .shift-list-veil{
+      display:none;
+      margin:0 0 10px;
+      padding:11px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.08);
+      border:1px dashed rgba(255,255,255,.14);
+      color:rgba(255,255,255,.72);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .shift-list.disabled + .shift-list-veil{
+      display:block;
     }
 
     .mobile-booking-card .shift-option{
@@ -767,6 +833,12 @@
       line-height:1.5;
     }
 
+    @keyframes stepPulse{
+      0%{box-shadow:0 0 0 0 rgba(255,138,0,.18)}
+      70%{box-shadow:0 0 0 8px rgba(255,138,0,0)}
+      100%{box-shadow:0 0 0 0 rgba(255,138,0,0)}
+    }
+
     .cta-main{
       width:100%;
       border:none;
@@ -806,6 +878,13 @@
       opacity:.45;
       cursor:not-allowed;
       box-shadow:none;
+    }
+
+    .cta-wrap.highlight{
+      border-radius:18px;
+      box-shadow:0 0 0 4px rgba(255,138,0,.10);
+      padding:4px;
+      margin:-4px 0 0;
     }
 
     .cta-subtext{
@@ -2184,7 +2263,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.20 (patch-18)
+    v0.0.21 (patch-19)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -2282,6 +2361,7 @@
             <h3 id="desktopBookingTitle">Выберите смену</h3>
             <p id="desktopBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
+            <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
             <div class="age-tabs" id="desktopAgeTabs">
               <button class="age-tab active" data-age="7-9">7–9 лет</button>
               <button class="age-tab" data-age="10-12">10–12 лет</button>
@@ -2289,9 +2369,17 @@
             </div>
 
             <div id="desktopBookingInfo" style="margin-bottom:12px;"></div>
-            <div id="desktopShiftOptions"></div>
+            <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
+            <div class="guided-callout" id="desktopGuidedHint">Сначала выберите возраст. После этого покажем подходящие смены и дадим перейти дальше.</div>
+            <div class="shift-list" id="desktopShiftList">
+              <div id="desktopShiftOptions"></div>
+            </div>
+            <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
 
-            <button class="cta-main" id="desktopStartBtn">Сначала выберите смену</button>
+            <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
+            <div class="cta-wrap" id="desktopCtaWrap">
+              <button class="cta-main" id="desktopStartBtn">Сначала выберите возраст</button>
+            </div>
             <div class="under-cta" id="desktopBookingHint">Покажем актуальные условия и остаток мест</div>
             <div class="cta-subtext">Без оплаты • Ответим в течение 5 минут</div>
             <div class="trust-mini">
@@ -2545,6 +2633,7 @@
               <h3 id="mobileBookingTitle">Выберите смену</h3>
               <p id="mobileBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
+              <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
               <div class="age-tabs" id="mobileAgeTabs">
                 <button class="age-tab active" data-age="7-9">7–9 лет</button>
                 <button class="age-tab" data-age="10-12">10–12 лет</button>
@@ -2552,9 +2641,17 @@
               </div>
 
               <div id="mobileBookingInfo" style="margin-bottom:12px;"></div>
-              <div id="mobileShiftOptions"></div>
+              <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
+              <div class="guided-callout" id="mobileGuidedHint">Сначала выберите возраст. После этого покажем подходящие смены и дадим перейти дальше.</div>
+              <div class="shift-list" id="mobileShiftList">
+                <div id="mobileShiftOptions"></div>
+              </div>
+              <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
 
-              <button class="cta-main" id="mobileStartBtn">Забронировать место →</button>
+              <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
+              <div class="cta-wrap" id="mobileCtaWrap">
+                <button class="cta-main" id="mobileStartBtn">Сначала выберите возраст</button>
+              </div>
               <div class="cta-subtext" id="mobileBookingHint">Без оплаты • Ответим в течение 5 минут</div>
               <div class="trust-mini">
                 <span>45 мест в смене</span>
@@ -2847,6 +2944,7 @@
 
     let timerId = null;
     state.desktopMode = state.desktopMode || 'full';
+    state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
 
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -2987,6 +3085,10 @@
       return state.shiftId ? shifts.find(s => s.id === state.shiftId) : null;
     }
 
+    function hasSelectedAge(){
+      return !!state.ageSelected;
+    }
+
     function isOfferActive(){
       return !!(state.expiresAt && Date.now() < state.expiresAt);
     }
@@ -3000,11 +3102,19 @@
 
     function getPrimaryActionState(){
       const shift = getSelectedShift();
+      if(!hasSelectedAge()){
+        return {
+          text:'Сначала выберите возраст',
+          disabled:true,
+          hint:'Первый шаг — выбрать возраст ребёнка'
+        };
+      }
+
       if(!shift){
         return {
           text:'Сначала выберите смену',
           disabled:true,
-          hint:'Покажем актуальные условия и остаток мест'
+          hint:'Теперь выберите подходящую смену'
         };
       }
 
@@ -3040,17 +3150,17 @@
     }
 
     function getStepState(){
-      if(!state.age){
+      if(!hasSelectedAge()){
         return 1;
       }
-      if(state.age && !state.shiftId){
-        return 1;
-      }
-      if(state.shiftId && state.offerStage === 0){
+      if(hasSelectedAge() && !state.shiftId){
         return 2;
       }
-      if(state.offerStage >= 1 && !state.code){
+      if(state.shiftId && state.offerStage === 0){
         return 3;
+      }
+      if(state.offerStage >= 1 && !state.code){
+        return 4;
       }
       if(state.offerStage >= 1){
         return 4;
@@ -3065,9 +3175,44 @@
       root.querySelectorAll('.booking-step').forEach((el, idx) => {
         const num = idx + 1;
         el.classList.remove('active','done');
+        el.classList.remove('pulse');
         if(num < current) el.classList.add('done');
-        if(num === current) el.classList.add('active');
+        if(num === current){
+          el.classList.add('active');
+          el.classList.add('pulse');
+        }
       });
+    }
+
+    function renderGuidedState(prefix){
+      const shiftList = document.getElementById(`${prefix}ShiftList`);
+      const hint = document.getElementById(`${prefix}GuidedHint`);
+      const ctaWrap = document.getElementById(`${prefix}CtaWrap`);
+
+      if(!shiftList || !hint || !ctaWrap) return;
+
+      shiftList.classList.remove('disabled','highlight');
+      ctaWrap.classList.remove('highlight');
+
+      if(!hasSelectedAge()){
+        shiftList.classList.add('disabled');
+        hint.textContent = 'Сначала выберите возраст ребёнка. Это нужно, чтобы показать подходящие смены.';
+        return;
+      }
+
+      if(hasSelectedAge() && !state.shiftId){
+        shiftList.classList.add('highlight');
+        hint.textContent = 'Отлично. Теперь выберите смену, которая подходит по датам и формату.';
+        return;
+      }
+
+      if(state.shiftId && state.offerStage === 0){
+        ctaWrap.classList.add('highlight');
+        hint.textContent = 'Смена выбрана. Теперь можно проверить условия и перейти к бронированию.';
+        return;
+      }
+
+      hint.textContent = 'Всё готово: можно фиксировать условия и оформлять заявку.';
     }
 
     function formatRemaining(diff){
@@ -3145,6 +3290,8 @@
 
       renderSteps('desktopBookingSteps');
       renderSteps('mobileBookingSteps');
+      renderGuidedState('desktop');
+      renderGuidedState('mobile');
     }
 
     function switchView(view){
@@ -3203,6 +3350,7 @@
           root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
           btn.classList.add('active');
           state.age = btn.dataset.age;
+          state.ageSelected = true;
           state.shiftId = null;
           state.basePrice = null;
           state.offerPrice = null;
@@ -3232,6 +3380,7 @@
 
       box.querySelectorAll('.shift-option').forEach(el => {
         el.addEventListener('click', () => {
+          if(!hasSelectedAge()) return;
           selectShift(el.dataset.id);
         });
       });
