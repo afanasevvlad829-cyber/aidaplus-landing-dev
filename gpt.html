@@ -2479,7 +2479,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.24 (patch-22)
+    v0.0.25 (patch-22r)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -3410,6 +3410,22 @@
       return !!state.ageSelected;
     }
 
+    function hasActiveBookingContext(){
+      return !!(
+        state.shiftId ||
+        state.basePrice ||
+        state.offerPrice ||
+        state.code ||
+        state.expiresAt
+      );
+    }
+
+    function syncGuidedState(){
+      if(hasActiveBookingContext() && state.age){
+        state.ageSelected = true;
+      }
+    }
+
     function ageLabel(value){
       if(value === '7-9') return '7–9 лет';
       if(value === '10-12') return '10–12 лет';
@@ -3450,6 +3466,7 @@
     }
 
     function getPrimaryActionState(){
+      syncGuidedState();
       const shift = getSelectedShift();
       if(!hasSelectedAge()){
         return {
@@ -3499,6 +3516,7 @@
     }
 
     function getStepState(){
+      syncGuidedState();
       if(!hasSelectedAge()){
         return 1;
       }
@@ -3534,6 +3552,7 @@
     }
 
     function renderGuidedState(prefix){
+      syncGuidedState();
       const shiftList = document.getElementById(`${prefix}ShiftList`);
       const hint = document.getElementById(`${prefix}GuidedHint`);
       const ctaWrap = document.getElementById(`${prefix}CtaWrap`);
@@ -3630,6 +3649,7 @@
     }
 
     function renderBookingPanels(){
+      syncGuidedState();
       renderBookingInfo(
         'desktopBookingInfo',
         'desktopBookingTitle',
@@ -3798,6 +3818,7 @@
     }
 
     function renderShiftCards(){
+      syncGuidedState();
       const grid = document.getElementById('shiftCardsGrid');
       grid.innerHTML = shifts.map(s => `
         <div class="mini-card">
@@ -4158,6 +4179,7 @@
     }
 
     function saveOfferAndClose(){
+      syncGuidedState();
       document.getElementById('offerOverlay').classList.add('hidden');
       renderSummary();
       renderBookingPanels();
@@ -4191,6 +4213,7 @@
     }
 
     function renderSummary(){
+      syncGuidedState();
       const bar = document.getElementById('summaryBar');
 
       if(!state.shiftId){
@@ -4211,6 +4234,7 @@
     }
 
     function openForm(){
+      syncGuidedState();
       if(!state.shiftId) return;
 
       const shift = shifts.find(s => s.id === state.shiftId);
@@ -4235,6 +4259,7 @@
     }
 
     function submitLead(){
+      syncGuidedState();
       const name = document.getElementById('parentName').value.trim();
       const phone = document.getElementById('parentPhone').value.trim();
       const consent = document.getElementById('consentCheck').checked;
