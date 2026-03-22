@@ -1181,6 +1181,62 @@
       letter-spacing:.08em;
     }
 
+    .map-card{
+      margin-top:14px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    .map-preview{
+      min-height:220px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,138,0,.16), transparent 26%),
+        linear-gradient(135deg,#e7edf5,#d5dfeb 45%,#c2cfdd);
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:20px;
+    }
+
+    .map-preview::after{
+      content:"MAP";
+      position:absolute;
+      left:14px;
+      bottom:14px;
+      color:#536277;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.14em;
+    }
+
+    .map-preview strong{
+      display:block;
+      font-size:22px;
+      letter-spacing:-.02em;
+      margin-bottom:6px;
+    }
+
+    .map-preview span{
+      color:#5f6d82;
+      font-size:14px;
+      line-height:1.5;
+      max-width:420px;
+    }
+
+    .map-footer{
+      padding:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
     .review-actions{
       margin-top:14px;
     }
@@ -1214,6 +1270,68 @@
       color:var(--muted);
       font-size:13px;
       line-height:1.55;
+    }
+
+    .review-real{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:var(--shadow);
+      display:grid;
+      gap:12px;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+
+    .review-real:hover{
+      transform:translateY(-2px);
+      box-shadow:0 22px 42px rgba(20,29,45,.10);
+    }
+
+    .review-head-real{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+
+    .review-avatar{
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      overflow:hidden;
+      flex:0 0 auto;
+      background:#f5f7fb;
+      border:1px solid var(--line);
+    }
+
+    .review-avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .review-person{
+      min-width:0;
+    }
+
+    .review-person strong{
+      display:block;
+      font-size:14px;
+      line-height:1.35;
+      margin-bottom:4px;
+    }
+
+    .review-meta{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .review-quote{
+      color:var(--text);
+      font-size:14px;
+      line-height:1.6;
     }
 
     .reviews-summary{
@@ -1878,7 +1996,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.19 (patch-17)
+    v0.0.19 (patch-17r)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -2138,6 +2256,18 @@
             <h3>Контакты и соцсети</h3>
             <div class="contacts-grid" id="contactsGrid"></div>
             <div class="socials-grid" id="socialsGrid"></div>
+            <div class="map-card">
+              <div class="map-preview">
+                <div>
+                  <strong>Локация лагеря</strong>
+                  <span>Открыть карту в Яндекс Картах и посмотреть точку лагеря, маршрут и окружение.</span>
+                </div>
+              </div>
+              <div class="map-footer">
+                <div style="color:var(--muted);font-size:13px;">Яндекс Карты</div>
+                <a class="inline-link-btn" id="locationMapBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть карту</a>
+              </div>
+            </div>
           </section>
 
           <footer>
@@ -2440,9 +2570,42 @@
         {key:'in',href:'https://www.linkedin.com/',label:'in'}
       ],
       reviews: [
-        {name:'Елена, мама Максима',text:'За 10 дней сын сделал свою первую игру. Дома такого вовлечения не было.'},
-        {name:'Андрей, папа Софии',text:'Боялись отпускать первый раз, но всё организовано на высшем уровне.'},
-        {name:'Марина, мама Артёма',text:'Не просто лагерь — у детей реально есть результат: бассейн, друзья, проекты.'}
+        {
+          name:'Сергей Найденов',
+          meta:'Яндекс Карты · 2 февраля 2026',
+          avatar:'https://avatars.mds.yandex.net/get-yapic/27503/0r-4/islands-68',
+          quote:'Отличное расположение в живописном месте, большие просторные аудитории для занятий. Большое значение придавалось и активностям вне аудиторных занятий: футбол, бадминтон и прочее.'
+        },
+        {
+          name:'виктория',
+          meta:'Яндекс Карты · 13 ноября 2024',
+          avatar:'https://avatars.mds.yandex.net/get-yapic/54535/fsnR7nvUqoioiSqyIVRArH7QSFs-1/islands-68',
+          quote:'Лагерь «Айдакемп» — это круто. Была там несколько раз, и каждый раз это был незабываемый опыт.'
+        },
+        {
+          name:'Natalia Savenkova',
+          meta:'Яндекс Карты · 10 ноября 2024',
+          avatar:'https://avatars.mds.yandex.net/get-yapic/68143/0s-4/islands-68',
+          quote:'Хочу поблагодарить АйДаКемп за отличную организацию и правильный подход в общении и воспитании детей в лагере. Потрясающие вожатые и педагоги.'
+        },
+        {
+          name:'Надежда Ш.',
+          meta:'Яндекс Карты · 12 августа 2025',
+          avatar:'https://avatars.mds.yandex.net/get-yapic/58107/0f-1/islands-68',
+          quote:'Сын в 9 лет этим летом побывал в первый раз в этом лагере. Остался в полном восторге и сказал, что обязательно поедет ещё.'
+        },
+        {
+          name:'Кристина',
+          meta:'Яндекс Карты · 8 ноября 2024',
+          avatar:'https://avatars.mds.yandex.net/get-yapic/49368/enc-f5d05dcd44e9fc6a6283d03f5fc4dfbadc08d6b278aedeb06cfa14e5027cfb80/islands-68',
+          quote:'Дочери лагерь понравился, с удовольствием провела время на каникулах. Интересные занятия, вкусная еда, комфортное размещение.'
+        },
+        {
+          name:'Мария Григорьева',
+          meta:'Яндекс Карты · 13 ноября 2024',
+          avatar:'https://avatars.mds.yandex.net/get-yapic/56823/XGlOg8N65vTR91xedCasHKXWqI-1/islands-68',
+          quote:'Отправляла детей 10 и 14 лет, оба остались довольны и готовы снова ехать на следующий год. Благодарна за опыт и пользу для детей.'
+        }
       ]
     };
 
@@ -2887,14 +3050,17 @@
       const bookLinkBtn = document.getElementById('bookLinkBtn');
       const yandexReviewsBtn = document.getElementById('yandexReviewsBtn');
       const reviewsGrid = document.getElementById('reviewsGrid');
+      const locationMapBtn = document.getElementById('locationMapBtn');
 
-      photoGrid.innerHTML = mediaContent.photos.map((item, idx) => `
-        <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}">
-          <img src="${item.src}" alt="${item.alt}">
-          <div class="photo-title">${idx === 0 ? 'Главный кадр' : 'AiDaCamp'}</div>
-          <div class="photo-badge">${item.cat}</div>
-        </div>
-      `).join('');
+      if (photoGrid) {
+        photoGrid.innerHTML = mediaContent.photos.map((item, idx) => `
+          <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}">
+            <img src="${item.src}" alt="${item.alt}">
+            <div class="photo-title">${idx === 0 ? 'Главный кадр' : 'AiDaCamp'}</div>
+            <div class="photo-badge">${item.cat}</div>
+          </div>
+        `).join('');
+      }
 
       if (videoList) {
         videoList.innerHTML = mediaContent.videos.map((item, idx) => `
@@ -2918,64 +3084,84 @@
         if (mainVideoBox) mainVideoBox.href = mediaContent.videos[0].url;
       }
 
-      bookLinkBtn.href = mediaContent.references.programmingBookUrl;
+      if (bookLinkBtn) bookLinkBtn.href = mediaContent.references.programmingBookUrl;
 
       if(yandexReviewsBtn){
         yandexReviewsBtn.textContent = mediaContent.references.yandexReviewsLabel;
         yandexReviewsBtn.href = mediaContent.references.yandexReviewsUrl;
       }
 
+      if (locationMapBtn) {
+        locationMapBtn.href = mediaContent.references.locationMapUrl;
+      }
+
       if(reviewsGrid){
         reviewsGrid.innerHTML = mediaContent.reviews.map(item => `
-          <div class="review-card">
-            <strong>${item.name}</strong>
-            <span>${item.text}</span>
+          <div class="review-real">
+            <div class="review-head-real">
+              <div class="review-avatar">
+                <img src="${item.avatar}" alt="${item.name}">
+              </div>
+              <div class="review-person">
+                <strong>${item.name}</strong>
+                <div class="review-meta">${item.meta}</div>
+              </div>
+            </div>
+            <div class="review-quote">«${item.quote}»</div>
           </div>
         `).join('');
       }
 
-      contactsGrid.innerHTML = mediaContent.contacts.map(item => `
-        <a class="contact-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
-          <div class="contact-icon">${iconGlyph(item.label)}</div>
-          <strong>${item.text}</strong>
-          <span>${item.label.replace('_',' ')}</span>
-        </a>
-      `).join('');
+      if (contactsGrid) {
+        contactsGrid.innerHTML = mediaContent.contacts.map(item => `
+          <a class="contact-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
+            <div class="contact-icon">${iconGlyph(item.label)}</div>
+            <strong>${item.text}</strong>
+            <span>${item.label.replace('_',' ')}</span>
+          </a>
+        `).join('');
+      }
 
-      socialsGrid.innerHTML = mediaContent.socials.map(item => `
-        <a class="social-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
-          <div class="social-glyph">${item.label}</div>
-          <span>${item.key}</span>
-        </a>
-      `).join('');
+      if (socialsGrid) {
+        socialsGrid.innerHTML = mediaContent.socials.map(item => `
+          <a class="social-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
+            <div class="social-glyph">${item.label}</div>
+            <span>${item.key}</span>
+          </a>
+        `).join('');
+      }
 
-      faqGroups.innerHTML = mediaContent.faq.map(group => `
-        <div class="faq-group">
-          <div class="faq-group-head">
-            <div class="faq-icon">${faqGlyph(group.icon, group.group)}</div>
-            <strong>${group.group}</strong>
+      if (faqGroups) {
+        faqGroups.innerHTML = mediaContent.faq.map(group => `
+          <div class="faq-group">
+            <div class="faq-group-head">
+              <div class="faq-icon">${faqGlyph(group.icon, group.group)}</div>
+              <strong>${group.group}</strong>
+            </div>
+            <div class="faq-list">
+              ${group.items.map(item => `
+                <div class="faq-line">
+                  <strong>${item.q}</strong>
+                  <span>${item.a}</span>
+                </div>
+              `).join('')}
+            </div>
           </div>
-          <div class="faq-list">
-            ${group.items.map(item => `
-              <div class="faq-line">
-                <strong>${item.q}</strong>
-                <span>${item.a}</span>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `).join('');
+        `).join('');
+      }
 
-      teamGrid.innerHTML = mediaContent.team.map(item => `
-        <div class="team-card">
-          <div class="team-avatar">
-            <img src="${item.avatarUrl}" alt="${item.fio}">
+      if (teamGrid) {
+        teamGrid.innerHTML = mediaContent.team.map(item => `
+          <div class="team-card">
+            <div class="team-avatar">
+              <img src="${item.avatarUrl}" alt="${item.fio}">
+            </div>
+            <strong>${item.fio}</strong>
+            <span class="team-role">${item.role}</span>
+            <span>${item.bio}</span>
           </div>
-          <strong>${item.fio}</strong>
-          <span class="team-role">${item.role}</span>
-          <span>${item.bio}</span>
-        </div>
-      `).join('');
+        `).join('');
+      }
     }
 
     function renderAll(){
