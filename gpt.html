@@ -28,6 +28,8 @@
       background:var(--bg);
       color:var(--text);
       min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
     .hidden{display:none !important}
 
@@ -104,6 +106,7 @@
       background:var(--panel);
       box-shadow:var(--shadow);
       border:1px solid rgba(255,255,255,.7);
+      transition:box-shadow .2s ease;
     }
 
     .compact-mode .body-sections{
@@ -194,10 +197,15 @@
       box-shadow:0 8px 20px rgba(0,0,0,.06);
       cursor:pointer;
       border:none;
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
     }
     .menu-pill.active{
       background:linear-gradient(135deg,var(--accent),var(--accent-2));
       color:#fff;
+    }
+    .menu-pill:hover{
+      transform:translateY(-1px);
+      box-shadow:0 12px 24px rgba(20,29,45,.10);
     }
 
     .hero-content{
@@ -214,6 +222,7 @@
       font-size:12px;
       margin-bottom:18px;
       backdrop-filter:blur(8px);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
     }
 
     .hero-title{
@@ -300,6 +309,12 @@
       font-size:12px;
       min-width:132px;
       backdrop-filter:blur(10px);
+      transition:transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .feature-pill:hover{
+      transform:translateY(-1px);
+      border-color:rgba(255,255,255,.22);
+      background:rgba(0,0,0,.26);
     }
     .feature-pill strong{
       display:block;
@@ -333,6 +348,11 @@
       backdrop-filter:blur(18px);
       box-shadow:0 24px 70px rgba(0,0,0,.34);
       color:#fff;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .hero-booking-card:hover{
+      transform:translateY(-1px);
+      box-shadow:0 28px 76px rgba(0,0,0,.36);
     }
 
     .mobile-booking-card{
@@ -386,6 +406,7 @@
       background:rgba(255,255,255,.06);
       color:rgba(255,255,255,.54);
       border:1px solid rgba(255,255,255,.08);
+      transition:background .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
     }
 
     .mobile-booking-card .booking-step{
@@ -419,9 +440,14 @@
       font-size:12px;
       font-weight:700;
       cursor:pointer;
+      transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
     }
     .age-tab.active{
       background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:0 8px 18px rgba(255,138,0,.18);
+    }
+    .age-tab:hover{
+      transform:translateY(-1px);
     }
 
     .shift-option{
@@ -437,6 +463,7 @@
       font-size:13px;
       cursor:pointer;
       border:1px solid transparent;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
     }
 
     .mobile-booking-card .shift-option{
@@ -576,6 +603,16 @@
       transform:translateY(-2px) scale(1.01);
       box-shadow:0 22px 55px rgba(255,122,0,.55);
     }
+    .cta-main:focus-visible,
+    .secondary-outline:focus-visible,
+    .inline-link-btn:focus-visible,
+    .mode-btn:focus-visible,
+    .switch-btn:focus-visible,
+    .menu-pill:focus-visible,
+    .age-tab:focus-visible{
+      outline:3px solid rgba(255,138,0,.30);
+      outline-offset:2px;
+    }
 
     .cta-main:disabled{
       opacity:.45;
@@ -655,6 +692,11 @@
       border-radius:20px;
       padding:16px;
       box-shadow:var(--shadow);
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .trust-band-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 22px 42px rgba(20,29,45,.10);
     }
 
     .trust-band-card strong{
@@ -840,6 +882,7 @@
       background:#fff;
       min-height:180px;
       box-shadow:var(--shadow);
+      transition:transform .22s ease, box-shadow .22s ease;
     }
 
     .photo-card.hero{
@@ -973,6 +1016,11 @@
       box-shadow:var(--shadow);
       display:grid;
       gap:12px;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .video-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 22px 42px rgba(20,29,45,.12);
     }
 
     .video-poster{
@@ -1055,6 +1103,7 @@
       text-decoration:none;
       color:var(--text);
       box-shadow:var(--shadow);
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
     }
 
     .contact-link:hover,
@@ -1108,6 +1157,7 @@
       color:var(--text);
       box-shadow:var(--shadow);
       padding:10px 8px;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
     }
 
     .social-glyph{
@@ -1147,6 +1197,11 @@
       border-radius:18px;
       padding:14px;
       box-shadow:var(--shadow);
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .review-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 22px 42px rgba(20,29,45,.10);
     }
 
     .review-card strong{
@@ -1208,6 +1263,11 @@
       padding:16px;
       text-align:center;
       box-shadow:var(--shadow);
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .team-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 22px 42px rgba(20,29,45,.10);
     }
 
     .team-avatar{
@@ -1311,6 +1371,11 @@
       border-radius:20px;
       padding:16px;
       box-shadow:var(--shadow);
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .faq-group:hover{
+      transform:translateY(-1px);
+      box-shadow:0 22px 42px rgba(20,29,45,.10);
     }
 
     .faq-group-head{
@@ -1445,6 +1510,7 @@
       justify-content:center;
       padding:18px;
       z-index:80;
+      animation:fadeIn .18s ease;
     }
 
     .overlay-card{
@@ -1454,6 +1520,7 @@
       box-shadow:0 25px 55px rgba(20,29,45,.16);
       padding:22px;
       border:1px solid #edf0f5;
+      animation:modalUp .22s ease;
     }
 
     .overlay-card.dark{
@@ -1518,6 +1585,12 @@
       font-size:14px;
       font-weight:800;
       cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .secondary-outline:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 26px rgba(20,29,45,.08);
+      border-color:#d4dae5;
     }
 
     .overlay-card.dark .secondary-outline{
@@ -1536,6 +1609,7 @@
       backdrop-filter:blur(18px);
       border-top:1px solid var(--line);
       box-shadow:0 -12px 32px rgba(20,29,45,.07);
+      animation:summaryIn .24s ease;
     }
 
     .compact-mode .summary-bar{
@@ -1601,6 +1675,7 @@
       align-items:flex-end;
       justify-content:center;
       padding:0;
+      animation:fadeIn .18s ease;
     }
 
     .form-panel{
@@ -1611,6 +1686,7 @@
       box-shadow:0 -24px 60px rgba(20,29,45,.16);
       max-height:92vh;
       overflow:auto;
+      animation:drawerUp .24s ease;
     }
 
     .form-panel h3{
@@ -1654,6 +1730,36 @@
       font-size:15px;
       color:var(--text);
       outline:none;
+      transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .input-box:focus{
+      border-color:#ffb15e;
+      box-shadow:0 0 0 4px rgba(255,138,0,.10);
+      background:#fffdfa;
+    }
+
+    .input-box::placeholder{
+      color:#95a0b0;
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0}
+      to{opacity:1}
+    }
+
+    @keyframes modalUp{
+      from{opacity:0; transform:translateY(8px) scale(.985)}
+      to{opacity:1; transform:translateY(0) scale(1)}
+    }
+
+    @keyframes drawerUp{
+      from{opacity:0; transform:translateY(18px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    @keyframes summaryIn{
+      from{opacity:0; transform:translateY(8px)}
+      to{opacity:1; transform:translateY(0)}
     }
 
     .check-row{
@@ -1740,6 +1846,19 @@
       .occupancy-badge{
         margin-top:14px;
       }
+
+      .overlay{
+        padding:14px;
+      }
+
+      .overlay-card{
+        padding:18px;
+        border-radius:22px;
+      }
+
+      .form-panel{
+        padding:20px 16px 22px;
+      }
     }
   </style>
 </head>
@@ -1759,7 +1878,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.17 (patch-15)
+    v0.0.18 (patch-16)
   </div>
   <!-- /@block:version -->
   <div class="page">
