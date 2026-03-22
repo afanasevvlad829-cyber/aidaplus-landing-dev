@@ -2383,6 +2383,18 @@
       gap:12px;
     }
 
+    .form-field{
+      display:grid;
+      gap:6px;
+    }
+
+    .form-field label{
+      font-size:13px;
+      color:var(--muted);
+      font-weight:700;
+      line-height:1.35;
+    }
+
     .input-box{
       width:100%;
       min-height:54px;
@@ -2422,6 +2434,12 @@
 
     .input-box::placeholder{
       color:#95a0b0;
+    }
+
+    .form-panel .under-cta{
+      margin-top:10px;
+      color:var(--muted);
+      text-align:left;
     }
 
     @keyframes fadeIn{
@@ -3026,12 +3044,24 @@
 
   <div class="form-drawer hidden" id="formDrawer">
     <div class="form-panel">
-      <h3>Оформление заявки</h3>
-      <div class="form-summary-box" id="formSummaryBox"></div>
+      <div class="form-head">
+        <div class="form-head-main">
+          <h3 id="formTitle">Оформление заявки</h3>
+          <p id="formLead" style="margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.55;"></p>
+        </div>
+        <button class="form-close" type="button" id="formCloseBtn" aria-label="Закрыть">×</button>
+      </div>
 
       <div class="form-grid">
-        <input class="input-box" id="parentName" placeholder="Имя родителя" />
-        <input class="input-box" id="parentPhone" placeholder="Телефон" />
+        <div class="form-field">
+          <label for="parentName">Имя родителя</label>
+          <input class="input-box" id="parentName" type="text" placeholder="Например, Анна" />
+        </div>
+        <div class="form-field">
+          <label for="parentPhone">Телефон</label>
+          <input class="input-box" id="parentPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" maxlength="18" />
+          <div class="field-error" id="phoneError">Введите телефон полностью в формате +7 (___) ___-__-__</div>
+        </div>
       </div>
 
       <label class="check-row">
@@ -3039,9 +3069,8 @@
         <span>Я согласен(на) на обработку персональных данных и понимаю, что после заявки со мной свяжутся для подтверждения брони.</span>
       </label>
 
-      <button class="cta-main" onclick="submitLead()">Оформить и отправить заявку</button>
-      <div class="muted-note">Без предоплаты. Мы сначала подтверждаем бронь вручную.</div>
-      <button class="secondary-outline" style="margin-top:14px;" onclick="closeForm()">Закрыть</button>
+      <button class="cta-main" id="submitLeadBtn">Оформить и отправить заявку</button>
+      <div class="under-cta">Без предоплаты. Мы сначала подтверждаем бронь вручную.</div>
     </div>
   </div>
 
@@ -4380,6 +4409,42 @@
       renderBookingPanels();
     }
 
+    function normalizePhoneValue(value){
+      let digits = (value || '').replace(/\D/g, '');
+      if(!digits) return '';
+      if(digits[0] === '8') digits = '7' + digits.slice(1);
+      if(digits[0] !== '7') digits = '7' + digits;
+      digits = digits.slice(0, 11);
+
+      const tail = digits.slice(1);
+      let out = '+7';
+      if(tail.length > 0) out += ` (${tail.slice(0, 3)}`;
+      if(tail.length >= 3) out += ')';
+      if(tail.length > 3) out += ` ${tail.slice(3, 6)}`;
+      if(tail.length > 6) out += `-${tail.slice(6, 8)}`;
+      if(tail.length > 8) out += `-${tail.slice(8, 10)}`;
+      return out;
+    }
+
+    function isPhoneComplete(value){
+      const digits = (value || '').replace(/\D/g, '');
+      return digits.length === 11 && digits[0] === '7';
+    }
+
+    function clearPhoneError(){
+      const phoneInput = document.getElementById('parentPhone');
+      const phoneError = document.getElementById('phoneError');
+      if(phoneInput) phoneInput.classList.remove('input-error');
+      if(phoneError) phoneError.classList.remove('visible');
+    }
+
+    function showPhoneError(){
+      const phoneInput = document.getElementById('parentPhone');
+      const phoneError = document.getElementById('phoneError');
+      if(phoneInput) phoneInput.classList.add('input-error');
+      if(phoneError) phoneError.classList.add('visible');
+    }
+
     function openForm(){
       syncGuidedState();
       if(!state.shiftId) return;
@@ -4387,31 +4452,39 @@
       const shift = shifts.find(s => s.id === state.shiftId);
       const price = state.offerPrice || state.basePrice || shift.price;
 
-      document.getElementById('formSummaryBox').innerHTML = `
-        <strong>Вы выбрали</strong>
-        <div class="form-summary-row">Смена: ${shift.title}</div>
-        <div class="form-summary-row">Даты: ${shift.dates}</div>
-        <div class="form-summary-row">Возраст: ${labelAge(state.age)}</div>
-        <div class="form-summary-row">Цена: ${formatPrice(price)}</div>
-        ${state.code ? `<div class="form-summary-row">Код бронирования: ${state.code}</div>` : ''}
-        <div class="form-summary-row" style="margin-top:8px;color:var(--text);">Без предоплаты. Мы свяжемся с вами и подтвердим бронь.</div>
-      `;
+      const formLead = document.getElementById('formLead');
+      if(formLead){
+        formLead.textContent = `${shift.title} · ${shift.dates} · ${labelAge(state.age)} · ${formatPrice(price)}${state.code ? ` · Код ${state.code}` : ''}`;
+      }
 
-      document.getElementById('parentPhone').value = state.phone || '';
+      const phoneInput = document.getElementById('parentPhone');
+      if(phoneInput){
+        phoneInput.value = state.phone ? normalizePhoneValue(state.phone) : '';
+      }
+      clearPhoneError();
       document.getElementById('formDrawer').classList.remove('hidden');
     }
 
     function closeForm(){
+      clearPhoneError();
       document.getElementById('formDrawer').classList.add('hidden');
     }
 
     function submitLead(){
       syncGuidedState();
       const name = document.getElementById('parentName').value.trim();
-      const phone = document.getElementById('parentPhone').value.trim();
+      const phoneInput = document.getElementById('parentPhone');
+      const phone = normalizePhoneValue(phoneInput ? phoneInput.value : '');
+      if(phoneInput) phoneInput.value = phone;
       const consent = document.getElementById('consentCheck').checked;
 
-      if(!name || !phone || !consent){
+      if(!isPhoneComplete(phone)){
+        showPhoneError();
+      } else {
+        clearPhoneError();
+      }
+
+      if(!name || !isPhoneComplete(phone) || !consent){
         alert('Заполните имя, телефон и подтвердите согласие.');
         return;
       }
@@ -4469,6 +4542,26 @@
         scrollToSection(btn.dataset.target);
       });
     });
+
+    const phoneInputEl = document.getElementById('parentPhone');
+    if(phoneInputEl){
+      phoneInputEl.addEventListener('input', () => {
+        phoneInputEl.value = normalizePhoneValue(phoneInputEl.value);
+        if(isPhoneComplete(phoneInputEl.value)){
+          clearPhoneError();
+        }
+      });
+    }
+
+    const submitLeadBtn = document.getElementById('submitLeadBtn');
+    if(submitLeadBtn){
+      submitLeadBtn.addEventListener('click', submitLead);
+    }
+
+    const formCloseBtn = document.getElementById('formCloseBtn');
+    if(formCloseBtn){
+      formCloseBtn.addEventListener('click', closeForm);
+    }
 
     document.getElementById('desktopStartBtn').addEventListener('click', () => {
       handlePrimaryCTA();
