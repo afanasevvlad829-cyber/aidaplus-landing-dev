@@ -4409,40 +4409,53 @@
       renderBookingPanels();
     }
 
-    function normalizePhoneValue(value){
-      let digits = (value || '').replace(/\D/g, '');
+    function onlyDigits(value){
+      return (value || '').replace(/\D/g, '');
+    }
+
+    function formatPhoneInput(value){
+      let digits = onlyDigits(value);
+
       if(!digits) return '';
+
       if(digits[0] === '8') digits = '7' + digits.slice(1);
+      if(digits[0] === '9') digits = '7' + digits;
       if(digits[0] !== '7') digits = '7' + digits;
+
       digits = digits.slice(0, 11);
 
-      const tail = digits.slice(1);
       let out = '+7';
-      if(tail.length > 0) out += ` (${tail.slice(0, 3)}`;
-      if(tail.length >= 3) out += ')';
-      if(tail.length > 3) out += ` ${tail.slice(3, 6)}`;
-      if(tail.length > 6) out += `-${tail.slice(6, 8)}`;
-      if(tail.length > 8) out += `-${tail.slice(8, 10)}`;
+      if(digits.length > 1) out += ` (${digits.slice(1, 4)}`;
+      if(digits.length >= 4) out += ')';
+      if(digits.length > 4) out += ` ${digits.slice(4, 7)}`;
+      if(digits.length > 7) out += `-${digits.slice(7, 9)}`;
+      if(digits.length > 9) out += `-${digits.slice(9, 11)}`;
+
       return out;
     }
 
-    function isPhoneComplete(value){
-      const digits = (value || '').replace(/\D/g, '');
-      return digits.length === 11 && digits[0] === '7';
+    function normalizePhone(value){
+      let digits = onlyDigits(value);
+      if(!digits) return '';
+
+      if(digits[0] === '8') digits = '7' + digits.slice(1);
+      if(digits[0] === '9') digits = '7' + digits;
+      if(digits[0] !== '7') digits = '7' + digits;
+
+      digits = digits.slice(0, 11);
+      return digits.length === 11 ? `+${digits}` : '';
     }
 
-    function clearPhoneError(){
-      const phoneInput = document.getElementById('parentPhone');
-      const phoneError = document.getElementById('phoneError');
-      if(phoneInput) phoneInput.classList.remove('input-error');
-      if(phoneError) phoneError.classList.remove('visible');
+    function isValidPhone(value){
+      return !!normalizePhone(value);
     }
 
-    function showPhoneError(){
-      const phoneInput = document.getElementById('parentPhone');
-      const phoneError = document.getElementById('phoneError');
-      if(phoneInput) phoneInput.classList.add('input-error');
-      if(phoneError) phoneError.classList.add('visible');
+    function setPhoneError(show){
+      const input = document.getElementById('parentPhone');
+      const error = document.getElementById('phoneError');
+      if(!input || !error) return;
+      input.classList.toggle('input-error', !!show);
+      error.classList.toggle('visible', !!show);
     }
 
     function openForm(){
@@ -4458,36 +4471,36 @@
       }
 
       const phoneInput = document.getElementById('parentPhone');
-      if(phoneInput){
-        phoneInput.value = state.phone ? normalizePhoneValue(state.phone) : '';
-      }
-      clearPhoneError();
+      document.getElementById('parentPhone').value = state.phone || '';
+      if(phoneInput) phoneInput.value = formatPhoneInput(state.phone || '');
+      setPhoneError(false);
       document.getElementById('formDrawer').classList.remove('hidden');
     }
 
     function closeForm(){
-      clearPhoneError();
       document.getElementById('formDrawer').classList.add('hidden');
     }
 
     function submitLead(){
       syncGuidedState();
       const name = document.getElementById('parentName').value.trim();
-      const phoneInput = document.getElementById('parentPhone');
-      const phone = normalizePhoneValue(phoneInput ? phoneInput.value : '');
-      if(phoneInput) phoneInput.value = phone;
+      const phoneRaw = document.getElementById('parentPhone').value.trim();
+      const phone = normalizePhone(phoneRaw);
       const consent = document.getElementById('consentCheck').checked;
 
-      if(!isPhoneComplete(phone)){
-        showPhoneError();
-      } else {
-        clearPhoneError();
-      }
-
-      if(!name || !isPhoneComplete(phone) || !consent){
+      if(!name || !phoneRaw || !consent){
+        if(!phoneRaw) setPhoneError(true);
         alert('Заполните имя, телефон и подтвердите согласие.');
         return;
       }
+
+      if(!isValidPhone(phoneRaw)){
+        setPhoneError(true);
+        alert('Проверьте номер телефона.');
+        return;
+      }
+
+      setPhoneError(false);
 
       state.phone = phone;
       persist();
@@ -4543,13 +4556,22 @@
       });
     });
 
-    const phoneInputEl = document.getElementById('parentPhone');
-    if(phoneInputEl){
-      phoneInputEl.addEventListener('input', () => {
-        phoneInputEl.value = normalizePhoneValue(phoneInputEl.value);
-        if(isPhoneComplete(phoneInputEl.value)){
-          clearPhoneError();
-        }
+    const parentPhoneInput = document.getElementById('parentPhone');
+    if(parentPhoneInput){
+      parentPhoneInput.addEventListener('input', (e) => {
+        e.target.value = formatPhoneInput(e.target.value);
+        setPhoneError(false);
+      });
+      parentPhoneInput.addEventListener('blur', () => {
+        const val = parentPhoneInput.value.trim();
+        if(!val) return setPhoneError(false);
+        setPhoneError(!isValidPhone(val));
+      });
+      parentPhoneInput.addEventListener('paste', () => {
+        requestAnimationFrame(() => {
+          parentPhoneInput.value = formatPhoneInput(parentPhoneInput.value);
+          setPhoneError(false);
+        });
       });
     }
 
@@ -4562,6 +4584,10 @@
     if(formCloseBtn){
       formCloseBtn.addEventListener('click', closeForm);
     }
+
+    document.getElementById('formDrawer').addEventListener('click', (e) => {
+      if(e.target.id === 'formDrawer') closeForm();
+    });
 
     document.getElementById('desktopStartBtn').addEventListener('click', () => {
       handlePrimaryCTA();
