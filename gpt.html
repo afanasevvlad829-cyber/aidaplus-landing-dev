@@ -1328,6 +1328,92 @@
       line-height:1.45;
     }
 
+    .media-lightbox{
+      position:fixed;
+      inset:0;
+      background:rgba(10,14,20,.92);
+      z-index:120;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      animation:fadeIn .2s ease;
+    }
+
+    .media-lightbox.hidden{
+      display:none !important;
+    }
+
+    .media-stage{
+      position:relative;
+      max-width:900px;
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .media-image{
+      max-width:100%;
+      max-height:80vh;
+      border-radius:18px;
+      box-shadow:0 30px 80px rgba(0,0,0,.5);
+    }
+
+    .media-video{
+      width:360px;
+      height:640px;
+      max-height:80vh;
+      border-radius:18px;
+      overflow:hidden;
+      background:#000;
+      box-shadow:0 30px 80px rgba(0,0,0,.6);
+    }
+
+    .media-nav{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      border:none;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:20px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter:blur(8px);
+    }
+
+    .media-prev{ left:-60px; }
+    .media-next{ right:-60px; }
+
+    .media-close{
+      position:absolute;
+      top:-60px;
+      right:0;
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:none;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:20px;
+      cursor:pointer;
+    }
+
+    .media-caption{
+      position:absolute;
+      bottom:-50px;
+      left:0;
+      color:#fff;
+      font-size:13px;
+      opacity:.8;
+    }
+
     .video-list{
       display:grid;
       grid-template-columns:repeat(3,1fr);
@@ -2393,7 +2479,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.23 (patch-21)
+    v0.0.24 (patch-22)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -2884,6 +2970,16 @@
     </div>
   </div>
 
+  <div class="media-lightbox hidden" id="mediaLightbox">
+    <div class="media-stage" id="mediaStage">
+      <button class="media-nav media-prev" id="mediaPrev">←</button>
+      <button class="media-nav media-next" id="mediaNext">→</button>
+      <button class="media-close" id="mediaClose">×</button>
+      <div id="mediaContent"></div>
+      <div class="media-caption" id="mediaCaption"></div>
+    </div>
+  </div>
+
   <div class="compact-trust-panel hidden" id="compactTrustPanel">
     <div class="compact-panel-top">
       <div>
@@ -3117,6 +3213,8 @@
     };
 
     let timerId = null;
+    let mediaIndex = 0;
+    let mediaType = 'photo';
     state.desktopMode = state.desktopMode || 'full';
     state.mobileMode = state.mobileMode || 'full';
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
@@ -3124,6 +3222,53 @@
 
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function openMedia(type, index){
+      mediaType = type;
+      mediaIndex = index;
+      renderMediaViewer();
+      document.getElementById('mediaLightbox').classList.remove('hidden');
+    }
+
+    function closeMedia(){
+      document.getElementById('mediaLightbox').classList.add('hidden');
+      document.getElementById('mediaContent').innerHTML = '';
+    }
+
+    function renderMediaViewer(){
+      const content = document.getElementById('mediaContent');
+      const caption = document.getElementById('mediaCaption');
+
+      if(mediaType === 'photo'){
+        const item = mediaContent.photos[mediaIndex];
+        content.innerHTML = `<img class="media-image" src="${item.src}" />`;
+        caption.textContent = `${item.cat} · ${mediaIndex + 1}/${mediaContent.photos.length}`;
+      }
+
+      if(mediaType === 'video'){
+        const item = mediaContent.videos[mediaIndex];
+        content.innerHTML = `
+          <iframe
+            class="media-video"
+            src="${item.url}"
+            frameborder="0"
+            allowfullscreen
+          ></iframe>`;
+        caption.textContent = `${mediaIndex + 1}/${mediaContent.videos.length}`;
+      }
+    }
+
+    function nextMedia(){
+      const list = mediaType === 'photo' ? mediaContent.photos : mediaContent.videos;
+      mediaIndex = (mediaIndex + 1) % list.length;
+      renderMediaViewer();
+    }
+
+    function prevMedia(){
+      const list = mediaType === 'photo' ? mediaContent.photos : mediaContent.videos;
+      mediaIndex = (mediaIndex - 1 + list.length) % list.length;
+      renderMediaViewer();
     }
 
     function notifyLead(eventName, payload){
@@ -3700,7 +3845,7 @@
           : mediaContent.photos.filter(item => item.cat === state.photoFilter);
 
         photoGrid.innerHTML = filteredPhotos.map((item, idx) => `
-          <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}">
+          <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}" onclick="openMedia('photo', ${idx})">
             <img src="${item.src}" alt="${item.alt}">
             <div class="photo-title">${idx === 0 ? 'Главный кадр' : 'AiDaCamp'}</div>
             <div class="photo-badge">${item.cat}</div>
@@ -3711,14 +3856,13 @@
       if (videoList) {
         videoList.innerHTML = mediaContent.videos.map((item, idx) => `
           <div class="video-card">
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer">
+            <div onclick="openMedia('video', ${idx})">
               <div class="video-poster">
                 <div class="video-play"><span>▶</span></div>
               </div>
-            </a>
+            </div>
             <h4>${item.title}</h4>
-            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="cta-main" style="text-align:center;text-decoration:none;">Смотреть видео</a>
+            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику.' : 'Про отказ от телефона.'}</p>
           </div>
         `).join('');
       }
@@ -4160,6 +4304,21 @@
 
     document.getElementById('mobileStartBtn').addEventListener('click', () => {
       handlePrimaryCTA();
+    });
+
+    document.getElementById('mediaClose').addEventListener('click', closeMedia);
+    document.getElementById('mediaNext').addEventListener('click', nextMedia);
+    document.getElementById('mediaPrev').addEventListener('click', prevMedia);
+
+    document.getElementById('mediaLightbox').addEventListener('click', (e) => {
+      if(e.target.id === 'mediaLightbox') closeMedia();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if(document.getElementById('mediaLightbox').classList.contains('hidden')) return;
+      if(e.key === 'Escape') closeMedia();
+      if(e.key === 'ArrowRight') nextMedia();
+      if(e.key === 'ArrowLeft') prevMedia();
     });
 
     renderShiftOptions('desktopShiftOptions');
