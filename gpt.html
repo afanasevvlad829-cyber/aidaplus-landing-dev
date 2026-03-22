@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <!--
+    PATCH 01:
+    Adds block anchors for future git patches
+  -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AiDaCamp — Prototype Full Logic</title>
@@ -781,6 +785,7 @@
 
     <div id="desktopView">
       <div class="screen">
+        <!-- @block:hero -->
         <div class="hero-shell">
           <div class="hero-topbar">
             <div class="brand"><span class="brand-dot"></span>AiDaCamp</div>
@@ -819,6 +824,7 @@
             <div class="occupancy-badge" id="occupancyBadge">⚡ 63% мест уже занято</div>
           </div>
 
+          <!-- @block:booking-card -->
           <div class="hero-booking-card">
             <h3>Ближайшие смены</h3>
             <p>Выберите возраст — покажем подходящие даты и свободные места.</p>
@@ -834,8 +840,11 @@
             <button class="cta-main" id="desktopStartBtn">Забронировать место →</button>
             <div class="under-cta">○ Ответим в течение 5 минут</div>
           </div>
+          <!-- /@block:booking-card -->
         </div>
+        <!-- /@block:hero -->
 
+        <!-- @block:sections -->
         <div class="body-sections">
           <section class="section-card" id="section-about">
             <h3>О лагере</h3>
@@ -964,6 +973,7 @@
             </div>
           </footer>
         </div>
+        <!-- /@block:sections -->
       </div>
     </div>
 
@@ -1009,9 +1019,11 @@
     </div>
   </div>
 
+  <!-- @block:offer-overlay -->
   <div class="overlay hidden" id="offerOverlay">
     <div class="overlay-card dark" id="offerCard"></div>
   </div>
+  <!-- /@block:offer-overlay -->
 
   <div class="form-drawer hidden" id="formDrawer">
     <div class="form-panel">
