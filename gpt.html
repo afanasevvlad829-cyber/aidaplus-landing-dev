@@ -346,11 +346,25 @@
       padding:22px;
       min-height:460px;
       background:
-        linear-gradient(180deg, rgba(16,22,33,.16), rgba(16,22,33,.66)),
-        radial-gradient(circle at 16% 20%, rgba(255,138,0,.22), transparent 30%),
-        radial-gradient(circle at 100% 0%, rgba(116,170,255,.20), transparent 30%),
-        linear-gradient(135deg, #7a8ea9 0%, #51657f 42%, #1d2633 100%);
+        linear-gradient(180deg, rgba(11,16,24,.20) 0%, rgba(11,16,24,.74) 100%),
+        radial-gradient(circle at 18% 18%, rgba(255,138,0,.18), transparent 28%),
+        radial-gradient(circle at 88% 12%, rgba(113,166,255,.16), transparent 26%),
+        linear-gradient(180deg, rgba(19,28,41,.10) 0%, rgba(19,28,41,.32) 62%, rgba(19,28,41,.58) 100%),
+        url('https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg');
+      background-size:cover;
+      background-position:center center;
+      background-repeat:no-repeat;
       color:#fff;
+    }
+
+    .hero-shell::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.02), transparent 18%, rgba(0,0,0,.08) 100%),
+        radial-gradient(circle at 50% 100%, rgba(255,255,255,.08), transparent 34%);
+      pointer-events:none;
     }
 
     .mobile-hero{
@@ -365,6 +379,8 @@
       justify-content:space-between;
       gap:12px;
       margin-bottom:30px;
+      position:relative;
+      z-index:1;
     }
 
     .brand{
@@ -434,6 +450,8 @@
 
     .hero-content{
       max-width:60%;
+      position:relative;
+      z-index:1;
     }
     .hero-tag{
       display:inline-flex;
@@ -573,6 +591,7 @@
       box-shadow:0 24px 70px rgba(0,0,0,.34);
       color:#fff;
       transition:transform .2s ease, box-shadow .2s ease;
+      z-index:1;
     }
     .hero-booking-card:hover{
       transform:translateY(-1px);
@@ -1196,6 +1215,36 @@
       grid-auto-rows:180px;
     }
 
+    .filter-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:0 0 14px;
+    }
+
+    .filter-chip{
+      border:none;
+      border-radius:999px;
+      padding:10px 12px;
+      background:#f5f7fb;
+      color:#111827;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      transition:transform .16s ease, background .16s ease, color .16s ease, box-shadow .16s ease;
+    }
+
+    .filter-chip:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 26px rgba(20,29,45,.10);
+    }
+
+    .filter-chip.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+    }
+
     .media-head{
       display:flex;
       align-items:end;
@@ -1269,6 +1318,14 @@
       font-weight:800;
       letter-spacing:.04em;
       text-transform:uppercase;
+    }
+
+    .shift-context-line{
+      margin-top:4px;
+      color:#6c788b;
+      font-size:11px;
+      font-weight:700;
+      line-height:1.45;
     }
 
     .video-list{
@@ -2336,7 +2393,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.22 (patch-20)
+    v0.0.23 (patch-21)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -2548,6 +2605,13 @@
                 <h3>Фото</h3>
                 <p>Живые кадры лагеря: занятия, бассейн, спорт, еда, команда и атмосфера.</p>
               </div>
+            </div>
+            <div class="filter-row" id="photoFilters">
+              <button class="filter-chip active" data-photo-filter="all">Все</button>
+              <button class="filter-chip" data-photo-filter="pool">Бассейн</button>
+              <button class="filter-chip" data-photo-filter="sport">Спорт</button>
+              <button class="filter-chip" data-photo-filter="study">Учёба</button>
+              <button class="filter-chip" data-photo-filter="food">Столовая</button>
             </div>
             <div class="photo-grid" id="photoGrid"></div>
           </section>
@@ -3056,6 +3120,7 @@
     state.desktopMode = state.desktopMode || 'full';
     state.mobileMode = state.mobileMode || 'full';
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
+    state.photoFilter = state.photoFilter || 'all';
 
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -3205,6 +3270,27 @@
       if(value === '10-12') return '10–12 лет';
       if(value === '13-14') return '13–14 лет';
       return '—';
+    }
+
+    function getShiftContextLine(shift){
+      if(!shift) return '';
+      if(!hasSelectedAge()){
+        return 'Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.';
+      }
+      const age = ageLabel(state.age);
+      if(shift.id === 'shift-1'){
+        return `Подходит для ${age} · часто выбирают ближайшую короткую смену.`;
+      }
+      if(shift.id === 'shift-2'){
+        return `Подходит для ${age} · хороший входной формат без длинной адаптации.`;
+      }
+      if(shift.id === 'shift-3'){
+        return `Подходит для ${age} · чаще выбирают ради AI-практики и проектной защиты.`;
+      }
+      if(shift.id === 'shift-4'){
+        return `Подходит для ${age} · длинная смена для более глубокого погружения.`;
+      }
+      return `Подходит для ${age}.`;
     }
 
     function isOfferActive(){
@@ -3471,6 +3557,13 @@
     document.getElementById('mobileFullModeBtn').addEventListener('click', () => switchMobileMode('full'));
     document.getElementById('mobileCompactModeBtn').addEventListener('click', () => switchMobileMode('compact'));
 
+    const photoFiltersEl = document.getElementById('photoFilters');
+    if (photoFiltersEl) {
+      photoFiltersEl.querySelectorAll('[data-photo-filter]').forEach(btn => {
+        btn.addEventListener('click', () => setPhotoFilter(btn.dataset.photoFilter));
+      });
+    }
+
     document.querySelectorAll('[data-ctp-tab]').forEach(btn => {
       btn.addEventListener('click', () => setCompactTrustTab(btn.dataset.ctpTab));
     });
@@ -3530,6 +3623,12 @@
       persist();
     }
 
+    function setPhotoFilter(filter){
+      state.photoFilter = filter;
+      renderMediaSections();
+      persist();
+    }
+
     bindAgeTabs('desktopAgeTabs');
     bindAgeTabs('mobileAgeTabs');
 
@@ -3559,6 +3658,7 @@
         <div class="mini-card">
           <h4>${s.title}</h4>
           <p><strong>${s.dates}</strong><br>${s.desc}<br><br>Текущая цена: ${formatPrice(s.price)}<br>Осталось мест: ${s.left}</p>
+          <div class="shift-context-line">${getShiftContextLine(s)}</div>
         </div>
       `).join('');
     }
@@ -3595,7 +3695,11 @@
       const locationMapBtn = document.getElementById('locationMapBtn');
 
       if (photoGrid) {
-        photoGrid.innerHTML = mediaContent.photos.map((item, idx) => `
+        const filteredPhotos = state.photoFilter === 'all'
+          ? mediaContent.photos
+          : mediaContent.photos.filter(item => item.cat === state.photoFilter);
+
+        photoGrid.innerHTML = filteredPhotos.map((item, idx) => `
           <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}">
             <img src="${item.src}" alt="${item.alt}">
             <div class="photo-title">${idx === 0 ? 'Главный кадр' : 'AiDaCamp'}</div>
@@ -3703,6 +3807,13 @@
             <span>${item.bio}</span>
           </div>
         `).join('');
+      }
+
+      const photoFilters = document.getElementById('photoFilters');
+      if (photoFilters) {
+        photoFilters.querySelectorAll('[data-photo-filter]').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.photoFilter === state.photoFilter);
+        });
       }
 
       renderCompactTrustPanelContent();
