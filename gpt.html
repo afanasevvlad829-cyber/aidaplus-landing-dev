@@ -247,6 +247,35 @@
       line-height:1.45;
     }
 
+    .booking-steps{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:6px;
+      margin-bottom:14px;
+    }
+
+    .booking-step{
+      padding:8px 6px;
+      border-radius:999px;
+      text-align:center;
+      font-size:11px;
+      font-weight:800;
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.54);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .booking-step.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      border-color:transparent;
+    }
+
+    .booking-step.done{
+      background:rgba(255,255,255,.14);
+      color:#fff;
+    }
+
     .age-tabs{
       display:flex;
       gap:8px;
@@ -281,6 +310,12 @@
       cursor:pointer;
       border:1px solid transparent;
     }
+
+    .shift-option:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(20,29,45,.08);
+    }
+
     .shift-option.active{
       border-color:#ffb15e;
       box-shadow:0 0 0 3px rgba(255,138,0,.12);
@@ -299,6 +334,66 @@
       font-size:11px;
       font-weight:800;
       white-space:nowrap;
+    }
+
+    .booking-price-box{
+      border-radius:18px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      padding:13px 13px 12px;
+      margin-bottom:12px;
+    }
+
+    .booking-price-head{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+
+    .booking-price-col small{
+      display:block;
+      font-size:11px;
+      color:rgba(255,255,255,.62);
+      margin-bottom:4px;
+    }
+
+    .booking-price-main{
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.02em;
+      color:#fff;
+    }
+
+    .booking-price-main.big{
+      font-size:24px;
+      font-weight:900;
+      color:#fff3e0;
+      letter-spacing:-.03em;
+    }
+
+    .booking-code-line{
+      margin-top:10px;
+      font-size:12px;
+      color:rgba(255,255,255,.68);
+    }
+
+    .booking-timer-line{
+      margin-top:8px;
+      font-size:12px;
+      color:#ffd9ae;
+      font-weight:800;
+    }
+
+    .booking-empty-box{
+      border-radius:18px;
+      background:rgba(255,255,255,.06);
+      border:1px dashed rgba(255,255,255,.14);
+      padding:12px 13px;
+      margin-bottom:12px;
+      color:rgba(255,255,255,.68);
+      font-size:12px;
+      line-height:1.5;
     }
 
     .cta-main{
@@ -785,7 +880,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.3 (patch-03)
+    v0.0.4 (patch-04)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -844,6 +939,12 @@
 
           <!-- @block:booking-card -->
           <div class="hero-booking-card">
+            <div class="booking-steps" id="desktopBookingSteps">
+              <div class="booking-step active">Возраст</div>
+              <div class="booking-step">Смена</div>
+              <div class="booking-step">Цена</div>
+              <div class="booking-step">Заявка</div>
+            </div>
             <h3 id="desktopBookingTitle">Выберите смену</h3>
             <p id="desktopBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
@@ -1018,6 +1119,12 @@
             <div class="occupancy-badge" id="mobileOccupancyBadge">⚡ 65% мест уже занято</div>
 
             <div class="hero-booking-card" style="position:static;width:100%;margin-top:18px;">
+              <div class="booking-steps" id="mobileBookingSteps">
+                <div class="booking-step active">Возраст</div>
+                <div class="booking-step">Смена</div>
+                <div class="booking-step">Цена</div>
+                <div class="booking-step">Заявка</div>
+              </div>
               <h3 id="mobileBookingTitle">Выберите смену</h3>
               <p id="mobileBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
@@ -1168,6 +1275,37 @@
       };
     }
 
+    function getStepState(){
+      if(!state.age){
+        return 1;
+      }
+      if(state.age && !state.shiftId){
+        return 1;
+      }
+      if(state.shiftId && state.offerStage === 0){
+        return 2;
+      }
+      if(state.offerStage >= 1 && !state.code){
+        return 3;
+      }
+      if(state.offerStage >= 1){
+        return 4;
+      }
+      return 1;
+    }
+
+    function renderSteps(targetId){
+      const root = document.getElementById(targetId);
+      if(!root) return;
+      const current = getStepState();
+      root.querySelectorAll('.booking-step').forEach((el, idx) => {
+        const num = idx + 1;
+        el.classList.remove('active','done');
+        if(num < current) el.classList.add('done');
+        if(num === current) el.classList.add('active');
+      });
+    }
+
     function formatRemaining(diff){
       if(diff <= 0) return '';
       const h = Math.floor(diff / (1000 * 60 * 60));
@@ -1191,7 +1329,11 @@
       if(!shift){
         title.textContent = 'Выберите смену';
         lead.textContent = 'Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.';
-        info.innerHTML = '';
+        info.innerHTML = `
+          <div class="booking-empty-box">
+            Сначала выберите одну из ближайших смен ниже. После этого мы покажем текущую цену и предложим проверить условия бронирования.
+          </div>
+        `;
         return;
       }
 
@@ -1203,19 +1345,19 @@
       lead.textContent = `${shift.title} · ${shift.dates}`;
 
       info.innerHTML = `
-        <div style="border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);padding:12px 12px 10px;">
-          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
-            <div>
-              <div style="font-size:12px;color:rgba(255,255,255,.68);margin-bottom:4px;">Текущая цена</div>
-              <div style="font-size:18px;font-weight:800;letter-spacing:-.02em;">${currentPrice}</div>
+        <div class="booking-price-box">
+          <div class="booking-price-head">
+            <div class="booking-price-col">
+              <small>Текущая цена</small>
+              <div class="booking-price-main">${currentPrice}</div>
             </div>
-            <div style="text-align:right;">
-              <div style="font-size:12px;color:rgba(255,255,255,.68);margin-bottom:4px;">${state.offerPrice ? 'Ваша цена' : 'После проверки'}</div>
-              <div style="font-size:22px;font-weight:900;letter-spacing:-.03em;color:#fff3e0;">${visiblePrice}</div>
+            <div class="booking-price-col" style="text-align:right;">
+              <small>${state.offerPrice ? 'Ваша цена' : 'После проверки'}</small>
+              <div class="booking-price-main big">${visiblePrice}</div>
             </div>
           </div>
-          ${state.code ? `<div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,.68);">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
-          ${timerText ? `<div style="margin-top:8px;font-size:12px;color:#ffd9ae;font-weight:800;">${timerText}</div>` : ''}
+          ${state.code ? `<div class="booking-code-line">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
+          ${timerText ? `<div class="booking-timer-line">${timerText}</div>` : ''}
         </div>
       `;
     }
@@ -1236,6 +1378,9 @@
         'mobileStartBtn',
         'mobileBookingHint'
       );
+
+      renderSteps('desktopBookingSteps');
+      renderSteps('mobileBookingSteps');
     }
 
     function switchView(view){
@@ -1292,7 +1437,7 @@
         <div class="shift-option ${state.shiftId === s.id ? 'active' : ''}" data-id="${s.id}">
           <div>
             <strong>${s.dates}</strong>
-            <small>${s.title} · ${formatPrice(s.price)}</small>
+            <small>${s.title} · ${formatPrice(s.price)} · осталось ${s.left} мест</small>
           </div>
           <div class="shift-price-chip">${s.left} мест</div>
         </div>
@@ -1444,6 +1589,7 @@
 
       if(!state.shiftId){
         bar.classList.add('hidden');
+        renderBookingPanels();
         return;
       }
 
