@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <!--
-    PATCH 01:
-    Adds block anchors for future git patches
-  -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AiDaCamp — Prototype Full Logic</title>
@@ -28,8 +24,6 @@
       background:var(--bg);
       color:var(--text);
       min-height:100vh;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
     }
     .hidden{display:none !important}
 
@@ -53,70 +47,6 @@
       border-radius:999px;
       box-shadow:var(--shadow);
     }
-
-    .mode-wrap{
-      display:flex;
-      justify-content:center;
-      margin:-6px 0 18px;
-    }
-
-    .mode-switch{
-      display:flex;
-      gap:8px;
-      padding:8px;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:999px;
-      box-shadow:var(--shadow);
-    }
-
-    .mode-btn{
-      border:none;
-      border-radius:999px;
-      padding:10px 16px;
-      background:transparent;
-      color:var(--text);
-      font-weight:700;
-      font-size:14px;
-      cursor:pointer;
-    }
-
-    .mode-btn.active{
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:#fff;
-    }
-
-    .mobile-mode-wrap{
-      display:flex;
-      justify-content:center;
-      margin:0 0 14px;
-    }
-
-    .mobile-mode-switch{
-      display:flex;
-      gap:8px;
-      padding:8px;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:999px;
-      box-shadow:var(--shadow);
-    }
-
-    .mobile-mode-btn{
-      border:none;
-      border-radius:999px;
-      padding:10px 14px;
-      background:transparent;
-      color:var(--text);
-      font-weight:700;
-      font-size:13px;
-      cursor:pointer;
-    }
-
-    .mobile-mode-btn.active{
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:#fff;
-    }
     .switch-btn{
       border:none;
       border-radius:999px;
@@ -132,231 +62,40 @@
       color:#fff;
     }
 
+    .title{
+      text-align:center;
+      margin-bottom:26px;
+    }
+    .title h1{
+      margin:0 0 8px;
+      font-size:34px;
+      line-height:1.12;
+      letter-spacing:-.03em;
+    }
+    .title p{
+      margin:0;
+      color:var(--muted);
+      font-size:16px;
+    }
+
     .screen{
       border-radius:30px;
       overflow:hidden;
       background:var(--panel);
       box-shadow:var(--shadow);
       border:1px solid rgba(255,255,255,.7);
-      transition:box-shadow .2s ease;
-    }
-
-    .compact-mode .body-sections{
-      display:none !important;
-    }
-
-    .compact-mode .hero-shell{
-      min-height:560px;
-    }
-
-    .mobile-compact-mode .mobile-body-sections{
-      display:none !important;
-    }
-
-    .compact-trust-entry{
-      display:none;
-      margin-top:18px;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .compact-mode .compact-trust-entry{
-      display:flex;
-    }
-
-    .compact-trust-btn{
-      border:none;
-      border-radius:14px;
-      padding:12px 14px;
-      background:rgba(255,255,255,.10);
-      color:#fff;
-      font-size:13px;
-      font-weight:800;
-      cursor:pointer;
-      border:1px solid rgba(255,255,255,.12);
-      backdrop-filter:blur(10px);
-      transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
-    }
-
-    .compact-trust-btn:hover{
-      transform:translateY(-1px);
-      background:rgba(255,255,255,.14);
-      box-shadow:0 14px 28px rgba(0,0,0,.14);
-    }
-
-    .compact-trust-panel{
-      position:fixed;
-      top:84px;
-      right:18px;
-      width:min(420px, calc(100vw - 32px));
-      max-height:calc(100vh - 120px);
-      overflow:auto;
-      z-index:88;
-      background:rgba(255,255,255,.96);
-      backdrop-filter:blur(18px);
-      border:1px solid var(--line);
-      border-radius:26px;
-      box-shadow:0 24px 70px rgba(20,29,45,.18);
-      padding:18px;
-      animation:panelIn .22s ease;
-    }
-
-    .compact-trust-panel.hidden{
-      display:none !important;
-    }
-
-    .compact-panel-top{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:14px;
-    }
-
-    .compact-panel-top h3{
-      margin:0 0 4px;
-      font-size:22px;
-      letter-spacing:-.03em;
-      line-height:1.1;
-    }
-
-    .compact-panel-top p{
-      margin:0;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.5;
-    }
-
-    .compact-panel-close{
-      border:none;
-      background:#f5f7fb;
-      color:#111827;
-      width:38px;
-      height:38px;
-      border-radius:12px;
-      font-size:18px;
-      font-weight:800;
-      cursor:pointer;
-      flex:0 0 auto;
-    }
-
-    .compact-panel-tabs{
-      display:flex;
-      gap:8px;
-      margin-bottom:14px;
-      flex-wrap:wrap;
-    }
-
-    .compact-panel-tab{
-      border:none;
-      border-radius:999px;
-      padding:10px 12px;
-      background:#f5f7fb;
-      color:#111827;
-      font-size:12px;
-      font-weight:800;
-      cursor:pointer;
-      transition:all .18s ease;
-    }
-
-    .compact-panel-tab.active{
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:#fff;
-    }
-
-    .compact-panel-section.hidden{
-      display:none !important;
-    }
-
-    .compact-panel-photo-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .compact-panel-photo{
-      border-radius:16px;
-      overflow:hidden;
-      border:1px solid var(--line);
-      background:#fff;
-      min-height:120px;
-    }
-
-    .compact-panel-photo img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      aspect-ratio:4/3;
-    }
-
-    .compact-panel-video-list,
-    .compact-panel-review-list{
-      display:grid;
-      gap:10px;
-    }
-
-    .compact-panel-video-card,
-    .compact-panel-review-card{
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:18px;
-      padding:14px;
-      box-shadow:var(--shadow);
-    }
-
-    .compact-panel-video-card h4,
-    .compact-panel-review-card strong{
-      display:block;
-      margin:0 0 8px;
-      font-size:14px;
-      line-height:1.4;
-    }
-
-    .compact-panel-video-card p,
-    .compact-panel-review-card span{
-      display:block;
-      margin:0 0 10px;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.55;
-    }
-
-    .compact-panel-link{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-height:40px;
-      padding:0 12px;
-      border-radius:12px;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:#fff;
-      text-decoration:none;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    @keyframes panelIn{
-      from{opacity:0; transform:translateX(12px)}
-      to{opacity:1; transform:translateX(0)}
     }
 
     .hero-shell{
       position:relative;
-      padding:22px;
-      min-height:460px;
+      padding:18px;
+      min-height:420px;
       background:
-        linear-gradient(180deg, rgba(16,22,33,.16), rgba(16,22,33,.66)),
-        radial-gradient(circle at 16% 20%, rgba(255,138,0,.22), transparent 30%),
-        radial-gradient(circle at 100% 0%, rgba(116,170,255,.20), transparent 30%),
-        linear-gradient(135deg, #7a8ea9 0%, #51657f 42%, #1d2633 100%);
+        linear-gradient(180deg, rgba(16,22,33,.20), rgba(16,22,33,.62)),
+        radial-gradient(circle at 20% 20%, rgba(255,138,0,.18), transparent 32%),
+        radial-gradient(circle at 100% 0%, rgba(116,170,255,.18), transparent 28%),
+        linear-gradient(135deg, #7489a8 0%, #50637d 40%, #1f2835 100%);
       color:#fff;
-    }
-
-    .mobile-hero{
-      min-height:unset;
-      padding:18px 16px 20px;
-      border-radius:30px;
     }
 
     .hero-topbar{
@@ -364,14 +103,14 @@
       align-items:center;
       justify-content:space-between;
       gap:12px;
-      margin-bottom:30px;
+      margin-bottom:26px;
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap:10px;
-      padding:10px 14px 10px 12px;
+      gap:8px;
+      padding:10px 14px;
       border-radius:999px;
       background:#fff;
       color:#111827;
@@ -379,21 +118,6 @@
       font-size:14px;
       box-shadow:0 10px 25px rgba(0,0,0,.08);
       white-space:nowrap;
-    }
-
-    .brand-logo{
-      width:24px;
-      height:24px;
-      flex:0 0 auto;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .brand-logo svg{
-      width:100%;
-      height:100%;
-      display:block;
     }
 
     .brand-dot{
@@ -421,15 +145,10 @@
       box-shadow:0 8px 20px rgba(0,0,0,.06);
       cursor:pointer;
       border:none;
-      transition:transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
     }
     .menu-pill.active{
       background:linear-gradient(135deg,var(--accent),var(--accent-2));
       color:#fff;
-    }
-    .menu-pill:hover{
-      transform:translateY(-1px);
-      box-shadow:0 12px 24px rgba(20,29,45,.10);
     }
 
     .hero-content{
@@ -439,84 +158,28 @@
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:10px 13px;
+      padding:9px 12px;
       border-radius:999px;
       background:rgba(255,255,255,.18);
       border:1px solid rgba(255,255,255,.18);
       font-size:12px;
-      margin-bottom:18px;
+      margin-bottom:16px;
       backdrop-filter:blur(8px);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
     }
 
-    .hero-title{
-      margin:0 0 12px;
-      font-size:38px;
-      font-weight:800;
-      line-height:1.08;
+    .hero-content h2{
+      margin:0 0 10px;
+      font-size:30px;
+      line-height:1.12;
       letter-spacing:-.03em;
-      max-width:760px;
-    }
-
-    .mobile-hero .hero-content h2{
-      font-size:28px;
-      line-height:1.1;
-      max-width:none;
+      max-width:680px;
     }
 
     .hero-sub{
       color:rgba(255,255,255,.84);
-      font-size:17px;
-      line-height:1.5;
-      margin-bottom:20px;
-    }
-
-    .mobile-hero .hero-sub{
       font-size:15px;
-      margin-bottom:16px;
-    }
-
-    .hero-slogan{
-      display:inline-block;
-      margin-top:12px;
-      font-size:14px;
-      font-weight:600;
-      color:#fff;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
-      padding:6px 10px;
-      border-radius:999px;
-      backdrop-filter:blur(6px);
-    }
-
-    .hero-proofline{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:16px;
-    }
-
-    .mobile-hero .hero-proofline{
-      gap:8px;
-      margin-top:14px;
-    }
-
-    .mobile-hero .hero-proofline span{
-      font-size:11px;
-      padding:7px 9px;
-    }
-
-    .hero-proofline span{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:8px 10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.12);
-      font-size:12px;
-      color:rgba(255,255,255,.9);
-      backdrop-filter:blur(8px);
+      line-height:1.45;
+      margin-bottom:18px;
     }
 
     .feature-row{
@@ -526,19 +189,13 @@
     }
 
     .feature-pill{
-      padding:11px 13px;
-      border-radius:16px;
-      background:rgba(0,0,0,.22);
-      border:1px solid rgba(255,255,255,.14);
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(0,0,0,.24);
+      border:1px solid rgba(255,255,255,.12);
       font-size:12px;
       min-width:132px;
       backdrop-filter:blur(10px);
-      transition:transform .18s ease, border-color .18s ease, background .18s ease;
-    }
-    .feature-pill:hover{
-      transform:translateY(-1px);
-      border-color:rgba(255,255,255,.22);
-      background:rgba(0,0,0,.26);
     }
     .feature-pill strong{
       display:block;
@@ -550,8 +207,8 @@
       display:inline-flex;
       align-items:center;
       gap:7px;
-      margin-top:16px;
-      padding:11px 13px;
+      margin-top:14px;
+      padding:10px 12px;
       border-radius:999px;
       background:rgba(255,138,0,.18);
       border:1px solid rgba(255,138,0,.34);
@@ -564,194 +221,53 @@
       position:absolute;
       right:18px;
       top:78px;
-      width:356px;
-      padding:20px;
-      border-radius:26px;
-      background:rgba(12,17,24,.76);
-      border:1px solid rgba(255,255,255,.10);
-      backdrop-filter:blur(18px);
-      box-shadow:0 24px 70px rgba(0,0,0,.34);
-      color:#fff;
-      transition:transform .2s ease, box-shadow .2s ease;
-    }
-    .hero-booking-card:hover{
-      transform:translateY(-1px);
-      box-shadow:0 28px 76px rgba(0,0,0,.36);
-    }
-
-    .mobile-booking-card{
-      position:static !important;
-      width:100% !important;
-      margin-top:18px;
+      width:320px;
       padding:18px;
       border-radius:24px;
       background:rgba(12,17,24,.78);
       border:1px solid rgba(255,255,255,.10);
-      backdrop-filter:blur(18px);
-      box-shadow:0 22px 60px rgba(0,0,0,.30);
-    }
-
-    .mobile-booking-card h3{
-      font-size:20px;
-      margin:0 0 8px;
-    }
-
-    .mobile-booking-card p{
-      font-size:13px;
-      line-height:1.5;
-      margin:0 0 14px;
+      backdrop-filter:blur(16px);
+      box-shadow:0 20px 50px rgba(0,0,0,.28);
+      color:#fff;
     }
 
     .hero-booking-card h3{
       margin:0 0 8px;
-      font-size:21px;
+      font-size:20px;
       letter-spacing:-.02em;
     }
     .hero-booking-card p{
       margin:0 0 14px;
       color:rgba(255,255,255,.72);
       font-size:13px;
-      line-height:1.5;
-    }
-
-    .booking-steps{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:6px;
-      margin-bottom:16px;
-    }
-
-    .booking-step{
-      padding:9px 6px;
-      border-radius:999px;
-      text-align:center;
-      font-size:11px;
-      font-weight:800;
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.54);
-      border:1px solid rgba(255,255,255,.08);
-      transition:background .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
-    }
-
-    .mobile-booking-card .booking-step{
-      font-size:10px;
-      padding:8px 4px;
-    }
-
-    .booking-step.active{
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:#fff;
-      border-color:transparent;
-    }
-
-    .booking-step.done{
-      background:rgba(255,255,255,.14);
-      color:#fff;
-    }
-
-    .booking-step.pulse{
-      box-shadow:0 0 0 4px rgba(255,138,0,.14);
-      animation:stepPulse 1.6s ease-in-out infinite;
+      line-height:1.45;
     }
 
     .age-tabs{
       display:flex;
       gap:8px;
-      margin-bottom:14px;
-    }
-
-    .guided-label{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      margin:0 0 8px;
-      font-size:12px;
-      font-weight:800;
-      color:rgba(255,255,255,.86);
-      letter-spacing:.02em;
-    }
-
-    .guided-dot{
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:var(--accent-2);
-      flex:0 0 auto;
-      box-shadow:0 0 0 4px rgba(255,159,47,.12);
-    }
-
-    .guided-callout{
-      margin:0 0 12px;
-      padding:11px 12px;
-      border-radius:14px;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.10);
-      color:rgba(255,255,255,.78);
-      font-size:12px;
-      line-height:1.5;
-    }
-
-    .selected-age-chip{
-      display:none;
-      align-items:center;
-      gap:10px;
-      margin:0 0 12px;
-      padding:10px 12px;
-      border-radius:14px;
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.12);
-      color:#fff;
-      font-size:12px;
-      font-weight:800;
-      width:max-content;
-      max-width:100%;
-    }
-
-    .selected-age-chip.visible{
-      display:inline-flex;
-    }
-
-    .selected-age-chip button{
-      border:none;
-      width:24px;
-      height:24px;
-      border-radius:8px;
-      background:rgba(255,255,255,.12);
-      color:#fff;
-      font-size:14px;
-      font-weight:900;
-      cursor:pointer;
-      flex:0 0 auto;
-    }
-
-    .age-tabs.hidden{
-      display:none !important;
+      margin-bottom:12px;
     }
     .age-tab{
       flex:1;
       border:none;
       border-radius:12px;
-      padding:11px 8px;
+      padding:10px 8px;
       background:rgba(255,255,255,.08);
       color:#fff;
       font-size:12px;
       font-weight:700;
       cursor:pointer;
-      transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
     }
     .age-tab.active{
       background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow:0 8px 18px rgba(255,138,0,.18);
-    }
-    .age-tab:hover{
-      transform:translateY(-1px);
     }
 
     .shift-option{
       border-radius:14px;
       background:#fff;
       color:#111827;
-      padding:12px 13px;
+      padding:11px 12px;
       margin-bottom:10px;
       display:flex;
       align-items:center;
@@ -760,59 +276,7 @@
       font-size:13px;
       cursor:pointer;
       border:1px solid transparent;
-      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
     }
-
-    .shift-list.disabled{
-      position:relative;
-      opacity:.52;
-      pointer-events:none;
-      filter:saturate(.85);
-    }
-
-    .shift-list.highlight{
-      border-radius:18px;
-      box-shadow:0 0 0 4px rgba(255,138,0,.10);
-      padding:4px;
-      margin:-4px 0 0;
-    }
-
-    .shift-list-veil{
-      display:none;
-      margin:0 0 10px;
-      padding:11px 12px;
-      border-radius:14px;
-      background:rgba(255,255,255,.08);
-      border:1px dashed rgba(255,255,255,.14);
-      color:rgba(255,255,255,.72);
-      font-size:12px;
-      line-height:1.5;
-    }
-
-    .shift-list.disabled + .shift-list-veil{
-      display:block;
-    }
-
-    .mobile-booking-card .shift-option{
-      padding:11px 12px;
-      border-radius:16px;
-    }
-
-    .mobile-booking-card .shift-option strong{
-      font-size:13px;
-      line-height:1.35;
-    }
-
-    .mobile-booking-card .shift-option small{
-      font-size:11px;
-      line-height:1.4;
-    }
-
-    .shift-option:hover{
-      transform:translateY(-1px);
-      box-shadow:0 10px 24px rgba(20,29,45,.08);
-    }
-
     .shift-option.active{
       border-color:#ffb15e;
       box-shadow:0 0 0 3px rgba(255,138,0,.12);
@@ -833,118 +297,17 @@
       white-space:nowrap;
     }
 
-    .booking-price-box{
-      border-radius:18px;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.10);
-      padding:14px 14px 13px;
-      margin-bottom:13px;
-    }
-
-    .mobile-booking-card .booking-price-box{
-      border-radius:16px;
-      padding:13px 13px 12px;
-    }
-
-    .booking-price-head{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
-    }
-
-    .booking-price-col small{
-      display:block;
-      font-size:11px;
-      color:rgba(255,255,255,.62);
-      margin-bottom:4px;
-    }
-
-    .booking-price-main{
-      font-size:18px;
-      font-weight:800;
-      letter-spacing:-.02em;
-      color:#fff;
-    }
-
-    .mobile-booking-card .booking-price-main{
-      font-size:17px;
-    }
-
-    .booking-price-main.big{
-      font-size:24px;
-      font-weight:900;
-      color:#fff3e0;
-      letter-spacing:-.03em;
-    }
-
-    .mobile-booking-card .booking-price-main.big{
-      font-size:21px;
-    }
-
-    .booking-code-line{
-      margin-top:10px;
-      font-size:12px;
-      color:rgba(255,255,255,.68);
-    }
-
-    .booking-timer-line{
-      margin-top:8px;
-      font-size:12px;
-      color:#ffd9ae;
-      font-weight:800;
-    }
-
-    .booking-empty-box{
-      border-radius:18px;
-      background:rgba(255,255,255,.06);
-      border:1px dashed rgba(255,255,255,.14);
-      padding:12px 13px;
-      margin-bottom:12px;
-      color:rgba(255,255,255,.68);
-      font-size:12px;
-      line-height:1.5;
-    }
-
-    @keyframes stepPulse{
-      0%{box-shadow:0 0 0 0 rgba(255,138,0,.18)}
-      70%{box-shadow:0 0 0 8px rgba(255,138,0,0)}
-      100%{box-shadow:0 0 0 0 rgba(255,138,0,0)}
-    }
-
     .cta-main{
       width:100%;
       border:none;
       border-radius:16px;
-      padding:16px;
+      padding:15px 16px;
       color:#fff;
       font-weight:800;
       font-size:15px;
       background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      box-shadow:0 18px 40px rgba(255,122,0,.45);
+      box-shadow:0 14px 32px rgba(255,138,0,.28);
       cursor:pointer;
-      transition:transform .15s ease, box-shadow .15s ease;
-    }
-
-    .mobile-booking-card .cta-main{
-      padding:15px 16px;
-      font-size:15px;
-      border-radius:15px;
-    }
-
-    .cta-main:hover{
-      transform:translateY(-2px) scale(1.01);
-      box-shadow:0 22px 55px rgba(255,122,0,.55);
-    }
-    .cta-main:focus-visible,
-    .secondary-outline:focus-visible,
-    .inline-link-btn:focus-visible,
-    .mode-btn:focus-visible,
-    .switch-btn:focus-visible,
-    .menu-pill:focus-visible,
-    .age-tab:focus-visible{
-      outline:3px solid rgba(255,138,0,.30);
-      outline-offset:2px;
     }
 
     .cta-main:disabled{
@@ -953,53 +316,8 @@
       box-shadow:none;
     }
 
-    .cta-wrap.highlight{
-      border-radius:18px;
-      box-shadow:0 0 0 4px rgba(255,138,0,.10);
-      padding:4px;
-      margin:-4px 0 0;
-    }
-
-    .cta-subtext{
-      margin-top:8px;
-      font-size:12px;
-      color:rgba(255,255,255,.6);
-      text-align:center;
-    }
-
-    .mobile-booking-card .cta-subtext{
-      font-size:11px;
-      margin-top:7px;
-    }
-
-    .trust-mini{
-      margin-top:15px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      font-size:12px;
-      color:rgba(255,255,255,.65);
-    }
-
-    .mobile-booking-card .trust-mini{
-      gap:8px;
-      margin-top:12px;
-      font-size:11px;
-    }
-
-    .trust-mini span{
-      background:rgba(255,255,255,.08);
-      padding:5px 9px;
-      border-radius:10px;
-    }
-
-    .mobile-booking-card .trust-mini span{
-      padding:5px 8px;
-      border-radius:9px;
-    }
-
     .under-cta{
-      margin-top:11px;
+      margin-top:10px;
       text-align:center;
       color:rgba(255,255,255,.68);
       font-size:12px;
@@ -1019,41 +337,6 @@
       padding:18px;
     }
 
-    .trust-band{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:12px;
-      margin-top:14px;
-    }
-
-    .trust-band-card{
-      border:1px solid var(--line);
-      background:linear-gradient(135deg,#fff8f0,#ffffff);
-      border-radius:20px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      transition:transform .18s ease, box-shadow .18s ease;
-    }
-    .trust-band-card:hover{
-      transform:translateY(-2px);
-      box-shadow:0 22px 42px rgba(20,29,45,.10);
-    }
-
-    .trust-band-card strong{
-      display:block;
-      font-size:18px;
-      letter-spacing:-.02em;
-      margin-bottom:8px;
-      color:#111827;
-    }
-
-    .trust-band-card span{
-      display:block;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.55;
-    }
-
     .section-card h3{
       margin:0 0 10px;
       font-size:22px;
@@ -1064,82 +347,6 @@
       color:var(--muted);
       line-height:1.55;
       font-size:14px;
-    }
-
-    .journey-grid{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-      margin-top:14px;
-    }
-
-    .journey-card{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      display:grid;
-      gap:10px;
-    }
-
-    .journey-num{
-      width:34px;
-      height:34px;
-      border-radius:50%;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:14px;
-      font-weight:900;
-      letter-spacing:-.02em;
-    }
-
-    .journey-card h4{
-      margin:0;
-      font-size:16px;
-      line-height:1.35;
-      letter-spacing:-.01em;
-    }
-
-    .journey-card p{
-      margin:0;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.6;
-    }
-
-    .results-band{
-      margin-top:16px;
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:10px;
-    }
-
-    .result-pill{
-      background:linear-gradient(135deg,#fff8f0,#ffffff);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px 12px;
-      box-shadow:var(--shadow);
-      text-align:center;
-    }
-
-    .result-pill strong{
-      display:block;
-      font-size:22px;
-      letter-spacing:-.03em;
-      color:#d66a00;
-      margin-bottom:6px;
-    }
-
-    .result-pill span{
-      display:block;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.45;
     }
 
     .grid-3{
@@ -1189,525 +396,6 @@
       letter-spacing:.08em;
     }
 
-    .photo-grid{
-      display:grid;
-      grid-template-columns:1.35fr 1fr 1fr;
-      gap:12px;
-      grid-auto-rows:180px;
-    }
-
-    .media-head{
-      display:flex;
-      align-items:end;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:14px;
-    }
-
-    .media-head h3{
-      margin:0;
-    }
-
-    .media-head p{
-      margin:0;
-      max-width:760px;
-    }
-
-    .photo-card{
-      position:relative;
-      overflow:hidden;
-      border-radius:20px;
-      border:1px solid var(--line);
-      background:#fff;
-      min-height:180px;
-      box-shadow:var(--shadow);
-      transition:transform .22s ease, box-shadow .22s ease;
-    }
-
-    .photo-card.hero{
-      grid-row:span 2;
-      min-height:372px;
-    }
-
-    .photo-card.wide{
-      grid-column:span 2;
-    }
-
-    .photo-card img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      aspect-ratio: 4 / 3;
-    }
-
-    .photo-badge{
-      position:absolute;
-      left:10px;
-      bottom:10px;
-      padding:6px 9px;
-      border-radius:999px;
-      background:rgba(17,24,39,.76);
-      color:#fff;
-      font-size:11px;
-      font-weight:700;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-      backdrop-filter:blur(8px);
-    }
-
-    .photo-title{
-      position:absolute;
-      left:10px;
-      top:10px;
-      padding:6px 9px;
-      border-radius:999px;
-      background:rgba(255,255,255,.86);
-      color:#111827;
-      font-size:11px;
-      font-weight:800;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-    }
-
-    .video-list{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:12px;
-    }
-
-    .video-feature{
-      margin-top:14px;
-      border-radius:22px;
-      border:1px solid var(--line);
-      background:
-        radial-gradient(circle at 20% 20%, rgba(255,138,0,.14), transparent 28%),
-        linear-gradient(135deg,#ffffff,#f7f9fc);
-      padding:18px;
-      box-shadow:var(--shadow);
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:18px;
-      align-items:center;
-    }
-
-    .video-feature h4{
-      margin:0 0 8px;
-      font-size:24px;
-      letter-spacing:-.03em;
-      line-height:1.15;
-    }
-
-    .video-feature p{
-      margin:0 0 14px;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.6;
-    }
-
-    .inline-link-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:14px;
-      padding:12px 16px;
-      font-weight:800;
-      font-size:14px;
-      text-decoration:none;
-    }
-
-    .inline-link-btn.primary{
-      color:#fff;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      box-shadow:0 12px 24px rgba(255,138,0,.22);
-    }
-
-    .video-feature-box{
-      min-height:220px;
-      border-radius:20px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(255,138,0,.18), transparent 28%),
-        linear-gradient(135deg,#dfe7f3,#a9b8cb 50%,#6f829a);
-      position:relative;
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .video-feature-box::after{
-      content:"MAIN VIDEO";
-      position:absolute;
-      left:14px;
-      bottom:14px;
-      color:#fff;
-      font-size:11px;
-      font-weight:800;
-      letter-spacing:.14em;
-      opacity:.92;
-    }
-
-    .video-card{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      display:grid;
-      gap:12px;
-      transition:transform .2s ease, box-shadow .2s ease;
-    }
-    .video-card:hover{
-      transform:translateY(-2px);
-      box-shadow:0 22px 42px rgba(20,29,45,.12);
-    }
-
-    .video-poster{
-      min-height:150px;
-      border-radius:16px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(255,138,0,.18), transparent 28%),
-        linear-gradient(135deg,#dfe7f3,#a9b8cb 50%,#6f829a);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .video-poster::after{
-      content:"VIDEO";
-      position:absolute;
-      left:12px;
-      bottom:12px;
-      color:#fff;
-      font-size:11px;
-      font-weight:800;
-      letter-spacing:.14em;
-      opacity:.92;
-    }
-
-    .video-play{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .video-play span{
-      width:56px;
-      height:56px;
-      border-radius:50%;
-      background:rgba(255,255,255,.92);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:var(--accent);
-      font-size:22px;
-      box-shadow:0 14px 28px rgba(20,29,45,.14);
-    }
-
-    .video-card h4{
-      margin:0;
-      font-size:16px;
-      line-height:1.35;
-      letter-spacing:-.01em;
-    }
-
-    .video-card p{
-      margin:0;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.55;
-    }
-
-    .video-card a{
-      text-decoration:none;
-    }
-
-    .contacts-grid{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-      margin-bottom:14px;
-    }
-
-    .contact-link{
-      display:grid;
-      justify-items:center;
-      gap:10px;
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:18px;
-      padding:16px;
-      text-align:center;
-      text-decoration:none;
-      color:var(--text);
-      box-shadow:var(--shadow);
-      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-    }
-
-    .contact-link:hover,
-    .social-link:hover,
-    .video-card:hover,
-    .photo-card:hover{
-      transform:translateY(-2px);
-      transition:.2s ease;
-    }
-
-    .contact-link .contact-icon{
-      width:42px;
-      height:42px;
-      border-radius:50%;
-      background:#fff1df;
-      color:#d66a00;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:18px;
-      font-weight:800;
-    }
-
-    .contact-link strong{
-      display:block;
-      font-size:14px;
-    }
-
-    .contact-link span{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.4;
-    }
-
-    .socials-grid{
-      display:grid;
-      grid-template-columns:repeat(7,1fr);
-      gap:10px;
-    }
-
-    .social-link{
-      display:grid;
-      justify-items:center;
-      align-content:center;
-      gap:8px;
-      min-height:92px;
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:18px;
-      text-decoration:none;
-      color:var(--text);
-      box-shadow:var(--shadow);
-      padding:10px 8px;
-      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-    }
-
-    .social-glyph{
-      width:38px;
-      height:38px;
-      border-radius:50%;
-      background:#f5f7fb;
-      border:1px solid var(--line);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:13px;
-      font-weight:800;
-      text-transform:uppercase;
-    }
-
-    .social-link span{
-      font-size:11px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
-    .map-card{
-      margin-top:14px;
-      border:1px solid var(--line);
-      border-radius:22px;
-      overflow:hidden;
-      background:#fff;
-      box-shadow:var(--shadow);
-    }
-
-    .map-preview{
-      min-height:220px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(255,138,0,.16), transparent 26%),
-        linear-gradient(135deg,#e7edf5,#d5dfeb 45%,#c2cfdd);
-      position:relative;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:20px;
-    }
-
-    .map-preview::after{
-      content:"MAP";
-      position:absolute;
-      left:14px;
-      bottom:14px;
-      color:#536277;
-      font-size:11px;
-      font-weight:800;
-      letter-spacing:.14em;
-    }
-
-    .map-preview strong{
-      display:block;
-      font-size:22px;
-      letter-spacing:-.02em;
-      margin-bottom:6px;
-    }
-
-    .map-preview span{
-      color:#5f6d82;
-      font-size:14px;
-      line-height:1.5;
-      max-width:420px;
-    }
-
-    .map-footer{
-      padding:14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .review-actions{
-      margin-top:14px;
-    }
-
-    .review-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:12px;
-    }
-
-    .review-card{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-      box-shadow:var(--shadow);
-      transition:transform .2s ease, box-shadow .2s ease;
-    }
-    .review-card:hover{
-      transform:translateY(-2px);
-      box-shadow:0 22px 42px rgba(20,29,45,.10);
-    }
-
-    .review-card strong{
-      display:block;
-      margin-bottom:6px;
-      font-size:14px;
-    }
-
-    .review-card span{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.55;
-    }
-
-    .review-real{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      display:grid;
-      gap:12px;
-      transition:transform .2s ease, box-shadow .2s ease;
-    }
-
-    .review-real:hover{
-      transform:translateY(-2px);
-      box-shadow:0 22px 42px rgba(20,29,45,.10);
-    }
-
-    .review-head-real{
-      display:flex;
-      gap:12px;
-      align-items:flex-start;
-    }
-
-    .review-avatar{
-      width:48px;
-      height:48px;
-      border-radius:50%;
-      overflow:hidden;
-      flex:0 0 auto;
-      background:#f5f7fb;
-      border:1px solid var(--line);
-    }
-
-    .review-avatar img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-
-    .review-person{
-      min-width:0;
-    }
-
-    .review-person strong{
-      display:block;
-      font-size:14px;
-      line-height:1.35;
-      margin-bottom:4px;
-    }
-
-    .review-meta{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.4;
-    }
-
-    .review-quote{
-      color:var(--text);
-      font-size:14px;
-      line-height:1.6;
-    }
-
-    .reviews-summary{
-      display:grid;
-      grid-template-columns:220px 1fr;
-      gap:14px;
-      margin-top:14px;
-      align-items:stretch;
-    }
-
-    .reviews-score{
-      background:linear-gradient(135deg,#fff8f0,#ffffff);
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:18px;
-      box-shadow:var(--shadow);
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      text-align:center;
-    }
-
-    .reviews-score strong{
-      font-size:42px;
-      line-height:1;
-      letter-spacing:-.04em;
-      color:#d66a00;
-      margin-bottom:8px;
-    }
-
-    .reviews-score span{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.5;
-    }
-
     .team-grid{
       display:grid;
       grid-template-columns:repeat(3,1fr);
@@ -1720,12 +408,6 @@
       border-radius:20px;
       padding:16px;
       text-align:center;
-      box-shadow:var(--shadow);
-      transition:transform .18s ease, box-shadow .18s ease;
-    }
-    .team-card:hover{
-      transform:translateY(-2px);
-      box-shadow:0 22px 42px rgba(20,29,45,.10);
     }
 
     .team-avatar{
@@ -1734,15 +416,6 @@
       border-radius:50%;
       margin:0 auto 12px;
       background:linear-gradient(135deg,#ffd8b3,#ffb15e);
-      overflow:hidden;
-      border:1px solid var(--line);
-    }
-
-    .team-avatar img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
     }
 
     .team-card strong{
@@ -1755,138 +428,6 @@
       color:var(--muted);
       font-size:13px;
       line-height:1.45;
-    }
-
-    .team-role{
-      display:block;
-      color:#111827;
-      font-size:13px;
-      font-weight:700;
-      line-height:1.45;
-      margin-bottom:8px;
-    }
-
-    .trust-callout{
-      margin-bottom:14px;
-      border-radius:22px;
-      padding:18px;
-      border:1px solid var(--line);
-      background:
-        radial-gradient(circle at 15% 20%, rgba(255,138,0,.12), transparent 24%),
-        linear-gradient(135deg,#fff8f0,#ffffff);
-      box-shadow:var(--shadow);
-    }
-
-    .trust-callout h4{
-      margin:0 0 8px;
-      font-size:22px;
-      letter-spacing:-.03em;
-      line-height:1.15;
-    }
-
-    .trust-callout p{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.6;
-    }
-
-    .book-card{
-      margin-top:14px;
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:14px;
-      align-items:center;
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:22px;
-      padding:16px;
-      box-shadow:var(--shadow);
-    }
-
-    .book-card h4{
-      margin:0 0 6px;
-      font-size:18px;
-      letter-spacing:-.02em;
-    }
-
-    .book-card p{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.55;
-    }
-
-    .faq-groups{
-      display:grid;
-      gap:12px;
-      margin-top:14px;
-    }
-
-    .faq-group{
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:20px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      transition:transform .18s ease, box-shadow .18s ease;
-    }
-    .faq-group:hover{
-      transform:translateY(-1px);
-      box-shadow:0 22px 42px rgba(20,29,45,.10);
-    }
-
-    .faq-group-head{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:12px;
-    }
-
-    .faq-icon{
-      width:36px;
-      height:36px;
-      border-radius:12px;
-      background:#fff1df;
-      color:#d66a00;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:12px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-      flex:0 0 auto;
-    }
-
-    .faq-group-head strong{
-      font-size:16px;
-      letter-spacing:-.01em;
-    }
-
-    .faq-list{
-      display:grid;
-      gap:10px;
-    }
-
-    .faq-line{
-      padding:12px 14px;
-      border-radius:16px;
-      background:#fafbfd;
-      border:1px solid #eef1f5;
-    }
-
-    .faq-line strong{
-      display:block;
-      margin-bottom:6px;
-      font-size:14px;
-      line-height:1.45;
-    }
-
-    .faq-line span{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.6;
     }
 
     .faq-grid{
@@ -1968,7 +509,6 @@
       justify-content:center;
       padding:18px;
       z-index:80;
-      animation:fadeIn .18s ease;
     }
 
     .overlay-card{
@@ -1978,7 +518,6 @@
       box-shadow:0 25px 55px rgba(20,29,45,.16);
       padding:22px;
       border:1px solid #edf0f5;
-      animation:modalUp .22s ease;
     }
 
     .overlay-card.dark{
@@ -2043,12 +582,6 @@
       font-size:14px;
       font-weight:800;
       cursor:pointer;
-      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-    }
-    .secondary-outline:hover{
-      transform:translateY(-1px);
-      box-shadow:0 14px 26px rgba(20,29,45,.08);
-      border-color:#d4dae5;
     }
 
     .overlay-card.dark .secondary-outline{
@@ -2063,21 +596,16 @@
       left:0;
       right:0;
       z-index:90;
-      background:rgba(255,255,255,.95);
-      backdrop-filter:blur(18px);
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(16px);
       border-top:1px solid var(--line);
-      box-shadow:0 -12px 32px rgba(20,29,45,.07);
-      animation:summaryIn .24s ease;
-    }
-
-    .compact-mode .summary-bar{
-      background:rgba(255,255,255,.96);
+      box-shadow:0 -10px 24px rgba(20,29,45,.05);
     }
 
     .summary-inner{
       max-width:1440px;
       margin:0 auto;
-      padding:14px 24px;
+      padding:12px 24px;
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -2092,14 +620,14 @@
     }
 
     .summary-item{
-      font-size:15px;
+      font-size:14px;
       font-weight:700;
     }
 
     .summary-sub{
       font-size:12px;
       color:var(--muted);
-      margin-top:3px;
+      margin-top:2px;
     }
 
     .summary-right{
@@ -2114,7 +642,7 @@
 
     .summary-price strong{
       display:block;
-      font-size:26px;
+      font-size:24px;
       letter-spacing:-.03em;
     }
 
@@ -2133,7 +661,6 @@
       align-items:flex-end;
       justify-content:center;
       padding:0;
-      animation:fadeIn .18s ease;
     }
 
     .form-panel{
@@ -2144,7 +671,6 @@
       box-shadow:0 -24px 60px rgba(20,29,45,.16);
       max-height:92vh;
       overflow:auto;
-      animation:drawerUp .24s ease;
     }
 
     .form-panel h3{
@@ -2188,36 +714,6 @@
       font-size:15px;
       color:var(--text);
       outline:none;
-      transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
-    }
-    .input-box:focus{
-      border-color:#ffb15e;
-      box-shadow:0 0 0 4px rgba(255,138,0,.10);
-      background:#fffdfa;
-    }
-
-    .input-box::placeholder{
-      color:#95a0b0;
-    }
-
-    @keyframes fadeIn{
-      from{opacity:0}
-      to{opacity:1}
-    }
-
-    @keyframes modalUp{
-      from{opacity:0; transform:translateY(8px) scale(.985)}
-      to{opacity:1; transform:translateY(0) scale(1)}
-    }
-
-    @keyframes drawerUp{
-      from{opacity:0; transform:translateY(18px)}
-      to{opacity:1; transform:translateY(0)}
-    }
-
-    @keyframes summaryIn{
-      from{opacity:0; transform:translateY(8px)}
-      to{opacity:1; transform:translateY(0)}
     }
 
     .check-row{
@@ -2246,23 +742,7 @@
       .hero-content,.hero-content.full{
         max-width:100%;
       }
-      .grid-3,.slot-grid,.team-grid,.contacts-row,footer,.video-list,.contacts-grid,.socials-grid,.review-grid,.journey-grid,.results-band,.trust-band,.reviews-summary{
-        grid-template-columns:1fr;
-      }
-      .photo-grid{
-        grid-template-columns:1fr;
-        grid-auto-rows:auto;
-      }
-      .photo-card.hero,
-      .photo-card.wide{
-        grid-row:auto;
-        grid-column:auto;
-        min-height:220px;
-      }
-      .video-feature{
-        grid-template-columns:1fr;
-      }
-      .book-card{
+      .grid-3,.slot-grid,.team-grid,.contacts-row,footer{
         grid-template-columns:1fr;
       }
     }
@@ -2282,63 +762,10 @@
       .summary-right{
         justify-content:space-between;
       }
-
-      .hero-topbar{
-        margin-bottom:18px;
-      }
-
-      .hero-tag{
-        margin-bottom:14px;
-      }
-
-      .feature-row{
-        gap:8px;
-      }
-
-      .feature-pill{
-        min-width:unset;
-        width:calc(50% - 4px);
-        padding:10px 11px;
-      }
-
-      .occupancy-badge{
-        margin-top:14px;
-      }
-
-      .overlay{
-        padding:14px;
-      }
-
-      .overlay-card{
-        padding:18px;
-        border-radius:22px;
-      }
-
-      .form-panel{
-        padding:20px 16px 22px;
-      }
     }
   </style>
 </head>
 <body>
-  <!-- @block:version -->
-  <div id="versionBadge" style="
-    position:fixed;
-    top:12px;
-    right:16px;
-    z-index:9999;
-    font-size:12px;
-    padding:6px 10px;
-    border-radius:8px;
-    background:rgba(0,0,0,0.6);
-    color:#fff;
-    backdrop-filter: blur(6px);
-    font-family: monospace;
-    opacity:0.7;
-  ">
-    v0.0.22 (patch-20)
-  </div>
-  <!-- /@block:version -->
   <div class="page">
     <div class="top-switcher">
       <div class="switch-wrap">
@@ -2347,35 +774,16 @@
       </div>
     </div>
 
-    <div class="mode-wrap" id="desktopModeWrap">
-      <div class="mode-switch">
-        <button class="mode-btn active" id="fullModeBtn">Полная версия</button>
-        <button class="mode-btn" id="compactModeBtn">Сокращённая версия</button>
-      </div>
+    <div class="title">
+      <h1>AiDaCamp — Новая архитектура лендинга</h1>
+      <p>Одна концепция, два режима: Full и Compact. Бронирование всегда в первом экране.</p>
     </div>
 
     <div id="desktopView">
       <div class="screen">
-        <!-- @block:hero -->
         <div class="hero-shell">
           <div class="hero-topbar">
-            <div class="brand">
-              <span class="brand-logo" aria-hidden="true">
-                <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AiDaCamp logo">
-                  <circle cx="64" cy="64" r="56" fill="#F59E0B"/>
-                  <path d="M35 36C29.5 40.5 26 47.5 26 55.5C26 62 28.2 67.1 32.8 71.1C36.1 74 38 77.5 38 82.2V89C38 96.2 43.8 102 51 102H77C84.2 102 90 96.2 90 89V82.2C90 77.5 91.9 74 95.2 71.1C99.8 67.1 102 62 102 55.5C102 47.5 98.5 40.5 93 36" stroke="#111111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M64 20V30" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
-                  <circle cx="64" cy="16" r="5" fill="#111111"/>
-                  <rect x="46" y="46" width="36" height="28" rx="10" fill="white"/>
-                  <rect x="50" y="51" width="8" height="8" rx="4" fill="#111111"/>
-                  <rect x="70" y="51" width="8" height="8" rx="4" fill="#111111"/>
-                  <path d="M54 66C56.7 69 60 70.5 64 70.5C68 70.5 71.3 69 74 66" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
-                  <path d="M17 38L28 47L17 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M111 38L100 47L111 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              AiDaCamp
-            </div>
+            <div class="brand"><span class="brand-dot"></span>AiDaCamp</div>
             <div class="hero-menu" id="serviceMenu">
               <button class="menu-pill active" data-target="about">О лагере</button>
               <button class="menu-pill" data-target="programs">Смены</button>
@@ -2390,20 +798,8 @@
 
           <div class="hero-content full">
             <div class="hero-tag">IT-лагерь для детей 7–14 лет</div>
-            <h2 class="hero-title">Лагерь, где ребёнок создаёт, а не потребляет</h2>
+            <h2>AiDaCamp — лагерь, где дети создают, а не потребляют</h2>
             <div class="hero-sub">Без телефонов • Программирование • Спорт • Живая атмосфера</div>
-            <div class="hero-slogan">Мы не играем в игры — мы их создаём</div>
-            <div class="hero-proofline">
-              <span>● реальные проекты за смену</span>
-              <span>● бассейн и спорт каждый день</span>
-              <span>● собственная учебная программа</span>
-            </div>
-
-            <div class="compact-trust-entry">
-              <button class="compact-trust-btn" onclick="openCompactTrustPanel('photos')">Фото лагеря</button>
-              <button class="compact-trust-btn" onclick="openCompactTrustPanel('videos')">Видео</button>
-              <button class="compact-trust-btn" onclick="openCompactTrustPanel('reviews')">Отзывы родителей</button>
-            </div>
 
             <div class="feature-row">
               <div class="feature-pill">
@@ -2423,118 +819,27 @@
             <div class="occupancy-badge" id="occupancyBadge">⚡ 63% мест уже занято</div>
           </div>
 
-          <!-- @block:booking-card -->
           <div class="hero-booking-card">
-            <div class="booking-steps" id="desktopBookingSteps">
-              <div class="booking-step active">Возраст</div>
-              <div class="booking-step">Смена</div>
-              <div class="booking-step">Цена</div>
-              <div class="booking-step">Заявка</div>
-            </div>
-            <h3 id="desktopBookingTitle">Выберите смену</h3>
-            <p id="desktopBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
+            <h3>Ближайшие смены</h3>
+            <p>Выберите возраст — покажем подходящие даты и свободные места.</p>
 
-            <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
-            <div class="selected-age-chip" id="desktopAgeChip">
-              <span id="desktopAgeChipText">Возраст: —</span>
-              <button type="button" onclick="resetAgeSelection()">×</button>
-            </div>
             <div class="age-tabs" id="desktopAgeTabs">
-              <button class="age-tab" data-age="7-9">7–9 лет</button>
+              <button class="age-tab active" data-age="7-9">7–9 лет</button>
               <button class="age-tab" data-age="10-12">10–12 лет</button>
               <button class="age-tab" data-age="13-14">13–14 лет</button>
             </div>
 
-            <div id="desktopBookingInfo" style="margin-bottom:12px;"></div>
-            <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
-            <div class="guided-callout" id="desktopGuidedHint">Сначала выберите возраст. После этого покажем подходящие смены и дадим перейти дальше.</div>
-            <div class="shift-list" id="desktopShiftList">
-              <div id="desktopShiftOptions"></div>
-            </div>
-            <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
+            <div id="desktopShiftOptions"></div>
 
-            <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
-            <div class="cta-wrap" id="desktopCtaWrap">
-              <button class="cta-main" id="desktopStartBtn">Сначала выберите возраст</button>
-            </div>
-            <div class="under-cta" id="desktopBookingHint">Покажем актуальные условия и остаток мест</div>
-            <div class="cta-subtext">Без оплаты • Ответим в течение 5 минут</div>
-            <div class="trust-mini">
-              <span>45 мест в смене</span>
-              <span>IT + спорт</span>
-              <span>Без гаджетов</span>
-            </div>
+            <button class="cta-main" id="desktopStartBtn">Забронировать место →</button>
+            <div class="under-cta">○ Ответим в течение 5 минут</div>
           </div>
-          <!-- /@block:booking-card -->
         </div>
-        <!-- /@block:hero -->
 
-        <!-- @block:sections -->
         <div class="body-sections">
           <section class="section-card" id="section-about">
             <h3>О лагере</h3>
             <p>AiDaCamp — это формат, где ребёнок не просто “занят”, а реально создаёт: делает проекты, учится работать в команде, двигается, плавает, общается и получает понятный результат за смену.</p>
-            <div class="trust-band">
-              <div class="trust-band-card">
-                <strong>AI и программирование</strong>
-                <span>Не теоретический кружок, а реальные проекты: Scratch, Python, Minecraft, нейросети.</span>
-              </div>
-              <div class="trust-band-card">
-                <strong>Бассейн и живая среда</strong>
-                <span>У ребёнка есть движение, команда, режим, спорт и общение — не только экран.</span>
-              </div>
-              <div class="trust-band-card">
-                <strong>Результат за смену</strong>
-                <span>К концу смены ребёнок уезжает не просто с эмоциями, а с проектом и новым уровнем уверенности.</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="section-card" id="section-journey">
-            <h3>Как проходит смена</h3>
-            <p>Мы ведём ребёнка не через скучные уроки, а через понятный маршрут: вход, вовлечение, проект, результат. Родителю легко понять, за что он платит, а ребёнку — зачем он здесь.</p>
-
-            <div class="journey-grid">
-              <div class="journey-card">
-                <div class="journey-num">1</div>
-                <h4>Быстрое включение</h4>
-                <p>В первый же день дети знакомятся, собираются в команды и входят в игровую механику лагеря без длинной раскачки.</p>
-              </div>
-              <div class="journey-card">
-                <div class="journey-num">2</div>
-                <h4>Практика вместо теории</h4>
-                <p>Scratch, Python, Minecraft, AI и мини-проекты — не пересказ, а работа руками и головой каждый день.</p>
-              </div>
-              <div class="journey-card">
-                <div class="journey-num">3</div>
-                <h4>Живая среда</h4>
-                <p>Бассейн, спорт, внутренняя экономика, командные задания и настоящая лагерная жизнь без залипания в телефоне.</p>
-              </div>
-              <div class="journey-card">
-                <div class="journey-num">4</div>
-                <h4>Финальный результат</h4>
-                <p>К концу смены у ребёнка есть проект, опыт защиты, новые друзья и ощущение: «я реально умею больше, чем неделю назад».</p>
-              </div>
-            </div>
-
-            <div class="results-band">
-              <div class="result-pill">
-                <strong>1–3</strong>
-                <span>проекта за смену</span>
-              </div>
-              <div class="result-pill">
-                <strong>7–14</strong>
-                <span>лет — основные возрастные группы</span>
-              </div>
-              <div class="result-pill">
-                <strong>24/7</strong>
-                <span>дети под присмотром команды и медработника</span>
-              </div>
-              <div class="result-pill">
-                <strong>0</strong>
-                <span>бессмысленного скроллинга вместо жизни</span>
-              </div>
-            </div>
           </section>
 
           <section class="section-card" id="section-programs">
@@ -2543,88 +848,98 @@
           </section>
 
           <section class="section-card" id="section-photos">
-            <div class="media-head">
-              <div>
-                <h3>Фото</h3>
-                <p>Живые кадры лагеря: занятия, бассейн, спорт, еда, команда и атмосфера.</p>
-              </div>
+            <h3>Фото</h3>
+            <div class="slot-grid">
+              <div class="slot">Photo 1</div>
+              <div class="slot">Photo 2</div>
+              <div class="slot">Photo 3</div>
             </div>
-            <div class="photo-grid" id="photoGrid"></div>
           </section>
 
           <section class="section-card" id="section-videos">
-            <div class="media-head">
-              <div>
-                <h3>Видео</h3>
-                <p>Короткие видео, которые быстро объясняют, почему дети в лагере меняются сильнее, чем родители ожидают.</p>
-              </div>
+            <h3>Видео</h3>
+            <div class="slot-grid">
+              <div class="slot">Video 1</div>
+              <div class="slot">Video 2</div>
+              <div class="slot">Video 3</div>
             </div>
-            <div class="video-feature">
-              <div>
-                <h4>Посмотрите 3 коротких видео — и станет понятно, чем живёт лагерь</h4>
-                <p>Здесь не просто “заняли ребёнка”. Здесь дети делают проекты, учатся принимать решения, живут в своей внутренней экономике и реально меняются за смену.</p>
-                <a class="inline-link-btn primary" id="mainVideoBtn" href="#" target="_blank" rel="noopener noreferrer">Смотреть главное видео</a>
-              </div>
-              <a class="video-feature-box" id="mainVideoBox" href="#" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
-                <div class="video-play"><span>▶</span></div>
-              </a>
-            </div>
-            <div class="video-list" id="videoList"></div>
           </section>
 
           <section class="section-card" id="section-reviews">
-            <h3>Отзывы</h3>
-            <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.55;">Реальные отзывы родителей и быстрый переход на Яндекс Карты.</p>
-            <div class="review-actions">
-              <a class="inline-link-btn primary" id="yandexReviewsBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть отзывы на Яндекс Картах</a>
-            </div>
-            <div class="reviews-summary">
-              <div class="reviews-score">
-                <strong>6</strong>
-                <span>реальных отзывов уже выведено на страницу как social proof</span>
+            <h3>Отзывы родителей</h3>
+            <div class="grid-3">
+              <div class="mini-card">
+                <h4>Елена, мама Максима</h4>
+                <p>«За 10 дней сын сделал свою первую игру. Дома такого вовлечения не было.»</p>
               </div>
-              <div class="review-grid" id="reviewsGrid"></div>
+              <div class="mini-card">
+                <h4>Андрей, папа Софии</h4>
+                <p>«Боялись отпускать первый раз, но всё организовано на высшем уровне.»</p>
+              </div>
+              <div class="mini-card">
+                <h4>Марина, мама Артёма</h4>
+                <p>«Не просто лагерь — у детей реально есть результат: бассейн, друзья, проекты.»</p>
+              </div>
             </div>
           </section>
 
           <section class="section-card" id="section-faq">
             <h3>FAQ</h3>
-            <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.55;">Собрали ключевые вопросы родителей по медицине, безопасности, питанию, проживанию и связи.</p>
-            <div class="faq-groups" id="faqGroups"></div>
+            <div class="faq-grid">
+              <div class="faq-item">
+                <strong>Как проходит бронирование?</strong>
+                <span>Вы выбираете возраст и смену, мы можем закрепить более выгодную цену, затем вы отправляете заявку — и мы подтверждаем бронь вручную.</span>
+              </div>
+              <div class="faq-item">
+                <strong>Нужно ли платить сразу?</strong>
+                <span>Нет. Сначала вы оставляете заявку, потом мы связываемся с вами.</span>
+              </div>
+              <div class="faq-item">
+                <strong>Что входит в программу?</strong>
+                <span>IT-проекты, бассейн, спорт, внутренняя экономика, командная работа и защита результата.</span>
+              </div>
+            </div>
           </section>
 
           <section class="section-card" id="section-team">
             <h3>Команда</h3>
-            <div class="trust-callout">
-              <h4>Преподаватели, которые пишут учебники — а не пересказывают их</h4>
-              <p>Команда лагеря не только ведёт занятия, но и создаёт собственные учебные материалы и игровые методики. Это видно и по урокам, и по проектам детей, и по авторской книге по Python.</p>
-            </div>
-
-            <div class="book-card">
-              <div>
-                <h4>Книга по Python от команды</h4>
-                <p>Отдельный trust-маркер: собственный учебный материал команды, который можно показать родителям как доказательство экспертизы.</p>
+            <div class="team-grid">
+              <div class="team-card">
+                <div class="team-avatar"></div>
+                <strong>Дарья Афанасьева</strong>
+                <span>Основатель и идеолог лагеря</span>
               </div>
-              <a class="inline-link-btn primary" id="bookLinkBtn" href="#" target="_blank" rel="noopener noreferrer">Смотреть книгу</a>
+              <div class="team-card">
+                <div class="team-avatar"></div>
+                <strong>Никита</strong>
+                <span>Преподаватель Python и проектной работы</span>
+              </div>
+              <div class="team-card">
+                <div class="team-avatar"></div>
+                <strong>Александр</strong>
+                <span>Наставник по Scratch, играм и командным задачам</span>
+              </div>
             </div>
-
-            <div class="team-grid" id="teamGrid"></div>
           </section>
 
           <section class="section-card" id="section-contacts">
             <h3>Контакты и соцсети</h3>
-            <div class="contacts-grid" id="contactsGrid"></div>
-            <div class="socials-grid" id="socialsGrid"></div>
-            <div class="map-card">
-              <div class="map-preview">
-                <div>
-                  <strong>Локация лагеря</strong>
-                  <span>Открыть карту в Яндекс Картах и посмотреть точку лагеря, маршрут и окружение.</span>
-                </div>
+            <div class="contacts-row">
+              <div class="contact-card">
+                <div class="contact-icon">✈</div>
+                <strong>Telegram</strong>
               </div>
-              <div class="map-footer">
-                <div style="color:var(--muted);font-size:13px;">Яндекс Карты</div>
-                <a class="inline-link-btn" id="locationMapBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть карту</a>
+              <div class="contact-card">
+                <div class="contact-icon">W</div>
+                <strong>WhatsApp</strong>
+              </div>
+              <div class="contact-card">
+                <div class="contact-icon">☎</div>
+                <strong>Телефон</strong>
+              </div>
+              <div class="contact-card">
+                <div class="contact-icon">@</div>
+                <strong>Email</strong>
               </div>
             </div>
           </section>
@@ -2649,49 +964,21 @@
             </div>
           </footer>
         </div>
-        <!-- /@block:sections -->
       </div>
     </div>
 
     <div id="mobileView" class="hidden">
-      <div class="mobile-mode-wrap">
-        <div class="mobile-mode-switch">
-          <button class="mobile-mode-btn active" id="mobileFullModeBtn">Полная версия</button>
-          <button class="mobile-mode-btn" id="mobileCompactModeBtn">Сокращённая версия</button>
-        </div>
-      </div>
-
       <div class="screen" style="max-width:520px;margin:0 auto;">
-        <div class="hero-shell mobile-hero">
+        <div class="hero-shell">
           <div class="hero-topbar">
-            <div class="brand">
-              <span class="brand-logo" aria-hidden="true">
-                <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AiDaCamp logo">
-                  <circle cx="64" cy="64" r="56" fill="#F59E0B"/>
-                  <path d="M35 36C29.5 40.5 26 47.5 26 55.5C26 62 28.2 67.1 32.8 71.1C36.1 74 38 77.5 38 82.2V89C38 96.2 43.8 102 51 102H77C84.2 102 90 96.2 90 89V82.2C90 77.5 91.9 74 95.2 71.1C99.8 67.1 102 62 102 55.5C102 47.5 98.5 40.5 93 36" stroke="#111111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M64 20V30" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
-                  <circle cx="64" cy="16" r="5" fill="#111111"/>
-                  <rect x="46" y="46" width="36" height="28" rx="10" fill="white"/>
-                  <rect x="50" y="51" width="8" height="8" rx="4" fill="#111111"/>
-                  <rect x="70" y="51" width="8" height="8" rx="4" fill="#111111"/>
-                  <path d="M54 66C56.7 69 60 70.5 64 70.5C68 70.5 71.3 69 74 66" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
-                  <path d="M17 38L28 47L17 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M111 38L100 47L111 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              AiDaCamp
-            </div>
-            <button class="menu-pill" type="button">Mobile</button>
+            <div class="brand"><span class="brand-dot"></span>AiDaCamp</div>
+            <button class="menu-pill" onclick="switchView('desktop')">Полная версия</button>
           </div>
 
           <div class="hero-content" style="max-width:100%;">
             <div class="hero-tag">IT-лагерь для детей 7–14 лет</div>
-            <h2 style="font-size:24px;">Лагерь, где ребёнок создаёт, а не потребляет</h2>
+            <h2 style="font-size:24px;">AiDaCamp — лагерь, где дети создают, а не потребляют</h2>
             <div class="hero-sub">Без телефонов • Программирование • Спорт • Живая атмосфера</div>
-
-            <div class="hero-slogan">
-              Мы не играем в игры — мы их создаём
-            </div>
 
             <div class="feature-row">
               <div class="feature-pill"><strong>IT-проекты</strong>Scratch и Python</div>
@@ -2701,85 +988,30 @@
 
             <div class="occupancy-badge" id="mobileOccupancyBadge">⚡ 65% мест уже занято</div>
 
-            <div class="hero-proofline">
-              <span>● проекты за смену</span>
-              <span>● бассейн каждый день</span>
-              <span>● своя программа</span>
-            </div>
+            <div class="hero-booking-card" style="position:static;width:100%;margin-top:18px;">
+              <h3>Выбрать смену</h3>
+              <p>Укажите возраст — покажем подходящие даты и свободные места.</p>
 
-            <div class="hero-booking-card mobile-booking-card" style="position:static;width:100%;margin-top:18px;">
-              <div class="booking-steps" id="mobileBookingSteps">
-                <div class="booking-step active">Возраст</div>
-                <div class="booking-step">Смена</div>
-                <div class="booking-step">Цена</div>
-                <div class="booking-step">Заявка</div>
-              </div>
-              <h3 id="mobileBookingTitle">Выберите смену</h3>
-              <p id="mobileBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
-
-              <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
-              <div class="selected-age-chip" id="mobileAgeChip">
-                <span id="mobileAgeChipText">Возраст: —</span>
-                <button type="button" onclick="resetAgeSelection()">×</button>
-              </div>
               <div class="age-tabs" id="mobileAgeTabs">
-                <button class="age-tab" data-age="7-9">7–9 лет</button>
+                <button class="age-tab active" data-age="7-9">7–9 лет</button>
                 <button class="age-tab" data-age="10-12">10–12 лет</button>
                 <button class="age-tab" data-age="13-14">13–14 лет</button>
               </div>
 
-              <div id="mobileBookingInfo" style="margin-bottom:12px;"></div>
-              <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
-              <div class="guided-callout" id="mobileGuidedHint">Сначала выберите возраст. После этого покажем подходящие смены и дадим перейти дальше.</div>
-              <div class="shift-list" id="mobileShiftList">
-                <div id="mobileShiftOptions"></div>
-              </div>
-              <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
+              <div id="mobileShiftOptions"></div>
 
-              <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
-              <div class="cta-wrap" id="mobileCtaWrap">
-                <button class="cta-main" id="mobileStartBtn">Сначала выберите возраст</button>
-              </div>
-              <div class="cta-subtext" id="mobileBookingHint">Без оплаты • Ответим в течение 5 минут</div>
-              <div class="trust-mini">
-                <span>45 мест в смене</span>
-                <span>IT + спорт</span>
-                <span>Без гаджетов</span>
-              </div>
+              <button class="cta-main" id="mobileStartBtn">Забронировать место →</button>
+              <div class="under-cta">○ Ответим в течение 5 минут</div>
             </div>
           </div>
-        </div>
-
-        <div class="mobile-body-sections" style="padding:18px;display:grid;gap:14px;">
-          <section class="section-card">
-            <h3>О лагере</h3>
-            <p>AiDaCamp — это формат, где ребёнок не просто занят, а реально создаёт: проекты, друзья, спорт, защита результатов и среда без бессмысленного скроллинга.</p>
-          </section>
-
-          <section class="section-card">
-            <h3>Фото</h3>
-            <div class="compact-panel-photo-grid" id="mobileInlinePhotoGrid"></div>
-          </section>
-
-          <section class="section-card">
-            <h3>Видео</h3>
-            <div class="compact-panel-video-list" id="mobileInlineVideoList"></div>
-          </section>
-
-          <section class="section-card">
-            <h3>Отзывы</h3>
-            <div class="compact-panel-review-list" id="mobileInlineReviewsList"></div>
-          </section>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- @block:offer-overlay -->
   <div class="overlay hidden" id="offerOverlay">
     <div class="overlay-card dark" id="offerCard"></div>
   </div>
-  <!-- /@block:offer-overlay -->
 
   <div class="form-drawer hidden" id="formDrawer">
     <div class="form-panel">
@@ -2820,46 +1052,6 @@
     </div>
   </div>
 
-  <div class="compact-trust-panel hidden" id="compactTrustPanel">
-    <div class="compact-panel-top">
-      <div>
-        <h3 id="compactTrustTitle">Подробнее</h3>
-        <p id="compactTrustLead">Дополнительные материалы, не выводя пользователя из сценария бронирования.</p>
-      </div>
-      <button class="compact-panel-close" onclick="closeCompactTrustPanel()">×</button>
-    </div>
-
-    <div class="compact-panel-tabs">
-      <button class="compact-panel-tab active" data-ctp-tab="photos">Фото</button>
-      <button class="compact-panel-tab" data-ctp-tab="videos">Видео</button>
-      <button class="compact-panel-tab" data-ctp-tab="reviews">Отзывы</button>
-    </div>
-
-    <div class="compact-panel-section" id="ctp-photos">
-      <div class="compact-panel-photo-grid" id="compactPhotoGrid"></div>
-    </div>
-
-    <div class="compact-panel-section hidden" id="ctp-videos">
-      <div class="compact-panel-video-list" id="compactVideoList"></div>
-    </div>
-
-    <div class="compact-panel-section hidden" id="ctp-reviews">
-      <div class="compact-panel-review-list" id="compactReviewsList"></div>
-    </div>
-  </div>
-
-  <script>
-    window.AC_NOTIFY_CONFIG = window.AC_NOTIFY_CONFIG || {
-      all: "",
-      promo_fixed: "",
-      booking_submitted: "",
-      booking_draft_saved: "",
-      promo_cancelled: "",
-      telegramBotToken: '8663835446:AAEJAemhHYPlVTc2RiLP3sBtsqCF9fBdhZ4',
-      telegramChatId: "-1003827680494"
-    };
-  </script>
-
   <script>
     const shifts = [
       {id:'shift-1',title:'1 смена',dates:'30 мая — 8 июня',price:79000,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
@@ -2867,176 +1059,6 @@
       {id:'shift-3',title:'3 смена',dates:'16 июня — 23 июня',price:65000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
       {id:'shift-4',title:'4 смена',dates:'10 июня — 23 июня',price:95000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'}
     ];
-
-    const mediaContent = {
-      references: {
-        yandexReviewsLabel: 'Отзывы на Яндекс Картах',
-        yandexReviewsUrl: 'https://yandex.ru/maps/org/aydakemp/35558479035/reviews/',
-        locationMapUrl: 'https://yandex.ru/map-widget/v1/?ll=36.719422%2C55.261573&z=15&pt=36.719422,55.261573,pm2rdm',
-        programmingBookUrl: 'https://www.codims.ru/python-book'
-      },
-      faq: [
-        {
-          group:'Медицина',
-          icon:'/assets/icons/med.svg',
-          items:[
-            {q:'Есть ли медик в лагере?',a:'Медработник на территории 24/7 всю смену.'},
-            {q:'Что если ребёнок заболеет?',a:'Медик осматривает, при необходимости вызывает скорую. Вы получите звонок сразу.'},
-            {q:'Можно давать лекарства?',a:'Передайте медику с инструкцией — будет выдавать по расписанию.'}
-          ]
-        },
-        {
-          group:'Безопасность',
-          icon:'/assets/icons/lock.svg',
-          items:[
-            {q:'Территория закрыта?',a:'Да, огорожена, КПП с охраной. Посторонние не допускаются.'},
-            {q:'Сколько детей на вожатого?',a:'Не более 8–10 детей, вожатые работают в парах.'}
-          ]
-        },
-        {
-          group:'Питание',
-          icon:'/assets/icons/food.svg',
-          items:[
-            {q:'Сколько раз кормят?',a:'5 раз в день: завтрак, второй завтрак, обед, полдник, ужин. Всё горячее.'},
-            {q:'Учитываются аллергии?',a:'Да. В лагере гипоаллергенная среда: минимум растений, которые вызывают аллергию.'}
-          ]
-        },
-        {
-          group:'Проживание',
-          icon:'/assets/icons/check.svg',
-          items:[
-            {q:'Сколько детей в комнате?',a:'2–4 человека, все удобства на этаже.'}
-          ]
-        },
-        {
-          group:'Связь',
-          icon:'/assets/icons/phone-mobile.svg',
-          items:[
-            {q:'Будет ли телефон у ребёнка?',a:'Лагерь «без телефонов». Сдаётся на хранение, звонки родителям 1–2 раза в день.'},
-            {q:'Как следить что происходит?',a:'Родительский Telegram-чат, фото каждый день.'}
-          ]
-        }
-      ],
-      team: [
-        {
-          teamId:'team_01',
-          bindKey:'дарья_афанасьева',
-          fio:'Дарья Афанасьева',
-          role:'основатель и вдохновитель АйДаКемп',
-          avatarUrl:'https://static.tildacdn.com/tild3633-3838-4462-a338-336166376565/photo.png',
-          bio:'предприниматель в сфере детского IT-образования и мама подростка, которая строит лагерь таким, каким сама хотела бы видеть обучение своего ребёнка.'
-        },
-        {
-          teamId:'team_02',
-          bindKey:'никита_брагин',
-          fio:'Никита Брагин',
-          role:'преподаватель Scratch, Minecraft и Python',
-          avatarUrl:'https://static.tildacdn.com/tild3830-6337-4038-b634-333236613738/photo.png',
-          bio:'автор учебника по разработке игр; специализируется на геймдеве и помогает детям создавать собственные игровые миры.'
-        },
-        {
-          teamId:'team_03',
-          bindKey:'александр_ташкин',
-          fio:'Александр Ташкин',
-          role:'преподаватель Scratch, Minecraft и Python',
-          avatarUrl:'https://static.tildacdn.com/tild3639-3337-4636-a233-306337633035/photo.png',
-          bio:'соавтор учебника по разработке игр; умеет зажигать интерес к программированию через практические задачи и командные проекты.'
-        },
-        {
-          teamId:'team_04',
-          bindKey:'омар_алхамви',
-          fio:'Омар Алхамви',
-          role:'преподаватель Python и нейросетей',
-          avatarUrl:'https://static.tildacdn.com/tild3737-3334-4538-a139-656430373836/photo.png',
-          bio:'работает со старшими и продвинутыми группами, часть занятий ведёт на английском и показывает, как применять AI в реальных проектах.'
-        },
-        {
-          teamId:'team_05',
-          bindKey:'дарья_воронцова',
-          fio:'Дарья Воронцова',
-          role:'преподаватель Python и Scratch',
-          avatarUrl:'https://static.tildacdn.com/tild3931-6630-4534-b239-373333393430/ChatGPT_Image_18__20.png',
-          bio:'помогает детям легко войти в программирование через игры, логику и первые самостоятельные программы.'
-        }
-      ],
-      photos: [
-        {cat:'all',src:'https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg',alt:'all'},
-        {cat:'all',src:'https://static.tildacdn.com/tild6436-6337-4466-b637-623363613935/photo.jpg',alt:'all'},
-        {cat:'all',src:'https://static.tildacdn.com/tild6666-3333-4534-a639-386666343634/photo_2025-06-14_08-.jpg',alt:'all'},
-        {cat:'all',src:'https://static.tildacdn.com/tild6336-6536-4238-a436-303937666565/photo_2025-06-17_13-.jpg',alt:'all'},
-        {cat:'study',src:'https://static.tildacdn.com/tild3263-3537-4961-b536-363837386238/IMG_1543.JPG',alt:'study'},
-        {cat:'food',src:'https://static.tildacdn.com/tild6330-6330-4664-b762-666363643137/photo_2025-06-14_08-.jpg',alt:'food'},
-        {cat:'food',src:'https://static.tildacdn.com/tild3864-3738-4763-b633-303434303665/photo_2025-06-14_08-.jpg',alt:'food'},
-        {cat:'food',src:'https://static.tildacdn.com/tild3134-3366-4638-b331-366662396639/photo.jpg',alt:'food'},
-        {cat:'study',src:'https://static.tildacdn.com/tild3066-3464-4137-a537-626336356335/photo_2025-06-14_08-.jpg',alt:'study'},
-        {cat:'study',src:'https://static.tildacdn.com/tild3637-6139-4636-b261-386434323832/photo_2025-06-14_08-.jpg',alt:'study'},
-        {cat:'study',src:'https://static.tildacdn.com/tild6266-6134-4235-b166-393766376531/photo_2025-06-14_08-.jpg',alt:'study'},
-        {cat:'study',src:'https://static.tildacdn.com/tild3238-6633-4862-a535-373731303734/photo_2025-06-14_08-.jpg',alt:'study'},
-        {cat:'pool',src:'https://static.tildacdn.com/tild6135-3464-4332-b565-386630323830/photo_2025-06-14_08-.jpg',alt:'pool'},
-        {cat:'pool',src:'https://static.tildacdn.com/tild3932-3632-4530-b038-613561623337/photo_2025-06-14_08-.jpg',alt:'pool'},
-        {cat:'sport',src:'https://static.tildacdn.com/tild3639-3532-4334-b035-316562666439/photo.jpg',alt:'sport'},
-        {cat:'sport',src:'https://static.tildacdn.com/tild3963-3938-4335-b335-656531616265/photo_2025-06-14_07-.jpg',alt:'sport'},
-        {cat:'sport',src:'https://static.tildacdn.com/tild6538-6438-4432-b737-313138346237/photo_2025-06-14_08-.jpg',alt:'sport'}
-      ],
-      videos: [
-        {title:'За неделю в лагере ребёнок меняется больше, чем за год дома',url:'https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/'},
-        {title:'Зачем детям копить деньги в лагере?',url:'https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/'},
-        {title:'Ребёнок сам откажется от телефона за 3 дня?',url:'https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/'}
-      ],
-      contacts: [
-        {label:'city_phone',href:'tel:+74951234567',text:'+7 (495) 123-45-67'},
-        {label:'mobile_phone',href:'tel:+79688086455',text:'+7 (968) 808-64-55'},
-        {label:'whatsapp',href:'https://wa.me/79688086455',text:'WhatsApp'},
-        {label:'telegram',href:'https://t.me/proga_school',text:'@proga_school'}
-      ],
-      socials: [
-        {key:'vk',href:'https://vk.com/aida_codit',label:'vk'},
-        {key:'ig',href:'https://www.instagram.com/',label:'ig'},
-        {key:'yt',href:'https://www.youtube.com/channel/UCavd6BfrYQ32HQX_S4iZ02g',label:'yt'},
-        {key:'fb',href:'https://www.facebook.com/',label:'fb'},
-        {key:'dz',href:'https://dzen.ru/',label:'dz'},
-        {key:'yp',href:'https://yappy.media/',label:'yp'},
-        {key:'in',href:'https://www.linkedin.com/',label:'in'}
-      ],
-      reviews: [
-        {
-          name:'Сергей Найденов',
-          meta:'Яндекс Карты · 2 февраля 2026',
-          avatar:'https://avatars.mds.yandex.net/get-yapic/27503/0r-4/islands-68',
-          quote:'Отличное расположение в живописном месте, большие просторные аудитории для занятий. Большое значение придавалось и активностям вне аудиторных занятий: футбол, бадминтон и прочее.'
-        },
-        {
-          name:'виктория',
-          meta:'Яндекс Карты · 13 ноября 2024',
-          avatar:'https://avatars.mds.yandex.net/get-yapic/54535/fsnR7nvUqoioiSqyIVRArH7QSFs-1/islands-68',
-          quote:'Лагерь «Айдакемп» — это круто. Была там несколько раз, и каждый раз это был незабываемый опыт.'
-        },
-        {
-          name:'Natalia Savenkova',
-          meta:'Яндекс Карты · 10 ноября 2024',
-          avatar:'https://avatars.mds.yandex.net/get-yapic/68143/0s-4/islands-68',
-          quote:'Хочу поблагодарить АйДаКемп за отличную организацию и правильный подход в общении и воспитании детей в лагере. Потрясающие вожатые и педагоги.'
-        },
-        {
-          name:'Надежда Ш.',
-          meta:'Яндекс Карты · 12 августа 2025',
-          avatar:'https://avatars.mds.yandex.net/get-yapic/58107/0f-1/islands-68',
-          quote:'Сын в 9 лет этим летом побывал в первый раз в этом лагере. Остался в полном восторге и сказал, что обязательно поедет ещё.'
-        },
-        {
-          name:'Кристина',
-          meta:'Яндекс Карты · 8 ноября 2024',
-          avatar:'https://avatars.mds.yandex.net/get-yapic/49368/enc-f5d05dcd44e9fc6a6283d03f5fc4dfbadc08d6b278aedeb06cfa14e5027cfb80/islands-68',
-          quote:'Дочери лагерь понравился, с удовольствием провела время на каникулах. Интересные занятия, вкусная еда, комфортное размещение.'
-        },
-        {
-          name:'Мария Григорьева',
-          meta:'Яндекс Карты · 13 ноября 2024',
-          avatar:'https://avatars.mds.yandex.net/get-yapic/56823/XGlOg8N65vTR91xedCasHKXWqI-1/islands-68',
-          quote:'Отправляла детей 10 и 14 лет, оба остались довольны и готовы снова ехать на следующий год. Благодарна за опыт и пользу для детей.'
-        }
-      ]
-    };
 
     const STORAGE_KEY = 'aidacamp_proto_state_v3';
 
@@ -3053,372 +1075,9 @@
     };
 
     let timerId = null;
-    state.desktopMode = state.desktopMode || 'full';
-    state.mobileMode = state.mobileMode || 'full';
-    state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
 
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    function notifyLead(eventName, payload){
-      try {
-        const cfg = window.AC_NOTIFY_CONFIG || {};
-
-        const eventUrl = cfg[eventName];
-        const allUrl = cfg.all;
-
-        const body = {
-          event: eventName,
-          payload: payload
-        };
-
-        const sendWebhook = async (url) => {
-          if(!url) return false;
-          try {
-            await fetch(url,{
-              method:'POST',
-              headers:{'Content-Type':'application/json'},
-              body:JSON.stringify(body)
-            });
-            return true;
-          } catch(e){
-            return false;
-          }
-        };
-
-        const sendTelegram = async () => {
-          if(!cfg.telegramBotToken || !cfg.telegramChatId) return;
-
-          const text = formatTelegramMessage(eventName, payload);
-
-          await fetch(`https://api.telegram.org/bot${cfg.telegramBotToken}/sendMessage`,{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-              chat_id: cfg.telegramChatId,
-              text,
-              disable_web_page_preview:true
-            })
-          });
-        };
-
-        (async ()=>{
-          let ok = false;
-
-          if(eventUrl){
-            ok = await sendWebhook(eventUrl);
-          }
-
-          if(!ok && allUrl){
-            ok = await sendWebhook(allUrl);
-          }
-
-          if(!ok){
-            await sendTelegram();
-          }
-        })();
-
-      } catch(e){
-        console.error("notifyLead error", e);
-      }
-    }
-
-    function formatTelegramMessage(eventName, payload){
-      const lines = [];
-
-      if(eventName === 'promo_fixed'){
-        lines.push('AiDaCamp • Фиксация цены');
-        lines.push('');
-        lines.push(`Тип: ${payload.promo_status === 'improved_again' ? 'повторное улучшение' : 'первая фиксация'}`);
-        lines.push(`Телефон: ${payload.phone || 'не указан'}`);
-        lines.push(`Возраст: ${payload.age || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || '—'}`);
-        lines.push(`Даты: ${payload.shift_date || '—'}`);
-        lines.push(`Цена: ${payload.price_final ? formatPrice(payload.price_final) : '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push(`Действует до: ${payload.promo_expires_at_local || '—'}`);
-        lines.push('');
-        lines.push(`Режим: ${payload.mode || '—'}`);
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
-      }
-
-      if(eventName === 'booking_submitted'){
-        lines.push('AiDaCamp • Новая заявка');
-        lines.push('');
-        lines.push(`Имя: ${payload.name || '—'}`);
-        lines.push(`Телефон: ${payload.phone || '—'}`);
-        lines.push(`Возраст: ${payload.age || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || '—'}`);
-        lines.push(`Даты: ${payload.shift_date || '—'}`);
-        lines.push(`Цена: ${payload.price_text || '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push(`Статус промо: ${payload.promo_status || '—'}`);
-        lines.push('');
-        lines.push(`Режим: ${payload.mode || '—'}`);
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
-      }
-
-      if(eventName === 'booking_draft_saved'){
-        lines.push('AiDaCamp • Черновик заявки');
-        lines.push('');
-        lines.push(`Имя: ${payload.name || '—'}`);
-        lines.push(`Телефон: ${payload.phone || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || payload.shift_text || '—'}`);
-        lines.push(`Цена: ${payload.price_text || '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push('');
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
-      }
-
-      if(eventName === 'promo_cancelled'){
-        lines.push('AiDaCamp • Отмена промо / брони');
-        lines.push('');
-        lines.push(`Имя: ${payload.name || '—'}`);
-        lines.push(`Телефон: ${payload.phone || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push(`Цена: ${payload.price_final ? formatPrice(payload.price_final) : '—'}`);
-        lines.push('');
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
-      }
-
-      if(lines.length === 0){
-        lines.push('AiDaCamp lead');
-        lines.push(`Event: ${eventName}`);
-        lines.push(JSON.stringify(payload, null, 2));
-      }
-
-      return lines.join('\n');
-    }
-
-    function getSelectedShift(){
-      return state.shiftId ? shifts.find(s => s.id === state.shiftId) : null;
-    }
-
-    function hasSelectedAge(){
-      return !!state.ageSelected;
-    }
-
-    function ageLabel(value){
-      if(value === '7-9') return '7–9 лет';
-      if(value === '10-12') return '10–12 лет';
-      if(value === '13-14') return '13–14 лет';
-      return '—';
-    }
-
-    function isOfferActive(){
-      return !!(state.expiresAt && Date.now() < state.expiresAt);
-    }
-
-    function getVisiblePrice(){
-      const shift = getSelectedShift();
-      if(state.offerPrice) return state.offerPrice;
-      if(state.basePrice) return state.basePrice;
-      return shift ? shift.price : null;
-    }
-
-    function getPrimaryActionState(){
-      const shift = getSelectedShift();
-      if(!hasSelectedAge()){
-        return {
-          text:'Сначала выберите возраст',
-          disabled:true,
-          hint:'Первый шаг — выбрать возраст ребёнка'
-        };
-      }
-
-      if(!shift){
-        return {
-          text:'Сначала выберите смену',
-          disabled:true,
-          hint:'Теперь выберите подходящую смену'
-        };
-      }
-
-      if(state.offerStage === 0){
-        return {
-          text:'Проверить условия',
-          disabled:false,
-          hint:'Сначала покажем актуальную цену и попробуем закрепить лучшую'
-        };
-      }
-
-      if(state.offerStage === 1 && isOfferActive()){
-        return {
-          text:'Улучшить условия ещё раз',
-          disabled:false,
-          hint:'Можно попробовать получить ещё более выгодную цену'
-        };
-      }
-
-      if(state.offerStage >= 1){
-        return {
-          text:'Оформить заявку',
-          disabled:false,
-          hint:'Цена и код бронирования уже сохранены'
-        };
-      }
-
-      return {
-        text:'Оформить заявку',
-        disabled:false,
-        hint:'Продолжить оформление'
-      };
-    }
-
-    function getStepState(){
-      if(!hasSelectedAge()){
-        return 1;
-      }
-      if(hasSelectedAge() && !state.shiftId){
-        return 2;
-      }
-      if(state.shiftId && state.offerStage === 0){
-        return 3;
-      }
-      if(state.offerStage >= 1 && !state.code){
-        return 4;
-      }
-      if(state.offerStage >= 1){
-        return 4;
-      }
-      return 1;
-    }
-
-    function renderSteps(targetId){
-      const root = document.getElementById(targetId);
-      if(!root) return;
-      const current = getStepState();
-      root.querySelectorAll('.booking-step').forEach((el, idx) => {
-        const num = idx + 1;
-        el.classList.remove('active','done');
-        el.classList.remove('pulse');
-        if(num < current) el.classList.add('done');
-        if(num === current){
-          el.classList.add('active');
-          el.classList.add('pulse');
-        }
-      });
-    }
-
-    function renderGuidedState(prefix){
-      const shiftList = document.getElementById(`${prefix}ShiftList`);
-      const hint = document.getElementById(`${prefix}GuidedHint`);
-      const ctaWrap = document.getElementById(`${prefix}CtaWrap`);
-      const ageTabs = document.getElementById(`${prefix}AgeTabs`);
-      const ageChip = document.getElementById(`${prefix}AgeChip`);
-      const ageChipText = document.getElementById(`${prefix}AgeChipText`);
-
-      if(!shiftList || !hint || !ctaWrap || !ageTabs || !ageChip || !ageChipText) return;
-
-      shiftList.classList.remove('disabled','highlight');
-      ctaWrap.classList.remove('highlight');
-      ageTabs.classList.remove('hidden');
-      ageChip.classList.remove('visible');
-
-      if(!hasSelectedAge()){
-        shiftList.classList.add('disabled');
-        hint.textContent = 'Сначала выберите возраст ребёнка. Это нужно, чтобы показать подходящие смены.';
-        return;
-      }
-
-      ageChipText.textContent = `Возраст: ${ageLabel(state.age)}`;
-      ageChip.classList.add('visible');
-      ageTabs.classList.add('hidden');
-
-      if(hasSelectedAge() && !state.shiftId){
-        shiftList.classList.add('highlight');
-        hint.textContent = 'Отлично. Теперь выберите смену, которая подходит по датам и формату.';
-        return;
-      }
-
-      if(state.shiftId && state.offerStage === 0){
-        ctaWrap.classList.add('highlight');
-        hint.textContent = 'Смена выбрана. Теперь можно проверить условия и перейти к бронированию.';
-        return;
-      }
-
-      hint.textContent = 'Всё готово: можно фиксировать условия и оформлять заявку.';
-    }
-
-    function formatRemaining(diff){
-      if(diff <= 0) return '';
-      const h = Math.floor(diff / (1000 * 60 * 60));
-      const m = Math.floor((diff / (1000 * 60)) % 60);
-      return `Действует ${h}ч ${m}м`;
-    }
-
-    function renderBookingInfo(targetInfoId, targetTitleId, targetLeadId, targetBtnId, targetHintId){
-      const info = document.getElementById(targetInfoId);
-      const title = document.getElementById(targetTitleId);
-      const lead = document.getElementById(targetLeadId);
-      const btn = document.getElementById(targetBtnId);
-      const hint = document.getElementById(targetHintId);
-      const shift = getSelectedShift();
-      const action = getPrimaryActionState();
-
-      btn.textContent = action.text;
-      btn.disabled = !!action.disabled;
-      hint.textContent = action.hint;
-
-      if(!shift){
-        title.textContent = 'Выберите смену';
-        lead.textContent = 'Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.';
-        info.innerHTML = `
-          <div class="booking-empty-box">
-            Сначала выберите одну из ближайших смен ниже. После этого мы покажем текущую цену и предложим проверить условия бронирования.
-          </div>
-        `;
-        return;
-      }
-
-      const currentPrice = formatPrice(shift.price);
-      const visiblePrice = formatPrice(getVisiblePrice());
-      const timerText = isOfferActive() ? formatRemaining(state.expiresAt - Date.now()) : '';
-
-      title.textContent = state.offerPrice ? 'Ваша цена готова' : 'Смена выбрана';
-      lead.textContent = `${shift.title} · ${shift.dates}`;
-
-      info.innerHTML = `
-        <div class="booking-price-box">
-          <div class="booking-price-head">
-            <div class="booking-price-col">
-              <small>Текущая цена</small>
-              <div class="booking-price-main">${currentPrice}</div>
-            </div>
-            <div class="booking-price-col" style="text-align:right;">
-              <small>${state.offerPrice ? 'Ваша цена' : 'После проверки'}</small>
-              <div class="booking-price-main big">${visiblePrice}</div>
-            </div>
-          </div>
-          ${state.code ? `<div class="booking-code-line">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
-          ${timerText ? `<div class="booking-timer-line">${timerText}</div>` : ''}
-        </div>
-      `;
-    }
-
-    function renderBookingPanels(){
-      renderBookingInfo(
-        'desktopBookingInfo',
-        'desktopBookingTitle',
-        'desktopBookingLead',
-        'desktopStartBtn',
-        'desktopBookingHint'
-      );
-
-      renderBookingInfo(
-        'mobileBookingInfo',
-        'mobileBookingTitle',
-        'mobileBookingLead',
-        'mobileStartBtn',
-        'mobileBookingHint'
-      );
-
-      renderSteps('desktopBookingSteps');
-      renderSteps('mobileBookingSteps');
-      renderGuidedState('desktop');
-      renderGuidedState('mobile');
     }
 
     function switchView(view){
@@ -3427,53 +1086,11 @@
       document.getElementById('mobileBtn').classList.toggle('active', view === 'mobile');
       document.getElementById('desktopView').classList.toggle('hidden', view !== 'desktop');
       document.getElementById('mobileView').classList.toggle('hidden', view !== 'mobile');
-      document.getElementById('desktopModeWrap').classList.toggle('hidden', view !== 'desktop');
-      persist();
-    }
-
-    function applyDesktopMode(){
-      const desktopView = document.getElementById('desktopView');
-      const fullBtn = document.getElementById('fullModeBtn');
-      const compactBtn = document.getElementById('compactModeBtn');
-
-      desktopView.classList.toggle('compact-mode', state.desktopMode === 'compact');
-      fullBtn.classList.toggle('active', state.desktopMode === 'full');
-      compactBtn.classList.toggle('active', state.desktopMode === 'compact');
-    }
-
-    function switchDesktopMode(mode){
-      state.desktopMode = mode;
-      applyDesktopMode();
-      persist();
-    }
-
-    function applyMobileMode(){
-      const mobileView = document.getElementById('mobileView');
-      const fullBtn = document.getElementById('mobileFullModeBtn');
-      const compactBtn = document.getElementById('mobileCompactModeBtn');
-      if(!mobileView || !fullBtn || !compactBtn) return;
-
-      mobileView.classList.toggle('mobile-compact-mode', state.mobileMode === 'compact');
-      fullBtn.classList.toggle('active', state.mobileMode === 'full');
-      compactBtn.classList.toggle('active', state.mobileMode === 'compact');
-    }
-
-    function switchMobileMode(mode){
-      state.mobileMode = mode;
-      applyMobileMode();
       persist();
     }
 
     document.getElementById('desktopBtn').addEventListener('click', () => switchView('desktop'));
     document.getElementById('mobileBtn').addEventListener('click', () => switchView('mobile'));
-    document.getElementById('fullModeBtn').addEventListener('click', () => switchDesktopMode('full'));
-    document.getElementById('compactModeBtn').addEventListener('click', () => switchDesktopMode('compact'));
-    document.getElementById('mobileFullModeBtn').addEventListener('click', () => switchMobileMode('full'));
-    document.getElementById('mobileCompactModeBtn').addEventListener('click', () => switchMobileMode('compact'));
-
-    document.querySelectorAll('[data-ctp-tab]').forEach(btn => {
-      btn.addEventListener('click', () => setCompactTrustTab(btn.dataset.ctpTab));
-    });
 
     function formatPrice(v){
       return new Intl.NumberFormat('ru-RU').format(v) + ' ₽';
@@ -3496,7 +1113,6 @@
           root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
           btn.classList.add('active');
           state.age = btn.dataset.age;
-          state.ageSelected = true;
           state.shiftId = null;
           state.basePrice = null;
           state.offerPrice = null;
@@ -3509,27 +1125,6 @@
       });
     }
 
-    function resetAgeSelection(){
-      state.age = null;
-      state.ageSelected = false;
-      state.shiftId = null;
-      state.basePrice = null;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerStage = 0;
-
-      ['desktopAgeTabs','mobileAgeTabs'].forEach(id => {
-        const root = document.getElementById(id);
-        if(root){
-          root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
-        }
-      });
-
-      renderAll();
-      persist();
-    }
-
     bindAgeTabs('desktopAgeTabs');
     bindAgeTabs('mobileAgeTabs');
 
@@ -3539,7 +1134,7 @@
         <div class="shift-option ${state.shiftId === s.id ? 'active' : ''}" data-id="${s.id}">
           <div>
             <strong>${s.dates}</strong>
-            <small>${s.title} · ${formatPrice(s.price)} · осталось ${s.left} мест</small>
+            <small>${s.title}</small>
           </div>
           <div class="shift-price-chip">${s.left} мест</div>
         </div>
@@ -3547,7 +1142,6 @@
 
       box.querySelectorAll('.shift-option').forEach(el => {
         el.addEventListener('click', () => {
-          if(!hasSelectedAge()) return;
           selectShift(el.dataset.id);
         });
       });
@@ -3563,260 +1157,6 @@
       `).join('');
     }
 
-    function iconGlyph(label){
-      const map = {
-        city_phone:'☎',
-        mobile_phone:'📱',
-        whatsapp:'W',
-        telegram:'✈'
-      };
-      return map[label] || '•';
-    }
-
-    function faqGlyph(iconPath, groupName){
-      if(iconPath && iconPath.includes('med')) return 'MED';
-      if(iconPath && iconPath.includes('lock')) return 'SAFE';
-      if(iconPath && iconPath.includes('food')) return 'FOOD';
-      if(iconPath && iconPath.includes('check')) return 'ROOM';
-      if(iconPath && iconPath.includes('phone')) return 'CALL';
-      return groupName.slice(0,3).toUpperCase();
-    }
-
-    function renderMediaSections(){
-      const photoGrid = document.getElementById('photoGrid');
-      const videoList = document.getElementById('videoList');
-      const contactsGrid = document.getElementById('contactsGrid');
-      const socialsGrid = document.getElementById('socialsGrid');
-      const faqGroups = document.getElementById('faqGroups');
-      const teamGrid = document.getElementById('teamGrid');
-      const bookLinkBtn = document.getElementById('bookLinkBtn');
-      const yandexReviewsBtn = document.getElementById('yandexReviewsBtn');
-      const reviewsGrid = document.getElementById('reviewsGrid');
-      const locationMapBtn = document.getElementById('locationMapBtn');
-
-      if (photoGrid) {
-        photoGrid.innerHTML = mediaContent.photos.map((item, idx) => `
-          <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}">
-            <img src="${item.src}" alt="${item.alt}">
-            <div class="photo-title">${idx === 0 ? 'Главный кадр' : 'AiDaCamp'}</div>
-            <div class="photo-badge">${item.cat}</div>
-          </div>
-        `).join('');
-      }
-
-      if (videoList) {
-        videoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <div class="video-card">
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer">
-              <div class="video-poster">
-                <div class="video-play"><span>▶</span></div>
-              </div>
-            </a>
-            <h4>${item.title}</h4>
-            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="cta-main" style="text-align:center;text-decoration:none;">Смотреть видео</a>
-          </div>
-        `).join('');
-      }
-
-      const mainVideoBtn = document.getElementById('mainVideoBtn');
-      const mainVideoBox = document.getElementById('mainVideoBox');
-      if (mediaContent.videos[0]) {
-        if (mainVideoBtn) mainVideoBtn.href = mediaContent.videos[0].url;
-        if (mainVideoBox) mainVideoBox.href = mediaContent.videos[0].url;
-      }
-
-      if (bookLinkBtn) bookLinkBtn.href = mediaContent.references.programmingBookUrl;
-
-      if(yandexReviewsBtn){
-        yandexReviewsBtn.textContent = mediaContent.references.yandexReviewsLabel;
-        yandexReviewsBtn.href = mediaContent.references.yandexReviewsUrl;
-      }
-
-      if (locationMapBtn) {
-        locationMapBtn.href = mediaContent.references.locationMapUrl;
-      }
-
-      if(reviewsGrid){
-        reviewsGrid.innerHTML = mediaContent.reviews.map(item => `
-          <div class="review-real">
-            <div class="review-head-real">
-              <div class="review-avatar">
-                <img src="${item.avatar}" alt="${item.name}">
-              </div>
-              <div class="review-person">
-                <strong>${item.name}</strong>
-                <div class="review-meta">${item.meta}</div>
-              </div>
-            </div>
-            <div class="review-quote">«${item.quote}»</div>
-          </div>
-        `).join('');
-      }
-
-      if (contactsGrid) {
-        contactsGrid.innerHTML = mediaContent.contacts.map(item => `
-          <a class="contact-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
-            <div class="contact-icon">${iconGlyph(item.label)}</div>
-            <strong>${item.text}</strong>
-            <span>${item.label.replace('_',' ')}</span>
-          </a>
-        `).join('');
-      }
-
-      if (socialsGrid) {
-        socialsGrid.innerHTML = mediaContent.socials.map(item => `
-          <a class="social-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
-            <div class="social-glyph">${item.label}</div>
-            <span>${item.key}</span>
-          </a>
-        `).join('');
-      }
-
-      if (faqGroups) {
-        faqGroups.innerHTML = mediaContent.faq.map(group => `
-          <div class="faq-group">
-            <div class="faq-group-head">
-              <div class="faq-icon">${faqGlyph(group.icon, group.group)}</div>
-              <strong>${group.group}</strong>
-            </div>
-            <div class="faq-list">
-              ${group.items.map(item => `
-                <div class="faq-line">
-                  <strong>${item.q}</strong>
-                  <span>${item.a}</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `).join('');
-      }
-
-      if (teamGrid) {
-        teamGrid.innerHTML = mediaContent.team.map(item => `
-          <div class="team-card">
-            <div class="team-avatar">
-              <img src="${item.avatarUrl}" alt="${item.fio}">
-            </div>
-            <strong>${item.fio}</strong>
-            <span class="team-role">${item.role}</span>
-            <span>${item.bio}</span>
-          </div>
-        `).join('');
-      }
-
-      renderCompactTrustPanelContent();
-    }
-
-    function renderCompactTrustPanelContent(){
-      const compactPhotoGrid = document.getElementById('compactPhotoGrid');
-      const compactVideoList = document.getElementById('compactVideoList');
-      const compactReviewsList = document.getElementById('compactReviewsList');
-      const mobileInlinePhotoGrid = document.getElementById('mobileInlinePhotoGrid');
-      const mobileInlineVideoList = document.getElementById('mobileInlineVideoList');
-      const mobileInlineReviewsList = document.getElementById('mobileInlineReviewsList');
-
-      if (compactPhotoGrid) {
-        compactPhotoGrid.innerHTML = mediaContent.photos.slice(0,8).map(item => `
-          <div class="compact-panel-photo">
-            <img src="${item.src}" alt="${item.alt}">
-          </div>
-        `).join('');
-      }
-
-      if (mobileInlinePhotoGrid) {
-        mobileInlinePhotoGrid.innerHTML = mediaContent.photos.slice(0,4).map(item => `
-          <div class="compact-panel-photo">
-            <img src="${item.src}" alt="${item.alt}">
-          </div>
-        `).join('');
-      }
-
-      if (compactVideoList) {
-        compactVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <div class="compact-panel-video-card">
-            <h4>${item.title}</h4>
-            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
-            <a class="compact-panel-link" href="${item.url}" target="_blank" rel="noopener noreferrer">Смотреть видео</a>
-          </div>
-        `).join('');
-      }
-
-      if (mobileInlineVideoList) {
-        mobileInlineVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <div class="compact-panel-video-card">
-            <h4>${item.title}</h4>
-            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
-            <a class="compact-panel-link" href="${item.url}" target="_blank" rel="noopener noreferrer">Смотреть видео</a>
-          </div>
-        `).join('');
-      }
-
-      if (compactReviewsList) {
-        compactReviewsList.innerHTML = mediaContent.reviews.map(item => `
-          <div class="compact-panel-review-card">
-            <strong>${item.name}</strong>
-            <span>${item.quote}</span>
-          </div>
-        `).join('');
-      }
-
-      if (mobileInlineReviewsList) {
-        mobileInlineReviewsList.innerHTML = mediaContent.reviews.slice(0,3).map(item => `
-          <div class="compact-panel-review-card">
-            <strong>${item.name}</strong>
-            <span>${item.quote}</span>
-          </div>
-        `).join('');
-      }
-    }
-
-    function setCompactTrustTab(tab){
-      const title = document.getElementById('compactTrustTitle');
-      const lead = document.getElementById('compactTrustLead');
-
-      document.querySelectorAll('[data-ctp-tab]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.ctpTab === tab);
-      });
-
-      ['photos','videos','reviews'].forEach(key => {
-        const el = document.getElementById(`ctp-${key}`);
-        if (el) el.classList.toggle('hidden', key !== tab);
-      });
-
-      if (tab === 'photos') {
-        title.textContent = 'Фото лагеря';
-        lead.textContent = 'Кадры занятий, бассейна, спорта и атмосферы лагеря.';
-      }
-      if (tab === 'videos') {
-        title.textContent = 'Видео';
-        lead.textContent = 'Короткие видео, которые быстро объясняют, чем живёт лагерь.';
-      }
-      if (tab === 'reviews') {
-        title.textContent = 'Отзывы родителей';
-        lead.textContent = 'Реальные отзывы как social proof без ухода со сценария бронирования.';
-      }
-    }
-
-    function openCompactTrustPanel(tab = 'photos'){
-      const panel = document.getElementById('compactTrustPanel');
-      if (!panel) return;
-      setCompactTrustTab(tab);
-      panel.classList.remove('hidden');
-    }
-
-    function closeCompactTrustPanel(){
-      const panel = document.getElementById('compactTrustPanel');
-      if (!panel) return;
-      panel.classList.add('hidden');
-    }
-
-    function renderAll(){
-      renderShiftOptions('desktopShiftOptions');
-      renderShiftOptions('mobileShiftOptions');
-      renderSummary();
-    }
-
     function selectShift(id){
       const shift = shifts.find(s => s.id === id);
       state.shiftId = id;
@@ -3827,23 +1167,7 @@
       state.offerStage = 0;
       renderAll();
       persist();
-    }
-
-    function handlePrimaryCTA(){
-      const action = getPrimaryActionState();
-      if(action.disabled) return;
-
-      if(state.offerStage === 0){
-        openOfferCheck();
-        return;
-      }
-
-      if(state.offerStage === 1 && isOfferActive()){
-        openOfferCheck();
-        return;
-      }
-
-      openForm();
+      openOfferCheck();
     }
 
     function openOfferCheck(){
@@ -3899,13 +1223,11 @@
 
       startTimer();
       renderSummary();
-      renderBookingPanels();
     }
 
     function saveOfferAndClose(){
       document.getElementById('offerOverlay').classList.add('hidden');
       renderSummary();
-      renderBookingPanels();
     }
 
     function startTimer(){
@@ -3924,11 +1246,12 @@
           persist();
           if(offerTimer) offerTimer.textContent = '';
           if(summaryTimer) summaryTimer.textContent = '';
-          renderBookingPanels();
           return;
         }
 
-        const text = formatRemaining(diff);
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff / (1000 * 60)) % 60);
+        const text = `Действует ${h}ч ${m}м`;
 
         if(offerTimer) offerTimer.textContent = text;
         if(summaryTimer) summaryTimer.textContent = text;
@@ -3940,7 +1263,6 @@
 
       if(!state.shiftId){
         bar.classList.add('hidden');
-        renderBookingPanels();
         return;
       }
 
@@ -3952,7 +1274,6 @@
       document.getElementById('summaryPrice').textContent = formatPrice(price);
 
       bar.classList.remove('hidden');
-      renderBookingPanels();
     }
 
     function openForm(){
@@ -4024,22 +1345,26 @@
     });
 
     document.getElementById('desktopStartBtn').addEventListener('click', () => {
-      handlePrimaryCTA();
+      if(!state.shiftId){
+        selectShift(shifts[0].id);
+      } else {
+        openForm();
+      }
     });
 
     document.getElementById('mobileStartBtn').addEventListener('click', () => {
-      handlePrimaryCTA();
+      if(!state.shiftId){
+        selectShift(shifts[0].id);
+      } else {
+        openForm();
+      }
     });
 
     renderShiftOptions('desktopShiftOptions');
     renderShiftOptions('mobileShiftOptions');
     renderShiftCards();
-    renderMediaSections();
     renderSummary();
-    renderBookingPanels();
     switchView(state.view || 'desktop');
-    applyDesktopMode();
-    applyMobileMode();
 
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();
