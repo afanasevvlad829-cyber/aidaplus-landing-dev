@@ -1323,7 +1323,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.8 (patch-08b)
+    v0.0.9 (patch-09a)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -1760,6 +1760,72 @@
 
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function notifyLead(eventName, payload){
+      try {
+        const cfg = window.AC_NOTIFY_CONFIG || {};
+
+        const eventUrl = cfg[eventName];
+        const allUrl = cfg.all;
+
+        const body = {
+          event: eventName,
+          payload: payload
+        };
+
+        const sendWebhook = async (url) => {
+          if(!url) return false;
+          try {
+            await fetch(url,{
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body:JSON.stringify(body)
+            });
+            return true;
+          } catch(e){
+            return false;
+          }
+        };
+
+        const sendTelegram = async () => {
+          if(!cfg.telegramBotToken || !cfg.telegramChatId) return;
+
+          const text =
+            "AidaCamp lead\n" +
+            "Event: " + eventName + "\n" +
+            JSON.stringify(payload,null,2);
+
+          await fetch(`https://api.telegram.org/bot${cfg.telegramBotToken}/sendMessage`,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+              chat_id: cfg.telegramChatId,
+              text,
+              disable_web_page_preview:true
+            })
+          });
+        };
+
+        (async ()=>{
+          let ok = false;
+
+          if(eventUrl){
+            ok = await sendWebhook(eventUrl);
+          }
+
+          if(!ok && allUrl){
+            ok = await sendWebhook(allUrl);
+          }
+
+          if(!ok){
+            await sendTelegram();
+          }
+        })();
+
+      } catch(e){
+        console.error("notifyLead error", e);
+      }
     }
 
     function getSelectedShift(){
