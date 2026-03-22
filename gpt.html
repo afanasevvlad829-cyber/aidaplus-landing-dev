@@ -497,8 +497,9 @@
 
     .photo-grid{
       display:grid;
-      grid-template-columns:repeat(3,1fr);
+      grid-template-columns:1.35fr 1fr 1fr;
       gap:12px;
+      grid-auto-rows:180px;
     }
 
     .photo-card{
@@ -509,6 +510,15 @@
       background:#fff;
       min-height:180px;
       box-shadow:var(--shadow);
+    }
+
+    .photo-card.hero{
+      grid-row:span 2;
+      min-height:372px;
+    }
+
+    .photo-card.wide{
+      grid-column:span 2;
     }
 
     .photo-card img{
@@ -534,10 +544,95 @@
       backdrop-filter:blur(8px);
     }
 
+    .photo-title{
+      position:absolute;
+      left:10px;
+      top:10px;
+      padding:6px 9px;
+      border-radius:999px;
+      background:rgba(255,255,255,.86);
+      color:#111827;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
     .video-list{
       display:grid;
       grid-template-columns:repeat(3,1fr);
       gap:12px;
+    }
+
+    .video-feature{
+      margin-top:14px;
+      border-radius:22px;
+      border:1px solid var(--line);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,138,0,.14), transparent 28%),
+        linear-gradient(135deg,#ffffff,#f7f9fc);
+      padding:18px;
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      align-items:center;
+    }
+
+    .video-feature h4{
+      margin:0 0 8px;
+      font-size:24px;
+      letter-spacing:-.03em;
+      line-height:1.15;
+    }
+
+    .video-feature p{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .inline-link-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:14px;
+      padding:12px 16px;
+      font-weight:800;
+      font-size:14px;
+      text-decoration:none;
+    }
+
+    .inline-link-btn.primary{
+      color:#fff;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 12px 24px rgba(255,138,0,.22);
+    }
+
+    .video-feature-box{
+      min-height:220px;
+      border-radius:20px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,138,0,.18), transparent 28%),
+        linear-gradient(135deg,#dfe7f3,#a9b8cb 50%,#6f829a);
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .video-feature-box::after{
+      content:"MAIN VIDEO";
+      position:absolute;
+      left:14px;
+      bottom:14px;
+      color:#fff;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.14em;
+      opacity:.92;
     }
 
     .video-card{
@@ -598,6 +693,13 @@
       font-size:16px;
       line-height:1.35;
       letter-spacing:-.01em;
+    }
+
+    .video-card p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
     }
 
     .video-card a{
@@ -1045,7 +1147,20 @@
       .hero-content,.hero-content.full{
         max-width:100%;
       }
-      .grid-3,.slot-grid,.team-grid,.contacts-row,footer{
+      .grid-3,.slot-grid,.team-grid,.contacts-row,footer,.video-list,.contacts-grid,.socials-grid,.review-grid{
+        grid-template-columns:1fr;
+      }
+      .photo-grid{
+        grid-template-columns:1fr;
+        grid-auto-rows:auto;
+      }
+      .photo-card.hero,
+      .photo-card.wide{
+        grid-row:auto;
+        grid-column:auto;
+        min-height:220px;
+      }
+      .video-feature{
         grid-template-columns:1fr;
       }
     }
@@ -1084,7 +1199,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.5 (patch-05)
+    v0.0.7 (patch-07)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -1189,6 +1304,16 @@
           <section class="section-card" id="section-videos">
             <h3>Видео</h3>
             <p style="margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.55;">Короткие видео с текущего сайта: про изменения ребёнка, внутреннюю экономику и отказ от телефона.</p>
+            <div class="video-feature">
+              <div>
+                <h4>Посмотрите 3 коротких видео — и станет понятно, чем живёт лагерь</h4>
+                <p>Здесь не просто “заняли ребёнка”. Здесь дети делают проекты, учатся принимать решения, живут в своей внутренней экономике и реально меняются за смену.</p>
+                <a class="inline-link-btn primary" id="mainVideoBtn" href="#" target="_blank" rel="noopener noreferrer">Смотреть главное видео</a>
+              </div>
+              <a class="video-feature-box" id="mainVideoBox" href="#" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+                <div class="video-play"><span>▶</span></div>
+              </a>
+            </div>
             <div class="video-list" id="videoList"></div>
           </section>
 
@@ -1700,14 +1825,15 @@
       const contactsGrid = document.getElementById('contactsGrid');
       const socialsGrid = document.getElementById('socialsGrid');
 
-      photoGrid.innerHTML = mediaContent.photos.map(item => `
-        <div class="photo-card">
+      photoGrid.innerHTML = mediaContent.photos.map((item, idx) => `
+        <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}">
           <img src="${item.src}" alt="${item.alt}">
+          <div class="photo-title">${idx === 0 ? 'Главный кадр' : 'AiDaCamp'}</div>
           <div class="photo-badge">${item.cat}</div>
         </div>
       `).join('');
 
-      videoList.innerHTML = mediaContent.videos.map(item => `
+      videoList.innerHTML = mediaContent.videos.map((item, idx) => `
         <div class="video-card">
           <a href="${item.url}" target="_blank" rel="noopener noreferrer">
             <div class="video-poster">
@@ -1715,9 +1841,17 @@
             </div>
           </a>
           <h4>${item.title}</h4>
+          <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
           <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="cta-main" style="text-align:center;text-decoration:none;">Смотреть видео</a>
         </div>
       `).join('');
+
+      const mainVideoBtn = document.getElementById('mainVideoBtn');
+      const mainVideoBox = document.getElementById('mainVideoBox');
+      if (mediaContent.videos[0]) {
+        mainVideoBtn.href = mediaContent.videos[0].url;
+        mainVideoBox.href = mediaContent.videos[0].url;
+      }
 
       contactsGrid.innerHTML = mediaContent.contacts.map(item => `
         <a class="contact-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
