@@ -3992,6 +3992,26 @@
       state.phone = phone;
       persist();
 
+      const shift = shifts.find(s => s.id === state.shiftId);
+      const price = state.offerPrice || state.basePrice || (shift ? shift.price : null);
+      const payload = {
+        name,
+        phone,
+        age: labelAge(state.age),
+        shift_id: shift ? shift.id : '',
+        shift_name: shift ? shift.title : '',
+        shift_date: shift ? shift.dates : '',
+        price_final: price || null,
+        price_text: price ? formatPrice(price) : '—',
+        promo_code: state.code || '',
+        promo_status: state.offerPrice ? (state.offerStage >= 2 ? 'improved_again' : 'fixed') : 'none',
+        mode: state.view === 'mobile'
+          ? `mobile:${state.mobileMode || 'full'}`
+          : `desktop:${state.desktopMode || 'full'}`,
+        sent_at_local: new Date().toLocaleString('ru-RU')
+      };
+      notifyLead('booking_submitted', payload);
+
       alert('Заявка отправлена');
       closeForm();
     }
