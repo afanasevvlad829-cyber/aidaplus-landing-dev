@@ -174,19 +174,33 @@
       backdrop-filter:blur(8px);
     }
 
-    .hero-content h2{
-      margin:0 0 10px;
-      font-size:30px;
+    .hero-title{
+      margin:0 0 14px;
+      font-size:46px;
+      font-weight:800;
       line-height:1.12;
       letter-spacing:-.03em;
       max-width:680px;
     }
 
     .hero-sub{
-      color:rgba(255,255,255,.84);
-      font-size:15px;
+      color:var(--muted);
+      font-size:18px;
       line-height:1.45;
-      margin-bottom:18px;
+      margin-bottom:22px;
+    }
+
+    .hero-slogan{
+      display:inline-block;
+      margin-top:12px;
+      font-size:14px;
+      font-weight:600;
+      color:#fff;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      padding:6px 10px;
+      border-radius:999px;
+      backdrop-filter:blur(6px);
     }
 
     .feature-row{
@@ -228,13 +242,13 @@
       position:absolute;
       right:18px;
       top:78px;
-      width:320px;
-      padding:18px;
+      width:340px;
+      padding:22px;
       border-radius:24px;
       background:rgba(12,17,24,.78);
       border:1px solid rgba(255,255,255,.10);
       backdrop-filter:blur(16px);
-      box-shadow:0 20px 50px rgba(0,0,0,.28);
+      box-shadow:0 25px 80px rgba(0,0,0,.5);
       color:#fff;
     }
 
@@ -403,19 +417,47 @@
       width:100%;
       border:none;
       border-radius:16px;
-      padding:15px 16px;
+      padding:16px;
       color:#fff;
       font-weight:800;
       font-size:15px;
       background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      box-shadow:0 14px 32px rgba(255,138,0,.28);
+      box-shadow:0 18px 40px rgba(255,122,0,.45);
       cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
+
+    .cta-main:hover{
+      transform:translateY(-2px) scale(1.01);
+      box-shadow:0 22px 55px rgba(255,122,0,.55);
     }
 
     .cta-main:disabled{
       opacity:.45;
       cursor:not-allowed;
       box-shadow:none;
+    }
+
+    .cta-subtext{
+      margin-top:8px;
+      font-size:12px;
+      color:rgba(255,255,255,.6);
+      text-align:center;
+    }
+
+    .trust-mini{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      font-size:12px;
+      color:rgba(255,255,255,.65);
+    }
+
+    .trust-mini span{
+      background:rgba(255,255,255,.08);
+      padding:4px 8px;
+      border-radius:8px;
     }
 
     .under-cta{
@@ -1150,7 +1192,7 @@
     .summary-inner{
       max-width:1440px;
       margin:0 auto;
-      padding:12px 24px;
+      padding:16px 22px;
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -1165,7 +1207,7 @@
     }
 
     .summary-item{
-      font-size:14px;
+      font-size:15px;
       font-weight:700;
     }
 
@@ -1342,7 +1384,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.11 (patch-09c)
+    v0.0.12 (patch-10)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -1376,8 +1418,9 @@
 
           <div class="hero-content full">
             <div class="hero-tag">IT-лагерь для детей 7–14 лет</div>
-            <h2>AiDaCamp — лагерь, где дети создают, а не потребляют</h2>
+            <h2 class="hero-title">Лагерь, где ребёнок<br>создаёт, а не потребляет</h2>
             <div class="hero-sub">Без телефонов • Программирование • Спорт • Живая атмосфера</div>
+            <div class="hero-slogan">Мы не играем в игры — мы их создаём</div>
 
             <div class="feature-row">
               <div class="feature-pill">
@@ -1419,6 +1462,12 @@
 
             <button class="cta-main" id="desktopStartBtn">Сначала выберите смену</button>
             <div class="under-cta" id="desktopBookingHint">Покажем актуальные условия и остаток мест</div>
+            <div class="cta-subtext">Без оплаты • Ответим в течение 5 минут</div>
+            <div class="trust-mini">
+              <span>45 мест в смене</span>
+              <span>IT + спорт</span>
+              <span>Без гаджетов</span>
+            </div>
           </div>
           <!-- /@block:booking-card -->
         </div>
