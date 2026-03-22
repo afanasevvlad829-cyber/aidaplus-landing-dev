@@ -117,6 +117,194 @@
       min-height:560px;
     }
 
+    .compact-trust-entry{
+      display:none;
+      margin-top:18px;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .compact-mode .compact-trust-entry{
+      display:flex;
+    }
+
+    .compact-trust-btn{
+      border:none;
+      border-radius:14px;
+      padding:12px 14px;
+      background:rgba(255,255,255,.10);
+      color:#fff;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(10px);
+      transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    .compact-trust-btn:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,.14);
+      box-shadow:0 14px 28px rgba(0,0,0,.14);
+    }
+
+    .compact-trust-panel{
+      position:fixed;
+      top:84px;
+      right:18px;
+      width:min(420px, calc(100vw - 32px));
+      max-height:calc(100vh - 120px);
+      overflow:auto;
+      z-index:88;
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(18px);
+      border:1px solid var(--line);
+      border-radius:26px;
+      box-shadow:0 24px 70px rgba(20,29,45,.18);
+      padding:18px;
+      animation:panelIn .22s ease;
+    }
+
+    .compact-trust-panel.hidden{
+      display:none !important;
+    }
+
+    .compact-panel-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .compact-panel-top h3{
+      margin:0 0 4px;
+      font-size:22px;
+      letter-spacing:-.03em;
+      line-height:1.1;
+    }
+
+    .compact-panel-top p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .compact-panel-close{
+      border:none;
+      background:#f5f7fb;
+      color:#111827;
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      font-size:18px;
+      font-weight:800;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
+    .compact-panel-tabs{
+      display:flex;
+      gap:8px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+
+    .compact-panel-tab{
+      border:none;
+      border-radius:999px;
+      padding:10px 12px;
+      background:#f5f7fb;
+      color:#111827;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      transition:all .18s ease;
+    }
+
+    .compact-panel-tab.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+    }
+
+    .compact-panel-section.hidden{
+      display:none !important;
+    }
+
+    .compact-panel-photo-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .compact-panel-photo{
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#fff;
+      min-height:120px;
+    }
+
+    .compact-panel-photo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      aspect-ratio:4/3;
+    }
+
+    .compact-panel-video-list,
+    .compact-panel-review-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .compact-panel-video-card,
+    .compact-panel-review-card{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .compact-panel-video-card h4,
+    .compact-panel-review-card strong{
+      display:block;
+      margin:0 0 8px;
+      font-size:14px;
+      line-height:1.4;
+    }
+
+    .compact-panel-video-card p,
+    .compact-panel-review-card span{
+      display:block;
+      margin:0 0 10px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .compact-panel-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:40px;
+      padding:0 12px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      text-decoration:none;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    @keyframes panelIn{
+      from{opacity:0; transform:translateX(12px)}
+      to{opacity:1; transform:translateX(0)}
+    }
+
     .hero-shell{
       position:relative;
       padding:22px;
@@ -1996,7 +2184,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.19 (patch-17r)
+    v0.0.20 (patch-18)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -2057,6 +2245,12 @@
               <span>● реальные проекты за смену</span>
               <span>● бассейн и спорт каждый день</span>
               <span>● собственная учебная программа</span>
+            </div>
+
+            <div class="compact-trust-entry">
+              <button class="compact-trust-btn" onclick="openCompactTrustPanel('photos')">Фото лагеря</button>
+              <button class="compact-trust-btn" onclick="openCompactTrustPanel('videos')">Видео</button>
+              <button class="compact-trust-btn" onclick="openCompactTrustPanel('reviews')">Отзывы родителей</button>
             </div>
 
             <div class="feature-row">
@@ -2416,6 +2610,34 @@
         </div>
         <button class="cta-main" style="width:auto;padding:14px 18px;" onclick="openForm()">Оформить</button>
       </div>
+    </div>
+  </div>
+
+  <div class="compact-trust-panel hidden" id="compactTrustPanel">
+    <div class="compact-panel-top">
+      <div>
+        <h3 id="compactTrustTitle">Подробнее</h3>
+        <p id="compactTrustLead">Дополнительные материалы, не выводя пользователя из сценария бронирования.</p>
+      </div>
+      <button class="compact-panel-close" onclick="closeCompactTrustPanel()">×</button>
+    </div>
+
+    <div class="compact-panel-tabs">
+      <button class="compact-panel-tab active" data-ctp-tab="photos">Фото</button>
+      <button class="compact-panel-tab" data-ctp-tab="videos">Видео</button>
+      <button class="compact-panel-tab" data-ctp-tab="reviews">Отзывы</button>
+    </div>
+
+    <div class="compact-panel-section" id="ctp-photos">
+      <div class="compact-panel-photo-grid" id="compactPhotoGrid"></div>
+    </div>
+
+    <div class="compact-panel-section hidden" id="ctp-videos">
+      <div class="compact-panel-video-list" id="compactVideoList"></div>
+    </div>
+
+    <div class="compact-panel-section hidden" id="ctp-reviews">
+      <div class="compact-panel-review-list" id="compactReviewsList"></div>
     </div>
   </div>
 
@@ -2956,6 +3178,10 @@
     document.getElementById('fullModeBtn').addEventListener('click', () => switchDesktopMode('full'));
     document.getElementById('compactModeBtn').addEventListener('click', () => switchDesktopMode('compact'));
 
+    document.querySelectorAll('[data-ctp-tab]').forEach(btn => {
+      btn.addEventListener('click', () => setCompactTrustTab(btn.dataset.ctpTab));
+    });
+
     function formatPrice(v){
       return new Intl.NumberFormat('ru-RU').format(v) + ' ₽';
     }
@@ -3162,6 +3388,81 @@
           </div>
         `).join('');
       }
+
+      renderCompactTrustPanelContent();
+    }
+
+    function renderCompactTrustPanelContent(){
+      const compactPhotoGrid = document.getElementById('compactPhotoGrid');
+      const compactVideoList = document.getElementById('compactVideoList');
+      const compactReviewsList = document.getElementById('compactReviewsList');
+
+      if (compactPhotoGrid) {
+        compactPhotoGrid.innerHTML = mediaContent.photos.slice(0,8).map(item => `
+          <div class="compact-panel-photo">
+            <img src="${item.src}" alt="${item.alt}">
+          </div>
+        `).join('');
+      }
+
+      if (compactVideoList) {
+        compactVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
+          <div class="compact-panel-video-card">
+            <h4>${item.title}</h4>
+            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
+            <a class="compact-panel-link" href="${item.url}" target="_blank" rel="noopener noreferrer">Смотреть видео</a>
+          </div>
+        `).join('');
+      }
+
+      if (compactReviewsList) {
+        compactReviewsList.innerHTML = mediaContent.reviews.map(item => `
+          <div class="compact-panel-review-card">
+            <strong>${item.name}</strong>
+            <span>${item.quote}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function setCompactTrustTab(tab){
+      const title = document.getElementById('compactTrustTitle');
+      const lead = document.getElementById('compactTrustLead');
+
+      document.querySelectorAll('[data-ctp-tab]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.ctpTab === tab);
+      });
+
+      ['photos','videos','reviews'].forEach(key => {
+        const el = document.getElementById(`ctp-${key}`);
+        if (el) el.classList.toggle('hidden', key !== tab);
+      });
+
+      if (tab === 'photos') {
+        title.textContent = 'Фото лагеря';
+        lead.textContent = 'Кадры занятий, бассейна, спорта и атмосферы лагеря.';
+      }
+      if (tab === 'videos') {
+        title.textContent = 'Видео';
+        lead.textContent = 'Короткие видео, которые быстро объясняют, чем живёт лагерь.';
+      }
+      if (tab === 'reviews') {
+        title.textContent = 'Отзывы родителей';
+        lead.textContent = 'Реальные отзывы как social proof без ухода со сценария бронирования.';
+      }
+    }
+
+    function openCompactTrustPanel(tab = 'photos'){
+      const panel = document.getElementById('compactTrustPanel');
+      if (!panel) return;
+      setCompactTrustTab(tab);
+      panel.classList.remove('hidden');
+    }
+
+    function closeCompactTrustPanel(){
+      const panel = document.getElementById('compactTrustPanel');
+      if (!panel) return;
+      panel.classList.add('hidden');
     }
 
     function renderAll(){
