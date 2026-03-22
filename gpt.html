@@ -349,12 +349,27 @@
         linear-gradient(180deg, rgba(11,16,24,.20) 0%, rgba(11,16,24,.74) 100%),
         radial-gradient(circle at 18% 18%, rgba(255,138,0,.18), transparent 28%),
         radial-gradient(circle at 88% 12%, rgba(113,166,255,.16), transparent 26%),
-        linear-gradient(180deg, rgba(19,28,41,.10) 0%, rgba(19,28,41,.32) 62%, rgba(19,28,41,.58) 100%),
-        url('https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg');
-      background-size:cover;
-      background-position:center center;
-      background-repeat:no-repeat;
+        linear-gradient(180deg, rgba(19,28,41,.10) 0%, rgba(19,28,41,.32) 62%, rgba(19,28,41,.58) 100%);
       color:#fff;
+    }
+
+    .hero-bg{
+      position:absolute;
+      inset:0;
+      z-index:0;
+      background-size:cover;
+      background-position:center;
+      transition:opacity 1.4s ease, transform 6s ease;
+      transform:scale(1);
+    }
+
+    .hero-bg.hidden{
+      opacity:0;
+    }
+
+    .hero-bg.active{
+      opacity:1;
+      transform:scale(1.05);
     }
 
     .hero-shell::after{
@@ -1724,6 +1739,21 @@
       margin-top:14px;
     }
 
+    .reviews-rating{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:14px;
+      margin-bottom:12px;
+    }
+
+    .stars{
+      color:#FF8A00;
+      font-size:14px;
+      letter-spacing:2px;
+      margin:4px 0 6px;
+    }
+
     .review-grid{
       display:grid;
       grid-template-columns:repeat(3,1fr);
@@ -2479,7 +2509,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.25 (patch-22r)
+    v0.0.26 (patch-23)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -2501,6 +2531,8 @@
       <div class="screen">
         <!-- @block:hero -->
         <div class="hero-shell">
+          <div id="heroBg1" class="hero-bg active"></div>
+          <div id="heroBg2" class="hero-bg hidden"></div>
           <div class="hero-topbar">
             <div class="brand">
               <span class="brand-logo" aria-hidden="true">
@@ -2725,6 +2757,10 @@
           <section class="section-card" id="section-reviews">
             <h3>Отзывы</h3>
             <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.55;">Реальные отзывы родителей и быстрый переход на Яндекс Карты.</p>
+            <div class="reviews-rating">
+              <strong>5.0 ★</strong>
+              <span>на основе отзывов родителей</span>
+            </div>
             <div class="review-actions">
               <a class="inline-link-btn primary" id="yandexReviewsBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть отзывы на Яндекс Картах</a>
             </div>
@@ -3220,8 +3256,57 @@
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
     state.photoFilter = state.photoFilter || 'all';
 
+    const HERO_IMAGES = [
+      'https://static.tildacdn.com/tild6163-6430-4337-b034-636439306264/day.png',
+      'https://static.tildacdn.com/tild3262-6236-4330-a631-323063383933/photo.png',
+      'https://static.tildacdn.com/tild3939-6137-4633-a635-303734373930/photo.png'
+    ];
+
+    const HERO_MOBILE =
+      'https://static.tildacdn.com/tild3939-6137-4633-a635-303734373930/photo.png';
+
+    let heroIndex = 0;
+    let heroTimer = null;
+
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function initHero(){
+      const isMobile = window.innerWidth < 768;
+
+      const bg1 = document.getElementById('heroBg1');
+      const bg2 = document.getElementById('heroBg2');
+      if(!bg1) return;
+
+      if(isMobile){
+        bg1.style.backgroundImage = `url(${HERO_MOBILE})`;
+        if(bg2) bg2.remove();
+        return;
+      }
+
+      bg1.style.backgroundImage = `url(${HERO_IMAGES[0]})`;
+      if(!bg2) return;
+
+      heroTimer = setInterval(() => {
+        heroIndex = (heroIndex + 1) % HERO_IMAGES.length;
+
+        const next = HERO_IMAGES[heroIndex];
+
+        if(bg1.classList.contains('active')){
+          bg2.style.backgroundImage = `url(${next})`;
+          bg2.classList.remove('hidden');
+          bg2.classList.add('active');
+          bg1.classList.remove('active');
+          bg1.classList.add('hidden');
+        } else {
+          bg1.style.backgroundImage = `url(${next})`;
+          bg1.classList.remove('hidden');
+          bg1.classList.add('active');
+          bg2.classList.remove('active');
+          bg2.classList.add('hidden');
+        }
+      }, 5500);
     }
 
     function openMedia(type, index){
@@ -3848,6 +3933,10 @@
       return groupName.slice(0,3).toUpperCase();
     }
 
+    function renderStars(){
+      return '<div class="stars">★★★★★</div>';
+    }
+
     function renderMediaSections(){
       const photoGrid = document.getElementById('photoGrid');
       const videoList = document.getElementById('videoList');
@@ -3918,6 +4007,7 @@
                 <div class="review-meta">${item.meta}</div>
               </div>
             </div>
+            ${renderStars()}
             <div class="review-quote">«${item.quote}»</div>
           </div>
         `).join('');
@@ -4345,6 +4435,8 @@
       if(e.key === 'ArrowRight') nextMedia();
       if(e.key === 'ArrowLeft') prevMedia();
     });
+
+    initHero();
 
     renderShiftOptions('desktopShiftOptions');
     renderShiftOptions('mobileShiftOptions');
