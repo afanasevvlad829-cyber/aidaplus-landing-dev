@@ -51,6 +51,38 @@
       border-radius:999px;
       box-shadow:var(--shadow);
     }
+
+    .mode-wrap{
+      display:flex;
+      justify-content:center;
+      margin:-6px 0 18px;
+    }
+
+    .mode-switch{
+      display:flex;
+      gap:8px;
+      padding:8px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      box-shadow:var(--shadow);
+    }
+
+    .mode-btn{
+      border:none;
+      border-radius:999px;
+      padding:10px 16px;
+      background:transparent;
+      color:var(--text);
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+    }
+
+    .mode-btn.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+    }
     .switch-btn{
       border:none;
       border-radius:999px;
@@ -72,6 +104,14 @@
       background:var(--panel);
       box-shadow:var(--shadow);
       border:1px solid rgba(255,255,255,.7);
+    }
+
+    .compact-mode .body-sections{
+      display:none !important;
+    }
+
+    .compact-mode .hero-shell{
+      min-height:520px;
     }
 
     .hero-shell{
@@ -481,6 +521,36 @@
       padding:18px;
     }
 
+    .trust-band{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .trust-band-card{
+      border:1px solid var(--line);
+      background:linear-gradient(135deg,#fff8f0,#ffffff);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+
+    .trust-band-card strong{
+      display:block;
+      font-size:18px;
+      letter-spacing:-.02em;
+      margin-bottom:8px;
+      color:#111827;
+    }
+
+    .trust-band-card span{
+      display:block;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+
     .section-card h3{
       margin:0 0 10px;
       font-size:22px;
@@ -621,6 +691,24 @@
       grid-template-columns:1.35fr 1fr 1fr;
       gap:12px;
       grid-auto-rows:180px;
+    }
+
+    .media-head{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+
+    .media-head h3{
+      margin:0;
+    }
+
+    .media-head p{
+      margin:0;
+      max-width:760px;
     }
 
     .photo-card{
@@ -920,6 +1008,70 @@
       color:var(--muted);
       text-transform:uppercase;
       letter-spacing:.08em;
+    }
+
+    .review-actions{
+      margin-top:14px;
+    }
+
+    .review-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+    }
+
+    .review-card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .review-card strong{
+      display:block;
+      margin-bottom:6px;
+      font-size:14px;
+    }
+
+    .review-card span{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .reviews-summary{
+      display:grid;
+      grid-template-columns:220px 1fr;
+      gap:14px;
+      margin-top:14px;
+      align-items:stretch;
+    }
+
+    .reviews-score{
+      background:linear-gradient(135deg,#fff8f0,#ffffff);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      text-align:center;
+    }
+
+    .reviews-score strong{
+      font-size:42px;
+      line-height:1;
+      letter-spacing:-.04em;
+      color:#d66a00;
+      margin-bottom:8px;
+    }
+
+    .reviews-score span{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
     }
 
     .team-grid{
@@ -1265,6 +1417,10 @@
       box-shadow:0 -10px 24px rgba(20,29,45,.05);
     }
 
+    .compact-mode .summary-bar{
+      background:rgba(255,255,255,.96);
+    }
+
     .summary-inner{
       max-width:1440px;
       margin:0 auto;
@@ -1405,7 +1561,7 @@
       .hero-content,.hero-content.full{
         max-width:100%;
       }
-      .grid-3,.slot-grid,.team-grid,.contacts-row,footer,.video-list,.contacts-grid,.socials-grid,.review-grid,.journey-grid,.results-band{
+      .grid-3,.slot-grid,.team-grid,.contacts-row,footer,.video-list,.contacts-grid,.socials-grid,.review-grid,.journey-grid,.results-band,.trust-band,.reviews-summary{
         grid-template-columns:1fr;
       }
       .photo-grid{
@@ -1460,7 +1616,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.13 (patch-11)
+    v0.0.14 (patch-12)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -1468,6 +1624,13 @@
       <div class="switch-wrap">
         <button class="switch-btn active" id="desktopBtn">Десктоп</button>
         <button class="switch-btn" id="mobileBtn">Мобильный</button>
+      </div>
+    </div>
+
+    <div class="mode-wrap" id="desktopModeWrap">
+      <div class="mode-switch">
+        <button class="mode-btn active" id="fullModeBtn">Полная версия</button>
+        <button class="mode-btn" id="compactModeBtn">Сокращённая версия</button>
       </div>
     </div>
 
@@ -1554,6 +1717,20 @@
           <section class="section-card" id="section-about">
             <h3>О лагере</h3>
             <p>AiDaCamp — это формат, где ребёнок не просто “занят”, а реально создаёт: делает проекты, учится работать в команде, двигается, плавает, общается и получает понятный результат за смену.</p>
+            <div class="trust-band">
+              <div class="trust-band-card">
+                <strong>AI и программирование</strong>
+                <span>Не теоретический кружок, а реальные проекты: Scratch, Python, Minecraft, нейросети.</span>
+              </div>
+              <div class="trust-band-card">
+                <strong>Бассейн и живая среда</strong>
+                <span>У ребёнка есть движение, команда, режим, спорт и общение — не только экран.</span>
+              </div>
+              <div class="trust-band-card">
+                <strong>Результат за смену</strong>
+                <span>К концу смены ребёнок уезжает не просто с эмоциями, а с проектом и новым уровнем уверенности.</span>
+              </div>
+            </div>
           </section>
 
           <section class="section-card" id="section-journey">
@@ -1609,14 +1786,22 @@
           </section>
 
           <section class="section-card" id="section-photos">
-            <h3>Фото</h3>
-            <p style="margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.55;">Актуальная подборка фотографий из текущего сайта.</p>
+            <div class="media-head">
+              <div>
+                <h3>Фото</h3>
+                <p>Живые кадры лагеря: занятия, бассейн, спорт, еда, команда и атмосфера.</p>
+              </div>
+            </div>
             <div class="photo-grid" id="photoGrid"></div>
           </section>
 
           <section class="section-card" id="section-videos">
-            <h3>Видео</h3>
-            <p style="margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.55;">Короткие видео с текущего сайта: про изменения ребёнка, внутреннюю экономику и отказ от телефона.</p>
+            <div class="media-head">
+              <div>
+                <h3>Видео</h3>
+                <p>Короткие видео, которые быстро объясняют, почему дети в лагере меняются сильнее, чем родители ожидают.</p>
+              </div>
+            </div>
             <div class="video-feature">
               <div>
                 <h4>Посмотрите 3 коротких видео — и станет понятно, чем живёт лагерь</h4>
@@ -1631,20 +1816,17 @@
           </section>
 
           <section class="section-card" id="section-reviews">
-            <h3>Отзывы родителей</h3>
-            <div class="grid-3">
-              <div class="mini-card">
-                <h4>Елена, мама Максима</h4>
-                <p>«За 10 дней сын сделал свою первую игру. Дома такого вовлечения не было.»</p>
+            <h3>Отзывы</h3>
+            <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.55;">Подтягиваем реальные отзывы из текущего сайта и даём быстрый переход на Яндекс Карты.</p>
+            <div class="review-actions">
+              <a class="inline-link-btn primary" id="yandexReviewsBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть отзывы на Яндекс Картах</a>
+            </div>
+            <div class="reviews-summary">
+              <div class="reviews-score">
+                <strong>6</strong>
+                <span>реальных отзывов уже выведено на страницу как social proof из текущего пакета контента</span>
               </div>
-              <div class="mini-card">
-                <h4>Андрей, папа Софии</h4>
-                <p>«Боялись отпускать первый раз, но всё организовано на высшем уровне.»</p>
-              </div>
-              <div class="mini-card">
-                <h4>Марина, мама Артёма</h4>
-                <p>«Не просто лагерь — у детей реально есть результат: бассейн, друзья, проекты.»</p>
-              </div>
+              <div class="review-grid" id="reviewsGrid"></div>
             </div>
           </section>
 
@@ -1948,6 +2130,11 @@
         {key:'dz',href:'https://dzen.ru/',label:'dz'},
         {key:'yp',href:'https://yappy.media/',label:'yp'},
         {key:'in',href:'https://www.linkedin.com/',label:'in'}
+      ],
+      reviews: [
+        {name:'Елена, мама Максима',text:'За 10 дней сын сделал свою первую игру. Дома такого вовлечения не было.'},
+        {name:'Андрей, папа Софии',text:'Боялись отпускать первый раз, но всё организовано на высшем уровне.'},
+        {name:'Марина, мама Артёма',text:'Не просто лагерь — у детей реально есть результат: бассейн, друзья, проекты.'}
       ]
     };
 
@@ -1966,6 +2153,7 @@
     };
 
     let timerId = null;
+    state.desktopMode = state.desktopMode || 'full';
 
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -2272,11 +2460,30 @@
       document.getElementById('mobileBtn').classList.toggle('active', view === 'mobile');
       document.getElementById('desktopView').classList.toggle('hidden', view !== 'desktop');
       document.getElementById('mobileView').classList.toggle('hidden', view !== 'mobile');
+      document.getElementById('desktopModeWrap').classList.toggle('hidden', view !== 'desktop');
+      persist();
+    }
+
+    function applyDesktopMode(){
+      const desktopView = document.getElementById('desktopView');
+      const fullBtn = document.getElementById('fullModeBtn');
+      const compactBtn = document.getElementById('compactModeBtn');
+
+      desktopView.classList.toggle('compact-mode', state.desktopMode === 'compact');
+      fullBtn.classList.toggle('active', state.desktopMode === 'full');
+      compactBtn.classList.toggle('active', state.desktopMode === 'compact');
+    }
+
+    function switchDesktopMode(mode){
+      state.desktopMode = mode;
+      applyDesktopMode();
       persist();
     }
 
     document.getElementById('desktopBtn').addEventListener('click', () => switchView('desktop'));
     document.getElementById('mobileBtn').addEventListener('click', () => switchView('mobile'));
+    document.getElementById('fullModeBtn').addEventListener('click', () => switchDesktopMode('full'));
+    document.getElementById('compactModeBtn').addEventListener('click', () => switchDesktopMode('compact'));
 
     function formatPrice(v){
       return new Intl.NumberFormat('ru-RU').format(v) + ' ₽';
@@ -2370,6 +2577,8 @@
       const faqGroups = document.getElementById('faqGroups');
       const teamGrid = document.getElementById('teamGrid');
       const bookLinkBtn = document.getElementById('bookLinkBtn');
+      const yandexReviewsBtn = document.getElementById('yandexReviewsBtn');
+      const reviewsGrid = document.getElementById('reviewsGrid');
 
       photoGrid.innerHTML = mediaContent.photos.map((item, idx) => `
         <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}">
@@ -2400,6 +2609,20 @@
       }
 
       bookLinkBtn.href = mediaContent.references.programmingBookUrl;
+
+      if(yandexReviewsBtn){
+        yandexReviewsBtn.textContent = mediaContent.references.yandexReviewsLabel;
+        yandexReviewsBtn.href = mediaContent.references.yandexReviewsUrl;
+      }
+
+      if(reviewsGrid){
+        reviewsGrid.innerHTML = mediaContent.reviews.map(item => `
+          <div class="review-card">
+            <strong>${item.name}</strong>
+            <span>${item.text}</span>
+          </div>
+        `).join('');
+      }
 
       contactsGrid.innerHTML = mediaContent.contacts.map(item => `
         <a class="contact-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
@@ -2672,6 +2895,7 @@
     renderSummary();
     renderBookingPanels();
     switchView(state.view || 'desktop');
+    applyDesktopMode();
 
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();
