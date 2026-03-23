@@ -8,7 +8,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AiDaCamp — Prototype Full Logic</title>
-  <style>
+  <!-- AC_BUILD_STYLE_START -->
+<style id="ac-build-main-css">
     :root{
       --bg:#eef1f6;
       --panel:#f7f8fb;
@@ -20,6 +21,11 @@
       --accent-2:#ff9f2f;
       --accent-soft:#fff1df;
       --shadow:0 18px 40px rgba(20,29,45,.08);
+      --z-base:1;
+      --z-hero:2;
+      --z-summary:40;
+      --z-overlay:100;
+      --z-debug:120;
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
@@ -145,65 +151,23 @@
       display:none !important;
     }
 
+    .compact-mobile-hidden{
+      display:block;
+    }
+
+    .compact-mode .compact-mobile-hidden{
+      display:none;
+    }
+
     .compact-mode .hero-shell{
-      min-height:620px;
+      min-height:700px;
     }
 
     .mobile-compact-mode .mobile-body-sections{
       display:none !important;
     }
 
-    .compact-trust-entry{
-      display:none;
-      margin-top:18px;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .compact-mode .compact-trust-entry{
-      display:flex;
-    }
-
-    .compact-trust-btn{
-      border:none;
-      border-radius:14px;
-      padding:12px 14px;
-      background:rgba(255,255,255,.10);
-      color:#fff;
-      font-size:13px;
-      font-weight:800;
-      cursor:pointer;
-      border:1px solid rgba(255,255,255,.12);
-      backdrop-filter:blur(10px);
-      transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
-    }
-
-    .compact-trust-btn:hover{
-      transform:translateY(-1px);
-      background:rgba(255,255,255,.14);
-      box-shadow:0 14px 28px rgba(0,0,0,.14);
-    }
-
-    .compact-trust-panel{
-      position:fixed;
-      top:84px;
-      right:18px;
-      width:min(420px, calc(100vw - 32px));
-      max-height:calc(100vh - 120px);
-      overflow:auto;
-      z-index:88;
-      background:rgba(255,255,255,.96);
-      backdrop-filter:blur(18px);
-      border:1px solid var(--line);
-      border-radius:26px;
-      box-shadow:0 24px 70px rgba(20,29,45,.18);
-      padding:18px;
-      animation:panelIn .22s ease;
-    }
-
-    .compact-trust-panel.hidden{
-      display:none !important;
-    }
+    /* compact trust panel removed: duplicated hero navigation / technical debt */
 
     .compact-panel-top{
       display:flex;
@@ -343,8 +307,12 @@
 
     .hero-shell{
       position:relative;
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) 356px;
+      column-gap:24px;
+      align-items:start;
       padding:22px;
-      min-height:560px;
+      min-height:700px;
       background:
         linear-gradient(180deg, rgba(11,16,24,.20) 0%, rgba(11,16,24,.74) 100%),
         radial-gradient(circle at 18% 18%, rgba(255,138,0,.18), transparent 28%),
@@ -352,6 +320,7 @@
         linear-gradient(180deg, rgba(19,28,41,.10) 0%, rgba(19,28,41,.32) 62%, rgba(19,28,41,.58) 100%);
       color:#fff;
       overflow:hidden;
+      z-index:var(--z-base);
     }
 
     .hero-bg{
@@ -390,6 +359,7 @@
         ),
         radial-gradient(circle at 50% 100%, rgba(255,255,255,.08), transparent 34%);
       pointer-events:none;
+      z-index:var(--z-base);
     }
 
     .mobile-hero{
@@ -406,6 +376,7 @@
       margin-bottom:30px;
       position:relative;
       z-index:1;
+      grid-column:1 / -1;
     }
 
     .brand{
@@ -474,10 +445,12 @@
     }
 
     .hero-content{
-      max-width:60%;
+      max-width:none;
+      width:auto;
       position:relative;
-      z-index:1;
-      padding-right:32px;
+      z-index:var(--z-hero);
+      padding-right:0;
+      min-width:0;
     }
     .hero-tag{
       display:inline-flex;
@@ -605,10 +578,12 @@
     }
 
     .hero-booking-card{
-      position:absolute;
-      right:22px;
-      top:92px;
-      width:356px;
+      position:relative;
+      right:auto;
+      top:auto;
+      width:100%;
+      max-width:356px;
+      margin-left:auto;
       padding:20px;
       border-radius:26px;
       background:rgba(12,17,24,.76);
@@ -617,16 +592,35 @@
       box-shadow:0 24px 70px rgba(0,0,0,.34);
       color:#fff;
       transition:transform .2s ease, box-shadow .2s ease;
-      z-index:1;
+      z-index:var(--z-hero);
+      box-sizing:border-box;
     }
     .hero-booking-card:hover{
       transform:translateY(-1px);
       box-shadow:0 28px 76px rgba(0,0,0,.36);
     }
 
+    .hero-booking-card,
+    .mobile-booking-card,
+    .booking-price-box,
+    .shift-option,
+    .feature-pill,
+    .section-card{
+      box-sizing:border-box;
+      max-width:100%;
+    }
+
+    .hero-shell,
+    .page,
+    .body-sections,
+    .mobile-body-sections{
+      overflow-x:clip;
+    }
+
     .mobile-booking-card{
       position:static !important;
       width:100% !important;
+      max-width:100% !important;
       margin-top:18px;
       padding:18px;
       border-radius:24px;
@@ -634,6 +628,11 @@
       border:1px solid rgba(255,255,255,.10);
       backdrop-filter:blur(18px);
       box-shadow:0 22px 60px rgba(0,0,0,.30);
+    }
+
+    .mobile-booking-card .guided-inline-hint{
+      background:rgba(255,255,255,.06);
+      border-color:rgba(255,255,255,.08);
     }
 
     .mobile-booking-card h3{
@@ -734,6 +733,37 @@
       color:rgba(255,255,255,.78);
       font-size:12px;
       line-height:1.5;
+    }
+
+    .guided-inline-hint{
+      margin:10px 0 0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      color:rgba(255,255,255,.82);
+      font-size:12px;
+      line-height:1.5;
+      opacity:0;
+      transform:translateY(-4px);
+      pointer-events:none;
+      transition:opacity .2s ease, transform .2s ease;
+      min-height:0;
+    }
+
+    .guided-inline-hint.visible{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .guided-pulse{
+      animation:guidedPulse 1.2s ease 2;
+    }
+
+    @keyframes guidedPulse{
+      0%{ box-shadow:0 0 0 0 rgba(255,138,0,.00); }
+      35%{ box-shadow:0 0 0 8px rgba(255,138,0,.12); }
+      100%{ box-shadow:0 0 0 0 rgba(255,138,0,.00); }
     }
 
     .section-card h3 + p.section-lead{
@@ -839,6 +869,7 @@
       color:rgba(255,255,255,.72);
       font-size:12px;
       line-height:1.5;
+      cursor:pointer;
     }
 
     .shift-list.disabled + .shift-list-veil{
@@ -1754,6 +1785,28 @@
       flex-wrap:wrap;
     }
 
+    .map-address{
+      display:grid;
+      gap:4px;
+      color:#111827;
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .map-address span{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .map-trust{
+      display:grid;
+      gap:6px;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+
     .review-actions{
       margin-top:14px;
     }
@@ -1777,6 +1830,82 @@
       display:grid;
       grid-template-columns:repeat(3,1fr);
       gap:12px;
+    }
+
+    .reviews-hero{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+      margin:14px 0 10px;
+      padding:18px;
+      border-radius:22px;
+      background:linear-gradient(135deg,#fff8f0,#ffffff);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+    }
+
+    .reviews-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:14px 0 0;
+    }
+
+    .reviews-hero-left strong{
+      display:block;
+      font-size:34px;
+      line-height:1;
+      letter-spacing:-.04em;
+      color:#d66a00;
+      margin-bottom:8px;
+    }
+
+    .reviews-hero-left span{
+      display:block;
+      color:#111827;
+      font-size:15px;
+      font-weight:700;
+      line-height:1.4;
+    }
+
+    .reviews-hero-sub{
+      max-width:560px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+      align-self:center;
+    }
+
+    .review-source{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+      margin-bottom:2px;
+    }
+
+    .faq-empty{
+      display:none;
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px dashed var(--line);
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+      background:#fbfcfe;
+    }
+
+    .faq-empty.visible{
+      display:block;
+    }
+
+    .review-stars{
+      color:#ff9800;
+      font-size:14px;
+      letter-spacing:2px;
+      margin:4px 0 8px;
     }
 
     .review-card{
@@ -1904,6 +2033,62 @@
       display:grid;
       grid-template-columns:repeat(3,1fr);
       gap:12px;
+      margin-top:14px;
+    }
+
+    .stay-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .stay-card{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      display:grid;
+    }
+
+    .stay-card img{
+      width:100%;
+      height:220px;
+      object-fit:cover;
+      display:block;
+    }
+
+    .stay-card-body{
+      padding:14px;
+      display:grid;
+      gap:6px;
+    }
+
+    .stay-card-body strong{
+      font-size:15px;
+      line-height:1.35;
+    }
+
+    .stay-card-body span{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .stay-card.placeholder .stay-placeholder{
+      min-height:220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:20px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,138,0,.10), transparent 26%),
+        linear-gradient(135deg,#f6f8fb,#eef2f7);
+      color:#607086;
+      font-size:14px;
+      line-height:1.55;
     }
 
     .team-card{
@@ -1912,6 +2097,8 @@
       border-radius:20px;
       padding:16px;
       text-align:center;
+      display:grid;
+      gap:8px;
       box-shadow:var(--shadow);
       transition:transform .18s ease, box-shadow .18s ease;
     }
@@ -1950,12 +2137,121 @@
     }
 
     .team-role{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+      font-weight:700;
+    }
+
+    .book-team-card{
+      background:linear-gradient(135deg,#fff7ef,#ffffff);
+      border:2px solid rgba(255,138,0,.26);
+      text-align:left;
+      align-content:start;
+      min-height:100%;
+    }
+
+    .book-team-cover-wrap{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:260px;
+      border-radius:16px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,138,0,.10), transparent 26%),
+        linear-gradient(135deg,#fff8f1,#fff);
+      overflow:hidden;
+    }
+
+    .book-team-cover{
+      width:100%;
+      max-width:260px;
+      height:auto;
       display:block;
+      object-fit:contain;
+      filter:drop-shadow(0 16px 24px rgba(0,0,0,.12));
+    }
+
+    .book-team-title{
+      font-size:30px;
+      line-height:1;
+      letter-spacing:-.04em;
+      color:#111827;
+      font-weight:900;
+      margin-top:2px;
+    }
+
+    .book-team-sub{
+      color:#495569;
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .book-team-proof{
       color:#111827;
       font-size:13px;
+      line-height:1.55;
       font-weight:700;
-      line-height:1.45;
-      margin-bottom:8px;
+    }
+
+    .book-team-cta{
+      margin-top:4px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      padding:0 16px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:800;
+      box-shadow:0 16px 32px rgba(255,138,0,.18);
+    }
+
+    .success-secondary{
+      margin-top:12px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      padding:0 16px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      text-decoration:none;
+      font-size:14px;
+      font-weight:800;
+      box-shadow:var(--shadow);
+    }
+
+    /* duplicate compact hero nav removed */
+
+    .mobile-hero-nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:14px 0 0;
+      position:relative;
+      z-index:2;
+    }
+
+    .mini-nav-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:36px;
+      padding:0 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      color:#fff;
+      text-decoration:none;
+      font-size:12px;
+      font-weight:800;
+      backdrop-filter:blur(10px);
     }
 
     .trust-callout{
@@ -2013,6 +2309,36 @@
       display:grid;
       gap:12px;
       margin-top:14px;
+    }
+
+    .faq-filter-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:14px 0 6px;
+    }
+
+    .faq-filter-chip{
+      border:none;
+      border-radius:999px;
+      padding:10px 12px;
+      background:#f5f7fb;
+      color:#111827;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      transition:transform .16s ease, background .16s ease, color .16s ease, box-shadow .16s ease;
+    }
+
+    .faq-filter-chip:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 26px rgba(20,29,45,.10);
+    }
+
+    .faq-filter-chip.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
     }
 
     .faq-group{
@@ -2159,7 +2485,7 @@
       align-items:center;
       justify-content:center;
       padding:24px;
-      z-index:80;
+      z-index:var(--z-overlay);
       animation:fadeIn .18s ease;
     }
 
@@ -2254,7 +2580,7 @@
       bottom:0;
       left:0;
       right:0;
-      z-index:90;
+      z-index:var(--z-summary);
       background:rgba(255,255,255,.95);
       backdrop-filter:blur(18px);
       border-top:1px solid var(--line);
@@ -2274,6 +2600,10 @@
       align-items:center;
       justify-content:space-between;
       gap:20px;
+    }
+
+    .summary-visible .page{
+      padding-bottom:130px;
     }
 
     .summary-left{
@@ -2320,12 +2650,20 @@
       position:fixed;
       inset:0;
       background:rgba(8,12,18,.58);
-      z-index:95;
+      z-index:var(--z-overlay);
       display:flex;
       align-items:center;
       justify-content:center;
       padding:24px;
       animation:fadeIn .18s ease;
+    }
+
+    .version-badge{
+      z-index:var(--z-debug);
+    }
+
+    .version-badge.hidden{
+      display:none;
     }
 
     .form-panel{
@@ -2337,6 +2675,69 @@
       max-height:min(92vh, 860px);
       overflow:auto;
       animation:drawerUp .24s ease;
+    }
+
+    .booking-summary-box{
+      margin:0 0 16px;
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:linear-gradient(135deg,#fbfcfe,#ffffff);
+      display:grid;
+      gap:8px;
+    }
+
+    .booking-summary-box strong{
+      font-size:14px;
+      line-height:1.35;
+    }
+
+    .booking-summary-list{
+      display:grid;
+      gap:4px;
+      color:#5b6678;
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .success-modal-note{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+      margin-bottom:14px;
+    }
+
+    .success-delivery-state{
+      margin:0 0 14px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid #f6d28d;
+      background:#fff6e8;
+      color:#8a4b00;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .success-delivery-state.error{
+      border-color:#efb2b2;
+      background:#fff3f3;
+      color:#9f2f2f;
+    }
+
+    .success-check{
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 14px;
+      background:linear-gradient(135deg,#fff7ef,#fff);
+      border:2px solid rgba(255,138,0,.20);
+      color:var(--accent);
+      font-size:28px;
+      font-weight:900;
+      box-shadow:0 14px 28px rgba(255,138,0,.12);
     }
 
     .form-head{
@@ -2502,6 +2903,7 @@
       .hero-booking-card{
         position:static;
         width:100%;
+        max-width:none;
         margin-top:16px;
       }
       .hero-content,.hero-content.full{
@@ -2509,9 +2911,10 @@
         padding-right:0;
       }
       .hero-shell{
+        display:block;
         min-height:auto;
       }
-      .grid-3,.slot-grid,.team-grid,.contacts-row,footer,.video-list,.contacts-grid,.socials-grid,.review-grid,.journey-grid,.results-band,.trust-band,.reviews-summary{
+      .grid-3,.slot-grid,.team-grid,.contacts-row,footer,.video-list,.contacts-grid,.socials-grid,.review-grid,.journey-grid,.results-band,.trust-band,.reviews-summary,.reviews-hero,.stay-grid{
         grid-template-columns:1fr;
       }
       .photo-grid{
@@ -2530,11 +2933,18 @@
       .book-card{
         grid-template-columns:1fr;
       }
+
+      .book-team-cover-wrap{
+        min-height:220px;
+      }
     }
 
     @media (max-width: 820px){
       .page{
         padding:20px 14px 120px;
+      }
+      .summary-visible .page{
+        padding-bottom:200px;
       }
       .title h1{
         font-size:28px;
@@ -2546,6 +2956,10 @@
       }
       .summary-right{
         justify-content:space-between;
+        flex-wrap:wrap;
+      }
+      .summary-price{
+        text-align:left;
       }
 
       .hero-topbar{
@@ -2561,13 +2975,21 @@
       }
 
       .feature-pill{
-        min-width:unset;
-        width:calc(50% - 4px);
+        min-width:0;
+        width:100%;
         padding:10px 11px;
       }
 
       .occupancy-badge{
         margin-top:14px;
+      }
+
+      .reviews-actions{
+        flex-direction:column;
+      }
+
+      .compact-mobile-hidden{
+        display:block;
       }
 
       .overlay{
@@ -2592,24 +3014,48 @@
         border-radius:10px;
       }
 
+      .book-team-title{
+        font-size:24px;
+      }
+
+      .book-team-cover{
+        max-width:220px;
+      }
+
       .form-drawer{
         align-items:flex-end;
         padding:0;
       }
 
       .hero-shell{
+        display:block;
         min-height:auto;
       }
+
+      .hero-booking-card,
+      .mobile-booking-card{
+        margin-left:0;
+      }
+
+      #versionBadge{
+        top:auto !important;
+        right:12px !important;
+        bottom:12px !important;
+        opacity:.5 !important;
+      }
     }
-  </style>
+  
+
+</style>
+<!-- AC_BUILD_STYLE_END -->
 </head>
 <body>
   <!-- @block:version -->
-  <div id="versionBadge" style="
+  <div class="version-badge" id="versionBadge" style="
     position:fixed;
     top:12px;
     right:16px;
-    z-index:9999;
+    z-index:var(--z-debug);
     font-size:12px;
     padding:6px 10px;
     border-radius:8px;
@@ -2619,7 +3065,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.31 (patch-30-fix)
+    v0.0.48 (patch-48)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -2685,12 +3131,6 @@
               <span>● собственная учебная программа</span>
             </div>
 
-            <div class="compact-trust-entry">
-              <button class="compact-trust-btn" onclick="openCompactTrustPanel('photos')">Фото лагеря</button>
-              <button class="compact-trust-btn" onclick="openCompactTrustPanel('videos')">Видео</button>
-              <button class="compact-trust-btn" onclick="openCompactTrustPanel('reviews')">Отзывы родителей</button>
-            </div>
-
             <div class="feature-row">
               <div class="feature-pill">
                 <strong>IT-проекты</strong>
@@ -2733,7 +3173,8 @@
 
             <div id="desktopBookingInfo" style="margin-bottom:12px;"></div>
             <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
-            <div class="guided-callout" id="desktopGuidedHint">Сначала выберите возраст. После этого покажем подходящие смены и дадим перейти дальше.</div>
+            <div class="guided-callout" id="desktopGuidedHint">Сначала выберите возраст ребёнка. После этого покажем подходящие смены и дадим перейти дальше.</div>
+            <div class="guided-inline-hint" id="desktopInlineHint"></div>
             <div class="shift-list" id="desktopShiftList">
               <div id="desktopShiftOptions"></div>
             </div>
@@ -2741,7 +3182,7 @@
 
             <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
             <div class="cta-wrap" id="desktopCtaWrap">
-              <button class="cta-main" id="desktopStartBtn">Сначала выберите возраст</button>
+                <button class="cta-main" id="desktopStartBtn" data-action="primary-cta">Сначала выберите возраст</button>
             </div>
             <div class="under-cta" id="desktopBookingHint">Покажем актуальные условия, код бронирования и сохраним цену без предоплаты</div>
             <div class="cta-subtext">Без оплаты • Ответим в течение 5 минут</div>
@@ -2837,11 +3278,11 @@
               </div>
             </div>
             <div class="filter-row" id="photoFilters">
-              <button class="filter-chip active" data-photo-filter="all">Все</button>
+              <button class="filter-chip active" data-photo-filter="camp">Атмосфера</button>
               <button class="filter-chip" data-photo-filter="pool">Бассейн</button>
               <button class="filter-chip" data-photo-filter="sport">Спорт</button>
               <button class="filter-chip" data-photo-filter="study">Учёба</button>
-              <button class="filter-chip" data-photo-filter="food">Столовая</button>
+              <button class="filter-chip" data-photo-filter="food">Питание</button>
             </div>
             <div class="photo-grid" id="photoGrid"></div>
           </section>
@@ -2868,50 +3309,70 @@
 
           <section class="section-card" id="section-reviews">
             <h3>Отзывы</h3>
-            <p class="section-lead">Сильный внешний социальный proof: реальные отзывы родителей на Яндекс Картах.</p>
-            <div class="reviews-rating">
-              <strong>5.0 ★</strong>
-              <span>на основе отзывов родителей</span>
-            </div>
-            <div class="review-actions">
-              <a class="inline-link-btn primary" id="yandexReviewsBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть отзывы на Яндекс Картах</a>
-            </div>
-            <div class="reviews-summary">
-              <div class="reviews-score">
-                <strong>6</strong>
-                <span>реальных отзывов уже выведено на страницу как social proof</span>
+            <p class="section-lead">Сильный внешний social proof: реальные отзывы родителей на Яндекс Картах.</p>
+            <div class="reviews-hero">
+              <div class="reviews-hero-left">
+                <strong>5.0 ★★★★★</strong>
+                <span>Более 40 реальных отзывов на Яндекс.Картах</span>
               </div>
-              <div class="review-grid" id="reviewsGrid"></div>
+              <div class="reviews-hero-sub">
+                Родители пишут не про «анимацию», а про реальные изменения детей, сильную команду, атмосферу, организацию и проекты, которые дети увозят с собой после смены.
+              </div>
             </div>
+            <div class="reviews-actions">
+              <a class="inline-link-btn primary" id="yandexReviewsBtn" href="https://yandex.ru/maps/org/aydakemp/35558479035/reviews/" target="_blank" rel="noopener noreferrer">Смотреть все отзывы на Яндекс.Картах</a>
+            </div>
+            <div class="review-grid" id="reviewsGrid"></div>
           </section>
 
           <section class="section-card" id="section-faq">
             <h3>FAQ</h3>
             <p class="section-lead">Собрали ключевые вопросы родителей по медицине, безопасности, питанию, проживанию и связи.</p>
+            <div class="faq-filter-row" id="faqFilters">
+              <button class="faq-filter-chip active" data-faq-filter="all">Все</button>
+              <button class="faq-filter-chip" data-faq-filter="Медицина">Медицина</button>
+              <button class="faq-filter-chip" data-faq-filter="Безопасность">Безопасность</button>
+              <button class="faq-filter-chip" data-faq-filter="Питание">Питание</button>
+              <button class="faq-filter-chip" data-faq-filter="Проживание">Проживание</button>
+              <button class="faq-filter-chip" data-faq-filter="Связь">Связь</button>
+            </div>
             <div class="faq-groups" id="faqGroups"></div>
-          </section>
-
-          <section class="section-card" id="section-team">
-            <h3>Команда</h3>
-            <div class="trust-callout">
-              <h4>Преподаватели, которые пишут учебники — а не пересказывают их</h4>
-              <p>Команда лагеря не только ведёт занятия, но и создаёт собственные учебные материалы и игровые методики. Это видно и по урокам, и по проектам детей, и по авторской книге по Python.</p>
-            </div>
-
-            <div class="book-card">
-              <div>
-                <h4>Книга по Python от команды</h4>
-                <p>Отдельный trust-маркер: собственный учебный материал команды, который можно показать родителям как доказательство экспертизы.</p>
-              </div>
-              <a class="inline-link-btn primary" id="bookLinkBtn" href="#" target="_blank" rel="noopener noreferrer">Смотреть книгу</a>
-            </div>
-
-            <div class="team-grid" id="teamGrid"></div>
+            <div class="faq-empty" id="faqEmptyState">Для этой категории вопросы скоро добавим отдельно. Пока можно переключиться на соседний раздел или открыть все вопросы.</div>
           </section>
 
           <section class="section-card" id="section-stay">
             <h3>Размещение</h3>
             <p class="section-lead">Показываем не только атмосферу лагеря, но и быт: комнаты, проживание, санузлы и общие пространства.</p>
+            <div class="stay-grid">
+              <div class="stay-card">
+                <img src="https://optim.tildacdn.com/tild3630-3131-4133-a533-353936666531/-/format/webp/45b1eb46cf5961c2188d.jpg.webp" alt="Комнаты и размещение">
+                <div class="stay-card-body">
+                  <strong>Комнаты и размещение</strong>
+                  <span>Спокойные светлые комнаты, удобное размещение и бытовая среда без ощущения «походного лагеря».</span>
+                </div>
+              </div>
+              <div class="stay-card">
+                <img src="https://optim.tildacdn.com/tild6235-3761-4033-b632-363462306663/-/format/webp/63e9322f53ec8ca1b307.jpg.webp" alt="Санузлы и бытовые зоны">
+                <div class="stay-card-body">
+                  <strong>Санузлы и бытовые зоны</strong>
+                  <span>Родителям важно понимать не только программу, но и бытовой комфорт ребёнка.</span>
+                </div>
+              </div>
+              <div class="stay-card placeholder">
+                <div class="stay-placeholder">Сюда добавим ещё фото проживания, душевых и деталей быта, когда ты их догрузишь.</div>
+                <div class="stay-card-body">
+                  <strong>Дополнительные фото размещения</strong>
+                  <span>Пока временная заглушка, чтобы блок уже был в структуре страницы и не потерялся.</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section-card" id="section-team">
+            <h3>Команда</h3>
+            <p class="section-lead">Сильнее, чем просто список преподавателей: у команды есть собственная книга и своя методика обучения, а не пересказ чужих материалов.</p>
+
+            <div class="team-grid" id="teamGrid"></div>
           </section>
 
           <section class="section-card" id="section-contacts">
@@ -2927,7 +3388,14 @@
                 </div>
               </div>
               <div class="map-footer">
-                <div style="color:var(--muted);font-size:13px;">Яндекс Карты</div>
+                <div class="map-address">
+                  <div>Московская область, Наро-Фоминский городской округ, территория «Санаторий Изумруд», земельный участок 1</div>
+                  <span>66 км от Москвы по киевскому шоссе</span>
+                  <div class="map-trust">
+                    <div>Удобный заезд на машине, понятная локация и проверяемый маршрут через Яндекс.Карты.</div>
+                    <div>Если нужно, менеджер отдельно подскажет дорогу и детали заезда перед сменой.</div>
+                  </div>
+                </div>
                 <a class="inline-link-btn" id="locationMapBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть карту</a>
               </div>
             </div>
@@ -2936,21 +3404,27 @@
           <footer>
             <div>
               <h4>Документы</h4>
-              <a href="#">Политика обработки персональных данных</a>
-              <a href="#">Пользовательское соглашение</a>
-              <a href="#">Договор-оферта</a>
+              <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+              <a href="https://www.codims.ru/dokumentaciya-k-letnemu-it-lageryu-sosny" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a>
+              <a href="https://www.codims.ru/dokumentaciya-k-letnemu-it-lageryu-sosny" target="_blank" rel="noopener noreferrer">Договор-оферта</a>
             </div>
             <div>
               <h4>Разделы</h4>
               <a href="#section-about">О лагере</a>
               <a href="#section-programs">Смены</a>
+              <a href="#section-reviews">Отзывы</a>
+              <a href="#section-faq">FAQ</a>
+              <a href="#section-contacts">Контакты</a>
               <a href="#section-team">Команда</a>
               <a href="#section-stay">Размещение</a>
             </div>
             <div>
-              <h4>AiDaCamp</h4>
-              <div>© AiDaCamp</div>
-              <div>Контакты и соцсети подключим позже</div>
+              <h4>Соцсети</h4>
+              <a href="https://t.me/aidacamp" target="_blank" rel="noopener noreferrer">Telegram</a>
+              <a href="https://vk.com/aidacamp" target="_blank" rel="noopener noreferrer">VK</a>
+              <a href="https://www.instagram.com/aida_codit" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href="https://ok.ru/group/64689601773621" target="_blank" rel="noopener noreferrer">Одноклассники</a>
+              <a href="https://www.codims.ru/python-book" target="_blank" rel="noopener noreferrer">Книга</a>
             </div>
           </footer>
         </div>
@@ -2989,6 +3463,15 @@
             <button class="menu-pill" type="button">Мобильная версия</button>
           </div>
 
+          <div class="mobile-hero-nav">
+            <a class="mini-nav-link" href="#section-about">О лагере</a>
+            <a class="mini-nav-link" href="#section-programs">Смены</a>
+            <a class="mini-nav-link" href="#section-photos">Фото</a>
+            <a class="mini-nav-link" href="#section-videos">Видео</a>
+            <a class="mini-nav-link" href="#section-reviews">Отзывы</a>
+            <a class="mini-nav-link" href="#section-faq">FAQ</a>
+          </div>
+
           <div class="hero-content" style="max-width:100%;">
             <div class="hero-tag">IT-лагерь для детей 7–14 лет</div>
             <h2 style="font-size:24px;">Лагерь, где ребёнок создаёт, а не потребляет</h2>
@@ -3012,7 +3495,7 @@
               <span>● своя программа</span>
             </div>
 
-            <div class="hero-booking-card mobile-booking-card" style="position:static;width:100%;margin-top:18px;">
+            <div class="hero-booking-card mobile-booking-card" id="mobile-section-programs" style="position:static;width:100%;margin-top:18px;">
               <div class="booking-steps" id="mobileBookingSteps">
                 <div class="booking-step active">Возраст</div>
                 <div class="booking-step">Смена</div>
@@ -3036,6 +3519,7 @@
               <div id="mobileBookingInfo" style="margin-bottom:12px;"></div>
               <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
               <div class="guided-callout" id="mobileGuidedHint">Сначала выберите возраст ребёнка. После этого покажем подходящие смены и дадим перейти дальше.</div>
+              <div class="guided-inline-hint" id="mobileInlineHint"></div>
               <div class="shift-list" id="mobileShiftList">
                 <div id="mobileShiftOptions"></div>
               </div>
@@ -3043,7 +3527,7 @@
 
               <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
               <div class="cta-wrap" id="mobileCtaWrap">
-                <button class="cta-main" id="mobileStartBtn">Сначала выберите возраст</button>
+              <button class="cta-main" id="mobileStartBtn" data-action="primary-cta">Сначала выберите возраст</button>
               </div>
               <div class="cta-subtext" id="mobileBookingHint">Без предоплаты • Ответим и подтвердим вручную</div>
               <div class="trust-mini">
@@ -3056,24 +3540,29 @@
         </div>
 
         <div class="mobile-body-sections" style="padding:18px;display:grid;gap:14px;">
-          <section class="section-card">
+          <section class="section-card" id="mobile-section-about">
             <h3>О лагере</h3>
             <p class="section-lead">AiDaCamp — это формат, где ребёнок не просто занят, а реально создаёт: проекты, друзья, спорт, защита результатов и среда без бессмысленного скроллинга.</p>
           </section>
 
-          <section class="section-card">
+          <section class="section-card compact-mobile-hidden" id="mobile-section-photos">
             <h3>Фото</h3>
             <div class="compact-panel-photo-grid" id="mobileInlinePhotoGrid"></div>
           </section>
 
-          <section class="section-card">
+          <section class="section-card compact-mobile-hidden" id="mobile-section-videos">
             <h3>Видео</h3>
             <div class="compact-panel-video-list" id="mobileInlineVideoList"></div>
           </section>
 
-          <section class="section-card">
+          <section class="section-card compact-mobile-hidden" id="mobile-section-reviews">
             <h3>Отзывы</h3>
             <div class="compact-panel-review-list" id="mobileInlineReviewsList"></div>
+          </section>
+
+          <section class="section-card" id="mobile-section-faq">
+            <h3>FAQ</h3>
+            <p class="section-lead">Частые вопросы по медицине, безопасности, питанию и проживанию доступны в полной версии страницы.</p>
           </section>
         </div>
       </div>
@@ -3093,8 +3582,9 @@
           <h3 id="formTitle">Оформление заявки</h3>
           <p id="formLead" style="margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.55;"></p>
         </div>
-        <button class="form-close" type="button" id="formCloseBtn" aria-label="Закрыть">×</button>
+        <button class="form-close" type="button" id="formCloseBtn" data-action="close-form" aria-label="Закрыть">×</button>
       </div>
+      <div class="booking-summary-box" id="bookingSummaryBox"></div>
 
       <div class="form-grid">
         <div class="form-field">
@@ -3113,8 +3603,27 @@
         <span>Я согласен(на) на обработку персональных данных и понимаю, что после заявки со мной свяжутся для подтверждения брони.</span>
       </label>
 
-      <button class="cta-main" id="submitLeadBtn">Оформить и отправить заявку</button>
+      <button class="cta-main" id="submitLeadBtn" data-action="submit-form">Оформить и отправить заявку</button>
       <div class="under-cta">Без предоплаты. Мы сначала подтверждаем бронь вручную.</div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="successOverlay">
+    <div class="overlay-card">
+      <div class="form-head">
+        <div class="form-head-main">
+          <h3>Заявка принята</h3>
+          <p style="margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.55;">Мы получили вашу заявку и свяжемся с вами для подтверждения брони.</p>
+        </div>
+        <button class="form-close" type="button" id="successCloseBtn" data-action="close-success" aria-label="Закрыть">×</button>
+      </div>
+      <div class="success-delivery-state hidden" id="successDeliveryState"></div>
+      <div class="success-check">✓</div>
+      <div class="success-modal-note">Ниже — параметры брони, которые мы зафиксировали за вами сейчас.</div>
+      <div class="booking-summary-box" id="successSummaryBox"></div>
+      <div class="success-modal-note">Если вам удобно, можно продолжить в Telegram: выбрать время звонка и сразу получить список документов с пояснениями.</div>
+      <button class="cta-main" id="successOkBtn" data-action="close-success">Понятно</button>
+      <a class="success-secondary" id="successTelegramBtn" href="https://t.me/aidacamp" target="_blank" rel="noopener noreferrer">Выбрать время звонка в Telegram</a>
     </div>
   </div>
 
@@ -3131,7 +3640,7 @@
           <strong id="summaryPrice">—</strong>
           <div class="summary-timer" id="summaryTimer"></div>
         </div>
-        <button class="cta-main" style="width:auto;padding:14px 18px;" onclick="openForm()">Оформить</button>
+        <button class="cta-main" style="width:auto;padding:14px 18px;" data-action="primary-cta">Оформить</button>
       </div>
     </div>
   </div>
@@ -3146,47 +3655,18 @@
     </div>
   </div>
 
-  <div class="compact-trust-panel hidden" id="compactTrustPanel">
-    <div class="compact-panel-top">
-      <div>
-        <h3 id="compactTrustTitle">Подробнее</h3>
-        <p id="compactTrustLead">Дополнительные материалы, не выводя пользователя из сценария бронирования.</p>
-      </div>
-      <button class="compact-panel-close" onclick="closeCompactTrustPanel()">×</button>
-    </div>
-
-    <div class="compact-panel-tabs">
-      <button class="compact-panel-tab active" data-ctp-tab="photos">Фото</button>
-      <button class="compact-panel-tab" data-ctp-tab="videos">Видео</button>
-      <button class="compact-panel-tab" data-ctp-tab="reviews">Отзывы</button>
-    </div>
-
-    <div class="compact-panel-section" id="ctp-photos">
-      <div class="compact-panel-photo-grid" id="compactPhotoGrid"></div>
-    </div>
-
-    <div class="compact-panel-section hidden" id="ctp-videos">
-      <div class="compact-panel-video-list" id="compactVideoList"></div>
-    </div>
-
-    <div class="compact-panel-section hidden" id="ctp-reviews">
-      <div class="compact-panel-review-list" id="compactReviewsList"></div>
-    </div>
-  </div>
-
   <script>
     window.AC_NOTIFY_CONFIG = window.AC_NOTIFY_CONFIG || {
-      all: "",
-      promo_fixed: "",
-      booking_submitted: "",
-      booking_draft_saved: "",
-      promo_cancelled: "",
-      telegramBotToken: '8663835446:AAEJAemhHYPlVTc2RiLP3sBtsqCF9fBdhZ4',
-      telegramChatId: "-1003827680494"
+      leadEndpoint: "/api/lead"
     };
   </script>
 
-  <script>
+  <!-- AC_BUILD_SCRIPT_START -->
+<script id="ac-build-components" type="application/json">[{"name": "gallery.html", "size": 230}, {"name": "hero.html", "size": 232}, {"name": "reviews.html", "size": 224}, {"name": "shifts.html", "size": 276}, {"name": "team.html", "size": 163}]</script>
+<script id="ac-build-media-manifest" type="application/json">[]</script>
+<script id="ac-build-team-manifest" type="application/json">[]</script>
+<script id="ac-build-main-js">
+/* src/scripts/main.js */
     const shifts = [
       {id:'shift-1',title:'1 смена',dates:'30 мая — 8 июня',price:79000,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
       {id:'shift-2',title:'2 смена',dates:'10 июня — 16 июня',price:48000,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
@@ -3316,13 +3796,12 @@
         {label:'telegram',href:'https://t.me/proga_school',text:'@proga_school'}
       ],
       socials: [
-        {key:'vk',href:'https://vk.com/aida_codit',label:'vk'},
-        {key:'ig',href:'https://www.instagram.com/',label:'ig'},
-        {key:'yt',href:'https://www.youtube.com/channel/UCavd6BfrYQ32HQX_S4iZ02g',label:'yt'},
-        {key:'fb',href:'https://www.facebook.com/',label:'fb'},
-        {key:'dz',href:'https://dzen.ru/',label:'dz'},
-        {key:'yp',href:'https://yappy.media/',label:'yp'},
-        {key:'in',href:'https://www.linkedin.com/',label:'in'}
+        { key:'Telegram', label:'TG', href:'https://t.me/aidacamp' },
+        { key:'VK', label:'VK', href:'https://vk.com/aidacamp' },
+        { key:'Rutube', label:'RT', href:'https://rutube.ru/channel/53394996/' },
+        { key:'Instagram', label:'IG', href:'https://www.instagram.com/aida_codit' },
+        { key:'Одноклассники', label:'OK', href:'https://ok.ru/group/64689601773621' },
+        { key:'YouTube', label:'YT', href:'https://www.youtube.com/@aidacamp' }
       ],
       reviews: [
         {
@@ -3378,13 +3857,84 @@
       phone:''
     };
 
+    const METRIKA_ID = 96499295;
+    const DEBUG_UI = false;
     let timerId = null;
     let mediaIndex = 0;
     let mediaType = 'photo';
+    let activePhotoList = [];
     state.desktopMode = state.desktopMode || 'full';
     state.mobileMode = state.mobileMode || 'full';
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
-    state.photoFilter = state.photoFilter || 'all';
+    state.photoFilter = state.photoFilter || 'camp';
+    state.faqFilter = state.faqFilter || 'all';
+    const metrikaSeen = new Set();
+    const scrollMarks = {25:false,50:false,75:false,90:false};
+    let offerTimeoutId = null;
+    let offerRunId = 0;
+    let leadSubmitInProgress = false;
+
+    function track(event, params = {}){
+      try {
+        if(typeof ym !== 'undefined'){
+          ym(METRIKA_ID, 'reachGoal', event, params);
+        }
+      } catch (err){
+        console.warn('Metrika track error:', event, err);
+      }
+      if(DEBUG_UI){
+        console.log('[TRACK]', event, params);
+      }
+    }
+
+    function applyDebugUiState(){
+      const badge = document.getElementById('versionBadge');
+      if(!badge) return;
+      badge.classList.toggle('hidden', !DEBUG_UI);
+    }
+
+    function trackOnce(event, params = {}){
+      const key = `${event}:${JSON.stringify(params)}`;
+      if(metrikaSeen.has(key)) return;
+      metrikaSeen.add(key);
+      track(event, params);
+    }
+
+    function initScrollTracking(){
+      window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const max = h.scrollHeight - h.clientHeight;
+        if(max <= 0) return;
+        const scrolled = (h.scrollTop / max) * 100;
+        [25,50,75,90].forEach((p) => {
+          if(scrolled >= p && !scrollMarks[p]){
+            scrollMarks[p] = true;
+            track(`scroll_${p}`);
+          }
+        });
+      }, {passive:true});
+    }
+
+    function initSectionViewTracking(){
+      const targets = [
+        {id:'section-stay', event:'stay_view'},
+        {id:'section-reviews', event:'reviews_view'},
+        {id:'section-team', event:'team_view'}
+      ];
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if(!entry.isIntersecting) return;
+          const found = targets.find(t => t.id === entry.target.id);
+          if(found) trackOnce(found.event);
+        });
+      }, {threshold:0.35});
+
+      targets.forEach((t) => {
+        const el = document.getElementById(t.id);
+        if(el) io.observe(el);
+      });
+    }
 
     const HERO_IMAGES = [
       'https://static.tildacdn.com/tild6163-6430-4337-b034-636439306264/day.png',
@@ -3442,6 +3992,21 @@
     function openMedia(type, index){
       mediaType = type;
       mediaIndex = index;
+      if(type === 'photo'){
+        const source = activePhotoList.length ? activePhotoList : mediaContent.photos;
+        const item = source[index];
+        track('photo_open', {
+          category: item?.cat || '',
+          index: index + 1
+        });
+      }
+      if(type === 'video'){
+        const item = mediaContent.videos[index];
+        track('video_open', {
+          title: item?.title || '',
+          index: index + 1
+        });
+      }
       renderMediaViewer();
       document.getElementById('mediaLightbox').classList.remove('hidden');
     }
@@ -3476,9 +4041,11 @@
       const caption = document.getElementById('mediaCaption');
 
       if(mediaType === 'photo'){
-        const item = mediaContent.photos[mediaIndex];
+        const source = activePhotoList.length ? activePhotoList : mediaContent.photos;
+        const item = source[mediaIndex];
+        if(!item) return;
         content.innerHTML = `<img class="media-image" src="${item.src}" />`;
-        caption.textContent = `${item.cat} · ${mediaIndex + 1}/${mediaContent.photos.length}`;
+        caption.textContent = `${item.cat} · ${mediaIndex + 1}/${source.length}`;
       }
 
       if(mediaType === 'video'){
@@ -3498,77 +4065,119 @@
     }
 
     function nextMedia(){
-      const list = mediaType === 'photo' ? mediaContent.photos : mediaContent.videos;
+      const list = mediaType === 'photo'
+        ? (activePhotoList.length ? activePhotoList : mediaContent.photos)
+        : mediaContent.videos;
       mediaIndex = (mediaIndex + 1) % list.length;
       renderMediaViewer();
     }
 
     function prevMedia(){
-      const list = mediaType === 'photo' ? mediaContent.photos : mediaContent.videos;
+      const list = mediaType === 'photo'
+        ? (activePhotoList.length ? activePhotoList : mediaContent.photos)
+        : mediaContent.videos;
       mediaIndex = (mediaIndex - 1 + list.length) % list.length;
       renderMediaViewer();
     }
 
-    function notifyLead(eventName, payload){
+    function handleDataActionClick(target){
+      const actionEl = target.closest('[data-action]');
+      if(!actionEl) return false;
+
+      const action = actionEl.dataset.action;
+
+      if(action === 'open-photo'){
+        const index = Number(actionEl.dataset.photoIndex || 0);
+        openMedia('photo', index);
+        return true;
+      }
+
+      if(action === 'open-video'){
+        const index = Number(actionEl.dataset.videoIndex || 0);
+        openMedia('video', index);
+        return true;
+      }
+
+      if(action === 'primary-cta'){
+        handlePrimaryCTA();
+        return true;
+      }
+
+      if(action === 'reset-age-selection'){
+        resetAgeSelection();
+        return true;
+      }
+
+      if(action === 'close-offer'){
+        offerRunId += 1;
+        clearOfferTimeout();
+        document.getElementById('offerOverlay')?.classList.add('hidden');
+        resetOfferProgressUI();
+        return true;
+      }
+
+      if(action === 'apply-offer'){
+        clearOfferTimeout();
+        state.offerStage = Math.max(state.offerStage, 1);
+        document.getElementById('offerOverlay')?.classList.add('hidden');
+        renderAll();
+        openForm();
+        persist();
+        return true;
+      }
+
+      if(action === 'close-form'){
+        closeForm();
+        return true;
+      }
+
+      if(action === 'submit-form'){
+        submitLead();
+        return true;
+      }
+
+      if(action === 'close-success'){
+        closeSuccessModal();
+        return true;
+      }
+
+      if(action === 'close-calendar'){
+        document.getElementById('calendarOverlay')?.classList.add('hidden');
+        return true;
+      }
+
+      return false;
+    }
+
+    async function notifyLead(eventName, payload){
       try {
         const cfg = window.AC_NOTIFY_CONFIG || {};
+        const body = {event: eventName, payload};
+        const endpoint = cfg.leadEndpoint || '/api/lead';
+        const response = await fetch(endpoint, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(body)
+        });
+        if(response.ok){
+          return {ok: true, delivered: true, endpoint};
+        }
 
-        const eventUrl = cfg[eventName];
-        const allUrl = cfg.all;
-
-        const body = {
+        localStorage.setItem('aidacamp_lead_fallback', JSON.stringify({
+          ts: Date.now(),
           event: eventName,
-          payload: payload
-        };
-
-        const sendWebhook = async (url) => {
-          if(!url) return false;
-          try {
-            await fetch(url,{
-              method:'POST',
-              headers:{'Content-Type':'application/json'},
-              body:JSON.stringify(body)
-            });
-            return true;
-          } catch(e){
-            return false;
-          }
-        };
-
-        const sendTelegram = async () => {
-          if(!cfg.telegramBotToken || !cfg.telegramChatId) return;
-
-          const text = formatTelegramMessage(eventName, payload);
-
-          await fetch(`https://api.telegram.org/bot${cfg.telegramBotToken}/sendMessage`,{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-              chat_id: cfg.telegramChatId,
-              text,
-              disable_web_page_preview:true
-            })
-          });
-        };
-
-        (async ()=>{
-          let ok = false;
-
-          if(eventUrl){
-            ok = await sendWebhook(eventUrl);
-          }
-
-          if(!ok && allUrl){
-            ok = await sendWebhook(allUrl);
-          }
-
-          if(!ok){
-            await sendTelegram();
-          }
-        })();
-
-      } catch(e){
-        console.error("notifyLead error", e);
+          payload
+        }));
+        console.warn('[LEAD_MOCK_FALLBACK]', {endpoint, body});
+        return {ok: false, delivered: false, fallback: true};
+      } catch(error){
+        console.error('notifyLead error', error);
+        localStorage.setItem('aidacamp_lead_fallback', JSON.stringify({
+          ts: Date.now(),
+          event: eventName,
+          payload
+        }));
+        return {ok: false, delivered: false, fallback: true, error: String(error)};
       }
     }
 
@@ -3669,6 +4278,15 @@
       if(value === '10-12') return '10–12 лет';
       if(value === '13-14') return '13–14 лет';
       return '—';
+    }
+
+    function photoCatLabel(cat){
+      if(cat === 'pool') return 'Бассейн';
+      if(cat === 'sport') return 'Спорт';
+      if(cat === 'study') return 'Учёба';
+      if(cat === 'food') return 'Питание';
+      if(cat === 'camp') return 'Атмосфера';
+      return cat;
     }
 
     function getShiftContextLine(shift){
@@ -3830,6 +4448,46 @@
       hint.textContent = 'Всё готово: цена найдена, код бронирования сохранён, можно отправлять заявку.';
     }
 
+    function pulseNode(node){
+      if(!node) return;
+      node.classList.remove('guided-pulse');
+      void node.offsetWidth;
+      node.classList.add('guided-pulse');
+      window.setTimeout(() => {
+        node.classList.remove('guided-pulse');
+      }, 1300);
+    }
+
+    function nudgeUserToNextStep(message = 'Сначала завершите предыдущий шаг.'){
+      const prefixes = state.view === 'mobile' ? ['mobile'] : ['desktop'];
+      prefixes.forEach((prefix) => {
+        const inlineHint = document.getElementById(`${prefix}InlineHint`);
+        if(inlineHint){
+          inlineHint.textContent = message;
+          inlineHint.classList.add('visible');
+          pulseNode(inlineHint);
+          window.clearTimeout(inlineHint.__hideTimer);
+          inlineHint.__hideTimer = window.setTimeout(() => {
+            inlineHint.classList.remove('visible');
+          }, 2400);
+        }
+
+        if(!hasSelectedAge()){
+          pulseNode(document.getElementById(`${prefix}AgeTabs`));
+          return;
+        }
+
+        if(!state.shiftId){
+          pulseNode(document.getElementById(`${prefix}ShiftList`));
+          return;
+        }
+
+        if(state.offerStage === 0){
+          pulseNode(document.getElementById(`${prefix}CtaWrap`));
+        }
+      });
+    }
+
     function formatRemaining(diff){
       if(diff <= 0) return '';
       const h = Math.floor(diff / (1000 * 60 * 60));
@@ -3970,8 +4628,82 @@
       });
     }
 
-    document.querySelectorAll('[data-ctp-tab]').forEach(btn => {
-      btn.addEventListener('click', () => setCompactTrustTab(btn.dataset.ctpTab));
+    const faqFiltersEl = document.getElementById('faqFilters');
+    if (faqFiltersEl) {
+      faqFiltersEl.querySelectorAll('[data-faq-filter]').forEach(btn => {
+        btn.addEventListener('click', () => setFaqFilter(btn.dataset.faqFilter));
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if(handleDataActionClick(e.target)){
+        return;
+      }
+
+      const ageWrap = e.target.closest('#desktopAgeTabs, #mobileAgeTabs');
+      const ageBtn = e.target.closest('button');
+      if(ageWrap && ageBtn){
+        const ageText = (ageBtn.textContent || '').trim();
+        if(ageText){
+          track('age_select', {age_label: ageText});
+        }
+      }
+
+      const shiftWrap = e.target.closest('#desktopShiftOptions, #mobileShiftOptions');
+      const shiftBtn = e.target.closest('button, .shift-option, .slot-card');
+      if(shiftWrap && shiftBtn){
+        const shiftText = (shiftBtn.textContent || '').trim().split('\n')[0];
+        if(shiftText){
+          track('shift_select', {
+            shift_label: shiftText,
+            age: state.age || ''
+          });
+        }
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const shiftDisabled = e.target.closest('#desktopShiftList.disabled, #mobileShiftList.disabled');
+      if(shiftDisabled){
+        nudgeUserToNextStep('Сначала выберите возраст ребёнка — тогда откроется список смен.');
+      }
+
+      const shiftVeil = e.target.closest('.shift-list-veil');
+      if(shiftVeil){
+        nudgeUserToNextStep('Сначала выберите возраст ребёнка — после этого откроются смены.');
+      }
+
+      const ctaBtn = e.target.closest('#desktopStartBtn, #mobileStartBtn');
+      if(ctaBtn && ctaBtn.disabled){
+        nudgeUserToNextStep();
+      }
+
+      const summaryBtn = e.target.closest('#summaryBar button, #summaryBar .cta-main');
+      if(summaryBtn && !state.shiftId){
+        nudgeUserToNextStep('Чтобы перейти дальше, сначала выберите возраст и смену.');
+      }
+    });
+
+    document.getElementById('locationMapBtn')?.addEventListener('click', () => {
+      track('map_click', {source:'contacts_map'});
+    });
+
+    document.getElementById('yandexReviewsBtn')?.addEventListener('click', () => {
+      track('social_click', {network:'Яндекс Отзывы'});
+    });
+
+    document.getElementById('socialsGrid')?.addEventListener('click', (e) => {
+      const link = e.target.closest('.social-link');
+      if(!link) return;
+      const network = (link.querySelector('span')?.textContent || '').trim();
+      track('social_click', {network});
+    });
+
+    document.getElementById('successTelegramBtn')?.addEventListener('click', () => {
+      track('telegram_click', {
+        source:'success_modal',
+        ...selectedShiftPayload()
+      });
     });
 
     function formatPrice(v){
@@ -3982,6 +4714,68 @@
       if(v === '7-9') return '7–9 лет';
       if(v === '10-12') return '10–12 лет';
       return '13–14 лет';
+    }
+
+    function shiftDaysLabel(shift){
+      if(!shift) return '';
+      const map = {
+        'shift-1':'10 дней',
+        'shift-2':'7 дней',
+        'shift-3':'8 дней',
+        'shift-4':'14 дней',
+        'shift-5':'13 дней',
+        'shift-6':'10 дней'
+      };
+      return map[shift.id] || '';
+    }
+
+    function selectedShiftPayload(){
+      const shift = getSelectedShift();
+      return {
+        shift_id: state.shiftId || '',
+        shift_title: shift ? shift.title : '',
+        shift_dates: shift ? shift.dates : '',
+        shift_days: shift ? shiftDaysLabel(shift) : '',
+        age: state.age || '',
+        price: state.offerPrice || state.basePrice || (shift ? shift.price : '')
+      };
+    }
+
+    function clearOfferTimeout(){
+      if(offerTimeoutId){
+        clearTimeout(offerTimeoutId);
+        offerTimeoutId = null;
+      }
+    }
+
+    function resetOfferState({preserveShift = true} = {}){
+      clearOfferTimeout();
+      state.offerStage = 0;
+      state.offerPrice = null;
+      state.code = null;
+      state.expiresAt = null;
+      state.offerSearching = false;
+      if(!preserveShift){
+        state.shiftId = null;
+        state.basePrice = null;
+      }
+    }
+
+    function buildBookingSummaryHtml(){
+      const shift = getSelectedShift();
+      if(!shift) return '';
+      return `
+        <strong>Что мы сейчас фиксируем за вами</strong>
+        <div class="booking-summary-list">
+          <div>Смена: ${shift.title}</div>
+          <div>Даты: ${shift.dates}</div>
+          <div>Длительность: ${shiftDaysLabel(shift)}</div>
+          <div>Возраст: ${ageLabel(state.age)}</div>
+          <div>Цена: ${formatPrice(state.offerPrice || state.basePrice || shift.price)}</div>
+          <div>Код бронирования: ${state.code || '—'}</div>
+        </div>
+        <div class="micro-note">Без предоплаты. Мы сначала подтверждаем бронь вручную.</div>
+      `;
     }
 
     function generateCode(){
@@ -4035,6 +4829,13 @@
       persist();
     }
 
+    function setFaqFilter(filter){
+      state.faqFilter = filter;
+      track('faq_filter', {filter});
+      renderMediaSections();
+      persist();
+    }
+
     bindAgeTabs('desktopAgeTabs');
     bindAgeTabs('mobileAgeTabs');
 
@@ -4052,7 +4853,10 @@
 
       box.querySelectorAll('.shift-option').forEach(el => {
         el.addEventListener('click', () => {
-          if(!hasSelectedAge()) return;
+          if(!hasSelectedAge()){
+            nudgeUserToNextStep('Сначала выберите возраст ребёнка — тогда откроется список смен.');
+            return;
+          }
           selectShift(el.dataset.id);
         });
       });
@@ -4064,7 +4868,11 @@
       grid.innerHTML = shifts.map(s => `
         <div class="mini-card">
           <h4>${s.title}</h4>
-          <p><strong>${s.dates}</strong><br>${s.desc}<br><br>Текущая цена: ${formatPrice(s.price)}<br>Осталось мест: ${s.left}</p>
+          <div class="price-row">
+            <strong>${formatPrice(s.price)}</strong>
+            <span>${s.dates} · ${shiftDaysLabel(s)}</span>
+          </div>
+          <p>${s.desc}</p>
           <div class="shift-context-line">${getShiftContextLine(s)}</div>
         </div>
       `).join('');
@@ -4106,26 +4914,42 @@
       const locationMapBtn = document.getElementById('locationMapBtn');
 
       if (photoGrid) {
-        const filteredPhotos = state.photoFilter === 'all'
-          ? mediaContent.photos
-          : mediaContent.photos.filter(item => item.cat === state.photoFilter);
+        let filteredPhotos = [];
+
+        if(state.photoFilter === 'all'){
+          filteredPhotos = mediaContent.photos;
+        } else if(state.photoFilter === 'camp'){
+          filteredPhotos = mediaContent.photos.filter(item => item.cat === 'camp' || item.cat === 'all');
+        } else {
+          filteredPhotos = mediaContent.photos.filter(item => item.cat === state.photoFilter);
+        }
+
+        if(!filteredPhotos.length){
+          filteredPhotos = mediaContent.photos.filter(item => item.cat === 'all');
+        }
+        if(!filteredPhotos.length){
+          filteredPhotos = mediaContent.photos;
+        }
+        activePhotoList = filteredPhotos;
 
         photoGrid.innerHTML = filteredPhotos.map((item, idx) => `
-          <div class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}" onclick="openMedia('photo', ${idx})">
+          <div
+            class="photo-card ${idx === 0 ? 'hero' : ''} ${idx === 4 ? 'wide' : ''}"
+            data-action="open-photo"
+            data-photo-index="${idx}"
+          >
             <img src="${item.src}" alt="${item.alt}">
             <div class="photo-title">${idx === 0 ? 'Главный кадр' : 'AiDaCamp'}</div>
-            <div class="photo-badge">${item.cat}</div>
+            <div class="photo-badge">${photoCatLabel(item.cat)}</div>
           </div>
         `).join('');
       }
 
       if (videoList) {
         videoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <div class="video-card">
-            <div onclick="openMedia('video', ${idx})">
-              <div class="video-poster">
-                <div class="video-play"><span>▶</span></div>
-              </div>
+          <div class="video-card" data-action="open-video" data-video-index="${idx}">
+            <div class="video-poster">
+              <div class="video-play"><span>▶</span></div>
             </div>
             <h4>${item.title}</h4>
             <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику.' : 'Про отказ от телефона.'}</p>
@@ -4148,7 +4972,7 @@
       }
 
       if (locationMapBtn) {
-        locationMapBtn.href = mediaContent.references.locationMapUrl;
+        locationMapBtn.href = 'https://yandex.ru/maps/-/CPR0vYMT';
       }
 
       if(reviewsGrid){
@@ -4160,10 +4984,11 @@
               </div>
               <div class="review-person">
                 <strong>${item.name}</strong>
+                <div class="review-source">Яндекс Карты</div>
+                <div class="review-stars">★★★★★</div>
                 <div class="review-meta">${item.meta}</div>
               </div>
             </div>
-            ${renderStars()}
             <div class="review-quote">«${item.quote}»</div>
           </div>
         `).join('');
@@ -4189,7 +5014,11 @@
       }
 
       if (faqGroups) {
-        faqGroups.innerHTML = mediaContent.faq.map(group => `
+        const filteredFaq = state.faqFilter === 'all'
+          ? mediaContent.faq
+          : mediaContent.faq.filter(group => group.group === state.faqFilter);
+
+        faqGroups.innerHTML = filteredFaq.map(group => `
           <div class="faq-group">
             <div class="faq-group-head">
               <div class="faq-icon">${faqGlyph(group.icon, group.group)}</div>
@@ -4205,10 +5034,22 @@
             </div>
           </div>
         `).join('');
+
+        const faqEmpty = document.getElementById('faqEmptyState');
+        if (faqEmpty) {
+          faqEmpty.classList.toggle('visible', filteredFaq.length === 0);
+        }
+      }
+
+      const faqFilters = document.getElementById('faqFilters');
+      if (faqFilters) {
+        faqFilters.querySelectorAll('[data-faq-filter]').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.faqFilter === state.faqFilter);
+        });
       }
 
       if (teamGrid) {
-        teamGrid.innerHTML = mediaContent.team.map(item => `
+        const teamCards = mediaContent.team.map(item => `
           <div class="team-card">
             <div class="team-avatar">
               <img src="${item.avatarUrl}" alt="${item.fio}">
@@ -4218,6 +5059,29 @@
             <span>${item.bio}</span>
           </div>
         `).join('');
+
+        const bookCard = `
+        <div class="team-card book-team-card">
+          <div class="book-team-cover-wrap">
+            <img
+              class="book-team-cover"
+              src="https://static.tildacdn.com/tild6165-3133-4138-a638-333532306465/8991804334.webp"
+              alt="Книга Python для детей"
+            >
+          </div>
+          <div class="book-team-title">Собственная книга по Python</div>
+          <div class="book-team-sub">Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики, по которым дети входят в программирование через практику.</div>
+          <div class="book-team-proof">Для родителя книга — это более сильное доказательство экспертизы и собственной методики, чем просто ещё одна карточка преподавателя.</div>
+          <a
+            class="book-team-cta"
+            href="https://www.codims.ru/python-book"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Смотреть книгу</a>
+        </div>
+        `;
+
+        teamGrid.innerHTML = [bookCard, teamCards].join('');
       }
 
       const photoFilters = document.getElementById('photoFilters');
@@ -4231,20 +5095,9 @@
     }
 
     function renderCompactTrustPanelContent(){
-      const compactPhotoGrid = document.getElementById('compactPhotoGrid');
-      const compactVideoList = document.getElementById('compactVideoList');
-      const compactReviewsList = document.getElementById('compactReviewsList');
       const mobileInlinePhotoGrid = document.getElementById('mobileInlinePhotoGrid');
       const mobileInlineVideoList = document.getElementById('mobileInlineVideoList');
       const mobileInlineReviewsList = document.getElementById('mobileInlineReviewsList');
-
-      if (compactPhotoGrid) {
-        compactPhotoGrid.innerHTML = mediaContent.photos.slice(0,8).map(item => `
-          <div class="compact-panel-photo">
-            <img src="${item.src}" alt="${item.alt}">
-          </div>
-        `).join('');
-      }
 
       if (mobileInlinePhotoGrid) {
         mobileInlinePhotoGrid.innerHTML = mediaContent.photos.slice(0,4).map(item => `
@@ -4254,32 +5107,13 @@
         `).join('');
       }
 
-      if (compactVideoList) {
-        compactVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <div class="compact-panel-video-card">
-            <h4>${item.title}</h4>
-            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
-            <a class="compact-panel-link" href="${item.url}" target="_blank" rel="noopener noreferrer">Смотреть видео</a>
-          </div>
-        `).join('');
-      }
-
       if (mobileInlineVideoList) {
         mobileInlineVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <div class="compact-panel-video-card">
+          <button class="compact-panel-video-card" type="button" data-action="open-video" data-video-index="${idx}">
             <h4>${item.title}</h4>
             <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
-            <a class="compact-panel-link" href="${item.url}" target="_blank" rel="noopener noreferrer">Смотреть видео</a>
-          </div>
-        `).join('');
-      }
-
-      if (compactReviewsList) {
-        compactReviewsList.innerHTML = mediaContent.reviews.map(item => `
-          <div class="compact-panel-review-card">
-            <strong>${item.name}</strong>
-            <span>${item.quote}</span>
-          </div>
+            <span class="compact-panel-link">Смотреть видео</span>
+          </button>
         `).join('');
       }
 
@@ -4293,49 +5127,13 @@
       }
     }
 
-    function setCompactTrustTab(tab){
-      const title = document.getElementById('compactTrustTitle');
-      const lead = document.getElementById('compactTrustLead');
-
-      document.querySelectorAll('[data-ctp-tab]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.ctpTab === tab);
-      });
-
-      ['photos','videos','reviews'].forEach(key => {
-        const el = document.getElementById(`ctp-${key}`);
-        if (el) el.classList.toggle('hidden', key !== tab);
-      });
-
-      if (tab === 'photos') {
-        title.textContent = 'Фото лагеря';
-        lead.textContent = 'Кадры занятий, бассейна, спорта и атмосферы лагеря.';
-      }
-      if (tab === 'videos') {
-        title.textContent = 'Видео';
-        lead.textContent = 'Короткие видео, которые быстро объясняют, чем живёт лагерь.';
-      }
-      if (tab === 'reviews') {
-        title.textContent = 'Отзывы родителей';
-        lead.textContent = 'Реальные отзывы как social proof без ухода со сценария бронирования.';
-      }
-    }
-
-    function openCompactTrustPanel(tab = 'photos'){
-      const panel = document.getElementById('compactTrustPanel');
-      if (!panel) return;
-      setCompactTrustTab(tab);
-      panel.classList.remove('hidden');
-    }
-
-    function closeCompactTrustPanel(){
-      const panel = document.getElementById('compactTrustPanel');
-      if (!panel) return;
-      panel.classList.add('hidden');
-    }
-
     function renderAll(){
       renderShiftOptions('desktopShiftOptions');
       renderShiftOptions('mobileShiftOptions');
+      renderBookingPanels();
+      renderGuidedState('desktop');
+      renderGuidedState('mobile');
+      renderMediaSections();
       renderSummary();
     }
 
@@ -4356,21 +5154,33 @@
       if(action.disabled) return;
 
       if(state.offerStage === 0){
-        openOfferCheck();
+        runOfferSearch();
         return;
       }
 
       if(state.offerStage === 1 && isOfferActive()){
-        openOfferCheck();
+        runOfferSearch();
         return;
       }
 
       openForm();
     }
 
-    function openOfferCheck(){
+    function runOfferSearch(){
+      const shift = getSelectedShift();
+      if(!shift){
+        nudgeUserToNextStep('Сначала выберите смену — потом мы сможем показать цену и условия.');
+        return;
+      }
+
       const wrap = document.getElementById('offerOverlay');
       const card = document.getElementById('offerCard');
+      offerRunId += 1;
+      const currentRunId = offerRunId;
+      state.offerSearching = true;
+      clearOfferTimeout();
+      track('offer_open', selectedShiftPayload());
+      track('offer_start', selectedShiftPayload());
       wrap.classList.remove('hidden');
 
       card.innerHTML = `
@@ -4387,7 +5197,15 @@
         </div>
       `;
 
-      setTimeout(showOffer, 700);
+      offerTimeoutId = setTimeout(() => {
+        if(currentRunId !== offerRunId) return;
+        offerTimeoutId = null;
+        showOffer();
+      }, 700);
+    }
+
+    function openOfferCheck(){
+      runOfferSearch();
     }
 
     function showOffer(){
@@ -4404,7 +5222,9 @@
       }
 
       state.code = generateCode();
+      state.offerSearching = false;
       persist();
+      track('offer_complete', selectedShiftPayload());
 
       card.innerHTML = `
         <h3>${state.offerStage === 2 ? 'Рады, что вы вернулись' : 'Удалось закрепить цену'}</h3>
@@ -4414,8 +5234,8 @@
         <div class="offer-code">Код бронирования: ${state.code}</div>
 
         <div class="overlay-actions">
-          <button class="cta-main" onclick="saveOfferAndClose()">Закрепить по телефону</button>
-          <button class="secondary-outline" onclick="saveOfferAndClose()">Сохранить на этом устройстве</button>
+          <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Закрепить по телефону</button>
+          <button class="secondary-outline" id="offerCloseBtn" data-action="close-offer" type="button">Сохранить на этом устройстве</button>
         </div>
       `;
 
@@ -4426,9 +5246,15 @@
 
     function saveOfferAndClose(){
       syncGuidedState();
+      clearOfferTimeout();
       document.getElementById('offerOverlay').classList.add('hidden');
       renderSummary();
       renderBookingPanels();
+    }
+
+    function resetOfferProgressUI(){
+      clearOfferTimeout();
+      state.offerSearching = false;
     }
 
     function startTimer(){
@@ -4443,7 +5269,7 @@
 
         if(diff <= 0){
           clearInterval(timerId);
-          state.expiresAt = null;
+          resetOfferState({preserveShift:true});
           persist();
           if(offerTimer) offerTimer.textContent = '';
           if(summaryTimer) summaryTimer.textContent = '';
@@ -4460,10 +5286,15 @@
 
     function renderSummary(){
       syncGuidedState();
+      if(state.expiresAt && Date.now() >= state.expiresAt){
+        resetOfferState({preserveShift:true});
+        persist();
+      }
       const bar = document.getElementById('summaryBar');
 
       if(!state.shiftId){
         bar.classList.add('hidden');
+        document.body.classList.remove('summary-visible');
         renderBookingPanels();
         return;
       }
@@ -4476,6 +5307,7 @@
       document.getElementById('summaryPrice').textContent = formatPrice(price);
 
       bar.classList.remove('hidden');
+      document.body.classList.add('summary-visible');
       renderBookingPanels();
     }
 
@@ -4528,6 +5360,13 @@
       error.classList.toggle('visible', !!show);
     }
 
+    function setLeadSubmitState(loading){
+      const btn = document.getElementById('submitLeadBtn');
+      if(!btn) return;
+      btn.disabled = !!loading;
+      btn.textContent = loading ? 'Отправляем...' : 'Оформить и отправить заявку';
+    }
+
     function openForm(){
       syncGuidedState();
       if(!state.shiftId) return;
@@ -4543,7 +5382,11 @@
       const phoneInput = document.getElementById('parentPhone');
       document.getElementById('parentPhone').value = state.phone || '';
       if(phoneInput) phoneInput.value = formatPhoneInput(state.phone || '');
+      const bookingSummaryBox = document.getElementById('bookingSummaryBox');
+      if(bookingSummaryBox) bookingSummaryBox.innerHTML = buildBookingSummaryHtml();
       setPhoneError(false);
+      setLeadSubmitState(false);
+      track('form_open', selectedShiftPayload());
       document.getElementById('formDrawer').classList.remove('hidden');
     }
 
@@ -4551,7 +5394,30 @@
       document.getElementById('formDrawer').classList.add('hidden');
     }
 
-    function submitLead(){
+    function openSuccessModal(deliveryResult){
+      const box = document.getElementById('successSummaryBox');
+      if(box) box.innerHTML = buildBookingSummaryHtml();
+      const deliveryState = document.getElementById('successDeliveryState');
+      if(deliveryState){
+        if(deliveryResult && deliveryResult.ok === false){
+          deliveryState.textContent = 'Заявка сохранена локально, но сейчас нет связи с сервером отправки. Если мы не ответим в течение 15 минут, напишите нам в Telegram.';
+          deliveryState.classList.remove('hidden');
+          deliveryState.classList.add('error');
+        } else {
+          deliveryState.textContent = '';
+          deliveryState.classList.add('hidden');
+          deliveryState.classList.remove('error');
+        }
+      }
+      document.getElementById('successOverlay').classList.remove('hidden');
+    }
+
+    function closeSuccessModal(){
+      document.getElementById('successOverlay').classList.add('hidden');
+    }
+
+    async function submitLead(){
+      if(leadSubmitInProgress) return;
       syncGuidedState();
       const name = document.getElementById('parentName').value.trim();
       const phoneRaw = document.getElementById('parentPhone').value.trim();
@@ -4571,6 +5437,8 @@
       }
 
       setPhoneError(false);
+      leadSubmitInProgress = true;
+      setLeadSubmitState(true);
 
       state.phone = phone;
       persist();
@@ -4593,14 +5461,24 @@
           : `desktop:${state.desktopMode || 'full'}`,
         sent_at_local: new Date().toLocaleString('ru-RU')
       };
-      notifyLead('booking_submitted', payload);
-
-      alert('Заявка отправлена');
-      closeForm();
+      track('form_submit', {
+        ...selectedShiftPayload(),
+        booking_code: state.code || '',
+        parent_name_present: !!name,
+        phone_present: !!phone
+      });
+      try {
+        const deliveryResult = await notifyLead('booking_submitted', payload);
+        closeForm();
+        openSuccessModal(deliveryResult);
+      } finally {
+        leadSubmitInProgress = false;
+        setLeadSubmitState(false);
+      }
     }
 
     function scrollToSection(target){
-      const map = {
+      const desktopMap = {
         about:'section-about',
         programs:'section-programs',
         photos:'section-photos',
@@ -4612,7 +5490,31 @@
         contacts:'section-contacts'
       };
 
-      const id = map[target];
+      const mobileMap = {
+        about:'mobile-section-about',
+        programs:'mobile-section-programs',
+        photos:'mobile-section-photos',
+        videos:'mobile-section-videos',
+        reviews:'mobile-section-reviews',
+        faq:'mobile-section-faq',
+        team:'mobile-section-about',
+        stay:'mobile-section-about',
+        contacts:'mobile-section-about'
+      };
+
+      if(
+        state.view === 'mobile' &&
+        state.mobileMode === 'compact' &&
+        ['about','photos','videos','reviews','faq','team','stay','contacts'].includes(target)
+      ){
+        switchMobileMode('full');
+        window.setTimeout(() => scrollToSection(target), 40);
+        return;
+      }
+
+      const id = state.view === 'mobile'
+        ? (mobileMap[target] || desktopMap[target])
+        : desktopMap[target];
       const el = document.getElementById(id);
       if(el){
         el.scrollIntoView({behavior:'smooth', block:'start'});
@@ -4625,6 +5527,26 @@
         btn.classList.add('active');
         scrollToSection(btn.dataset.target);
       });
+    });
+
+    document.addEventListener('click', (e) => {
+      const anchor = e.target.closest('a[href^="#section-"]');
+      if(!anchor) return;
+      const href = anchor.getAttribute('href');
+      const target = {
+        '#section-about':'about',
+        '#section-programs':'programs',
+        '#section-photos':'photos',
+        '#section-videos':'videos',
+        '#section-reviews':'reviews',
+        '#section-faq':'faq',
+        '#section-team':'team',
+        '#section-stay':'stay',
+        '#section-contacts':'contacts'
+      }[href];
+      if(!target) return;
+      e.preventDefault();
+      scrollToSection(target);
     });
 
     const parentPhoneInput = document.getElementById('parentPhone');
@@ -4646,27 +5568,28 @@
       });
     }
 
-    const submitLeadBtn = document.getElementById('submitLeadBtn');
-    if(submitLeadBtn){
-      submitLeadBtn.addEventListener('click', submitLead);
-    }
-
-    const formCloseBtn = document.getElementById('formCloseBtn');
-    if(formCloseBtn){
-      formCloseBtn.addEventListener('click', closeForm);
-    }
-
     document.getElementById('formDrawer').addEventListener('click', (e) => {
       if(e.target.id === 'formDrawer') closeForm();
     });
 
-    document.getElementById('desktopStartBtn').addEventListener('click', () => {
-      handlePrimaryCTA();
-    });
+    const successOverlay = document.getElementById('successOverlay');
+    if(successOverlay){
+      successOverlay.addEventListener('click', (e) => {
+        if(e.target.id === 'successOverlay') closeSuccessModal();
+      });
+    }
 
-    document.getElementById('mobileStartBtn').addEventListener('click', () => {
-      handlePrimaryCTA();
-    });
+    const offerOverlay = document.getElementById('offerOverlay');
+    if(offerOverlay){
+      offerOverlay.addEventListener('click', (e) => {
+        if(e.target.id === 'offerOverlay'){
+          offerRunId += 1;
+          clearOfferTimeout();
+          offerOverlay.classList.add('hidden');
+          resetOfferProgressUI();
+        }
+      });
+    }
 
     document.getElementById('mediaClose').addEventListener('click', closeMedia);
     document.getElementById('mediaNext').addEventListener('click', nextMedia);
@@ -4691,6 +5614,15 @@
     renderMediaSections();
     renderSummary();
     renderBookingPanels();
+    resetOfferProgressUI();
+    applyDebugUiState();
+    track('page_view', {
+      view: state.view || 'desktop',
+      desktop_mode: state.desktopMode || '',
+      mobile_mode: state.mobileMode || ''
+    });
+    initScrollTracking();
+    initSectionViewTracking();
     switchView(state.view || 'desktop');
     applyDesktopMode();
     applyMobileMode();
@@ -4698,6 +5630,9 @@
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();
     }
-  </script>
+  
+
+</script>
+<!-- AC_BUILD_SCRIPT_END -->
 </body>
 </html>
