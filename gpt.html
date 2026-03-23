@@ -160,7 +160,7 @@
     }
 
     .compact-mode .hero-shell{
-      min-height:660px;
+      min-height:600px;
     }
 
     .mobile-compact-mode .mobile-body-sections{
@@ -311,8 +311,8 @@
       grid-template-columns:minmax(0, 1fr) 356px;
       column-gap:24px;
       align-items:start;
-      padding:22px;
-      min-height:640px;
+      padding:22px 22px 14px;
+      min-height:620px;
       background:
         linear-gradient(180deg, rgba(11,16,24,.20) 0%, rgba(11,16,24,.74) 100%),
         radial-gradient(circle at 18% 18%, rgba(255,138,0,.18), transparent 28%),
@@ -320,7 +320,7 @@
         linear-gradient(180deg, rgba(19,28,41,.10) 0%, rgba(19,28,41,.32) 62%, rgba(19,28,41,.58) 100%);
       color:#fff;
       overflow:visible;
-      z-index:var(--z-base);
+      z-index:1;
     }
 
     .hero-bg{
@@ -359,7 +359,16 @@
         ),
         radial-gradient(circle at 50% 100%, rgba(255,255,255,.08), transparent 34%);
       pointer-events:none;
-      z-index:var(--z-base);
+      z-index:1;
+    }
+
+    .hero-overlay{
+      z-index:1;
+      pointer-events:none;
+    }
+
+    .hero-overlay::before{
+      z-index:0;
     }
 
     .mobile-hero{
@@ -375,7 +384,7 @@
       gap:12px;
       margin-bottom:30px;
       position:relative;
-      z-index:1;
+      z-index:6;
       grid-column:1 / -1;
     }
 
@@ -421,6 +430,8 @@
       gap:8px;
       flex-wrap:wrap;
       justify-content:flex-end;
+      position:relative;
+      z-index:7;
     }
 
     .menu-pill{
@@ -448,7 +459,7 @@
       max-width:none;
       width:auto;
       position:relative;
-      z-index:var(--z-hero);
+      z-index:3;
       padding-right:0;
       min-width:0;
     }
@@ -585,7 +596,7 @@
       max-width:356px;
       margin-left:auto;
       margin-top:0;
-      margin-bottom:-74px;
+      margin-bottom:-38px;
       padding:20px;
       border-radius:26px;
       background:rgba(12,17,24,.76);
@@ -594,12 +605,12 @@
       box-shadow:0 24px 70px rgba(0,0,0,.34);
       color:#fff;
       transition:transform .2s ease, box-shadow .2s ease;
-      z-index:var(--z-hero);
+      z-index:3;
       box-sizing:border-box;
-      transform:translateY(-42px);
+      transform:translateY(-18px);
     }
     .hero-booking-card:hover{
-      transform:translateY(-43px);
+      transform:translateY(-20px);
       box-shadow:0 28px 76px rgba(0,0,0,.36);
     }
 
@@ -1091,8 +1102,24 @@
       font-size:12px;
     }
 
+    .booking-hint{
+      opacity:0;
+      transform:translateY(6px);
+      transition:opacity .25s ease, transform .25s ease;
+      font-size:13px;
+      color:#ffb86b;
+      margin-top:8px;
+      min-height:18px;
+      pointer-events:none;
+    }
+
+    .booking-hint.visible{
+      opacity:1;
+      transform:translateY(0);
+    }
+
     .body-sections{
-      padding:18px;
+      padding:0 18px 18px;
       display:grid;
       gap:18px;
     }
@@ -1252,6 +1279,52 @@
       color:var(--muted);
       font-size:13px;
       line-height:1.55;
+    }
+
+    .price-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .price-row strong{
+      white-space:nowrap;
+    }
+
+    .price-row span{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:8px;
+      min-width:0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+      text-align:right;
+    }
+
+    .shift-calendar-btn{
+      width:30px;
+      height:30px;
+      border-radius:9px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:15px;
+      line-height:1;
+      flex:0 0 auto;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .shift-calendar-btn:hover{
+      transform:translateY(-1px);
+      border-color:#d5dbe7;
+      box-shadow:0 10px 18px rgba(20,29,45,.10);
     }
 
     .slot-grid{
@@ -1482,6 +1555,200 @@
       opacity:.8;
     }
 
+    .video-modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.82);
+      z-index:130;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      animation:fadeIn .2s ease;
+    }
+
+    .video-inner{
+      width:min(92vw, 900px);
+      margin:auto;
+      position:relative;
+      border-radius:18px;
+      overflow:hidden;
+      background:#000;
+      box-shadow:0 28px 72px rgba(0,0,0,.55);
+    }
+
+    .video-inner.vertical{
+      width:min(92vw, 430px);
+      border-radius:22px;
+    }
+
+    .video-frame{
+      width:100%;
+      max-height:80vh;
+      display:block;
+      aspect-ratio:16/9;
+      background:#000;
+    }
+
+    .video-frame.vertical{
+      aspect-ratio:9/16;
+      max-height:84vh;
+    }
+
+    .video-close{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:38px;
+      height:38px;
+      border:none;
+      border-radius:10px;
+      background:rgba(0,0,0,.56);
+      color:#fff;
+      font-size:20px;
+      line-height:1;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:2;
+    }
+
+    .video-fallback{
+      display:grid;
+      gap:10px;
+      align-content:center;
+      justify-items:flex-start;
+      min-height:280px;
+      padding:18px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,138,0,.14), transparent 30%),
+        linear-gradient(135deg,#0f1725,#111c2b);
+      color:#fff;
+    }
+
+    .video-fallback p{
+      margin:0;
+      color:rgba(255,255,255,.78);
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .calendar-modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.72);
+      z-index:131;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      animation:fadeIn .2s ease;
+    }
+
+    .calendar-inner{
+      width:min(92vw, 430px);
+      max-height:min(80vh, 620px);
+      overflow:auto;
+      border-radius:16px;
+      background:#0f1622;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 26px 70px rgba(0,0,0,.45);
+      padding:16px;
+      color:#fff;
+    }
+
+    .calendar-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .calendar-header span{
+      font-size:14px;
+      font-weight:700;
+      line-height:1.45;
+    }
+
+    .calendar-header button{
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      cursor:pointer;
+      font-size:18px;
+      line-height:1;
+    }
+
+    .calendar-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .calendar-month{
+      display:grid;
+      gap:8px;
+    }
+
+    .calendar-month-title{
+      font-size:13px;
+      font-weight:800;
+      color:rgba(255,255,255,.86);
+      text-transform:capitalize;
+    }
+
+    .calendar-month-grid{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:6px;
+    }
+
+    .calendar-day{
+      text-align:center;
+      padding:7px 4px;
+      border-radius:10px;
+      opacity:.65;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      min-height:48px;
+      display:grid;
+      align-content:center;
+      gap:3px;
+    }
+
+    .calendar-day span{
+      font-size:13px;
+      font-weight:700;
+      line-height:1;
+    }
+
+    .calendar-day small{
+      font-size:10px;
+      color:rgba(255,255,255,.72);
+      line-height:1;
+    }
+
+    .calendar-day.active{
+      background:#ff8a00;
+      color:#111827;
+      border-color:#ff8a00;
+      opacity:1;
+    }
+
+    .calendar-day.active small{
+      color:#111827;
+      opacity:.8;
+    }
+
+    .calendar-day.empty{
+      opacity:0;
+      pointer-events:none;
+    }
+
     .video-list{
       display:grid;
       grid-template-columns:repeat(3,1fr);
@@ -1547,6 +1814,13 @@
       justify-content:center;
     }
 
+    .video-feature-box img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
     .video-feature-box::after{
       content:"MAIN VIDEO";
       position:absolute;
@@ -1567,6 +1841,7 @@
       box-shadow:var(--shadow);
       display:grid;
       gap:12px;
+      cursor:pointer;
       transition:transform .2s ease, box-shadow .2s ease;
     }
     .video-card:hover{
@@ -1582,6 +1857,13 @@
         linear-gradient(135deg,#dfe7f3,#a9b8cb 50%,#6f829a);
       position:relative;
       overflow:hidden;
+    }
+
+    .video-poster img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
     }
 
     .video-poster::after{
@@ -1742,41 +2024,19 @@
     }
 
     .map-preview{
-      min-height:220px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(255,138,0,.16), transparent 26%),
-        linear-gradient(135deg,#e7edf5,#d5dfeb 45%,#c2cfdd);
+      min-height:260px;
+      background:#e5ecf6;
       position:relative;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:20px;
+      overflow:hidden;
+      padding:0;
     }
 
-    .map-preview::after{
-      content:"MAP";
-      position:absolute;
-      left:14px;
-      bottom:14px;
-      color:#536277;
-      font-size:11px;
-      font-weight:800;
-      letter-spacing:.14em;
-    }
-
-    .map-preview strong{
+    .map-frame{
+      width:100%;
+      min-height:260px;
+      border:none;
       display:block;
-      font-size:22px;
-      letter-spacing:-.02em;
-      margin-bottom:6px;
-    }
-
-    .map-preview span{
-      color:#5f6d82;
-      font-size:14px;
-      line-height:1.5;
-      max-width:420px;
+      background:#dde6f3;
     }
 
     .map-footer{
@@ -2037,6 +2297,7 @@
       grid-template-columns:repeat(3,1fr);
       gap:12px;
       margin-top:14px;
+      align-items:start;
     }
 
     .stay-grid{
@@ -2151,14 +2412,16 @@
       border:2px solid rgba(255,138,0,.26);
       text-align:left;
       align-content:start;
-      min-height:100%;
+      min-height:auto;
+      gap:10px;
+      padding:14px;
     }
 
     .book-team-cover-wrap{
       display:flex;
       align-items:center;
       justify-content:center;
-      min-height:260px;
+      min-height:180px;
       border-radius:16px;
       background:
         radial-gradient(circle at 20% 20%, rgba(255,138,0,.10), transparent 26%),
@@ -2168,7 +2431,7 @@
 
     .book-team-cover{
       width:100%;
-      max-width:260px;
+      max-width:170px;
       height:auto;
       display:block;
       object-fit:contain;
@@ -2176,8 +2439,8 @@
     }
 
     .book-team-title{
-      font-size:30px;
-      line-height:1;
+      font-size:24px;
+      line-height:1.1;
       letter-spacing:-.04em;
       color:#111827;
       font-weight:900;
@@ -2186,13 +2449,13 @@
 
     .book-team-sub{
       color:#495569;
-      font-size:14px;
-      line-height:1.6;
+      font-size:13px;
+      line-height:1.55;
     }
 
     .book-team-proof{
       color:#111827;
-      font-size:13px;
+      font-size:12px;
       line-height:1.55;
       font-weight:700;
     }
@@ -2211,6 +2474,7 @@
       font-size:14px;
       font-weight:800;
       box-shadow:0 16px 32px rgba(255,138,0,.18);
+      align-self:flex-start;
     }
 
     .success-secondary{
@@ -2480,6 +2744,14 @@
       text-decoration:none;
     }
 
+    .footer-legal-links{
+      margin-top:6px;
+      padding-top:8px;
+      border-top:1px dashed #d9e1ed;
+      display:grid;
+      gap:2px;
+    }
+
     .overlay{
       position:fixed;
       inset:0;
@@ -2500,6 +2772,50 @@
       padding:22px;
       border:1px solid #edf0f5;
       animation:modalUp .22s ease;
+    }
+
+    .section-modal-card{
+      width:min(100%, 980px);
+      max-height:min(90vh, 920px);
+      padding:0;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      background:#f4f7fb;
+    }
+
+    .section-modal-head{
+      padding:16px 18px;
+      border-bottom:1px solid #e5ebf4;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .section-modal-head h3{
+      margin:0;
+      font-size:22px;
+      letter-spacing:-.02em;
+      color:#111827;
+    }
+
+    .section-modal-body{
+      padding:18px;
+      overflow:auto;
+      display:grid;
+      gap:12px;
+    }
+
+    .section-modal-body .section-card{
+      margin:0;
+      border-radius:20px;
+      box-shadow:none;
+    }
+
+    .section-modal-body .section-card h3{
+      display:none;
     }
 
     .overlay-card.dark{
@@ -2941,7 +3257,7 @@
       }
 
       .book-team-cover-wrap{
-        min-height:220px;
+        min-height:180px;
       }
     }
 
@@ -3007,6 +3323,10 @@
         border-radius:22px;
       }
 
+      .section-modal-body{
+        padding:14px;
+      }
+
       .form-panel{
         padding:20px 16px 22px;
         border-radius:24px 24px 0 0;
@@ -3021,11 +3341,11 @@
       }
 
       .book-team-title{
-        font-size:24px;
+        font-size:22px;
       }
 
       .book-team-cover{
-        max-width:220px;
+        max-width:160px;
       }
 
       .form-drawer{
@@ -3049,6 +3369,11 @@
         bottom:12px !important;
         opacity:.5 !important;
       }
+
+      .map-preview,
+      .map-frame{
+        min-height:220px;
+      }
     }
   
 
@@ -3071,7 +3396,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.48 (patch-48)
+    v0.0.50 (patch-50)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -3114,15 +3439,15 @@
               AiDaCamp
             </div>
             <div class="hero-menu" id="serviceMenu">
-              <button class="menu-pill active" data-target="about">О лагере</button>
-              <button class="menu-pill" data-target="programs">Смены</button>
-              <button class="menu-pill" data-target="photos">Фото</button>
-              <button class="menu-pill" data-target="videos">Видео</button>
-              <button class="menu-pill" data-target="reviews">Отзывы</button>
-              <button class="menu-pill" data-target="faq">FAQ</button>
-              <button class="menu-pill" data-target="team">Команда</button>
-              <button class="menu-pill" data-target="stay">Размещение</button>
-              <button class="menu-pill" data-target="contacts">Контакты</button>
+              <button class="menu-pill active" type="button" data-nav="section-about">О лагере</button>
+              <button class="menu-pill" type="button" data-nav="section-programs">Смены</button>
+              <button class="menu-pill" type="button" data-nav="section-photos">Фото</button>
+              <button class="menu-pill" type="button" data-nav="section-videos">Видео</button>
+              <button class="menu-pill" type="button" data-nav="section-reviews">Отзывы</button>
+              <button class="menu-pill" type="button" data-nav="section-faq">FAQ</button>
+              <button class="menu-pill" type="button" data-nav="section-team">Команда</button>
+              <button class="menu-pill" type="button" data-nav="section-stay">Размещение</button>
+              <button class="menu-pill" type="button" data-nav="section-contacts">Контакты</button>
             </div>
           </div>
 
@@ -3188,10 +3513,10 @@
 
             <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
             <div class="cta-wrap" id="desktopCtaWrap">
-                <button class="cta-main" id="desktopStartBtn" data-action="primary-cta">Сначала выберите возраст</button>
+                <button class="cta-main" id="desktopStartBtn" data-action="primary-cta">Выберите возраст</button>
             </div>
-            <div class="under-cta" id="desktopBookingHint">Покажем актуальные условия, код бронирования и сохраним цену без предоплаты</div>
-            <div class="cta-subtext">Без оплаты • Ответим в течение 5 минут</div>
+            <div class="under-cta" id="desktopBookingHint">Без предоплаты. Мы сначала подтверждаем бронь вручную.</div>
+            <div class="booking-hint" id="desktopBookingHintInline" aria-live="polite"></div>
             <div class="trust-mini">
               <span>45 мест в смене</span>
               <span>IT + спорт</span>
@@ -3388,10 +3713,14 @@
             <div class="socials-grid" id="socialsGrid"></div>
             <div class="map-card">
               <div class="map-preview">
-                <div>
-                  <strong>Локация лагеря</strong>
-                  <span>Открыть карту в Яндекс Картах и посмотреть точку лагеря, маршрут и окружение.</span>
-                </div>
+                <iframe
+                  id="locationMapFrame"
+                  class="map-frame"
+                  src=""
+                  title="Карта расположения AiDaCamp"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
               </div>
               <div class="map-footer">
                 <div class="map-address">
@@ -3413,6 +3742,10 @@
               <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
               <a href="https://www.codims.ru/dokumentaciya-k-letnemu-it-lageryu-sosny" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a>
               <a href="https://www.codims.ru/dokumentaciya-k-letnemu-it-lageryu-sosny" target="_blank" rel="noopener noreferrer">Договор-оферта</a>
+              <div class="footer-legal-links">
+                <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
+                <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
+              </div>
             </div>
             <div>
               <h4>Разделы</h4>
@@ -3470,12 +3803,12 @@
           </div>
 
           <div class="mobile-hero-nav">
-            <a class="mini-nav-link" href="#section-about">О лагере</a>
-            <a class="mini-nav-link" href="#section-programs">Смены</a>
-            <a class="mini-nav-link" href="#section-photos">Фото</a>
-            <a class="mini-nav-link" href="#section-videos">Видео</a>
-            <a class="mini-nav-link" href="#section-reviews">Отзывы</a>
-            <a class="mini-nav-link" href="#section-faq">FAQ</a>
+            <button class="mini-nav-link" type="button" data-nav="section-about">О лагере</button>
+            <button class="mini-nav-link" type="button" data-nav="section-programs">Смены</button>
+            <button class="mini-nav-link" type="button" data-nav="section-photos">Фото</button>
+            <button class="mini-nav-link" type="button" data-nav="section-videos">Видео</button>
+            <button class="mini-nav-link" type="button" data-nav="section-reviews">Отзывы</button>
+            <button class="mini-nav-link" type="button" data-nav="section-faq">FAQ</button>
           </div>
 
           <div class="hero-content" style="max-width:100%;">
@@ -3533,9 +3866,10 @@
 
               <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
               <div class="cta-wrap" id="mobileCtaWrap">
-              <button class="cta-main" id="mobileStartBtn" data-action="primary-cta">Сначала выберите возраст</button>
+              <button class="cta-main" id="mobileStartBtn" data-action="primary-cta">Выберите возраст</button>
               </div>
               <div class="cta-subtext" id="mobileBookingHint">Без предоплаты • Ответим и подтвердим вручную</div>
+              <div class="booking-hint" id="mobileBookingHintInline" aria-live="polite"></div>
               <div class="trust-mini">
                 <span>45 мест в смене</span>
                 <span>IT + спорт</span>
@@ -3651,6 +3985,16 @@
     </div>
   </div>
 
+  <div class="overlay hidden" id="sectionModal">
+    <div class="overlay-card section-modal-card">
+      <div class="section-modal-head">
+        <h3 id="sectionModalTitle">Раздел</h3>
+        <button class="form-close" type="button" data-action="close-section-modal" aria-label="Закрыть">×</button>
+      </div>
+      <div class="section-modal-body" id="sectionModalBody"></div>
+    </div>
+  </div>
+
   <div class="media-lightbox hidden" id="mediaLightbox">
     <div class="media-stage" id="mediaStage">
       <button class="media-nav media-prev" id="mediaPrev">←</button>
@@ -3658,6 +4002,36 @@
       <button class="media-close" id="mediaClose">×</button>
       <div id="mediaContent"></div>
       <div class="media-caption" id="mediaCaption"></div>
+    </div>
+  </div>
+
+  <div id="videoModal" class="video-modal hidden">
+    <div class="video-inner" id="videoInner">
+      <iframe
+        id="videoFrame"
+        class="video-frame"
+        src=""
+        frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      ></iframe>
+      <div class="video-fallback hidden" id="videoFallback">
+        <strong>Видео недоступно для встраивания</strong>
+        <p>Откройте ролик в источнике, чтобы посмотреть его без ограничений.</p>
+        <a class="inline-link-btn primary" id="videoFallbackLink" href="#" target="_blank" rel="noopener noreferrer">Открыть видео</a>
+      </div>
+      <button class="video-close" type="button" data-action="close-video-modal" aria-label="Закрыть">✕</button>
+    </div>
+  </div>
+
+  <div id="calendarModal" class="calendar-modal hidden">
+    <div class="calendar-inner">
+      <div class="calendar-header">
+        <span id="calendarTitle"></span>
+        <button type="button" data-action="close-calendar" aria-label="Закрыть">✕</button>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
     </div>
   </div>
 
@@ -3674,17 +4048,18 @@
 <script id="ac-build-main-js">
 /* src/scripts/main.js */
     const shifts = [
-      {id:'shift-1',title:'1 смена',dates:'30 мая — 8 июня',price:79000,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
-      {id:'shift-2',title:'2 смена',dates:'10 июня — 16 июня',price:48000,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
-      {id:'shift-3',title:'3 смена',dates:'16 июня — 23 июня',price:65000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
-      {id:'shift-4',title:'4 смена',dates:'10 июня — 23 июня',price:95000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'}
+      {id:'shift-1',title:'1 смена',dates:'30 мая — 8 июня',start:'2025-05-30',end:'2025-06-08',price:79000,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
+      {id:'shift-2',title:'2 смена',dates:'10 июня — 16 июня',start:'2025-06-10',end:'2025-06-16',price:48000,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
+      {id:'shift-3',title:'3 смена',dates:'16 июня — 23 июня',start:'2025-06-16',end:'2025-06-23',price:65000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
+      {id:'shift-4',title:'4 смена',dates:'10 июня — 23 июня',start:'2025-06-10',end:'2025-06-23',price:95000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'}
     ];
 
     const mediaContent = {
       references: {
         yandexReviewsLabel: 'Отзывы на Яндекс Картах',
         yandexReviewsUrl: 'https://yandex.ru/maps/org/aydakemp/35558479035/reviews/',
-        locationMapUrl: 'https://yandex.ru/map-widget/v1/?ll=36.719422%2C55.261573&z=15&pt=36.719422,55.261573,pm2rdm',
+        locationMapUrl: 'https://yandex.ru/maps/-/CPR0vYMT',
+        locationMapEmbedUrl: 'https://yandex.ru/map-widget/v1/?ll=36.719422%2C55.261573&z=15&pt=36.719422,55.261573,pm2rdm',
         programmingBookUrl: 'https://www.codims.ru/python-book'
       },
       faq: [
@@ -3791,9 +4166,24 @@
         {cat:'sport',src:'https://static.tildacdn.com/tild6538-6438-4432-b737-313138346237/photo_2025-06-14_08-.jpg',alt:'sport'}
       ],
       videos: [
-        {title:'За неделю в лагере ребёнок меняется больше, чем за год дома',url:'https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/'},
-        {title:'Зачем детям копить деньги в лагере?',url:'https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/'},
-        {title:'Ребёнок сам откажется от телефона за 3 дня?',url:'https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/'}
+        {
+          title:'За неделю в лагере ребёнок меняется больше, чем за год дома',
+          url:'https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/',
+          cover:'/assets/video-covers/cover-week-change.jpg',
+          orientation:'vertical'
+        },
+        {
+          title:'Зачем детям копить деньги в лагере?',
+          url:'https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/',
+          cover:'/assets/video-covers/cover-money-why.jpg',
+          orientation:'vertical'
+        },
+        {
+          title:'Ребёнок сам откажется от телефона за 3 дня?',
+          url:'https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/',
+          cover:'/assets/video-covers/cover-phone-3days.jpg',
+          orientation:'vertical'
+        }
       ],
       contacts: [
         {label:'city_phone',href:'tel:+74951234567',text:'+7 (495) 123-45-67'},
@@ -3865,6 +4255,17 @@
 
     const METRIKA_ID = 96499295;
     const DEBUG_UI = false;
+    const COMPACT_MODAL_SECTIONS = new Set([
+      'section-about',
+      'section-programs',
+      'section-photos',
+      'section-videos',
+      'section-reviews',
+      'section-faq',
+      'section-team',
+      'section-stay',
+      'section-contacts'
+    ]);
     let timerId = null;
     let mediaIndex = 0;
     let mediaType = 'photo';
@@ -3996,6 +4397,7 @@
     }
 
     function openMedia(type, index){
+      closeTransientModals('media');
       mediaType = type;
       mediaIndex = index;
       if(type === 'photo'){
@@ -4022,24 +4424,201 @@
       document.getElementById('mediaContent').innerHTML = '';
     }
 
-    function getVideoEmbedUrl(url){
-      try {
-        const u = new URL(url, window.location.origin);
-        if(!u.hostname.includes('rutube.ru')) return url;
+    function closeTransientModals(except = ''){
+      if(except !== 'section'){
+        document.getElementById('sectionModal')?.classList.add('hidden');
+      }
+      if(except !== 'media'){
+        document.getElementById('mediaLightbox')?.classList.add('hidden');
+      }
+      if(except !== 'video'){
+        const iframe = document.getElementById('videoFrame');
+        const inner = document.getElementById('videoInner');
+        const fallback = document.getElementById('videoFallback');
+        if(iframe){
+          iframe.src = '';
+          iframe.classList.remove('vertical');
+          iframe.classList.remove('hidden');
+        }
+        if(inner){
+          inner.classList.remove('vertical');
+        }
+        if(fallback){
+          fallback.classList.add('hidden');
+        }
+        document.getElementById('videoModal')?.classList.add('hidden');
+      }
+      if(except !== 'calendar'){
+        document.getElementById('calendarModal')?.classList.add('hidden');
+      }
+    }
 
+    function openVideo(url){
+      const modal = document.getElementById('videoModal');
+      const iframe = document.getElementById('videoFrame');
+      const inner = document.getElementById('videoInner');
+      const fallback = document.getElementById('videoFallback');
+      const fallbackLink = document.getElementById('videoFallbackLink');
+      if(!modal || !iframe || !inner || !fallback || !fallbackLink || !url) return;
+
+      closeTransientModals('video');
+      const source = resolveVideoSource(url);
+      const isVertical = source.orientation === 'vertical';
+      inner.classList.toggle('vertical', isVertical);
+      iframe.classList.toggle('vertical', isVertical);
+
+      if(source.canEmbed){
+        iframe.classList.remove('hidden');
+        fallback.classList.add('hidden');
+        iframe.src = source.embedUrl;
+      } else {
+        iframe.src = '';
+        iframe.classList.add('hidden');
+        fallback.classList.remove('hidden');
+        fallbackLink.href = source.externalUrl;
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeVideo(){
+      const modal = document.getElementById('videoModal');
+      const iframe = document.getElementById('videoFrame');
+      const inner = document.getElementById('videoInner');
+      const fallback = document.getElementById('videoFallback');
+      if(!modal || !iframe || !inner || !fallback) return;
+
+      iframe.src = '';
+      inner.classList.remove('vertical');
+      iframe.classList.remove('vertical');
+      iframe.classList.remove('hidden');
+      fallback.classList.add('hidden');
+      modal.classList.add('hidden');
+    }
+
+    function resolveVideoSource(url){
+      const externalUrl = String(url || '').trim();
+      const fallback = {
+        canEmbed: false,
+        embedUrl: '',
+        externalUrl,
+        orientation: isVerticalVideoUrl(externalUrl) ? 'vertical' : 'horizontal'
+      };
+      if(!externalUrl) return fallback;
+      try {
+        const u = new URL(externalUrl, window.location.origin);
+        const host = (u.hostname || '').replace(/^www\./, '');
         const parts = u.pathname.split('/').filter(Boolean);
-        if(parts[0] === 'play' && parts[1] === 'embed' && parts[2]){
-          return `https://rutube.ru/play/embed/${parts[2]}`;
+
+        if(host.includes('rutube.ru')){
+          if(parts[0] === 'play' && parts[1] === 'embed' && parts[2]){
+            return {
+              canEmbed: true,
+              embedUrl: `https://rutube.ru/play/embed/${parts[2]}`,
+              externalUrl,
+              orientation: fallback.orientation
+            };
+          }
+          if(parts[0] === 'shorts' && parts[1]){
+            return {
+              canEmbed: true,
+              embedUrl: `https://rutube.ru/play/embed/${parts[1]}`,
+              externalUrl,
+              orientation: 'vertical'
+            };
+          }
+          if(parts[0] === 'video' && parts[1]){
+            return {
+              canEmbed: true,
+              embedUrl: `https://rutube.ru/play/embed/${parts[1]}`,
+              externalUrl,
+              orientation: 'horizontal'
+            };
+          }
         }
-        if(parts[0] === 'shorts' && parts[1]){
-          return `https://rutube.ru/play/embed/${parts[1]}`;
+
+        if(host === 'youtu.be' && parts[0]){
+          return {
+            canEmbed: true,
+            embedUrl: `https://www.youtube.com/embed/${parts[0]}`,
+            externalUrl,
+            orientation: fallback.orientation
+          };
         }
-        if(parts[0] === 'video' && parts[1]){
-          return `https://rutube.ru/play/embed/${parts[1]}`;
+
+        if(host.includes('youtube.com')){
+          if(parts[0] === 'watch' && u.searchParams.get('v')){
+            return {
+              canEmbed: true,
+              embedUrl: `https://www.youtube.com/embed/${u.searchParams.get('v')}`,
+              externalUrl,
+              orientation: 'horizontal'
+            };
+          }
+          if(parts[0] === 'shorts' && parts[1]){
+            return {
+              canEmbed: true,
+              embedUrl: `https://www.youtube.com/embed/${parts[1]}`,
+              externalUrl,
+              orientation: 'vertical'
+            };
+          }
+          if(parts[0] === 'embed' && parts[1]){
+            return {
+              canEmbed: true,
+              embedUrl: externalUrl,
+              externalUrl,
+              orientation: fallback.orientation
+            };
+          }
+        }
+
+        if(parts[0] === 'embed'){
+          return {
+            canEmbed: true,
+            embedUrl: externalUrl,
+            externalUrl,
+            orientation: fallback.orientation
+          };
         }
       } catch(e){
       }
-      return url;
+      return fallback;
+    }
+
+    function isVerticalVideoUrl(url){
+      const value = String(url || '').toLowerCase();
+      return (
+        value.includes('/shorts/') ||
+        value.includes('shortvideo') ||
+        value.includes('/reel') ||
+        value.includes('vertical') ||
+        value.includes('story')
+      );
+    }
+
+    function closeSectionModal(){
+      document.getElementById('sectionModal')?.classList.add('hidden');
+    }
+
+    function openSectionModal(sectionId){
+      const modal = document.getElementById('sectionModal');
+      const titleEl = document.getElementById('sectionModalTitle');
+      const bodyEl = document.getElementById('sectionModalBody');
+      const sourceSection = document.getElementById(sectionId);
+      if(!modal || !titleEl || !bodyEl || !sourceSection) return false;
+      closeTransientModals('section');
+
+      const sourceTitle = sourceSection.querySelector('h3')?.textContent?.trim() || 'Раздел';
+      titleEl.textContent = sourceTitle;
+
+      const clone = sourceSection.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+
+      bodyEl.innerHTML = '';
+      bodyEl.appendChild(clone);
+      modal.classList.remove('hidden');
+      return true;
     }
 
     function renderMediaViewer(){
@@ -4056,11 +4635,22 @@
 
       if(mediaType === 'video'){
         const item = mediaContent.videos[mediaIndex];
-        const embedUrl = getVideoEmbedUrl(item.url);
+        const source = resolveVideoSource(item.url);
+        if(!source.canEmbed){
+          content.innerHTML = `
+            <div class="video-fallback">
+              <strong>Видео доступно во внешнем источнике</strong>
+              <p>Откройте ролик в отдельной вкладке, если встраивание недоступно.</p>
+              <a class="inline-link-btn primary" href="${source.externalUrl}" target="_blank" rel="noopener noreferrer">Открыть видео</a>
+            </div>
+          `;
+          caption.textContent = `${mediaIndex + 1}/${mediaContent.videos.length}`;
+          return;
+        }
         content.innerHTML = `
           <iframe
             class="media-video"
-            src="${embedUrl}"
+            src="${source.embedUrl}"
             frameborder="0"
             allow="autoplay; fullscreen; picture-in-picture"
             referrerpolicy="strict-origin-when-cross-origin"
@@ -4099,8 +4689,20 @@
       }
 
       if(action === 'open-video'){
+        const directUrl = actionEl.dataset.video || '';
+        if(directUrl){
+          openVideo(directUrl);
+          return true;
+        }
         const index = Number(actionEl.dataset.videoIndex || 0);
-        openMedia('video', index);
+        const item = mediaContent.videos[index];
+        if(item?.url) openVideo(item.url);
+        return true;
+      }
+
+      if(action === 'open-calendar'){
+        const shiftId = actionEl.dataset.shiftId || '';
+        if(shiftId) openCalendar(shiftId);
         return true;
       }
 
@@ -4148,7 +4750,17 @@
       }
 
       if(action === 'close-calendar'){
-        document.getElementById('calendarOverlay')?.classList.add('hidden');
+        closeCalendar();
+        return true;
+      }
+
+      if(action === 'close-section-modal'){
+        closeSectionModal();
+        return true;
+      }
+
+      if(action === 'close-video-modal'){
+        closeVideo();
         return true;
       }
 
@@ -4332,48 +4944,24 @@
       const shift = getSelectedShift();
       if(!hasSelectedAge()){
         return {
-          text:'Сначала выберите возраст',
+          text:'Выберите возраст',
           disabled:true,
-          hint:'Первый шаг — выбрать возраст ребёнка'
+          hint:'Без предоплаты. Мы сначала подтверждаем бронь вручную.'
         };
       }
 
       if(!shift){
         return {
-          text:'Сначала выберите смену',
+          text:'Выберите смену',
           disabled:true,
-          hint:'Теперь выберите подходящую смену'
-        };
-      }
-
-      if(state.offerStage === 0){
-        return {
-          text:'Проверить условия и цену',
-          disabled:false,
-          hint:'Покажем лучшую доступную цену и сохраним код бронирования'
-        };
-      }
-
-      if(state.offerStage === 1 && isOfferActive()){
-        return {
-          text:'Улучшить условия ещё раз',
-          disabled:false,
-          hint:'Можно попробовать получить ещё более выгодную цену'
-        };
-      }
-
-      if(state.offerStage >= 1){
-        return {
-          text:'Оформить заявку',
-          disabled:false,
-          hint:'Цена и код бронирования уже сохранены'
+          hint:'Без предоплаты. Мы сначала подтверждаем бронь вручную.'
         };
       }
 
       return {
         text:'Оформить заявку',
         disabled:false,
-        hint:'Продолжить оформление'
+        hint:'Без предоплаты. Мы сначала подтверждаем бронь вручную.'
       };
     }
 
@@ -4494,6 +5082,40 @@
       });
     }
 
+    function showHint(message, requiredStep = ''){
+      ['desktop', 'mobile'].forEach((prefix) => {
+        const el = document.getElementById(`${prefix}BookingHintInline`);
+        if(!el) return;
+        el.textContent = message;
+        if(requiredStep){
+          el.dataset.requiredStep = requiredStep;
+        } else {
+          delete el.dataset.requiredStep;
+        }
+        el.classList.add('visible');
+      });
+    }
+
+    function syncBookingHints(){
+      ['desktop', 'mobile'].forEach((prefix) => {
+        const el = document.getElementById(`${prefix}BookingHintInline`);
+        if(!el) return;
+        const requiredStep = el.dataset.requiredStep || '';
+        if(!requiredStep) return;
+
+        const resolved = (
+          (requiredStep === 'age' && hasSelectedAge()) ||
+          (requiredStep === 'shift' && !!state.shiftId)
+        );
+
+        if(resolved){
+          el.classList.remove('visible');
+          el.textContent = '';
+          delete el.dataset.requiredStep;
+        }
+      });
+    }
+
     function formatRemaining(diff){
       if(diff <= 0) return '';
       const h = Math.floor(diff / (1000 * 60 * 60));
@@ -4572,6 +5194,7 @@
       renderSteps('mobileBookingSteps');
       renderGuidedState('desktop');
       renderGuidedState('mobile');
+      syncBookingHints();
     }
 
     function switchView(view){
@@ -4581,6 +5204,9 @@
       document.getElementById('desktopView').classList.toggle('hidden', view !== 'desktop');
       document.getElementById('mobileView').classList.toggle('hidden', view !== 'mobile');
       document.getElementById('desktopModeWrap').classList.toggle('hidden', view !== 'desktop');
+      if(view !== 'desktop'){
+        closeSectionModal();
+      }
       persist();
       requestAnimationFrame(() => {
         window.dispatchEvent(new Event('resize'));
@@ -4600,6 +5226,9 @@
     function switchDesktopMode(mode){
       state.desktopMode = mode;
       applyDesktopMode();
+      if(mode !== 'compact'){
+        closeSectionModal();
+      }
       persist();
     }
 
@@ -4627,22 +5256,26 @@
     document.getElementById('mobileFullModeBtn').addEventListener('click', () => switchMobileMode('full'));
     document.getElementById('mobileCompactModeBtn').addEventListener('click', () => switchMobileMode('compact'));
 
-    const photoFiltersEl = document.getElementById('photoFilters');
-    if (photoFiltersEl) {
-      photoFiltersEl.querySelectorAll('[data-photo-filter]').forEach(btn => {
-        btn.addEventListener('click', () => setPhotoFilter(btn.dataset.photoFilter));
-      });
-    }
-
-    const faqFiltersEl = document.getElementById('faqFilters');
-    if (faqFiltersEl) {
-      faqFiltersEl.querySelectorAll('[data-faq-filter]').forEach(btn => {
-        btn.addEventListener('click', () => setFaqFilter(btn.dataset.faqFilter));
-      });
-    }
-
     document.addEventListener('click', (e) => {
       if(handleDataActionClick(e.target)){
+        return;
+      }
+
+      const photoFilterBtn = e.target.closest('[data-photo-filter]');
+      if(photoFilterBtn){
+        setPhotoFilter(photoFilterBtn.dataset.photoFilter);
+        if(state.view === 'desktop' && state.desktopMode === 'compact'){
+          openSectionModal('section-photos');
+        }
+        return;
+      }
+
+      const faqFilterBtn = e.target.closest('[data-faq-filter]');
+      if(faqFilterBtn){
+        setFaqFilter(faqFilterBtn.dataset.faqFilter);
+        if(state.view === 'desktop' && state.desktopMode === 'compact'){
+          openSectionModal('section-faq');
+        }
         return;
       }
 
@@ -4669,18 +5302,35 @@
     });
 
     document.addEventListener('click', (e) => {
+      const videoCard = e.target.closest('[data-video]');
+      if(videoCard){
+        const url = videoCard.dataset.video || '';
+        if(url){
+          if(videoCard.tagName === 'A') e.preventDefault();
+          openVideo(url);
+          return;
+        }
+      }
+
       const shiftDisabled = e.target.closest('#desktopShiftList.disabled, #mobileShiftList.disabled');
       if(shiftDisabled){
+        showHint('Сначала выберите возраст ребёнка', 'age');
         nudgeUserToNextStep('Сначала выберите возраст ребёнка — тогда откроется список смен.');
       }
 
       const shiftVeil = e.target.closest('.shift-list-veil');
       if(shiftVeil){
+        showHint('Сначала выберите возраст ребёнка', 'age');
         nudgeUserToNextStep('Сначала выберите возраст ребёнка — после этого откроются смены.');
       }
 
       const ctaBtn = e.target.closest('#desktopStartBtn, #mobileStartBtn');
       if(ctaBtn && ctaBtn.disabled){
+        if(!hasSelectedAge()){
+          showHint('Выберите возраст ребёнка', 'age');
+        } else if(!state.shiftId){
+          showHint('Выберите подходящую смену', 'shift');
+        }
         nudgeUserToNextStep();
       }
 
@@ -4733,6 +5383,78 @@
         'shift-6':'10 дней'
       };
       return map[shift.id] || '';
+    }
+
+    function parseShiftDate(dateStr){
+      const m = String(dateStr || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!m) return null;
+      return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    }
+
+    function renderCalendar(shift){
+      const grid = document.getElementById('calendarGrid');
+      const title = document.getElementById('calendarTitle');
+      if(!grid || !title || !shift) return;
+
+      const start = parseShiftDate(shift.start);
+      const end = parseShiftDate(shift.end);
+      if(!start || !end) return;
+
+      const ruWeek = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+      const ruMonth = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+
+      title.textContent = `${shift.title}: ${start.toLocaleDateString('ru-RU')} — ${end.toLocaleDateString('ru-RU')}`;
+
+      const firstMonth = new Date(start.getFullYear(), start.getMonth(), 1);
+      const lastMonth = new Date(end.getFullYear(), end.getMonth(), 1);
+      const cursor = new Date(firstMonth);
+      let html = '';
+
+      while(cursor <= lastMonth){
+        const year = cursor.getFullYear();
+        const month = cursor.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const leading = firstDay.getDay();
+
+        html += `
+          <div class="calendar-month">
+            <div class="calendar-month-title">${ruMonth[month]} ${year}</div>
+            <div class="calendar-month-grid">
+        `;
+
+        for(let i = 0; i < leading; i += 1){
+          html += '<div class="calendar-day empty"></div>';
+        }
+
+        for(let day = 1; day <= daysInMonth; day += 1){
+          const d = new Date(year, month, day);
+          const isInRange = d >= start && d <= end;
+          html += `
+            <div class="calendar-day ${isInRange ? 'active' : ''}">
+              <span>${day}</span>
+              <small>${ruWeek[d.getDay()]}</small>
+            </div>
+          `;
+        }
+
+        html += '</div></div>';
+        cursor.setMonth(cursor.getMonth() + 1);
+      }
+
+      grid.innerHTML = html;
+    }
+
+    function openCalendar(shiftId){
+      const shift = shifts.find(s => s.id === shiftId);
+      if(!shift) return;
+      closeTransientModals('calendar');
+      renderCalendar(shift);
+      document.getElementById('calendarModal')?.classList.remove('hidden');
+    }
+
+    function closeCalendar(){
+      document.getElementById('calendarModal')?.classList.add('hidden');
     }
 
     function selectedShiftPayload(){
@@ -4860,6 +5582,7 @@
       box.querySelectorAll('.shift-option').forEach(el => {
         el.addEventListener('click', () => {
           if(!hasSelectedAge()){
+            showHint('Сначала выберите возраст ребёнка', 'age');
             nudgeUserToNextStep('Сначала выберите возраст ребёнка — тогда откроется список смен.');
             return;
           }
@@ -4876,7 +5599,10 @@
           <h4>${s.title}</h4>
           <div class="price-row">
             <strong>${formatPrice(s.price)}</strong>
-            <span>${s.dates} · ${shiftDaysLabel(s)}</span>
+            <span>
+              ${s.dates} · ${shiftDaysLabel(s)}
+              <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">📅</button>
+            </span>
           </div>
           <p>${s.desc}</p>
           <div class="shift-context-line">${getShiftContextLine(s)}</div>
@@ -4918,6 +5644,7 @@
       const yandexReviewsBtn = document.getElementById('yandexReviewsBtn');
       const reviewsGrid = document.getElementById('reviewsGrid');
       const locationMapBtn = document.getElementById('locationMapBtn');
+      const locationMapFrame = document.getElementById('locationMapFrame');
 
       if (photoGrid) {
         let filteredPhotos = [];
@@ -4953,8 +5680,9 @@
 
       if (videoList) {
         videoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <div class="video-card" data-action="open-video" data-video-index="${idx}">
+          <div class="video-card" data-video="${item.url}">
             <div class="video-poster">
+              <img src="${item.cover || ''}" alt="${item.title}">
               <div class="video-play"><span>▶</span></div>
             </div>
             <h4>${item.title}</h4>
@@ -4966,8 +5694,21 @@
       const mainVideoBtn = document.getElementById('mainVideoBtn');
       const mainVideoBox = document.getElementById('mainVideoBox');
       if (mediaContent.videos[0]) {
-        if (mainVideoBtn) mainVideoBtn.href = mediaContent.videos[0].url;
-        if (mainVideoBox) mainVideoBox.href = mediaContent.videos[0].url;
+        if (mainVideoBtn) {
+          mainVideoBtn.href = mediaContent.videos[0].url;
+          mainVideoBtn.dataset.video = mediaContent.videos[0].url;
+        }
+        if (mainVideoBox) {
+          mainVideoBox.href = mediaContent.videos[0].url;
+          mainVideoBox.dataset.video = mediaContent.videos[0].url;
+          const mainCover = mediaContent.videos[0].cover || '';
+          if(mainCover){
+            mainVideoBox.innerHTML = `
+              <img src="${mainCover}" alt="${mediaContent.videos[0].title}">
+              <div class="video-play"><span>▶</span></div>
+            `;
+          }
+        }
       }
 
       if (bookLinkBtn) bookLinkBtn.href = mediaContent.references.programmingBookUrl;
@@ -4978,7 +5719,11 @@
       }
 
       if (locationMapBtn) {
-        locationMapBtn.href = 'https://yandex.ru/maps/-/CPR0vYMT';
+        locationMapBtn.href = mediaContent.references.locationMapUrl;
+      }
+
+      if (locationMapFrame) {
+        locationMapFrame.src = mediaContent.references.locationMapEmbedUrl || '';
       }
 
       if(reviewsGrid){
@@ -5115,7 +5860,7 @@
 
       if (mobileInlineVideoList) {
         mobileInlineVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <button class="compact-panel-video-card" type="button" data-action="open-video" data-video-index="${idx}">
+          <button class="compact-panel-video-card" type="button" data-video="${item.url}">
             <h4>${item.title}</h4>
             <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
             <span class="compact-panel-link">Смотреть видео</span>
@@ -5156,15 +5901,22 @@
     }
 
     function handlePrimaryCTA(){
+      if(!hasSelectedAge()){
+        showHint('Выберите возраст ребёнка', 'age');
+        nudgeUserToNextStep('Сначала выберите возраст ребёнка');
+        return;
+      }
+
+      if(!state.shiftId){
+        showHint('Выберите подходящую смену', 'shift');
+        nudgeUserToNextStep('Теперь выберите подходящую смену');
+        return;
+      }
+
       const action = getPrimaryActionState();
       if(action.disabled) return;
 
       if(state.offerStage === 0){
-        runOfferSearch();
-        return;
-      }
-
-      if(state.offerStage === 1 && isOfferActive()){
         runOfferSearch();
         return;
       }
@@ -5483,76 +6235,83 @@
       }
     }
 
-    function scrollToSection(target){
-      const desktopMap = {
-        about:'section-about',
-        programs:'section-programs',
-        photos:'section-photos',
-        videos:'section-videos',
-        reviews:'section-reviews',
-        faq:'section-faq',
-        team:'section-team',
-        stay:'section-stay',
-        contacts:'section-contacts'
-      };
+    function scrollToSection(id){
+      const cleanId = String(id || '').replace(/^#/, '');
+      if(!cleanId) return false;
 
       const mobileMap = {
-        about:'mobile-section-about',
-        programs:'mobile-section-programs',
-        photos:'mobile-section-photos',
-        videos:'mobile-section-videos',
-        reviews:'mobile-section-reviews',
-        faq:'mobile-section-faq',
-        team:'mobile-section-about',
-        stay:'mobile-section-about',
-        contacts:'mobile-section-about'
+        'section-about':'mobile-section-about',
+        'section-programs':'mobile-section-programs',
+        'section-photos':'mobile-section-photos',
+        'section-videos':'mobile-section-videos',
+        'section-reviews':'mobile-section-reviews',
+        'section-faq':'mobile-section-faq',
+        'section-team':'mobile-section-about',
+        'section-stay':'mobile-section-about',
+        'section-contacts':'mobile-section-about'
       };
 
-      if(
-        state.view === 'mobile' &&
-        state.mobileMode === 'compact' &&
-        ['about','photos','videos','reviews','faq','team','stay','contacts'].includes(target)
-      ){
+      const targetId = state.view === 'mobile'
+        ? (mobileMap[cleanId] || cleanId)
+        : cleanId;
+      const el = document.getElementById(targetId) || document.getElementById(cleanId);
+      if(!el) return false;
+
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+      return true;
+    }
+
+    function navigateToSection(id){
+      const cleanId = String(id || '').replace(/^#/, '');
+      if(!cleanId) return;
+
+      if(state.view === 'mobile' && state.mobileMode === 'compact'){
         switchMobileMode('full');
-        window.setTimeout(() => scrollToSection(target), 40);
+        window.setTimeout(() => {
+          scrollToSection(cleanId);
+        }, 50);
         return;
       }
 
-      const id = state.view === 'mobile'
-        ? (mobileMap[target] || desktopMap[target])
-        : desktopMap[target];
-      const el = document.getElementById(id);
-      if(el){
-        el.scrollIntoView({behavior:'smooth', block:'start'});
+      if(state.view === 'desktop' && state.desktopMode === 'compact'){
+        if(COMPACT_MODAL_SECTIONS.has(cleanId)){
+          openSectionModal(cleanId);
+          return;
+        }
+
+        switchDesktopMode('full');
+        window.setTimeout(() => {
+          scrollToSection(cleanId);
+        }, 50);
+        return;
       }
+
+      scrollToSection(cleanId);
     }
 
-    document.querySelectorAll('#serviceMenu [data-target]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#serviceMenu [data-target]').forEach(x => x.classList.remove('active'));
-        btn.classList.add('active');
-        scrollToSection(btn.dataset.target);
-      });
+    document.addEventListener('click', (e) => {
+      const navEl = e.target.closest('[data-nav]');
+      if(!navEl) return;
+
+      e.preventDefault();
+      const target = navEl.dataset.nav;
+      if(!target) return;
+
+      if(navEl.closest('#serviceMenu')){
+        document.querySelectorAll('#serviceMenu [data-nav]').forEach(x => x.classList.remove('active'));
+        navEl.classList.add('active');
+      }
+
+      navigateToSection(target);
     });
 
     document.addEventListener('click', (e) => {
       const anchor = e.target.closest('a[href^="#section-"]');
       if(!anchor) return;
       const href = anchor.getAttribute('href');
-      const target = {
-        '#section-about':'about',
-        '#section-programs':'programs',
-        '#section-photos':'photos',
-        '#section-videos':'videos',
-        '#section-reviews':'reviews',
-        '#section-faq':'faq',
-        '#section-team':'team',
-        '#section-stay':'stay',
-        '#section-contacts':'contacts'
-      }[href];
-      if(!target) return;
+      if(!href) return;
       e.preventDefault();
-      scrollToSection(target);
+      navigateToSection(href);
     });
 
     const parentPhoneInput = document.getElementById('parentPhone');
@@ -5605,11 +6364,50 @@
       if(e.target.id === 'mediaLightbox') closeMedia();
     });
 
+    const videoModal = document.getElementById('videoModal');
+    if(videoModal){
+      videoModal.addEventListener('click', (e) => {
+        if(e.target.id === 'videoModal') closeVideo();
+      });
+    }
+
+    const calendarModal = document.getElementById('calendarModal');
+    if(calendarModal){
+      calendarModal.addEventListener('click', (e) => {
+        if(e.target.id === 'calendarModal') closeCalendar();
+      });
+    }
+
+    const sectionModal = document.getElementById('sectionModal');
+    if(sectionModal){
+      sectionModal.addEventListener('click', (e) => {
+        if(e.target.id === 'sectionModal') closeSectionModal();
+      });
+    }
+
     document.addEventListener('keydown', (e) => {
       if(document.getElementById('mediaLightbox').classList.contains('hidden')) return;
       if(e.key === 'Escape') closeMedia();
       if(e.key === 'ArrowRight') nextMedia();
       if(e.key === 'ArrowLeft') prevMedia();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('videoModal');
+      if(!modal || modal.classList.contains('hidden')) return;
+      if(e.key === 'Escape') closeVideo();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('calendarModal');
+      if(!modal || modal.classList.contains('hidden')) return;
+      if(e.key === 'Escape') closeCalendar();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('sectionModal');
+      if(!modal || modal.classList.contains('hidden')) return;
+      if(e.key === 'Escape') closeSectionModal();
     });
 
     initHero();
