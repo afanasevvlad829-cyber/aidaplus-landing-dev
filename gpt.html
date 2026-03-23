@@ -124,6 +124,30 @@
       background:linear-gradient(135deg,var(--accent),var(--accent-2));
       color:#fff;
     }
+
+    .debug-tools{
+      display:flex;
+      justify-content:center;
+      margin:-8px 0 14px;
+    }
+
+    .debug-reset-btn{
+      border:1px dashed #f2b275;
+      border-radius:999px;
+      padding:8px 14px;
+      background:#fff8ef;
+      color:#a24d00;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .debug-reset-btn:hover{
+      transform:translateY(-1px);
+      border-color:#e89c53;
+      box-shadow:0 10px 18px rgba(162,77,0,.10);
+    }
     .switch-btn{
       border:none;
       border-radius:999px;
@@ -161,7 +185,7 @@
     }
 
     .compact-mode .hero-shell{
-      min-height:600px;
+      min-height:560px;
     }
 
     .mobile-compact-mode .mobile-body-sections{
@@ -312,8 +336,8 @@
       grid-template-columns:minmax(0, 1fr) 356px;
       column-gap:24px;
       align-items:start;
-      padding:22px 22px 14px;
-      min-height:620px;
+      padding:22px 22px 8px;
+      min-height:560px;
       background:
         linear-gradient(180deg, rgba(11,16,24,.20) 0%, rgba(11,16,24,.74) 100%),
         radial-gradient(circle at 18% 18%, rgba(255,138,0,.18), transparent 28%),
@@ -383,7 +407,7 @@
       align-items:center;
       justify-content:space-between;
       gap:12px;
-      margin-bottom:30px;
+      margin-bottom:22px;
       position:relative;
       z-index:6;
       grid-column:1 / -1;
@@ -462,6 +486,7 @@
       position:relative;
       z-index:3;
       padding-right:0;
+      padding-bottom:4px;
       min-width:0;
     }
     .hero-tag{
@@ -597,7 +622,7 @@
       max-width:356px;
       margin-left:auto;
       margin-top:0;
-      margin-bottom:-38px;
+      margin-bottom:-20px;
       padding:20px;
       border-radius:26px;
       background:rgba(12,17,24,.76);
@@ -608,10 +633,10 @@
       transition:transform .2s ease, box-shadow .2s ease;
       z-index:3;
       box-sizing:border-box;
-      transform:translateY(-18px);
+      transform:translateY(-8px);
     }
     .hero-booking-card:hover{
-      transform:translateY(-20px);
+      transform:translateY(-10px);
       box-shadow:0 28px 76px rgba(0,0,0,.36);
     }
 
@@ -885,6 +910,18 @@
       font-size:12px;
       line-height:1.5;
       cursor:pointer;
+    }
+
+    .shift-calendar-discovery{
+      margin:6px 0 14px;
+      color:rgba(255,255,255,.68);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .shift-calendar-discovery strong{
+      color:#fff;
+      font-weight:800;
     }
 
     .shift-list.disabled + .shift-list-veil{
@@ -1307,7 +1344,6 @@
     }
 
     .shift-calendar-btn{
-      width:30px;
       height:30px;
       border-radius:9px;
       border:1px solid var(--line);
@@ -1316,7 +1352,10 @@
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      font-size:15px;
+      gap:4px;
+      padding:0 8px;
+      font-size:12px;
+      font-weight:700;
       line-height:1;
       flex:0 0 auto;
       transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
@@ -1569,7 +1608,7 @@
     }
 
     .video-inner{
-      width:min(92vw, 900px);
+      width:min(92vw, 920px);
       margin:auto;
       position:relative;
       border-radius:18px;
@@ -1579,13 +1618,13 @@
     }
 
     .video-inner.vertical{
-      width:min(92vw, 430px);
+      width:min(92vw, 390px);
       border-radius:22px;
     }
 
     .video-frame{
       width:100%;
-      max-height:80vh;
+      max-height:78vh;
       display:block;
       aspect-ratio:16/9;
       background:#000;
@@ -1593,7 +1632,7 @@
 
     .video-frame.vertical{
       aspect-ratio:9/16;
-      max-height:84vh;
+      max-height:82vh;
     }
 
     .video-close{
@@ -2754,6 +2793,20 @@
       gap:2px;
     }
 
+    .footer-org-meta{
+      margin-top:8px;
+      display:grid;
+      gap:2px;
+      padding-top:8px;
+      border-top:1px dashed #e1e7f0;
+    }
+
+    .footer-org-meta div{
+      line-height:1.55;
+      font-size:12px;
+      color:#6d7586;
+    }
+
     .overlay{
       position:fixed;
       inset:0;
@@ -2784,6 +2837,32 @@
       display:flex;
       flex-direction:column;
       background:#f4f7fb;
+    }
+
+    .overlay.section-modal-compact{
+      align-items:flex-start;
+      justify-content:flex-start;
+      padding:88px 0 0 24px;
+      background:linear-gradient(90deg, rgba(9,14,22,.52) 0%, rgba(9,14,22,.40) 56%, rgba(9,14,22,0) 58%);
+    }
+
+    .overlay.section-modal-compact .section-modal-card{
+      width:min(60vw, 760px);
+      max-height:min(74vh, 680px);
+      border-radius:20px;
+      box-shadow:0 20px 56px rgba(7,12,20,.30);
+    }
+
+    .overlay.section-modal-compact .section-modal-head{
+      padding:14px 16px;
+    }
+
+    .overlay.section-modal-compact .section-modal-head h3{
+      font-size:20px;
+    }
+
+    .overlay.section-modal-compact .section-modal-body{
+      padding:14px;
     }
 
     .section-modal-head{
@@ -2841,6 +2920,100 @@
 
     .overlay-card.dark p{
       color:rgba(255,255,255,.72);
+    }
+
+    .mobile-faq-list,
+    .mobile-team-list,
+    .mobile-stay-list,
+    .mobile-contacts-list{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .mobile-faq-card,
+    .mobile-team-card,
+    .mobile-stay-card,
+    .mobile-contact-card{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      padding:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .mobile-faq-card strong,
+    .mobile-team-card strong,
+    .mobile-stay-card strong,
+    .mobile-contact-card strong{
+      display:block;
+      margin:0 0 6px;
+      font-size:14px;
+      line-height:1.45;
+      color:#111827;
+    }
+
+    .mobile-faq-card span,
+    .mobile-team-card span,
+    .mobile-stay-card span,
+    .mobile-contact-card span{
+      display:block;
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .mobile-team-card{
+      display:grid;
+      grid-template-columns:56px 1fr;
+      gap:10px;
+      align-items:start;
+    }
+
+    .mobile-team-avatar{
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#f3f6fb;
+    }
+
+    .mobile-team-avatar img{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+    }
+
+    .mobile-stay-card{
+      display:grid;
+      grid-template-columns:84px 1fr;
+      gap:10px;
+      align-items:start;
+    }
+
+    .mobile-stay-thumb{
+      width:84px;
+      height:70px;
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#f3f6fb;
+    }
+
+    .mobile-stay-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .mobile-contact-card a{
+      color:#111827;
+      text-decoration:none;
+      font-weight:700;
     }
 
     .big-price{
@@ -3265,6 +3438,16 @@
       .book-team-card{
         grid-row:auto;
       }
+
+      .overlay.section-modal-compact{
+        padding:18px 12px;
+        background:rgba(9,14,22,.64);
+      }
+
+      .overlay.section-modal-compact .section-modal-card{
+        width:min(100%, 980px);
+        max-height:min(90vh, 920px);
+      }
     }
 
     @media (max-width: 820px){
@@ -3318,6 +3501,22 @@
 
       .compact-mobile-hidden{
         display:block;
+      }
+
+      .mobile-hero-nav{
+        flex-wrap:nowrap;
+        overflow-x:auto;
+        padding-bottom:4px;
+        -webkit-overflow-scrolling:touch;
+        scrollbar-width:none;
+      }
+
+      .mobile-hero-nav::-webkit-scrollbar{
+        display:none;
+      }
+
+      .mobile-hero-nav .mini-nav-link{
+        white-space:nowrap;
       }
 
       .overlay{
@@ -3402,7 +3601,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.51 (patch-51-display)
+    v0.0.52 (patch-52-standard-fixes)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -3418,6 +3617,9 @@
         <button class="mode-btn active" id="fullModeBtn">Полная версия</button>
         <button class="mode-btn" id="compactModeBtn">Сокращённая версия</button>
       </div>
+    </div>
+    <div class="debug-tools">
+      <button class="debug-reset-btn" type="button" data-action="debug-reset-booking">Сбросить сценарий бронирования (debug)</button>
     </div>
 
     <div id="desktopView">
@@ -3500,7 +3702,7 @@
             <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
             <div class="selected-age-chip" id="desktopAgeChip">
               <span id="desktopAgeChipText">Возраст: —</span>
-              <button type="button" onclick="resetAgeSelection()">×</button>
+              <button type="button" data-action="reset-age-selection">×</button>
             </div>
             <div class="age-tabs" id="desktopAgeTabs">
               <button class="age-tab" data-age="7-9">7–9 лет</button>
@@ -3516,6 +3718,7 @@
               <div id="desktopShiftOptions"></div>
             </div>
             <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
+            <div class="shift-calendar-discovery">Совет: нажмите <strong>📅</strong> рядом со сменой, чтобы увидеть дни недели и диапазон дат.</div>
 
             <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
             <div class="cta-wrap" id="desktopCtaWrap">
@@ -3752,6 +3955,11 @@
                 <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
                 <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
               </div>
+              <div class="footer-org-meta">
+                <div>© 2012-2026 © ООО «ВОИП КОННЕКТ»</div>
+                <div>ИНН 7729713637</div>
+                <div>Реестровый номер туроператора РТО 025773</div>
+              </div>
             </div>
             <div>
               <h4>Разделы</h4>
@@ -3815,6 +4023,9 @@
             <button class="mini-nav-link" type="button" data-nav="section-videos">Видео</button>
             <button class="mini-nav-link" type="button" data-nav="section-reviews">Отзывы</button>
             <button class="mini-nav-link" type="button" data-nav="section-faq">FAQ</button>
+            <button class="mini-nav-link" type="button" data-nav="section-team">Команда</button>
+            <button class="mini-nav-link" type="button" data-nav="section-stay">Размещение</button>
+            <button class="mini-nav-link" type="button" data-nav="section-contacts">Контакты</button>
           </div>
 
           <div class="hero-content" style="max-width:100%;">
@@ -3853,7 +4064,7 @@
               <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
               <div class="selected-age-chip" id="mobileAgeChip">
                 <span id="mobileAgeChipText">Возраст: —</span>
-                <button type="button" onclick="resetAgeSelection()">×</button>
+                <button type="button" data-action="reset-age-selection">×</button>
               </div>
               <div class="age-tabs" id="mobileAgeTabs">
                 <button class="age-tab" data-age="7-9">7–9 лет</button>
@@ -3869,6 +4080,7 @@
                 <div id="mobileShiftOptions"></div>
               </div>
               <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
+              <div class="shift-calendar-discovery">Совет: нажмите <strong>📅</strong> у смены, чтобы быстро открыть календарь.</div>
 
               <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
               <div class="cta-wrap" id="mobileCtaWrap">
@@ -3908,7 +4120,27 @@
 
           <section class="section-card" id="mobile-section-faq">
             <h3>FAQ</h3>
-            <p class="section-lead">Частые вопросы по медицине, безопасности, питанию и проживанию доступны в полной версии страницы.</p>
+            <p class="section-lead">Ключевые вопросы по медицине, безопасности, питанию и проживанию.</p>
+            <div class="mobile-faq-list" id="mobileFaqList"></div>
+          </section>
+
+          <section class="section-card" id="mobile-section-team">
+            <h3>Команда</h3>
+            <p class="section-lead">Люди, которые ведут смены и работают с детьми в проектном формате.</p>
+            <div class="mobile-team-list" id="mobileInlineTeamList"></div>
+          </section>
+
+          <section class="section-card" id="mobile-section-stay">
+            <h3>Размещение</h3>
+            <p class="section-lead">Комнаты, бытовые зоны и территория лагеря.</p>
+            <div class="mobile-stay-list" id="mobileInlineStayList"></div>
+          </section>
+
+          <section class="section-card" id="mobile-section-contacts">
+            <h3>Контакты</h3>
+            <p class="section-lead">Быстрая связь и маршрут до лагеря.</p>
+            <div class="mobile-contacts-list" id="mobileInlineContactsList"></div>
+            <a class="inline-link-btn" href="#section-contacts">Открыть полный блок контактов</a>
           </section>
         </div>
       </div>
@@ -4175,19 +4407,19 @@
         {
           title:'За неделю в лагере ребёнок меняется больше, чем за год дома',
           url:'https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/',
-          cover:'/assets/video-covers/cover-week-change.jpg',
+          cover:'assets/video-covers/cover-week-change.jpg',
           orientation:'vertical'
         },
         {
           title:'Зачем детям копить деньги в лагере?',
           url:'https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/',
-          cover:'/assets/video-covers/cover-money-why.jpg',
+          cover:'assets/video-covers/cover-money-why.jpg',
           orientation:'vertical'
         },
         {
           title:'Ребёнок сам откажется от телефона за 3 дня?',
           url:'https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/',
-          cover:'/assets/video-covers/cover-phone-3days.jpg',
+          cover:'assets/video-covers/cover-phone-3days.jpg',
           orientation:'vertical'
         }
       ],
@@ -4603,7 +4835,10 @@
     }
 
     function closeSectionModal(){
-      document.getElementById('sectionModal')?.classList.add('hidden');
+      const modal = document.getElementById('sectionModal');
+      if(!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('section-modal-compact');
     }
 
     function openSectionModal(sectionId){
@@ -4613,6 +4848,8 @@
       const sourceSection = document.getElementById(sectionId);
       if(!modal || !titleEl || !bodyEl || !sourceSection) return false;
       closeTransientModals('section');
+      const isCompactDesktop = state.view === 'desktop' && state.desktopMode === 'compact';
+      modal.classList.toggle('section-modal-compact', isCompactDesktop);
 
       const sourceTitle = sourceSection.querySelector('h3')?.textContent?.trim() || 'Раздел';
       titleEl.textContent = sourceTitle;
@@ -4636,7 +4873,7 @@
         const item = source[mediaIndex];
         if(!item) return;
         content.innerHTML = `<img class="media-image" src="${item.src}" />`;
-        caption.textContent = `${item.cat} · ${mediaIndex + 1}/${source.length}`;
+        caption.textContent = `${photoCatLabel(item.cat)} · ${mediaIndex + 1}/${source.length}`;
       }
 
       if(mediaType === 'video'){
@@ -4767,6 +5004,11 @@
 
       if(action === 'close-video-modal'){
         closeVideo();
+        return true;
+      }
+
+      if(action === 'debug-reset-booking'){
+        resetBookingFlowDebug();
         return true;
       }
 
@@ -4909,8 +5151,82 @@
       if(cat === 'sport') return 'Спорт';
       if(cat === 'study') return 'Учёба';
       if(cat === 'food') return 'Питание';
+      if(cat === 'all') return 'Атмосфера';
       if(cat === 'camp') return 'Атмосфера';
       return cat;
+    }
+
+    function clearBookingCookies(){
+      const isBookingCookie = (name) => /(aidacamp|booking|promo|lead|aida|ac_)/i.test(name);
+      const pairs = document.cookie ? document.cookie.split(';') : [];
+      const host = window.location.hostname || '';
+      const hostParts = host.split('.').filter(Boolean);
+      const baseDomain = hostParts.length >= 2 ? `.${hostParts.slice(-2).join('.')}` : '';
+      const domains = ['', host ? `;domain=${host}` : '', baseDomain ? `;domain=${baseDomain}` : ''];
+      const paths = [';path=/', ';path=/;SameSite=Lax'];
+
+      pairs.forEach((pair) => {
+        const name = pair.split('=')[0].trim();
+        if(!name || !isBookingCookie(name)) return;
+        domains.forEach((domain) => {
+          paths.forEach((path) => {
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT${path}${domain}`;
+          });
+        });
+      });
+    }
+
+    function resetBookingFlowDebug(){
+      clearOfferTimeout();
+      if(timerId){
+        clearInterval(timerId);
+        timerId = null;
+      }
+      offerRunId += 1;
+      leadSubmitInProgress = false;
+      setLeadSubmitState(false);
+      closeTransientModals();
+
+      try { localStorage.clear(); } catch(e) {}
+      try { sessionStorage.clear(); } catch(e) {}
+      clearBookingCookies();
+
+      const keepView = state.view || 'desktop';
+      const keepDesktopMode = state.desktopMode || 'full';
+      const keepMobileMode = state.mobileMode || 'full';
+      state = {
+        age: null,
+        ageSelected: false,
+        shiftId: null,
+        basePrice: null,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerStage: 0,
+        view: keepView,
+        phone: '',
+        desktopMode: keepDesktopMode,
+        mobileMode: keepMobileMode,
+        photoFilter: 'camp',
+        faqFilter: 'all',
+        offerSearching: false
+      };
+
+      ['parentName','parentPhone'].forEach((id) => {
+        const input = document.getElementById(id);
+        if(input) input.value = '';
+      });
+      const consentCheck = document.getElementById('consentCheck');
+      if(consentCheck) consentCheck.checked = false;
+      setPhoneError(false);
+
+      renderShiftCards();
+      renderAll();
+      switchView(keepView);
+      applyDesktopMode();
+      applyMobileMode();
+      persist();
+      showHint('Сценарий бронирования сброшен. Начните с выбора возраста.');
     }
 
     function getShiftContextLine(shift){
@@ -5607,7 +5923,10 @@
             <strong>${formatPrice(s.price)}</strong>
             <span>
               ${s.dates} · ${shiftDaysLabel(s)}
-              <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">📅</button>
+              <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
+                <span aria-hidden="true">📅</span>
+                <span>календарь</span>
+              </button>
             </span>
           </div>
           <p>${s.desc}</p>
@@ -5678,7 +5997,7 @@
             data-photo-index="${idx}"
           >
             <img src="${item.src}" alt="${item.alt}">
-            <div class="photo-title">${idx === 0 ? 'Главный кадр' : 'AiDaCamp'}</div>
+            <div class="photo-title">АйДаКемп</div>
             <div class="photo-badge">${photoCatLabel(item.cat)}</div>
           </div>
         `).join('');
@@ -5838,7 +6157,7 @@
         </div>
         `;
 
-        teamGrid.innerHTML = [bookCard, teamCards].join('');
+        teamGrid.innerHTML = [teamCards, bookCard].join('');
       }
 
       const photoFilters = document.getElementById('photoFilters');
@@ -5855,6 +6174,10 @@
       const mobileInlinePhotoGrid = document.getElementById('mobileInlinePhotoGrid');
       const mobileInlineVideoList = document.getElementById('mobileInlineVideoList');
       const mobileInlineReviewsList = document.getElementById('mobileInlineReviewsList');
+      const mobileFaqList = document.getElementById('mobileFaqList');
+      const mobileInlineTeamList = document.getElementById('mobileInlineTeamList');
+      const mobileInlineStayList = document.getElementById('mobileInlineStayList');
+      const mobileInlineContactsList = document.getElementById('mobileInlineContactsList');
 
       if (mobileInlinePhotoGrid) {
         mobileInlinePhotoGrid.innerHTML = mediaContent.photos.slice(0,4).map(item => `
@@ -5878,7 +6201,65 @@
         mobileInlineReviewsList.innerHTML = mediaContent.reviews.slice(0,3).map(item => `
           <div class="compact-panel-review-card">
             <strong>${item.name}</strong>
+            <div class="review-stars">★★★★★</div>
             <span>${item.quote}</span>
+          </div>
+        `).join('');
+      }
+
+      if (mobileFaqList) {
+        const flatFaq = mediaContent.faq.flatMap(group => group.items.map(item => ({
+          group: group.group,
+          q: item.q,
+          a: item.a
+        })));
+        mobileFaqList.innerHTML = flatFaq.slice(0, 6).map(item => `
+          <div class="mobile-faq-card">
+            <strong>${item.group} · ${item.q}</strong>
+            <span>${item.a}</span>
+          </div>
+        `).join('');
+      }
+
+      if (mobileInlineTeamList) {
+        mobileInlineTeamList.innerHTML = mediaContent.team.slice(0, 4).map(item => `
+          <div class="mobile-team-card">
+            <div class="mobile-team-avatar">
+              <img src="${item.avatarUrl}" alt="${item.fio}">
+            </div>
+            <div>
+              <strong>${item.fio}</strong>
+              <span>${item.role}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      if (mobileInlineStayList) {
+        const stayCards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
+          return {
+            img: card.querySelector('img')?.getAttribute('src') || '',
+            title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
+            text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
+          };
+        }).filter(item => item.title);
+
+        mobileInlineStayList.innerHTML = stayCards.slice(0, 3).map(item => `
+          <div class="mobile-stay-card">
+            <div class="mobile-stay-thumb">${item.img ? `<img src="${item.img}" alt="${item.title}">` : ''}</div>
+            <div>
+              <strong>${item.title}</strong>
+              <span>${item.text}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      if (mobileInlineContactsList) {
+        mobileInlineContactsList.innerHTML = mediaContent.contacts.map(item => `
+          <div class="mobile-contact-card">
+            <strong>${item.label.replace('_', ' ')}</strong>
+            <a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.text}</a>
           </div>
         `).join('');
       }
@@ -6252,9 +6633,9 @@
         'section-videos':'mobile-section-videos',
         'section-reviews':'mobile-section-reviews',
         'section-faq':'mobile-section-faq',
-        'section-team':'mobile-section-about',
-        'section-stay':'mobile-section-about',
-        'section-contacts':'mobile-section-about'
+        'section-team':'mobile-section-team',
+        'section-stay':'mobile-section-stay',
+        'section-contacts':'mobile-section-contacts'
       };
 
       const targetId = state.view === 'mobile'
