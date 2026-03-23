@@ -3700,9 +3700,9 @@
 
       if(state.offerStage === 0){
         return {
-          text:'Проверить условия',
+          text:'Проверить условия и цену',
           disabled:false,
-          hint:'Сначала покажем актуальную цену и попробуем закрепить лучшую'
+          hint:'Покажем лучшую доступную цену и сохраним код бронирования'
         };
       }
 
@@ -3793,17 +3793,17 @@
 
       if(hasSelectedAge() && !state.shiftId){
         shiftList.classList.add('highlight');
-        hint.textContent = 'Отлично. Теперь выберите смену, которая подходит по датам и формату.';
+        hint.textContent = 'Отлично. Теперь выберите смену, которая подходит по датам, длительности и формату.';
         return;
       }
 
       if(state.shiftId && state.offerStage === 0){
         ctaWrap.classList.add('highlight');
-        hint.textContent = 'Смена выбрана. Теперь можно проверить условия и перейти к бронированию.';
+        hint.textContent = 'Смена выбрана. Теперь можно проверить условия, получить код бронирования и перейти к заявке.';
         return;
       }
 
-      hint.textContent = 'Всё готово: можно фиксировать условия и оформлять заявку.';
+      hint.textContent = 'Всё готово: цена найдена, код бронирования сохранён, можно отправлять заявку.';
     }
 
     function formatRemaining(diff){
