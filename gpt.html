@@ -93,30 +93,21 @@
       color:#fff;
     }
 
-    .mobile-mode-wrap{
-      display:flex;
-      justify-content:center;
-      margin:0 0 14px;
-    }
-
     .mobile-mode-switch{
       display:flex;
-      gap:8px;
-      padding:8px;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:999px;
-      box-shadow:var(--shadow);
+      gap:6px;
+      align-items:center;
     }
 
     .mobile-mode-btn{
       border:none;
-      border-radius:999px;
-      padding:10px 14px;
+      border-radius:10px;
+      min-height:30px;
+      padding:0 10px;
       background:transparent;
-      color:var(--text);
+      color:rgba(255,255,255,.82);
       font-weight:700;
-      font-size:13px;
+      font-size:11px;
       cursor:pointer;
     }
 
@@ -185,7 +176,7 @@
     }
 
     .compact-mode .hero-shell{
-      min-height:560px;
+      min-height:460px;
     }
 
     .mobile-compact-mode .mobile-body-sections{
@@ -336,8 +327,8 @@
       grid-template-columns:minmax(0, 1fr) 356px;
       column-gap:24px;
       align-items:start;
-      padding:22px 22px 8px;
-      min-height:560px;
+      padding:22px 22px 0;
+      min-height:480px;
       background:
         linear-gradient(180deg, rgba(11,16,24,.20) 0%, rgba(11,16,24,.74) 100%),
         radial-gradient(circle at 18% 18%, rgba(255,138,0,.18), transparent 28%),
@@ -354,8 +345,10 @@
       z-index:0;
       background-size:cover;
       background-position:center;
-      transition:opacity 1.4s ease, transform 6s ease;
-      transform:scale(1);
+      transition:opacity 1.15s ease-in-out, transform 6s ease;
+      transform:scale(1.02);
+      opacity:0;
+      will-change:opacity, transform;
     }
 
     .hero-bg.hidden{
@@ -413,6 +406,53 @@
       grid-column:1 / -1;
     }
 
+    .hero-left-tools{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+
+    .hero-mode-inline{
+      display:inline-flex;
+      gap:6px;
+      padding:6px;
+      border-radius:14px;
+      background:rgba(8,12,18,.62);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 8px 24px rgba(0,0,0,.18);
+      backdrop-filter:blur(12px);
+    }
+
+    .mobile-mode-inline{
+      display:inline-flex;
+      gap:6px;
+      padding:6px;
+      border-radius:14px;
+      background:rgba(8,12,18,.62);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 8px 24px rgba(0,0,0,.18);
+      backdrop-filter:blur(12px);
+    }
+
+    .hero-mode-inline .mode-btn{
+      min-height:30px;
+      padding:0 10px;
+      font-size:11px;
+      border-radius:10px;
+      background:transparent;
+      color:rgba(255,255,255,.82);
+      border:1px solid transparent;
+      box-shadow:none;
+    }
+
+    .hero-mode-inline .mode-btn.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      border-color:transparent;
+      box-shadow:0 10px 20px rgba(255,138,0,.20);
+    }
+
     .brand{
       display:flex;
       align-items:center;
@@ -425,6 +465,19 @@
       font-size:14px;
       box-shadow:0 10px 25px rgba(0,0,0,.08);
       white-space:nowrap;
+    }
+
+    .desktop-brand-mark{
+      width:40px;
+      height:40px;
+      padding:7px;
+      justify-content:center;
+      border-radius:12px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:none;
+      color:#fff;
+      backdrop-filter:blur(8px);
     }
 
     .brand-logo{
@@ -486,7 +539,7 @@
       position:relative;
       z-index:3;
       padding-right:0;
-      padding-bottom:4px;
+      padding-bottom:0;
       min-width:0;
     }
     .hero-tag{
@@ -622,7 +675,7 @@
       max-width:356px;
       margin-left:auto;
       margin-top:0;
-      margin-bottom:-20px;
+      margin-bottom:-32px;
       padding:20px;
       border-radius:26px;
       background:rgba(12,17,24,.76);
@@ -633,10 +686,10 @@
       transition:transform .2s ease, box-shadow .2s ease;
       z-index:3;
       box-sizing:border-box;
-      transform:translateY(-8px);
+      transform:translateY(-12px);
     }
     .hero-booking-card:hover{
-      transform:translateY(-10px);
+      transform:translateY(-14px);
       box-shadow:0 28px 76px rgba(0,0,0,.36);
     }
 
@@ -673,6 +726,83 @@
     .mobile-booking-card .guided-inline-hint{
       background:rgba(255,255,255,.06);
       border-color:rgba(255,255,255,.08);
+    }
+
+    .booking-step-block{
+      display:grid;
+      gap:8px;
+    }
+
+    .booking-step-block + .booking-step-block{
+      margin-top:10px;
+    }
+
+    .booking-stage-1 #desktopBookingInfo,
+    .booking-stage-1 #mobileBookingInfo{
+      display:none;
+    }
+
+    .booking-stage-1 .booking-step-2 .guided-callout,
+    .booking-stage-1 .booking-step-2 .guided-inline-hint,
+    .booking-stage-1 .booking-step-2 .shift-calendar-discovery,
+    .booking-stage-1 .booking-step-2 .selected-shift-chip,
+    .booking-stage-1 .booking-step-2 .shift-list,
+    .booking-stage-1 .booking-step-3,
+    .booking-stage-2 .booking-step-3{
+      display:none;
+    }
+
+    .booking-stage-3 .shift-list-veil{
+      display:none;
+    }
+
+    .booking-stage-4 .guided-callout,
+    .booking-stage-4 .guided-inline-hint,
+    .booking-stage-4 .shift-list-veil,
+    .booking-stage-4 .shift-calendar-discovery,
+    .booking-stage-4 .trust-mini{
+      display:none;
+    }
+
+    .booking-stage-4 .booking-save-btn{
+      display:block;
+    }
+
+    .selected-shift-chip{
+      display:none;
+      align-items:center;
+      gap:8px;
+      margin:0 0 8px;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      width:max-content;
+      max-width:100%;
+    }
+
+    .selected-shift-chip.visible{
+      display:inline-flex;
+    }
+
+    .selected-shift-chip button{
+      border:none;
+      width:22px;
+      height:22px;
+      border-radius:8px;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:13px;
+      font-weight:900;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
+    .shift-list.collapsed{
+      display:none;
     }
 
     .mobile-booking-card h3{
@@ -807,7 +937,7 @@
     }
 
     .section-card h3 + p.section-lead{
-      margin:0;
+      margin:0 0 12px;
       color:var(--muted);
       font-size:14px;
       line-height:1.6;
@@ -1088,11 +1218,27 @@
       box-shadow:none;
     }
 
+    .cta-main.is-disabled{
+      opacity:.5;
+      cursor:not-allowed;
+      box-shadow:none;
+      transform:none !important;
+    }
+
     .cta-wrap.highlight{
       border-radius:18px;
       box-shadow:0 0 0 4px rgba(255,138,0,.10);
       padding:4px;
       margin:-4px 0 0;
+    }
+
+    .booking-save-btn{
+      display:none;
+      margin-top:10px;
+      border-color:rgba(255,255,255,.24);
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      box-shadow:none;
     }
 
     .cta-subtext{
@@ -1918,6 +2064,27 @@
       opacity:.92;
     }
 
+    .video-source-tag{
+      position:absolute;
+      top:10px;
+      left:10px;
+      min-height:24px;
+      padding:0 9px;
+      border-radius:999px;
+      background:rgba(8,12,18,.64);
+      border:1px solid rgba(255,255,255,.20);
+      color:#fff;
+      font-size:11px;
+      font-weight:800;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      z-index:2;
+      backdrop-filter:blur(8px);
+    }
+
     .video-play{
       position:absolute;
       inset:0;
@@ -2086,6 +2253,28 @@
       justify-content:space-between;
       gap:12px;
       flex-wrap:wrap;
+    }
+
+    .map-open-btn{
+      border:none;
+      border-radius:14px;
+      min-height:44px;
+      padding:0 16px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      font-size:13px;
+      font-weight:800;
+      text-decoration:none;
+      box-shadow:0 14px 26px rgba(255,138,0,.24);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transition:transform .16s ease, box-shadow .16s ease;
+    }
+
+    .map-open-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 18px 34px rgba(255,138,0,.28);
     }
 
     .map-address{
@@ -2334,10 +2523,56 @@
 
     .team-grid{
       display:grid;
-      grid-template-columns:repeat(3,1fr);
       gap:12px;
       margin-top:14px;
       align-items:start;
+    }
+
+    .team-layout{
+      display:grid;
+      gap:12px;
+    }
+
+    .team-top{
+      display:grid;
+      grid-template-columns:minmax(0, 1.1fr) minmax(0, 1fr);
+      gap:12px;
+      align-items:stretch;
+    }
+
+    .team-core-grid{
+      display:grid;
+      gap:12px;
+      grid-template-columns:1fr;
+    }
+
+    .team-core-grid .team-card{
+      min-height:100%;
+    }
+
+    .team-carousel{
+      display:flex;
+      gap:12px;
+      overflow-x:auto;
+      padding-bottom:8px;
+      scroll-snap-type:x proximity;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .team-carousel::-webkit-scrollbar{
+      height:6px;
+    }
+
+    .team-carousel::-webkit-scrollbar-thumb{
+      background:#d4dceb;
+      border-radius:999px;
+    }
+
+    .team-carousel .team-card{
+      min-width:260px;
+      max-width:300px;
+      flex:0 0 auto;
+      scroll-snap-align:start;
     }
 
     .stay-grid{
@@ -2452,7 +2687,7 @@
       border:2px solid rgba(255,138,0,.26);
       text-align:left;
       align-content:start;
-      grid-row:span 2;
+      grid-row:auto;
       min-height:auto;
       gap:10px;
       padding:14px;
@@ -2541,17 +2776,18 @@
       display:flex;
       gap:8px;
       flex-wrap:wrap;
-      margin:14px 0 0;
+      margin:10px 0 0;
       position:relative;
       z-index:2;
+      align-items:center;
     }
 
     .mini-nav-link{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-height:36px;
-      padding:0 12px;
+      min-height:34px;
+      padding:0 11px;
       border-radius:999px;
       background:rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.14);
@@ -2560,6 +2796,33 @@
       font-size:12px;
       font-weight:800;
       backdrop-filter:blur(10px);
+      gap:6px;
+    }
+
+    .mini-nav-link.icon{
+      min-width:34px;
+      width:34px;
+      padding:0;
+    }
+
+    .mini-nav-link img{
+      width:14px;
+      height:14px;
+      filter:brightness(0) invert(1);
+    }
+
+    .mobile-brand{
+      padding:8px;
+      width:40px;
+      height:40px;
+      justify-content:center;
+      border-radius:12px;
+    }
+
+    .mobile-hero-tools{
+      width:100%;
+      justify-content:space-between;
+      gap:8px;
     }
 
     .trust-callout{
@@ -2842,13 +3105,14 @@
     .overlay.section-modal-compact{
       align-items:flex-start;
       justify-content:flex-start;
-      padding:88px 0 0 24px;
-      background:linear-gradient(90deg, rgba(9,14,22,.52) 0%, rgba(9,14,22,.40) 56%, rgba(9,14,22,0) 58%);
+      padding:84px 0 0 18px;
+      background:linear-gradient(90deg, rgba(9,14,22,.58) 0%, rgba(9,14,22,.44) 56%, rgba(9,14,22,0) 58%);
     }
 
     .overlay.section-modal-compact .section-modal-card{
-      width:min(60vw, 760px);
-      max-height:min(74vh, 680px);
+      width:min(48vw, 640px);
+      max-width:calc(100vw - 420px);
+      max-height:min(56vh, 500px);
       border-radius:20px;
       box-shadow:0 20px 56px rgba(7,12,20,.30);
     }
@@ -2862,6 +3126,32 @@
     }
 
     .overlay.section-modal-compact .section-modal-body{
+      padding:14px;
+    }
+
+    .overlay.section-modal-mobile{
+      align-items:flex-end;
+      justify-content:center;
+      padding:0;
+      background:rgba(9,14,22,.64);
+    }
+
+    .overlay.section-modal-mobile .section-modal-card{
+      width:100%;
+      max-width:100%;
+      max-height:84vh;
+      border-radius:20px 20px 0 0;
+    }
+
+    .overlay.section-modal-mobile .section-modal-head{
+      padding:14px 16px;
+    }
+
+    .overlay.section-modal-mobile .section-modal-head h3{
+      font-size:20px;
+    }
+
+    .overlay.section-modal-mobile .section-modal-body{
       padding:14px;
     }
 
@@ -3014,6 +3304,32 @@
       color:#111827;
       text-decoration:none;
       font-weight:700;
+      font-size:16px;
+      line-height:1.3;
+    }
+
+    .mobile-socials-row{
+      margin-top:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .mobile-social-link{
+      min-width:42px;
+      min-height:36px;
+      padding:0 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      text-decoration:none;
+      color:#111827;
+      font-size:12px;
+      font-weight:800;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:var(--shadow);
     }
 
     .big-price{
@@ -3021,6 +3337,62 @@
       font-weight:900;
       letter-spacing:-.04em;
       margin-bottom:8px;
+    }
+
+    .offer-headline{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .offer-headline h3{
+      margin:0;
+    }
+
+    .offer-close-btn{
+      width:36px;
+      height:36px;
+      border-radius:10px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      color:#fff;
+      box-shadow:none;
+    }
+
+    .offer-progress-track{
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      overflow:hidden;
+      margin:4px 0 12px;
+    }
+
+    .offer-progress-fill{
+      width:0%;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#ff8a00,#ffb15e);
+      transition:width .55s ease;
+    }
+
+    .offer-progress-steps{
+      display:grid;
+      gap:8px;
+      margin-top:6px;
+      margin-bottom:2px;
+    }
+
+    .offer-progress-step{
+      color:rgba(255,255,255,.62);
+      font-size:12px;
+      line-height:1.45;
+    }
+
+    .offer-progress-step.active{
+      color:#fff;
+      font-weight:800;
     }
 
     .offer-code{
@@ -3411,6 +3783,11 @@
         min-height:auto;
         overflow:hidden;
       }
+
+      .hero-left-tools{
+        width:100%;
+        justify-content:space-between;
+      }
       .grid-3,.slot-grid,.team-grid,.contacts-row,footer,.video-list,.contacts-grid,.socials-grid,.review-grid,.journey-grid,.results-band,.trust-band,.reviews-summary,.reviews-hero,.stay-grid{
         grid-template-columns:1fr;
       }
@@ -3437,6 +3814,18 @@
 
       .book-team-card{
         grid-row:auto;
+      }
+
+      .team-top{
+        grid-template-columns:1fr;
+      }
+
+      .team-core-grid{
+        grid-template-columns:1fr;
+      }
+
+      .team-carousel .team-card{
+        min-width:240px;
       }
 
       .overlay.section-modal-compact{
@@ -3475,6 +3864,7 @@
 
       .hero-topbar{
         margin-bottom:18px;
+        gap:10px;
       }
 
       .hero-tag{
@@ -3517,6 +3907,34 @@
 
       .mobile-hero-nav .mini-nav-link{
         white-space:nowrap;
+      }
+
+      .mobile-brand{
+        width:38px;
+        height:38px;
+        padding:7px;
+        border-radius:10px;
+      }
+
+      .mobile-mode-inline{
+        flex:1;
+      }
+
+      .mobile-mode-inline .mobile-mode-btn{
+        flex:1;
+      }
+
+      .hero-mode-inline{
+        width:100%;
+      }
+
+      .hero-mode-inline .mode-btn{
+        flex:1;
+      }
+
+      .team-carousel .team-card{
+        min-width:86%;
+        max-width:86%;
       }
 
       .overlay{
@@ -3601,7 +4019,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.52 (patch-52-standard-fixes)
+    v0.0.57 (patch-57-final-nav-contacts-offer-polish)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -3612,12 +4030,6 @@
       </div>
     </div>
 
-    <div class="mode-wrap" id="desktopModeWrap">
-      <div class="mode-switch">
-        <button class="mode-btn active" id="fullModeBtn">Полная версия</button>
-        <button class="mode-btn" id="compactModeBtn">Сокращённая версия</button>
-      </div>
-    </div>
     <div class="debug-tools">
       <button class="debug-reset-btn" type="button" data-action="debug-reset-booking">Сбросить сценарий бронирования (debug)</button>
     </div>
@@ -3629,22 +4041,27 @@
           <div id="heroBg1" class="hero-bg active"></div>
           <div id="heroBg2" class="hero-bg hidden"></div>
           <div class="hero-topbar">
-            <div class="brand">
-              <span class="brand-logo" aria-hidden="true">
-                <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AiDaCamp logo">
-                  <circle cx="64" cy="64" r="56" fill="#F59E0B"/>
-                  <path d="M35 36C29.5 40.5 26 47.5 26 55.5C26 62 28.2 67.1 32.8 71.1C36.1 74 38 77.5 38 82.2V89C38 96.2 43.8 102 51 102H77C84.2 102 90 96.2 90 89V82.2C90 77.5 91.9 74 95.2 71.1C99.8 67.1 102 62 102 55.5C102 47.5 98.5 40.5 93 36" stroke="#111111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M64 20V30" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
-                  <circle cx="64" cy="16" r="5" fill="#111111"/>
-                  <rect x="46" y="46" width="36" height="28" rx="10" fill="white"/>
-                  <rect x="50" y="51" width="8" height="8" rx="4" fill="#111111"/>
-                  <rect x="70" y="51" width="8" height="8" rx="4" fill="#111111"/>
-                  <path d="M54 66C56.7 69 60 70.5 64 70.5C68 70.5 71.3 69 74 66" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
-                  <path d="M17 38L28 47L17 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M111 38L100 47L111 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              AiDaCamp
+            <div class="hero-left-tools">
+              <div class="mode-switch hero-mode-inline" id="desktopModeWrap">
+                <button class="mode-btn active" id="fullModeBtn">Полная версия</button>
+                <button class="mode-btn" id="compactModeBtn">Сокращённая версия</button>
+              </div>
+              <div class="brand desktop-brand-mark" aria-label="AiDaCamp">
+                <span class="brand-logo" aria-hidden="true">
+                  <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AiDaCamp logo">
+                    <circle cx="64" cy="64" r="56" fill="#F59E0B"/>
+                    <path d="M35 36C29.5 40.5 26 47.5 26 55.5C26 62 28.2 67.1 32.8 71.1C36.1 74 38 77.5 38 82.2V89C38 96.2 43.8 102 51 102H77C84.2 102 90 96.2 90 89V82.2C90 77.5 91.9 74 95.2 71.1C99.8 67.1 102 62 102 55.5C102 47.5 98.5 40.5 93 36" stroke="#111111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M64 20V30" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+                    <circle cx="64" cy="16" r="5" fill="#111111"/>
+                    <rect x="46" y="46" width="36" height="28" rx="10" fill="white"/>
+                    <rect x="50" y="51" width="8" height="8" rx="4" fill="#111111"/>
+                    <rect x="70" y="51" width="8" height="8" rx="4" fill="#111111"/>
+                    <path d="M54 66C56.7 69 60 70.5 64 70.5C68 70.5 71.3 69 74 66" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M17 38L28 47L17 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M111 38L100 47L111 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
             </div>
             <div class="hero-menu" id="serviceMenu">
               <button class="menu-pill active" type="button" data-nav="section-about">О лагере</button>
@@ -3689,7 +4106,7 @@
           </div>
 
           <!-- @block:booking-card -->
-          <div class="hero-booking-card">
+          <div class="hero-booking-card" id="desktopBookingCard">
             <div class="booking-steps" id="desktopBookingSteps">
               <div class="booking-step active">Возраст</div>
               <div class="booking-step">Смена</div>
@@ -3699,37 +4116,48 @@
             <h3 id="desktopBookingTitle">Выберите смену</h3>
             <p id="desktopBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
-            <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
-            <div class="selected-age-chip" id="desktopAgeChip">
-              <span id="desktopAgeChipText">Возраст: —</span>
-              <button type="button" data-action="reset-age-selection">×</button>
-            </div>
-            <div class="age-tabs" id="desktopAgeTabs">
-              <button class="age-tab" data-age="7-9">7–9 лет</button>
-              <button class="age-tab" data-age="10-12">10–12 лет</button>
-              <button class="age-tab" data-age="13-14">13–14 лет</button>
+            <div class="booking-step-block booking-step-1">
+              <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
+              <div class="selected-age-chip" id="desktopAgeChip">
+                <span id="desktopAgeChipText">Возраст: —</span>
+                <button type="button" data-action="reset-age-selection">×</button>
+              </div>
+              <div class="age-tabs" id="desktopAgeTabs">
+                <button class="age-tab" data-age="7-9">7–9 лет</button>
+                <button class="age-tab" data-age="10-12">10–12 лет</button>
+                <button class="age-tab" data-age="13-14">13–14 лет</button>
+              </div>
             </div>
 
             <div id="desktopBookingInfo" style="margin-bottom:12px;"></div>
-            <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
-            <div class="guided-callout" id="desktopGuidedHint">Сначала выберите возраст ребёнка. После этого покажем подходящие смены и дадим перейти дальше.</div>
-            <div class="guided-inline-hint" id="desktopInlineHint"></div>
-            <div class="shift-list" id="desktopShiftList">
-              <div id="desktopShiftOptions"></div>
+            <div class="booking-step-block booking-step-2">
+              <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
+              <div class="selected-shift-chip" id="desktopShiftChip">
+                <span id="desktopShiftChipText">Смена: —</span>
+                <button type="button" data-action="reset-shift-selection">×</button>
+              </div>
+              <div class="guided-callout" id="desktopGuidedHint">Сначала выберите возраст ребёнка. После этого покажем подходящие смены и дадим перейти дальше.</div>
+              <div class="guided-inline-hint" id="desktopInlineHint"></div>
+              <div class="shift-list" id="desktopShiftList">
+                <div id="desktopShiftOptions"></div>
+              </div>
+              <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
+              <div class="shift-calendar-discovery">Совет: нажмите <strong>📅</strong> рядом со сменой, чтобы увидеть дни недели и диапазон дат.</div>
             </div>
-            <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
-            <div class="shift-calendar-discovery">Совет: нажмите <strong>📅</strong> рядом со сменой, чтобы увидеть дни недели и диапазон дат.</div>
 
-            <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
-            <div class="cta-wrap" id="desktopCtaWrap">
-                <button class="cta-main" id="desktopStartBtn" data-action="primary-cta">Выберите возраст</button>
-            </div>
-            <div class="under-cta" id="desktopBookingHint">Без предоплаты. Мы сначала подтверждаем бронь вручную.</div>
-            <div class="booking-hint" id="desktopBookingHintInline" aria-live="polite"></div>
-            <div class="trust-mini">
-              <span>45 мест в смене</span>
-              <span>IT + спорт</span>
-              <span>Без гаджетов</span>
+            <div class="booking-step-block booking-step-3">
+              <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
+              <div class="cta-wrap" id="desktopCtaWrap">
+                  <button class="cta-main" id="desktopStartBtn" data-action="primary-cta">Выберите возраст</button>
+                  <button class="secondary-outline booking-save-btn" type="button" data-action="save-on-device">Сохранить на этом устройстве</button>
+              </div>
+              <div class="under-cta" id="desktopBookingHint">Без предоплаты. Мы сначала подтверждаем бронь вручную.</div>
+              <div class="booking-hint" id="desktopBookingHintInline" aria-live="polite"></div>
+              <div class="trust-mini">
+                <span>45 мест в смене</span>
+                <span>IT + спорт</span>
+                <span>Без гаджетов</span>
+              </div>
             </div>
           </div>
           <!-- /@block:booking-card -->
@@ -3869,12 +4297,12 @@
             <h3>FAQ</h3>
             <p class="section-lead">Собрали ключевые вопросы родителей по медицине, безопасности, питанию, проживанию и связи.</p>
             <div class="faq-filter-row" id="faqFilters">
-              <button class="faq-filter-chip active" data-faq-filter="all">Все</button>
               <button class="faq-filter-chip" data-faq-filter="Медицина">Медицина</button>
               <button class="faq-filter-chip" data-faq-filter="Безопасность">Безопасность</button>
               <button class="faq-filter-chip" data-faq-filter="Питание">Питание</button>
               <button class="faq-filter-chip" data-faq-filter="Проживание">Проживание</button>
               <button class="faq-filter-chip" data-faq-filter="Связь">Связь</button>
+              <button class="faq-filter-chip active" data-faq-filter="all">Все</button>
             </div>
             <div class="faq-groups" id="faqGroups"></div>
             <div class="faq-empty" id="faqEmptyState">Для этой категории вопросы скоро добавим отдельно. Пока можно переключиться на соседний раздел или открыть все вопросы.</div>
@@ -3940,7 +4368,7 @@
                     <div>Если нужно, менеджер отдельно подскажет дорогу и детали заезда перед сменой.</div>
                   </div>
                 </div>
-                <a class="inline-link-btn" id="locationMapBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть карту</a>
+                <a class="map-open-btn" id="locationMapBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть карту</a>
               </div>
             </div>
           </section>
@@ -3986,46 +4414,50 @@
     </div>
 
     <div id="mobileView" class="hidden">
-      <div class="mobile-mode-wrap">
-        <div class="mobile-mode-switch">
-          <button class="mobile-mode-btn active" id="mobileFullModeBtn">Полная версия</button>
-          <button class="mobile-mode-btn" id="mobileCompactModeBtn">Сокращённая версия</button>
-        </div>
-      </div>
-
       <div class="screen" style="max-width:520px;margin:0 auto;">
         <div class="hero-shell mobile-hero">
           <div class="hero-topbar">
-            <div class="brand">
-              <span class="brand-logo" aria-hidden="true">
-                <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AiDaCamp logo">
-                  <circle cx="64" cy="64" r="56" fill="#F59E0B"/>
-                  <path d="M35 36C29.5 40.5 26 47.5 26 55.5C26 62 28.2 67.1 32.8 71.1C36.1 74 38 77.5 38 82.2V89C38 96.2 43.8 102 51 102H77C84.2 102 90 96.2 90 89V82.2C90 77.5 91.9 74 95.2 71.1C99.8 67.1 102 62 102 55.5C102 47.5 98.5 40.5 93 36" stroke="#111111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M64 20V30" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
-                  <circle cx="64" cy="16" r="5" fill="#111111"/>
-                  <rect x="46" y="46" width="36" height="28" rx="10" fill="white"/>
-                  <rect x="50" y="51" width="8" height="8" rx="4" fill="#111111"/>
-                  <rect x="70" y="51" width="8" height="8" rx="4" fill="#111111"/>
-                  <path d="M54 66C56.7 69 60 70.5 64 70.5C68 70.5 71.3 69 74 66" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
-                  <path d="M17 38L28 47L17 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M111 38L100 47L111 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              AiDaCamp
+            <div class="hero-left-tools mobile-hero-tools">
+              <div class="brand mobile-brand" aria-label="AiDaCamp">
+                <span class="brand-logo" aria-hidden="true">
+                  <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AiDaCamp logo">
+                    <circle cx="64" cy="64" r="56" fill="#F59E0B"/>
+                    <path d="M35 36C29.5 40.5 26 47.5 26 55.5C26 62 28.2 67.1 32.8 71.1C36.1 74 38 77.5 38 82.2V89C38 96.2 43.8 102 51 102H77C84.2 102 90 96.2 90 89V82.2C90 77.5 91.9 74 95.2 71.1C99.8 67.1 102 62 102 55.5C102 47.5 98.5 40.5 93 36" stroke="#111111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M64 20V30" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+                    <circle cx="64" cy="16" r="5" fill="#111111"/>
+                    <rect x="46" y="46" width="36" height="28" rx="10" fill="white"/>
+                    <rect x="50" y="51" width="8" height="8" rx="4" fill="#111111"/>
+                    <rect x="70" y="51" width="8" height="8" rx="4" fill="#111111"/>
+                    <path d="M54 66C56.7 69 60 70.5 64 70.5C68 70.5 71.3 69 74 66" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M17 38L28 47L17 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M111 38L100 47L111 56" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+              <div class="mobile-mode-switch mobile-mode-inline">
+                <button class="mobile-mode-btn active" id="mobileFullModeBtn">Полная</button>
+                <button class="mobile-mode-btn" id="mobileCompactModeBtn">Сокращённая</button>
+              </div>
             </div>
-            <button class="menu-pill" type="button">Мобильная версия</button>
           </div>
 
           <div class="mobile-hero-nav">
-            <button class="mini-nav-link" type="button" data-nav="section-about">О лагере</button>
             <button class="mini-nav-link" type="button" data-nav="section-programs">Смены</button>
-            <button class="mini-nav-link" type="button" data-nav="section-photos">Фото</button>
-            <button class="mini-nav-link" type="button" data-nav="section-videos">Видео</button>
             <button class="mini-nav-link" type="button" data-nav="section-reviews">Отзывы</button>
-            <button class="mini-nav-link" type="button" data-nav="section-faq">FAQ</button>
-            <button class="mini-nav-link" type="button" data-nav="section-team">Команда</button>
             <button class="mini-nav-link" type="button" data-nav="section-stay">Размещение</button>
             <button class="mini-nav-link" type="button" data-nav="section-contacts">Контакты</button>
+            <button class="mini-nav-link icon" type="button" data-nav="section-photos" aria-label="Фото">
+              <img class="ac-icon" src="/assets/icons/images.svg" alt="" aria-hidden="true">
+            </button>
+            <button class="mini-nav-link icon" type="button" data-nav="section-videos" aria-label="Видео">
+              <img class="ac-icon" src="/assets/icons/play.svg" alt="" aria-hidden="true">
+            </button>
+            <button class="mini-nav-link icon" type="button" data-nav="section-faq" aria-label="FAQ">
+              <img class="ac-icon" src="/assets/icons/help-circle.svg" alt="" aria-hidden="true">
+            </button>
+            <button class="mini-nav-link icon" type="button" data-nav="section-team" aria-label="Команда">
+              <img class="ac-icon" src="/assets/icons/users.svg" alt="" aria-hidden="true">
+            </button>
           </div>
 
           <div class="hero-content" style="max-width:100%;">
@@ -4051,7 +4483,7 @@
               <span>● своя программа</span>
             </div>
 
-            <div class="hero-booking-card mobile-booking-card" id="mobile-section-programs" style="position:static;width:100%;margin-top:18px;">
+            <div class="hero-booking-card mobile-booking-card" id="mobileBookingCard" style="position:static;width:100%;margin-top:18px;">
               <div class="booking-steps" id="mobileBookingSteps">
                 <div class="booking-step active">Возраст</div>
                 <div class="booking-step">Смена</div>
@@ -4061,37 +4493,48 @@
               <h3 id="mobileBookingTitle">Выберите смену</h3>
               <p id="mobileBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
 
-              <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
-              <div class="selected-age-chip" id="mobileAgeChip">
-                <span id="mobileAgeChipText">Возраст: —</span>
-                <button type="button" data-action="reset-age-selection">×</button>
-              </div>
-              <div class="age-tabs" id="mobileAgeTabs">
-                <button class="age-tab" data-age="7-9">7–9 лет</button>
-                <button class="age-tab" data-age="10-12">10–12 лет</button>
-                <button class="age-tab" data-age="13-14">13–14 лет</button>
+              <div class="booking-step-block booking-step-1">
+                <div class="guided-label"><span class="guided-dot"></span>Шаг 1 — возраст ребёнка</div>
+                <div class="selected-age-chip" id="mobileAgeChip">
+                  <span id="mobileAgeChipText">Возраст: —</span>
+                  <button type="button" data-action="reset-age-selection">×</button>
+                </div>
+                <div class="age-tabs" id="mobileAgeTabs">
+                  <button class="age-tab" data-age="7-9">7–9 лет</button>
+                  <button class="age-tab" data-age="10-12">10–12 лет</button>
+                  <button class="age-tab" data-age="13-14">13–14 лет</button>
+                </div>
               </div>
 
               <div id="mobileBookingInfo" style="margin-bottom:12px;"></div>
-              <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
-              <div class="guided-callout" id="mobileGuidedHint">Сначала выберите возраст ребёнка. После этого покажем подходящие смены и дадим перейти дальше.</div>
-              <div class="guided-inline-hint" id="mobileInlineHint"></div>
-              <div class="shift-list" id="mobileShiftList">
-                <div id="mobileShiftOptions"></div>
+              <div class="booking-step-block booking-step-2">
+                <div class="guided-label"><span class="guided-dot"></span>Шаг 2 — смена</div>
+                <div class="selected-shift-chip" id="mobileShiftChip">
+                  <span id="mobileShiftChipText">Смена: —</span>
+                  <button type="button" data-action="reset-shift-selection">×</button>
+                </div>
+                <div class="guided-callout" id="mobileGuidedHint">Сначала выберите возраст ребёнка. После этого покажем подходящие смены и дадим перейти дальше.</div>
+                <div class="guided-inline-hint" id="mobileInlineHint"></div>
+                <div class="shift-list" id="mobileShiftList">
+                  <div id="mobileShiftOptions"></div>
+                </div>
+                <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
+                <div class="shift-calendar-discovery">Совет: нажмите <strong>📅</strong> у смены, чтобы быстро открыть календарь.</div>
               </div>
-              <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
-              <div class="shift-calendar-discovery">Совет: нажмите <strong>📅</strong> у смены, чтобы быстро открыть календарь.</div>
 
-              <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
-              <div class="cta-wrap" id="mobileCtaWrap">
-              <button class="cta-main" id="mobileStartBtn" data-action="primary-cta">Выберите возраст</button>
-              </div>
-              <div class="cta-subtext" id="mobileBookingHint">Без предоплаты • Ответим и подтвердим вручную</div>
-              <div class="booking-hint" id="mobileBookingHintInline" aria-live="polite"></div>
-              <div class="trust-mini">
-                <span>45 мест в смене</span>
-                <span>IT + спорт</span>
-                <span>Без гаджетов</span>
+              <div class="booking-step-block booking-step-3">
+                <div class="guided-label"><span class="guided-dot"></span>Шаг 3 — условия и заявка</div>
+                <div class="cta-wrap" id="mobileCtaWrap">
+                  <button class="cta-main" id="mobileStartBtn" data-action="primary-cta">Выберите возраст</button>
+                  <button class="secondary-outline booking-save-btn" type="button" data-action="save-on-device">Сохранить на этом устройстве</button>
+                </div>
+                <div class="cta-subtext" id="mobileBookingHint">Без предоплаты • Ответим и подтвердим вручную</div>
+                <div class="booking-hint" id="mobileBookingHintInline" aria-live="polite"></div>
+                <div class="trust-mini">
+                  <span>45 мест в смене</span>
+                  <span>IT + спорт</span>
+                  <span>Без гаджетов</span>
+                </div>
               </div>
             </div>
           </div>
@@ -4140,7 +4583,7 @@
             <h3>Контакты</h3>
             <p class="section-lead">Быстрая связь и маршрут до лагеря.</p>
             <div class="mobile-contacts-list" id="mobileInlineContactsList"></div>
-            <a class="inline-link-btn" href="#section-contacts">Открыть полный блок контактов</a>
+            <div class="mobile-socials-row" id="mobileInlineSocials"></div>
           </section>
         </div>
       </div>
@@ -4407,19 +4850,19 @@
         {
           title:'За неделю в лагере ребёнок меняется больше, чем за год дома',
           url:'https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/',
-          cover:'assets/video-covers/cover-week-change.jpg',
+          cover:'/assets/video-covers/cover-week-change.jpg',
           orientation:'vertical'
         },
         {
           title:'Зачем детям копить деньги в лагере?',
           url:'https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/',
-          cover:'assets/video-covers/cover-money-why.jpg',
+          cover:'/assets/video-covers/cover-money-why.jpg',
           orientation:'vertical'
         },
         {
           title:'Ребёнок сам откажется от телефона за 3 дня?',
           url:'https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/',
-          cover:'assets/video-covers/cover-phone-3days.jpg',
+          cover:'/assets/video-covers/cover-phone-3days.jpg',
           orientation:'vertical'
         }
       ],
@@ -4480,7 +4923,7 @@
     const STORAGE_KEY = 'aidacamp_proto_state_v3';
 
     let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
-      age:'7-9',
+      age:null,
       shiftId:null,
       basePrice:null,
       offerPrice:null,
@@ -4515,7 +4958,7 @@
     state.faqFilter = state.faqFilter || 'all';
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
-    let offerTimeoutId = null;
+    let offerTimeoutIds = [];
     let offerRunId = 0;
     let leadSubmitInProgress = false;
 
@@ -4592,6 +5035,7 @@
 
     let heroIndex = 0;
     let heroTimer = null;
+    let heroResizeTimer = null;
 
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -4603,15 +5047,29 @@
       const bg1 = document.getElementById('heroBg1');
       const bg2 = document.getElementById('heroBg2');
       if(!bg1) return;
+      if(heroTimer){
+        clearInterval(heroTimer);
+        heroTimer = null;
+      }
 
       if(isMobile){
         bg1.style.backgroundImage = `url(${HERO_MOBILE})`;
-        if(bg2) bg2.remove();
+        bg1.classList.add('active');
+        bg1.classList.remove('hidden');
+        if(bg2){
+          bg2.style.backgroundImage = `url(${HERO_MOBILE})`;
+          bg2.classList.remove('active');
+          bg2.classList.add('hidden');
+        }
         return;
       }
 
       bg1.style.backgroundImage = `url(${HERO_IMAGES[0]})`;
+      bg1.classList.add('active');
+      bg1.classList.remove('hidden');
       if(!bg2) return;
+      bg2.classList.remove('active');
+      bg2.classList.add('hidden');
 
       heroTimer = setInterval(() => {
         heroIndex = (heroIndex + 1) % HERO_IMAGES.length;
@@ -4714,6 +5172,7 @@
         iframe.classList.add('hidden');
         fallback.classList.remove('hidden');
         fallbackLink.href = source.externalUrl;
+        fallbackLink.textContent = `Смотреть на ${source.sourceName}`;
       }
       modal.classList.remove('hidden');
     }
@@ -4739,13 +5198,16 @@
         canEmbed: false,
         embedUrl: '',
         externalUrl,
-        orientation: isVerticalVideoUrl(externalUrl) ? 'vertical' : 'horizontal'
+        orientation: isVerticalVideoUrl(externalUrl) ? 'vertical' : 'horizontal',
+        sourceName: 'источнике'
       };
       if(!externalUrl) return fallback;
       try {
         const u = new URL(externalUrl, window.location.origin);
         const host = (u.hostname || '').replace(/^www\./, '');
         const parts = u.pathname.split('/').filter(Boolean);
+        if(host.includes('rutube.ru')) fallback.sourceName = 'Rutube';
+        if(host.includes('youtube.com') || host === 'youtu.be') fallback.sourceName = 'YouTube';
 
         if(host.includes('rutube.ru')){
           if(parts[0] === 'play' && parts[1] === 'embed' && parts[2]){
@@ -4753,7 +5215,8 @@
               canEmbed: true,
               embedUrl: `https://rutube.ru/play/embed/${parts[2]}`,
               externalUrl,
-              orientation: fallback.orientation
+              orientation: fallback.orientation,
+              sourceName: 'Rutube'
             };
           }
           if(parts[0] === 'shorts' && parts[1]){
@@ -4761,7 +5224,8 @@
               canEmbed: true,
               embedUrl: `https://rutube.ru/play/embed/${parts[1]}`,
               externalUrl,
-              orientation: 'vertical'
+              orientation: 'vertical',
+              sourceName: 'Rutube'
             };
           }
           if(parts[0] === 'video' && parts[1]){
@@ -4769,7 +5233,8 @@
               canEmbed: true,
               embedUrl: `https://rutube.ru/play/embed/${parts[1]}`,
               externalUrl,
-              orientation: 'horizontal'
+              orientation: 'horizontal',
+              sourceName: 'Rutube'
             };
           }
         }
@@ -4779,7 +5244,8 @@
             canEmbed: true,
             embedUrl: `https://www.youtube.com/embed/${parts[0]}`,
             externalUrl,
-            orientation: fallback.orientation
+            orientation: fallback.orientation,
+            sourceName: 'YouTube'
           };
         }
 
@@ -4789,7 +5255,8 @@
               canEmbed: true,
               embedUrl: `https://www.youtube.com/embed/${u.searchParams.get('v')}`,
               externalUrl,
-              orientation: 'horizontal'
+              orientation: 'horizontal',
+              sourceName: 'YouTube'
             };
           }
           if(parts[0] === 'shorts' && parts[1]){
@@ -4797,7 +5264,8 @@
               canEmbed: true,
               embedUrl: `https://www.youtube.com/embed/${parts[1]}`,
               externalUrl,
-              orientation: 'vertical'
+              orientation: 'vertical',
+              sourceName: 'YouTube'
             };
           }
           if(parts[0] === 'embed' && parts[1]){
@@ -4805,7 +5273,8 @@
               canEmbed: true,
               embedUrl: externalUrl,
               externalUrl,
-              orientation: fallback.orientation
+              orientation: fallback.orientation,
+              sourceName: 'YouTube'
             };
           }
         }
@@ -4815,7 +5284,8 @@
             canEmbed: true,
             embedUrl: externalUrl,
             externalUrl,
-            orientation: fallback.orientation
+            orientation: fallback.orientation,
+            sourceName: fallback.sourceName
           };
         }
       } catch(e){
@@ -4839,6 +5309,7 @@
       if(!modal) return;
       modal.classList.add('hidden');
       modal.classList.remove('section-modal-compact');
+      modal.classList.remove('section-modal-mobile');
     }
 
     function openSectionModal(sectionId){
@@ -4849,7 +5320,9 @@
       if(!modal || !titleEl || !bodyEl || !sourceSection) return false;
       closeTransientModals('section');
       const isCompactDesktop = state.view === 'desktop' && state.desktopMode === 'compact';
+      const isMobilePanel = state.view === 'mobile';
       modal.classList.toggle('section-modal-compact', isCompactDesktop);
+      modal.classList.toggle('section-modal-mobile', isMobilePanel);
 
       const sourceTitle = sourceSection.querySelector('h3')?.textContent?.trim() || 'Раздел';
       titleEl.textContent = sourceTitle;
@@ -4884,7 +5357,7 @@
             <div class="video-fallback">
               <strong>Видео доступно во внешнем источнике</strong>
               <p>Откройте ролик в отдельной вкладке, если встраивание недоступно.</p>
-              <a class="inline-link-btn primary" href="${source.externalUrl}" target="_blank" rel="noopener noreferrer">Открыть видео</a>
+              <a class="inline-link-btn primary" href="${source.externalUrl}" target="_blank" rel="noopener noreferrer">Смотреть на ${source.sourceName}</a>
             </div>
           `;
           caption.textContent = `${mediaIndex + 1}/${mediaContent.videos.length}`;
@@ -4959,11 +5432,22 @@
         return true;
       }
 
+      if(action === 'reset-shift-selection'){
+        resetShiftSelection();
+        return true;
+      }
+
       if(action === 'close-offer'){
         offerRunId += 1;
         clearOfferTimeout();
         document.getElementById('offerOverlay')?.classList.add('hidden');
         resetOfferProgressUI();
+        return true;
+      }
+
+      if(action === 'save-on-device'){
+        saveOfferAndClose();
+        showHint('Условия сохранены на этом устройстве.');
         return true;
       }
 
@@ -5190,6 +5674,11 @@
       try { localStorage.clear(); } catch(e) {}
       try { sessionStorage.clear(); } catch(e) {}
       clearBookingCookies();
+      metrikaSeen.clear();
+      Object.keys(scrollMarks).forEach((k) => {
+        scrollMarks[k] = false;
+      });
+      activePhotoList = [];
 
       const keepView = state.view || 'desktop';
       const keepDesktopMode = state.desktopMode || 'full';
@@ -5219,6 +5708,19 @@
       const consentCheck = document.getElementById('consentCheck');
       if(consentCheck) consentCheck.checked = false;
       setPhoneError(false);
+      ['desktopBookingHintInline', 'mobileBookingHintInline', 'desktopInlineHint', 'mobileInlineHint'].forEach((id) => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.textContent = '';
+        el.classList.remove('visible');
+        delete el.dataset.requiredStep;
+      });
+      document.querySelectorAll('[data-age].active').forEach((el) => el.classList.remove('active'));
+      document.querySelectorAll('#serviceMenu [data-nav]').forEach((el) => el.classList.remove('active'));
+      document.querySelector('#serviceMenu [data-nav="section-about"]')?.classList.add('active');
+      if(window.history?.replaceState){
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
 
       renderShiftCards();
       renderAll();
@@ -5280,6 +5782,14 @@
         };
       }
 
+      if(state.offerStage === 0){
+        return {
+          text:'Проверить условия и цену',
+          disabled:false,
+          hint:'Покажем цену, код бронирования и зафиксируем условия на устройстве.'
+        };
+      }
+
       return {
         text:'Оформить заявку',
         disabled:false,
@@ -5307,6 +5817,17 @@
       return 1;
     }
 
+    function getBookingStage(){
+      return Math.min(Math.max(getStepState(), 1), 4);
+    }
+
+    function applyBookingStageClass(prefix){
+      const card = document.getElementById(`${prefix}BookingCard`);
+      if(!card) return;
+      card.classList.remove('booking-stage-1', 'booking-stage-2', 'booking-stage-3', 'booking-stage-4');
+      card.classList.add(`booking-stage-${getBookingStage()}`);
+    }
+
     function renderSteps(targetId){
       const root = document.getElementById(targetId);
       if(!root) return;
@@ -5331,13 +5852,16 @@
       const ageTabs = document.getElementById(`${prefix}AgeTabs`);
       const ageChip = document.getElementById(`${prefix}AgeChip`);
       const ageChipText = document.getElementById(`${prefix}AgeChipText`);
+      const shiftChip = document.getElementById(`${prefix}ShiftChip`);
+      const shiftChipText = document.getElementById(`${prefix}ShiftChipText`);
 
-      if(!shiftList || !hint || !ctaWrap || !ageTabs || !ageChip || !ageChipText) return;
+      if(!shiftList || !hint || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
 
-      shiftList.classList.remove('disabled','highlight');
+      shiftList.classList.remove('disabled','highlight','collapsed');
       ctaWrap.classList.remove('highlight');
       ageTabs.classList.remove('hidden');
       ageChip.classList.remove('visible');
+      shiftChip.classList.remove('visible');
 
       if(!hasSelectedAge()){
         shiftList.classList.add('disabled');
@@ -5350,9 +5874,17 @@
       ageTabs.classList.add('hidden');
 
       if(hasSelectedAge() && !state.shiftId){
+        shiftList.classList.remove('collapsed');
         shiftList.classList.add('highlight');
         hint.textContent = 'Отлично. Теперь выберите смену, которая подходит по датам, длительности и формату.';
         return;
+      }
+
+      const shift = getSelectedShift();
+      if(shift){
+        shiftChipText.textContent = `Смена: ${shift.title} · ${shift.dates}`;
+        shiftChip.classList.add('visible');
+        shiftList.classList.add('collapsed');
       }
 
       if(state.shiftId && state.offerStage === 0){
@@ -5454,18 +5986,20 @@
       const shift = getSelectedShift();
       const action = getPrimaryActionState();
 
-      btn.textContent = action.text;
-      btn.disabled = !!action.disabled;
-      hint.textContent = action.hint;
+      if(btn){
+        btn.textContent = action.text;
+        btn.classList.toggle('is-disabled', !!action.disabled);
+        btn.setAttribute('aria-disabled', action.disabled ? 'true' : 'false');
+        btn.disabled = false;
+      }
+      if(hint){
+        hint.textContent = action.hint;
+      }
 
       if(!shift){
-        title.textContent = 'Выберите смену';
-        lead.textContent = 'Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.';
-        info.innerHTML = `
-          <div class="booking-empty-box">
-            Сначала выберите одну из ближайших смен ниже. После этого мы покажем текущую цену и предложим проверить условия бронирования.
-          </div>
-        `;
+        if(title) title.textContent = 'Выберите смену';
+        if(lead) lead.textContent = 'Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.';
+        if(info) info.innerHTML = '';
         return;
       }
 
@@ -5473,10 +6007,27 @@
       const visiblePrice = formatPrice(getVisiblePrice());
       const timerText = isOfferActive() ? formatRemaining(state.expiresAt - Date.now()) : '';
 
-      title.textContent = state.offerPrice ? 'Ваша цена готова' : 'Смена выбрана';
-      lead.textContent = `${shift.title} · ${shift.dates}`;
+      if(title) title.textContent = state.offerPrice ? 'Ваша цена готова' : 'Смена выбрана';
+      if(lead) lead.textContent = `${shift.title} · ${shift.dates}`;
 
-      info.innerHTML = `
+      const isSummaryStage = state.offerStage >= 1;
+      if(info) info.innerHTML = isSummaryStage ? `
+        <div class="booking-price-box booking-summary-mini">
+          <div class="booking-price-head">
+            <div class="booking-price-col">
+              <small>Возраст</small>
+              <div class="booking-price-main">${ageLabel(state.age)}</div>
+            </div>
+            <div class="booking-price-col" style="text-align:right;">
+              <small>Цена</small>
+              <div class="booking-price-main big">${visiblePrice}</div>
+            </div>
+          </div>
+          <div class="booking-code-line">Смена: <strong style="color:#fff;">${shift.title}</strong></div>
+          ${state.code ? `<div class="booking-code-line">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
+          ${timerText ? `<div class="booking-timer-line">${timerText}</div>` : ''}
+        </div>
+      ` : `
         <div class="booking-price-box">
           <div class="booking-price-head">
             <div class="booking-price-col">
@@ -5484,12 +6035,10 @@
               <div class="booking-price-main">${currentPrice}</div>
             </div>
             <div class="booking-price-col" style="text-align:right;">
-              <small>${state.offerPrice ? 'Ваша цена' : 'После проверки'}</small>
+              <small>После проверки</small>
               <div class="booking-price-main big">${visiblePrice}</div>
             </div>
           </div>
-          ${state.code ? `<div class="booking-code-line">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
-          ${timerText ? `<div class="booking-timer-line">${timerText}</div>` : ''}
         </div>
       `;
     }
@@ -5516,6 +6065,8 @@
       renderSteps('mobileBookingSteps');
       renderGuidedState('desktop');
       renderGuidedState('mobile');
+      applyBookingStageClass('desktop');
+      applyBookingStageClass('mobile');
       syncBookingHints();
     }
 
@@ -5525,7 +6076,10 @@
       document.getElementById('mobileBtn').classList.toggle('active', view === 'mobile');
       document.getElementById('desktopView').classList.toggle('hidden', view !== 'desktop');
       document.getElementById('mobileView').classList.toggle('hidden', view !== 'mobile');
-      document.getElementById('desktopModeWrap').classList.toggle('hidden', view !== 'desktop');
+      const desktopModeWrap = document.getElementById('desktopModeWrap');
+      if(desktopModeWrap){
+        desktopModeWrap.classList.toggle('hidden', view !== 'desktop');
+      }
       if(view !== 'desktop'){
         closeSectionModal();
       }
@@ -5586,7 +6140,9 @@
       const photoFilterBtn = e.target.closest('[data-photo-filter]');
       if(photoFilterBtn){
         setPhotoFilter(photoFilterBtn.dataset.photoFilter);
-        if(state.view === 'desktop' && state.desktopMode === 'compact'){
+        const sectionModal = document.getElementById('sectionModal');
+        const sectionModalOpened = !!(sectionModal && !sectionModal.classList.contains('hidden'));
+        if((state.view === 'desktop' && state.desktopMode === 'compact') || (state.view === 'mobile' && sectionModalOpened)){
           openSectionModal('section-photos');
         }
         return;
@@ -5595,7 +6151,9 @@
       const faqFilterBtn = e.target.closest('[data-faq-filter]');
       if(faqFilterBtn){
         setFaqFilter(faqFilterBtn.dataset.faqFilter);
-        if(state.view === 'desktop' && state.desktopMode === 'compact'){
+        const sectionModal = document.getElementById('sectionModal');
+        const sectionModalOpened = !!(sectionModal && !sectionModal.classList.contains('hidden'));
+        if((state.view === 'desktop' && state.desktopMode === 'compact') || (state.view === 'mobile' && sectionModalOpened)){
           openSectionModal('section-faq');
         }
         return;
@@ -5647,7 +6205,7 @@
       }
 
       const ctaBtn = e.target.closest('#desktopStartBtn, #mobileStartBtn');
-      if(ctaBtn && ctaBtn.disabled){
+      if(ctaBtn && ctaBtn.classList.contains('is-disabled')){
         if(!hasSelectedAge()){
           showHint('Выберите возраст ребёнка', 'age');
         } else if(!state.shiftId){
@@ -5657,8 +6215,14 @@
       }
 
       const summaryBtn = e.target.closest('#summaryBar button, #summaryBar .cta-main');
-      if(summaryBtn && !state.shiftId){
-        nudgeUserToNextStep('Чтобы перейти дальше, сначала выберите возраст и смену.');
+      if(summaryBtn && (!hasSelectedAge() || !state.shiftId)){
+        if(!hasSelectedAge()){
+          showHint('Сначала выберите возраст ребёнка', 'age');
+          nudgeUserToNextStep('Чтобы перейти дальше, сначала выберите возраст ребёнка.');
+        } else {
+          showHint('Выберите подходящую смену', 'shift');
+          nudgeUserToNextStep('Чтобы перейти дальше, выберите смену.');
+        }
       }
     });
 
@@ -5792,10 +6356,9 @@
     }
 
     function clearOfferTimeout(){
-      if(offerTimeoutId){
-        clearTimeout(offerTimeoutId);
-        offerTimeoutId = null;
-      }
+      if(!offerTimeoutIds.length) return;
+      offerTimeoutIds.forEach((id) => clearTimeout(id));
+      offerTimeoutIds = [];
     }
 
     function resetOfferState({preserveShift = true} = {}){
@@ -5869,6 +6432,19 @@
         }
       });
 
+      renderAll();
+      persist();
+    }
+
+    function resetShiftSelection(){
+      state.shiftId = null;
+      state.basePrice = null;
+      state.offerPrice = null;
+      state.code = null;
+      state.expiresAt = null;
+      state.offerStage = 0;
+      state.offerSearching = false;
+      showHint('Смена сброшена. Выберите подходящий вариант.', 'shift');
       renderAll();
       persist();
     }
@@ -6008,6 +6584,7 @@
           <div class="video-card" data-video="${item.url}">
             <div class="video-poster">
               <img src="${item.cover || ''}" alt="${item.title}">
+              <div class="video-source-tag">${item.url.includes('rutube') ? 'Rutube' : 'YouTube'}</div>
               <div class="video-play"><span>▶</span></div>
             </div>
             <h4>${item.title}</h4>
@@ -6030,6 +6607,7 @@
           if(mainCover){
             mainVideoBox.innerHTML = `
               <img src="${mainCover}" alt="${mediaContent.videos[0].title}">
+              <div class="video-source-tag">${mediaContent.videos[0].url.includes('rutube') ? 'Rutube' : 'YouTube'}</div>
               <div class="video-play"><span>▶</span></div>
             `;
           }
@@ -6125,7 +6703,7 @@
       }
 
       if (teamGrid) {
-        const teamCards = mediaContent.team.map(item => `
+        const renderTeamCard = (item) => `
           <div class="team-card">
             <div class="team-avatar">
               <img src="${item.avatarUrl}" alt="${item.fio}">
@@ -6134,7 +6712,16 @@
             <span class="team-role">${item.role}</span>
             <span>${item.bio}</span>
           </div>
-        `).join('');
+        `;
+
+        const [daryaCard, nikitaCard, ...tailCards] = mediaContent.team;
+        const coreCards = [daryaCard, nikitaCard]
+          .filter(Boolean)
+          .map(renderTeamCard)
+          .join('');
+        const carouselCards = (tailCards.length ? tailCards : mediaContent.team.slice(2))
+          .map(renderTeamCard)
+          .join('');
 
         const bookCard = `
         <div class="team-card book-team-card">
@@ -6157,7 +6744,15 @@
         </div>
         `;
 
-        teamGrid.innerHTML = [teamCards, bookCard].join('');
+        teamGrid.innerHTML = `
+          <div class="team-layout">
+            <div class="team-top">
+              ${bookCard}
+              <div class="team-core-grid">${coreCards}</div>
+            </div>
+            <div class="team-carousel">${carouselCards}</div>
+          </div>
+        `;
       }
 
       const photoFilters = document.getElementById('photoFilters');
@@ -6178,6 +6773,7 @@
       const mobileInlineTeamList = document.getElementById('mobileInlineTeamList');
       const mobileInlineStayList = document.getElementById('mobileInlineStayList');
       const mobileInlineContactsList = document.getElementById('mobileInlineContactsList');
+      const mobileInlineSocials = document.getElementById('mobileInlineSocials');
 
       if (mobileInlinePhotoGrid) {
         mobileInlinePhotoGrid.innerHTML = mediaContent.photos.slice(0,4).map(item => `
@@ -6256,11 +6852,19 @@
       }
 
       if (mobileInlineContactsList) {
-        mobileInlineContactsList.innerHTML = mediaContent.contacts.map(item => `
+        const primaryContacts = mediaContent.contacts.filter(item => item.label === 'whatsapp' || item.label === 'telegram');
+        mobileInlineContactsList.innerHTML = primaryContacts.map(item => `
           <div class="mobile-contact-card">
-            <strong>${item.label.replace('_', ' ')}</strong>
-            <a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.text}</a>
+            <a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.label === 'whatsapp' ? 'WhatsApp' : '@proga_school'}</a>
           </div>
+        `).join('');
+      }
+
+      if (mobileInlineSocials) {
+        mobileInlineSocials.innerHTML = mediaContent.socials.slice(0, 5).map(item => `
+          <a class="mobile-social-link" href="${item.href}" target="_blank" rel="noopener noreferrer" aria-label="${item.key}">
+            <span>${item.label}</span>
+          </a>
         `).join('');
       }
     }
@@ -6329,24 +6933,53 @@
       wrap.classList.remove('hidden');
 
       card.innerHTML = `
-        <h3>Проверяем условия</h3>
-        <p>Смотрим, можем ли закрепить лучшую цену для этой смены.</p>
-        <div style="height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:10px;">
-          <div style="width:72%;height:100%;background:linear-gradient(90deg,#ff8a00,#ffb15e);"></div>
+        <div class="offer-headline">
+          <h3>Ищем лучшую цену</h3>
+          <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
         </div>
-        <div style="height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:10px;">
-          <div style="width:54%;height:100%;background:linear-gradient(90deg,#ff8a00,#ffb15e);"></div>
+        <p id="offerProgressLead">Проверяем остаток мест и доступные условия для выбранной смены.</p>
+        <div class="offer-progress-track">
+          <div class="offer-progress-fill" id="offerProgressFillLine"></div>
         </div>
-        <div style="height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;">
-          <div style="width:36%;height:100%;background:linear-gradient(90deg,#ff8a00,#ffb15e);"></div>
+        <div class="offer-progress-steps">
+          <div class="offer-progress-step active" id="offerStepA">Проверяем смену</div>
+          <div class="offer-progress-step" id="offerStepB">Сверяем цену</div>
+          <div class="offer-progress-step" id="offerStepC">Генерируем код</div>
         </div>
       `;
+      const fillEl = document.getElementById('offerProgressFillLine');
+      const leadEl = document.getElementById('offerProgressLead');
+      const stepA = document.getElementById('offerStepA');
+      const stepB = document.getElementById('offerStepB');
+      const stepC = document.getElementById('offerStepC');
 
-      offerTimeoutId = setTimeout(() => {
+      if(fillEl) fillEl.style.width = '18%';
+      offerTimeoutIds.push(setTimeout(() => {
         if(currentRunId !== offerRunId) return;
-        offerTimeoutId = null;
+        if(fillEl) fillEl.style.width = '44%';
+        if(leadEl) leadEl.textContent = 'Сверяем цену и проверяем, можно ли зафиксировать условия.';
+        stepA?.classList.remove('active');
+        stepB?.classList.add('active');
+      }, 1200));
+
+      offerTimeoutIds.push(setTimeout(() => {
+        if(currentRunId !== offerRunId) return;
+        if(fillEl) fillEl.style.width = '76%';
+        if(leadEl) leadEl.textContent = 'Готовим персональный код бронирования и закрепляем цену.';
+        stepB?.classList.remove('active');
+        stepC?.classList.add('active');
+      }, 2500));
+
+      offerTimeoutIds.push(setTimeout(() => {
+        if(currentRunId !== offerRunId) return;
+        if(fillEl) fillEl.style.width = '100%';
+      }, 3300));
+
+      offerTimeoutIds.push(setTimeout(() => {
+        if(currentRunId !== offerRunId) return;
+        clearOfferTimeout();
         showOffer();
-      }, 700);
+      }, 3600));
     }
 
     function openOfferCheck(){
@@ -6372,7 +7005,10 @@
       track('offer_complete', selectedShiftPayload());
 
       card.innerHTML = `
-        <h3>${state.offerStage === 2 ? 'Рады, что вы вернулись' : 'Удалось закрепить цену'}</h3>
+        <div class="offer-headline">
+          <h3>${state.offerStage === 2 ? 'Рады, что вы вернулись' : 'Удалось закрепить цену'}</h3>
+          <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
+        </div>
         <p>${state.offerStage === 2 ? 'Мы смогли ещё немного улучшить условия. Эта цена действует 24 часа.' : 'Ваша цена сохранится на ограниченное время, чтобы вы могли спокойно принять решение.'}</p>
         <div class="big-price">${formatPrice(state.offerPrice)}</div>
         <div class="summary-timer" id="offerTimer"></div>
@@ -6628,7 +7264,7 @@
 
       const mobileMap = {
         'section-about':'mobile-section-about',
-        'section-programs':'mobile-section-programs',
+        'section-programs':'mobileBookingCard',
         'section-photos':'mobile-section-photos',
         'section-videos':'mobile-section-videos',
         'section-reviews':'mobile-section-reviews',
@@ -6687,6 +7323,11 @@
       if(navEl.closest('#serviceMenu')){
         document.querySelectorAll('#serviceMenu [data-nav]').forEach(x => x.classList.remove('active'));
         navEl.classList.add('active');
+      }
+
+      if(navEl.closest('.mobile-hero-nav') && COMPACT_MODAL_SECTIONS.has(target)){
+        openSectionModal(target);
+        return;
       }
 
       navigateToSection(target);
@@ -6796,6 +7437,15 @@
       if(!modal || modal.classList.contains('hidden')) return;
       if(e.key === 'Escape') closeSectionModal();
     });
+
+    window.addEventListener('resize', () => {
+      if(heroResizeTimer){
+        clearTimeout(heroResizeTimer);
+      }
+      heroResizeTimer = setTimeout(() => {
+        initHero();
+      }, 160);
+    }, {passive:true});
 
     initHero();
 
