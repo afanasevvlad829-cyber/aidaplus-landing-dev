@@ -3879,6 +3879,9 @@
       document.getElementById('mobileView').classList.toggle('hidden', view !== 'mobile');
       document.getElementById('desktopModeWrap').classList.toggle('hidden', view !== 'desktop');
       persist();
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new Event('resize'));
+      });
     }
 
     function applyDesktopMode(){
