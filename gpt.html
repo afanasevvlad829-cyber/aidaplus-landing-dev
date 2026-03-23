@@ -743,12 +743,6 @@
       line-height:1.6;
     }
 
-    .micro-note{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.5;
-    }
-
     .selected-age-chip{
       display:none;
       align-items:center;
@@ -2625,7 +2619,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.30 (patch-29)
+    v0.0.31 (patch-30-fix)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -2675,6 +2669,7 @@
               <button class="menu-pill" data-target="reviews">Отзывы</button>
               <button class="menu-pill" data-target="faq">FAQ</button>
               <button class="menu-pill" data-target="team">Команда</button>
+              <button class="menu-pill" data-target="stay">Размещение</button>
               <button class="menu-pill" data-target="contacts">Контакты</button>
             </div>
           </div>
@@ -2914,6 +2909,11 @@
             <div class="team-grid" id="teamGrid"></div>
           </section>
 
+          <section class="section-card" id="section-stay">
+            <h3>Размещение</h3>
+            <p class="section-lead">Показываем не только атмосферу лагеря, но и быт: комнаты, проживание, санузлы и общие пространства.</p>
+          </section>
+
           <section class="section-card" id="section-contacts">
             <h3>Контакты и соцсети</h3>
             <p class="section-lead">Если хочется быстро проверить локацию, маршрут и площадки — всё собрано в одном месте.</p>
@@ -2945,6 +2945,7 @@
               <a href="#section-about">О лагере</a>
               <a href="#section-programs">Смены</a>
               <a href="#section-team">Команда</a>
+              <a href="#section-stay">Размещение</a>
             </div>
             <div>
               <h4>AiDaCamp</h4>
@@ -3450,6 +3451,26 @@
       document.getElementById('mediaContent').innerHTML = '';
     }
 
+    function getVideoEmbedUrl(url){
+      try {
+        const u = new URL(url, window.location.origin);
+        if(!u.hostname.includes('rutube.ru')) return url;
+
+        const parts = u.pathname.split('/').filter(Boolean);
+        if(parts[0] === 'play' && parts[1] === 'embed' && parts[2]){
+          return `https://rutube.ru/play/embed/${parts[2]}`;
+        }
+        if(parts[0] === 'shorts' && parts[1]){
+          return `https://rutube.ru/play/embed/${parts[1]}`;
+        }
+        if(parts[0] === 'video' && parts[1]){
+          return `https://rutube.ru/play/embed/${parts[1]}`;
+        }
+      } catch(e){
+      }
+      return url;
+    }
+
     function renderMediaViewer(){
       const content = document.getElementById('mediaContent');
       const caption = document.getElementById('mediaCaption');
@@ -3462,11 +3483,14 @@
 
       if(mediaType === 'video'){
         const item = mediaContent.videos[mediaIndex];
+        const embedUrl = getVideoEmbedUrl(item.url);
         content.innerHTML = `
           <iframe
             class="media-video"
-            src="${item.url}"
+            src="${embedUrl}"
             frameborder="0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen
           ></iframe>`;
         caption.textContent = `${mediaIndex + 1}/${mediaContent.videos.length}`;
@@ -4584,6 +4608,7 @@
         reviews:'section-reviews',
         faq:'section-faq',
         team:'section-team',
+        stay:'section-stay',
         contacts:'section-contacts'
       };
 
