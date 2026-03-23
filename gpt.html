@@ -8,6 +8,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AiDaCamp — Prototype Full Logic</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/robot.svg" />
   <!-- AC_BUILD_STYLE_START -->
 <style id="ac-build-main-css">
     :root{
@@ -2412,6 +2413,7 @@
       border:2px solid rgba(255,138,0,.26);
       text-align:left;
       align-content:start;
+      grid-row:span 2;
       min-height:auto;
       gap:10px;
       padding:14px;
@@ -3259,6 +3261,10 @@
       .book-team-cover-wrap{
         min-height:180px;
       }
+
+      .book-team-card{
+        grid-row:auto;
+      }
     }
 
     @media (max-width: 820px){
@@ -3396,7 +3402,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.50 (patch-50)
+    v0.0.51 (patch-51-display)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -4012,7 +4018,7 @@
         class="video-frame"
         src=""
         frameborder="0"
-        allow="autoplay; fullscreen; picture-in-picture"
+        allow="autoplay; picture-in-picture"
         referrerpolicy="strict-origin-when-cross-origin"
         allowfullscreen
       ></iframe>
