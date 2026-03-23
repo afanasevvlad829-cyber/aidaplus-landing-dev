@@ -120,19 +120,19 @@
         {
           title:'За неделю в лагере ребёнок меняется больше, чем за год дома',
           url:'https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/',
-          cover:'assets/video-covers/cover-week-change.jpg',
+          cover:'https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg',
           orientation:'vertical'
         },
         {
           title:'Зачем детям копить деньги в лагере?',
           url:'https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/',
-          cover:'assets/video-covers/cover-money-why.jpg',
+          cover:'https://static.tildacdn.com/tild6135-3464-4332-b565-386630323830/photo_2025-06-14_08-.jpg',
           orientation:'vertical'
         },
         {
           title:'Ребёнок сам откажется от телефона за 3 дня?',
           url:'https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/',
-          cover:'assets/video-covers/cover-phone-3days.jpg',
+          cover:'https://static.tildacdn.com/tild3639-3532-4334-b035-316562666439/photo.jpg',
           orientation:'vertical'
         }
       ],

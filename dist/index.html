@@ -9,7 +9,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AiDaCamp — Prototype Full Logic</title>
   <link rel="icon" type="image/svg+xml" href="/assets/icons/robot.svg" />
-  <!-- AC_BUILD_STYLE_START -->
+  <link rel="stylesheet" href="/src/styles/main.css">
+
+<!-- AC_BUILD_STYLE_START -->
 <style id="ac-build-main-css">
     :root{
       --bg:#eef1f6;
@@ -185,7 +187,7 @@
     }
 
     .compact-mode .hero-shell{
-      min-height:560px;
+      min-height:540px;
     }
 
     .mobile-compact-mode .mobile-body-sections{
@@ -336,8 +338,8 @@
       grid-template-columns:minmax(0, 1fr) 356px;
       column-gap:24px;
       align-items:start;
-      padding:22px 22px 8px;
-      min-height:560px;
+      padding:22px 22px 0;
+      min-height:540px;
       background:
         linear-gradient(180deg, rgba(11,16,24,.20) 0%, rgba(11,16,24,.74) 100%),
         radial-gradient(circle at 18% 18%, rgba(255,138,0,.18), transparent 28%),
@@ -622,7 +624,7 @@
       max-width:356px;
       margin-left:auto;
       margin-top:0;
-      margin-bottom:-20px;
+      margin-bottom:-32px;
       padding:20px;
       border-radius:26px;
       background:rgba(12,17,24,.76);
@@ -633,10 +635,10 @@
       transition:transform .2s ease, box-shadow .2s ease;
       z-index:3;
       box-sizing:border-box;
-      transform:translateY(-8px);
+      transform:translateY(-14px);
     }
     .hero-booking-card:hover{
-      transform:translateY(-10px);
+      transform:translateY(-16px);
       box-shadow:0 28px 76px rgba(0,0,0,.36);
     }
 
@@ -2452,7 +2454,7 @@
       border:2px solid rgba(255,138,0,.26);
       text-align:left;
       align-content:start;
-      grid-row:span 2;
+      grid-row:auto;
       min-height:auto;
       gap:10px;
       padding:14px;
@@ -2842,13 +2844,14 @@
     .overlay.section-modal-compact{
       align-items:flex-start;
       justify-content:flex-start;
-      padding:88px 0 0 24px;
-      background:linear-gradient(90deg, rgba(9,14,22,.52) 0%, rgba(9,14,22,.40) 56%, rgba(9,14,22,0) 58%);
+      padding:84px 0 0 20px;
+      background:linear-gradient(90deg, rgba(9,14,22,.54) 0%, rgba(9,14,22,.42) 52%, rgba(9,14,22,0) 54%);
     }
 
     .overlay.section-modal-compact .section-modal-card{
-      width:min(60vw, 760px);
-      max-height:min(74vh, 680px);
+      width:min(52vw, 680px);
+      max-width:calc(100vw - 420px);
+      max-height:min(60vh, 520px);
       border-radius:20px;
       box-shadow:0 20px 56px rgba(7,12,20,.30);
     }
@@ -3601,7 +3604,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.52 (patch-52-standard-fixes)
+    v0.0.53 (patch-53-final-mini)
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -4279,12 +4282,12 @@
     };
   </script>
 
-  <!-- AC_BUILD_SCRIPT_START -->
+  <script src="/src/scripts/main.js"></script>
+<!-- AC_BUILD_SCRIPT_START -->
 <script id="ac-build-components" type="application/json">[{"name": "gallery.html", "size": 230}, {"name": "hero.html", "size": 232}, {"name": "reviews.html", "size": 224}, {"name": "shifts.html", "size": 276}, {"name": "team.html", "size": 163}]</script>
 <script id="ac-build-media-manifest" type="application/json">[]</script>
 <script id="ac-build-team-manifest" type="application/json">[]</script>
 <script id="ac-build-main-js">
-/* src/scripts/main.js */
     const shifts = [
       {id:'shift-1',title:'1 смена',dates:'30 мая — 8 июня',start:'2025-05-30',end:'2025-06-08',price:79000,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
       {id:'shift-2',title:'2 смена',dates:'10 июня — 16 июня',start:'2025-06-10',end:'2025-06-16',price:48000,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
@@ -4407,19 +4410,19 @@
         {
           title:'За неделю в лагере ребёнок меняется больше, чем за год дома',
           url:'https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/',
-          cover:'assets/video-covers/cover-week-change.jpg',
+          cover:'https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg',
           orientation:'vertical'
         },
         {
           title:'Зачем детям копить деньги в лагере?',
           url:'https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/',
-          cover:'assets/video-covers/cover-money-why.jpg',
+          cover:'https://static.tildacdn.com/tild6135-3464-4332-b565-386630323830/photo_2025-06-14_08-.jpg',
           orientation:'vertical'
         },
         {
           title:'Ребёнок сам откажется от телефона за 3 дня?',
           url:'https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/',
-          cover:'assets/video-covers/cover-phone-3days.jpg',
+          cover:'https://static.tildacdn.com/tild3639-3532-4334-b035-316562666439/photo.jpg',
           orientation:'vertical'
         }
       ],
