@@ -1,0 +1,10 @@
+Priority,Проблема,Почему,Что делать,Ожидаемый эффект
+P0,"PII в localStorage state.phone","compliance и security риск","убрать phone из persistent state; хранить transient","снижение privacy риска"
+P0,"Split runtime perception (unused modules vs main monolith)","порождает ложный source-of-truth","зафиксировать runtime entrypoint policy в коде и CI-check","меньше ошибок при развитии"
+P0,"Event routing complexity","двойные click listeners + action router","объединить routing в один слой","снижение regression rate"
+P1,"Mobile full content cuts","нарушает целевую 1 system / 4 views","вернуть FAQ/reviews/team/journey richness","выравнивание смысловой эквивалентности"
+P1,"Stay data derives from desktop DOM","хрупкая cross-view зависимость","вынести stay в data map","устойчивый mobile рендер"
+P1,"Hero/booking magic numbers","дизайн ломается при локальных патчах","перевести ключевые высоты/overlap в токены","стабильная first-screen композиция"
+P1,"Section modal clone fragility","часть интерактива теряется после clone","добавить post-clone init hook","предсказуемый compact modal UX"
+P2,"CSS monolith maintainability","дорогие правки","вернуть @import segmented files + build bundling","лучше поддерживаемость без смены one-file output"
+P2,"Footer parity","mobile lacks footer cluster","добавить footer-lite для mobile","более целостная info architecture"

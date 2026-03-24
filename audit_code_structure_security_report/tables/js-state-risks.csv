@@ -1,0 +1,13 @@
+Zone,Risk,Where,Impact,Severity,Recommendation
+Booking state lifecycle,"Mutable global state without schema migration","src/scripts/main.js:211-251","Stale/corrupted localStorage can push UI into inconsistent branch",major,"Introduce validateState() on load and explicit defaults per key"
+Render recursion,"Cross-calling render functions increases coupling","renderSummary()->renderBookingPanels() and many callers","Hard to reason about side effects and repaint cost",major,"Split renderSummary from booking panel refresh and use targeted updates"
+Debug reset blast radius,"Clears all local/session storage","resetBookingFlowDebug():968-969","Can wipe unrelated app data for same origin",major,"Limit reset to aidacamp keys only"
+Lead fallback persistence,"PII fallback stored raw in localStorage","notifyLead():810-819","Sensitive data remains in browser storage without TTL",major,"Store minimized payload + expiry or use sessionStorage"
+Dead code in runtime file,"Unused functions remain active code surface","formatTelegramMessage(), renderStars(), openOfferCheck()","Increases maintenance and audit noise",minor,"Remove or move behind explicit debug flag"
+Event layer complexity,"Multiple document-level click handlers","main.js around 1429 and 1478","Ordering-dependent behavior; accidental double handling risk",major,"Consolidate into one router with explicit phases"
+Modal orchestration,"Many modals coordinated manually","closeTransientModals(), several keydown/backdrop handlers","New modal can break close policy or z-stack",major,"Centralize modal registry and close policy"
+Offer timers,"Multiple timeout IDs and run IDs","runOfferSearch()/clearOfferTimeout()","Race risk reduced but still non-trivial to maintain",minor,"Wrap in small OfferMachine object"
+Section modal clone,"cloneNode + id stripping","openSectionModal():609-634","Interactive clones depend on delegated handlers only",minor,"Snapshot-test modal section interactions"
+Flow gating UX-state coupling,"Hard lock spread across state + CSS + handlers","getPrimaryActionState/getBookingStage + booking-stage-* CSS","Regressions likely when changing markup/state order",major,"Create single gate contract and test scenarios"
+History handling,"Reset rewrites URL path only","resetBookingFlowDebug():1016","Potential mismatch if future query/hash-based routing added",minor,"Normalize through dedicated URL state helper"
+Mode routing divergence,"navigateToSection branches by mode and section set","navigateToSection():2600+","High branch complexity across 4 modes",major,"Explicit policy matrix + tests per mode"

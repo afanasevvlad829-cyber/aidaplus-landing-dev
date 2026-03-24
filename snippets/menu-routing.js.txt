@@ -1,0 +1,81 @@
+      input.classList.toggle('input-error', !!show);
+      error.classList.toggle('visible', !!show);
+    }
+
+    function setLeadSubmitState(loading){
+      const btn = document.getElementById('submitLeadBtn');
+      if(!btn) return;
+      btn.disabled = !!loading;
+      btn.textContent = loading ? 'Отправляем...' : 'Оформить и отправить заявку';
+    }
+
+    function openForm(){
+      syncGuidedState();
+      if(!state.shiftId) return;
+
+      const shift = shifts.find(s => s.id === state.shiftId);
+      const price = state.offerPrice || state.basePrice || shift.price;
+
+      const formLead = document.getElementById('formLead');
+      if(formLead){
+        formLead.textContent = `${shift.title} · ${shift.dates} · ${labelAge(state.age)} · ${formatPrice(price)}${state.code ? ` · Код ${state.code}` : ''}`;
+      }
+
+      const phoneInput = document.getElementById('parentPhone');
+      document.getElementById('parentPhone').value = state.phone || '';
+      if(phoneInput) phoneInput.value = formatPhoneInput(state.phone || '');
+      const bookingSummaryBox = document.getElementById('bookingSummaryBox');
+      if(bookingSummaryBox) bookingSummaryBox.innerHTML = buildBookingSummaryHtml();
+      setPhoneError(false);
+      setLeadSubmitState(false);
+      track('form_open', selectedShiftPayload());
+      document.getElementById('formDrawer').classList.remove('hidden');
+    }
+
+    function closeForm(){
+      document.getElementById('formDrawer').classList.add('hidden');
+    }
+
+    function openSuccessModal(deliveryResult){
+      const box = document.getElementById('successSummaryBox');
+      if(box) box.innerHTML = buildBookingSummaryHtml();
+      const deliveryState = document.getElementById('successDeliveryState');
+      if(deliveryState){
+        if(deliveryResult && deliveryResult.ok === false){
+          deliveryState.textContent = 'Заявка сохранена локально, но сейчас нет связи с сервером отправки. Если мы не ответим в течение 15 минут, напишите нам в Telegram.';
+          deliveryState.classList.remove('hidden');
+          deliveryState.classList.add('error');
+        } else {
+          deliveryState.textContent = '';
+          deliveryState.classList.add('hidden');
+          deliveryState.classList.remove('error');
+        }
+      }
+      document.getElementById('successOverlay').classList.remove('hidden');
+    }
+
+    function closeSuccessModal(){
+      document.getElementById('successOverlay').classList.add('hidden');
+    }
+
+    async function submitLead(){
+      if(leadSubmitInProgress) return;
+      syncGuidedState();
+      const name = document.getElementById('parentName').value.trim();
+      const phoneRaw = document.getElementById('parentPhone').value.trim();
+      const phone = normalizePhone(phoneRaw);
+      const consent = document.getElementById('consentCheck').checked;
+
+      if(!name || !phoneRaw || !consent){
+        if(!phoneRaw) setPhoneError(true);
+        alert('Заполните имя, телефон и подтвердите согласие.');
+        return;
+      }
+
+      if(!isValidPhone(phoneRaw)){
+        setPhoneError(true);
+        alert('Проверьте номер телефона.');
+        return;
+      }
+
+      setPhoneError(false);

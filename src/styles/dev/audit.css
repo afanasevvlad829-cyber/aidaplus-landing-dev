@@ -1,7 +1,7 @@
 /* Audit mode: interactive numbering for menu + top Hero + funnel */
 body.ac-audit-mode .ac-audit-target {
-  outline: 1px dashed rgba(255, 136, 0, 0.9);
-  outline-offset: 2px;
+  outline: none;
+  outline-offset: 0;
   translate: var(--ac-audit-dx, 0px) var(--ac-audit-dy, 0px);
 }
 
@@ -33,6 +33,10 @@ body.ac-audit-mode .ac-audit-badge {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
+body.ac-audit-mode .ac-audit-badge:not(.ac-audit-badge--layer2) {
+  display: none !important;
+}
+
 body.ac-audit-mode .ac-audit-badge:active {
   cursor: grabbing;
 }
@@ -44,7 +48,29 @@ body.ac-audit-mode .ac-audit-badge:focus-visible {
   box-shadow: 0 0 0 2px rgba(255, 159, 31, 0.35), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-body.ac-audit-mode .ac-audit-target--container > .ac-audit-badge {
+body.ac-audit-mode .ac-audit-badge--layer2 {
+  left: auto;
+  right: 3px;
+  top: 3px;
+  width: auto;
+  min-width: 28px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #0ea5e9;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: default;
+  pointer-events: none;
+  z-index: 9996;
+}
+
+body.ac-audit-mode .ac-audit-target--container > .ac-audit-badge--layer2 {
+  right: 6px;
+  top: 6px;
+}
+
+body.ac-audit-mode .ac-audit-target--container > .ac-audit-badge:not(.ac-audit-badge--layer2) {
   left: 6px;
   right: auto;
   top: 6px;
@@ -57,12 +83,12 @@ body.ac-audit-mode .ac-audit-target--container > .ac-audit-badge {
 }
 
 body.ac-audit-mode .ac-audit-target--active {
-  outline: 2px solid #ff8800;
-  box-shadow: 0 0 0 3px rgba(255, 136, 0, 0.22);
+  outline: none;
+  box-shadow: none;
 }
 body.ac-audit-mode .ac-audit-target--dragging {
-  outline: 2px solid #ff9f1f;
-  box-shadow: 0 0 0 3px rgba(255, 159, 31, 0.3);
+  outline: none;
+  box-shadow: none;
 }
 
 
@@ -77,6 +103,37 @@ body.ac-audit-mode .ac-audit-target--hidden::after {
 
 body.ac-audit-mode .ac-audit-target--hidden .ac-audit-badge {
   display: none;
+}
+
+body.ac-audit-mode .ac-audit-state-host {
+  position: relative;
+}
+
+body.ac-audit-mode .ac-audit-workflow-marker {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 9997;
+  min-width: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  background: rgba(14, 22, 36, 0.9);
+  color: #fff;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-align: center;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+}
+
+body.ac-audit-mode .ac-booking-fixed__card .ac-audit-workflow-marker,
+body.ac-audit-mode .ac-shift-item--featured__center .ac-audit-workflow-marker,
+body.ac-audit-mode .ac-shift-item__price-shell .ac-audit-workflow-marker {
+  top: 6px;
+  left: 6px;
 }
 
 .ac-audit-panel {

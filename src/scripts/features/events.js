@@ -27,10 +27,12 @@
     holdHours: 72
   };
   var SHIFT_PRICE_META = [
-    { date: "1–13 ИЮН", days: 13, seats: 4, finalPrice: 79000, badge: "ХИТ", monthLabel: "Июнь 2026", monthIndex: 5, year: 2026, startDay: 1, endDay: 13 },
-    { date: "15–27 ИЮН", days: 13, seats: 8, finalPrice: 95000, badge: "", monthLabel: "Июнь 2026", monthIndex: 5, year: 2026, startDay: 15, endDay: 27 },
-    { date: "1–13 АВГ", days: 13, seats: 10, finalPrice: 75000, badge: "", monthLabel: "Август 2026", monthIndex: 7, year: 2026, startDay: 1, endDay: 13 },
-    { date: "17–26 АВГ", days: 10, seats: 6, finalPrice: 79000, badge: "", monthLabel: "Август 2026", monthIndex: 7, year: 2026, startDay: 17, endDay: 26 }
+    { title: "1 смена", date: "30 мая - 8 июня", days: 8, seats: 12, finalPrice: 79000, oldPrice: 85000, badge: "ХИТ", monthLabel: "Июнь 2026", monthIndex: 5, year: 2026, startDay: 1, endDay: 8 },
+    { title: "2 смена", date: "10 июня - 16 июня", days: 6, seats: 8, finalPrice: 48000, oldPrice: 58000, badge: "", monthLabel: "Июнь 2026", monthIndex: 5, year: 2026, startDay: 10, endDay: 16 },
+    { title: "3 смена", date: "16 июня - 23 июня", days: 7, seats: 5, finalPrice: 65000, oldPrice: 69000, badge: "", monthLabel: "Июнь 2026", monthIndex: 5, year: 2026, startDay: 16, endDay: 23 },
+    { title: "4 смена", date: "10 июня — 23 июня", days: 13, seats: 14, finalPrice: 95000, oldPrice: 111000, badge: "", monthLabel: "Июнь 2026", monthIndex: 5, year: 2026, startDay: 10, endDay: 23 },
+    { title: "5 смена", date: "3 августа — 15 августа", days: 12, seats: 7, finalPrice: 89400, oldPrice: 98000, badge: "", monthLabel: "Август 2026", monthIndex: 7, year: 2026, startDay: 3, endDay: 15 },
+    { title: "6 смена", date: "17 августа — 26 августа", days: 9, seats: 15, finalPrice: 69600, oldPrice: 79000, badge: "", monthLabel: "Август 2026", monthIndex: 7, year: 2026, startDay: 17, endDay: 26 }
   ];
   var shiftsShowAll = false;
   var shiftCalendar = { open: false, shiftId: "" };
@@ -47,6 +49,8 @@
     ageSelected: false,
     stageSync: null
   };
+  var coreState = (window.AC_CORE && window.AC_CORE.state) || {};
+  var coreActions = (window.AC_CORE && window.AC_CORE.actions) || {};
 
   var data = window.AC_DATA || {};
   var ICON_MAP = data.ICON_MAP || {};
@@ -79,7 +83,7 @@
     activeTab: "info",
     step: 0,
     direction: initialShift.direction,
-    age: 9,
+    age: 11,
     shiftView: "list",
     selectedShiftId: initialShift.id,
     overlays: {
@@ -95,6 +99,18 @@
     teamPage: 0,
     faqCategory: "medicine"
   };
+  if (typeof coreState.validateMode === "function") {
+    state.mode = coreState.validateMode(state.mode);
+  }
+  if (typeof coreState.validateAge === "function") {
+    state.age = coreState.validateAge(state.age);
+  }
+  if (typeof coreState.validateShiftView === "function") {
+    state.shiftView = coreState.validateShiftView(state.shiftView);
+  }
+  if (typeof coreState.validateOverlays === "function") {
+    state.overlays = coreState.validateOverlays(state.overlays);
+  }
   var mediaSwapDir = {
     photo: 0,
     video: 0,
@@ -104,7 +120,8 @@
 
   function getInitialMode() {
     try {
-      return localStorage.getItem(MODE_KEY) === "full" ? "full" : "compact";
+      var mode = localStorage.getItem(MODE_KEY) === "full" ? "full" : "compact";
+      return typeof coreState.validateMode === "function" ? coreState.validateMode(mode) : mode;
     } catch (_err) {
       return "compact";
     }
@@ -132,7 +149,10 @@
 
   function persistAge(age) {
     try {
-      localStorage.setItem(AGE_KEY, String(clamp(Number(age) || 7, 7, 14)));
+      var safeAge = typeof coreState.validateAge === "function"
+        ? coreState.validateAge(age)
+        : clamp(Number(age) || 11, 7, 14);
+      localStorage.setItem(AGE_KEY, String(safeAge));
     } catch (_err) {
       // ignore storage errors
     }
@@ -291,10 +311,16 @@
   }
 
   function clamp(value, min, max) {
+    if (typeof coreActions.clamp === "function") {
+      return coreActions.clamp(value, min, max);
+    }
     return Math.max(min, Math.min(max, value));
   }
 
   function hasOwn(obj, key) {
+    if (typeof coreActions.hasOwn === "function") {
+      return coreActions.hasOwn(obj, key);
+    }
     return Object.prototype.hasOwnProperty.call(obj, key);
   }
 
@@ -307,6 +333,9 @@
     ageGateNudge = true;
     renderInfoCard();
     renderFunnel();
+    if (state.overlays.shifts) {
+      renderOverlays();
+    }
   }
 
   function findProfileByAge(age) {
@@ -317,6 +346,18 @@
       }
     }
     return AGE_PROFILES[0];
+  }
+
+  function getShiftSummaryByAge(shift, age) {
+    if (!shift) return "";
+    var profile = findProfileByAge(clamp(Number(age) || 11, 7, 14));
+    var ageId = profile && profile.id ? String(profile.id) : "10-12";
+    var byAge = shift.descriptions_by_age || shift.descriptionsByAge;
+    if (byAge && typeof byAge === "object") {
+      var resolved = byAge[ageId] || byAge["10-12"] || byAge["default"] || "";
+      if (resolved) return String(resolved);
+    }
+    return String(shift.summary || shift.line || "");
   }
 
   function sliderValueToAge(sliderValue) {
@@ -650,18 +691,22 @@
   function getShiftPriceMeta(shift, idx) {
     var fallback = SHIFT_PRICE_META[idx] || SHIFT_PRICE_META[0];
     var finalPrice = fallback.finalPrice;
-    var basePrice = Math.round(finalPrice * (1 + SHIFT_PRICE_CFG.initialMarkup));
+    var basePrice = Number(fallback.oldPrice || 0);
+    if (!Number.isFinite(basePrice) || basePrice <= 0) {
+      basePrice = Math.round(finalPrice * (1 + SHIFT_PRICE_CFG.initialMarkup));
+    }
     var totalSeats = 45;
     var seatsLeft = Math.max(0, Number(fallback.seats || 0));
     var reserved = Math.max(0, totalSeats - seatsLeft);
     return {
       date: fallback.date,
+      title: fallback.title || "",
       days: fallback.days,
       seats: fallback.seats,
       badge: fallback.badge,
       finalPrice: finalPrice,
       basePrice: basePrice,
-      shiftName: shift.summary || shift.line,
+      shiftName: getShiftSummaryByAge(shift, state.age),
       monthLabel: fallback.monthLabel || "",
       monthIndex: Number(fallback.monthIndex || 0),
       year: Number(fallback.year || 2026),
@@ -761,9 +806,10 @@
       : shiftSummary;
     var promoCode = promo && promo.code ? String(promo.code) : "—";
     var deadline = promo && promo.expiresAt ? formatPromoDeadlineLine(promo.expiresAt) : "";
+    var hidePricing = !!(options && options.hidePricing);
 
     return (
-      '<article class="ac-booking-fixed__card">' +
+      '<article class="ac-booking-fixed__card' + (hidePricing ? " is-consent-accepted" : "") + '">' +
       '<button class="ac-booking-fixed__close" type="button" data-action="promo-reset" aria-label="Отказаться от брони">' +
       '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.close + '" alt="" aria-hidden="true">' +
       "</button>" +
@@ -783,7 +829,16 @@
     );
   }
 
+  function syncBookingFixedCardConsentState(consentAccepted) {
+    var fixedCard = document.querySelector("#acBookingFixedCard .ac-booking-fixed__card");
+    if (!fixedCard) return;
+    fixedCard.classList.toggle("is-consent-accepted", !!consentAccepted);
+  }
+
   function getResumePromoContext() {
+    var lead = loadBookingLead();
+    var leadSubmitted = !!(lead && lead.submitted);
+
     var promo = loadShiftPromo();
     if (promo && promo.shiftId) {
       var status = String(promo.status || "draft");
@@ -808,13 +863,13 @@
           }
 
           var discount = Math.max(0, basePrice - finalPrice);
-          var ageValue = clamp(Number(promo.age || state.age || 7), 7, 14);
+          var ageValue = clamp(Number(promo.age || state.age || 11), 7, 14);
           var ageProfile = findProfileByAge(ageValue);
           var isActive = String(promo.status || "draft") === "active" && getPromoRemainingMs(promo) > 0;
 
           return {
             shiftId: shift.id,
-            shiftLine: meta.date + " • " + meta.days + " дн. • " + (shift.summary || shift.line || ""),
+            shiftLine: meta.date + " • " + meta.days + " дн. • " + getShiftSummaryByAge(shift, ageValue),
             ageLabel: ageProfile.min + "-" + ageProfile.max,
             basePrice: basePrice,
             finalPrice: finalPrice,
@@ -822,18 +877,19 @@
             code: String(promo.code || ""),
             isActive: isActive,
             ttlText: isActive ? formatPromoDeadlineLine(promo.expiresAt || 0) : "",
-            ctaMode: isActive ? "booking" : "shift",
-            ctaText: "Продолжить бронирование",
-            hintText: isActive
-              ? "Цена сохранена за вами."
-              : "Вы остановились на подборе цены. Можно продолжить и завершить бронирование.",
-            submitted: false
+            ctaMode: leadSubmitted ? "" : (isActive ? "booking" : "shift"),
+            ctaText: leadSubmitted ? "" : "Продолжить бронирование",
+            hintText: leadSubmitted
+              ? "Заявка уже отправлена. Ожидайте подтверждение менеджера."
+              : (isActive
+                  ? "Цена сохранена за вами."
+                  : "Вы остановились на подборе цены. Можно продолжить и завершить бронирование."),
+            submitted: leadSubmitted
           };
         }
       }
     }
 
-    var lead = loadBookingLead();
     if (!lead || !lead.shiftId) return null;
 
     var leadShift = findExactShiftById(String(lead.shiftId));
@@ -851,13 +907,11 @@
       leadFinalPrice = leadBasePrice;
     }
     var leadDiscount = Math.max(0, leadBasePrice - leadFinalPrice);
-    var leadAge = clamp(Number(lead.age || state.age || 7), 7, 14);
+    var leadAge = clamp(Number(lead.age || state.age || 11), 7, 14);
     var leadProfile = findProfileByAge(leadAge);
-    var leadSubmitted = !!lead.submitted;
-
     return {
       shiftId: leadShift.id,
-      shiftLine: String(lead.shiftText || (leadMeta.date + " • " + leadMeta.days + " дн. • " + (leadShift.summary || leadShift.line || ""))),
+      shiftLine: String(lead.shiftText || (leadMeta.date + " • " + leadMeta.days + " дн. • " + getShiftSummaryByAge(leadShift, leadAge))),
       ageLabel: leadProfile.min + "-" + leadProfile.max,
       basePrice: leadBasePrice,
       finalPrice: leadFinalPrice,
@@ -865,16 +919,21 @@
       code: String(lead.promoCode || ""),
       isActive: false,
       ttlText: "",
-      ctaMode: "booking",
-      ctaText: "Продолжить бронирование",
+      ctaMode: leadSubmitted ? "" : "booking",
+      ctaText: leadSubmitted ? "" : "Продолжить бронирование",
       hintText: leadSubmitted
-        ? "Заявка уже отправлена. Можно открыть бронь и проверить данные."
+        ? "Заявка уже отправлена. Ожидайте подтверждение менеджера."
         : "Бронь сохранена. Можно продолжить и завершить оформление.",
       submitted: leadSubmitted
     };
   }
 
   function buildHeroResumeCardMarkup(context) {
+    var basePrice = Number(context && context.basePrice || 0);
+    var finalPrice = Number(context && context.finalPrice || 0);
+    var discount = Math.max(0, Number(context && context.discount || 0));
+    var showPriceGrid = finalPrice > 0;
+    var showCta = !context.submitted && !!String(context.ctaText || "");
     return (
       '<article class="ac-booking-fixed__card ac-booking-fixed__card--resume-only">' +
       '<button class="ac-booking-fixed__close" type="button" data-action="promo-reset" aria-label="Сбросить выбранную бронь">' +
@@ -882,44 +941,48 @@
       "</button>" +
       '<p class="ac-booking-fixed__title">' + (context.submitted ? "Ваша бронь сохранена" : "Продолжить бронирование") + "</p>" +
       '<p class="ac-booking-fixed__meta">' + String(context.shiftLine || "") + "</p>" +
-      '<p class="ac-booking-fixed__meta">Возраст: ' + String(context.ageLabel || "") + "</p>" +
-      '<p class="ac-booking-fixed__meta">Цена: ' + formatPriceNumber(context.finalPrice || 0) + "</p>" +
+      '<div class="ac-booking-fixed__grid ac-booking-fixed__grid--resume">' +
+      '<div class="ac-booking-fixed__age"><span>Возраст</span><strong>' + String(context.ageLabel || "") + "</strong></div>" +
+      (
+        showPriceGrid
+          ? (
+              '<div class="ac-booking-fixed__prices">' +
+              '<div class="ac-booking-fixed__price-row"><span>Полная стоимость</span><strong class="is-old">' + (basePrice > 0 ? formatPriceNumber(basePrice) : "—") + "</strong></div>" +
+              '<div class="ac-booking-fixed__price-row"><span>Стоимость со скидкой</span><strong>' + formatPriceNumber(finalPrice) + "</strong></div>" +
+              '<div class="ac-booking-fixed__price-row"><span>Ваша скидка</span><strong class="is-discount">' + (discount > 0 ? ("− " + formatPriceNumber(discount)) : "—") + "</strong></div>" +
+              "</div>"
+            )
+          : ""
+      ) +
+      "</div>" +
       (context.code ? ('<p class="ac-booking-fixed__promo">Промокод: ' + context.code + "</p>") : "") +
       (context.hintText ? ('<p class="ac-booking-fixed__ttl">' + context.hintText + "</p>") : "") +
-      '<button class="ac-primary-btn ac-booking-fixed__cta" type="button" data-action="resume-booking" data-resume-mode="' + context.ctaMode + '">' +
-      String(context.ctaText || "Продолжить бронирование") +
-      "</button>" +
+      (
+        showCta
+          ? (
+              '<button class="ac-primary-btn ac-booking-fixed__cta" type="button" data-action="resume-booking" data-resume-mode="' + context.ctaMode + '">' +
+              String(context.ctaText || "Продолжить бронирование") +
+              "</button>"
+            )
+          : ""
+      ) +
       "</article>"
     );
   }
 
   function formatPhoneInput(raw) {
-    var digits = String(raw || "").replace(/\D/g, "");
-    if (digits.charAt(0) === "8") {
-      digits = "7" + digits.slice(1);
-    }
-    if (digits.charAt(0) !== "7") {
-      digits = "7" + digits;
-    }
-    digits = digits.slice(0, 11);
-
-    var p1 = digits.slice(1, 4);
-    var p2 = digits.slice(4, 7);
-    var p3 = digits.slice(7, 9);
-    var p4 = digits.slice(9, 11);
-
-    var out = "+7";
-    out += " (" + p1 + (p1.length < 3 ? "" : ")");
-    if (p2) out += " " + p2;
-    if (p3) out += "-" + p3;
-    if (p4) out += "-" + p4;
-    return out;
+    return String(raw || "").replace(/\D/g, "").slice(0, 11);
   }
 
   function normalizePhone(raw) {
     var digits = String(raw || "").replace(/\D/g, "");
-    if (digits.charAt(0) === "8") digits = "7" + digits.slice(1);
-    if (digits.length === 10) digits = "7" + digits;
+    if (!digits) return "";
+    if (digits.charAt(0) === "8") {
+      digits = "7" + digits.slice(1);
+    }
+    if (digits.length === 10) {
+      digits = "7" + digits;
+    }
     return digits.slice(0, 11);
   }
 
@@ -958,6 +1021,13 @@
     if (!startedAt) return 0;
     var elapsed = Math.max(0, Date.now() - startedAt);
     return clamp(Math.round((elapsed / duration) * 100), 0, 100);
+  }
+
+  function getPriceSearchStatusLine(progress) {
+    var safe = clamp(Number(progress) || 0, 0, 100);
+    if (safe < 30) return "Проверяем наличие мест";
+    if (safe < 65) return "Проверяем предварительное бронирование";
+    return "Ищем отказы";
   }
 
   function stopPromoTicker() {
@@ -1014,6 +1084,14 @@
         if (!pinnedNode) continue;
         pinnedNode.textContent = formatPromoDeadlineLine(promo.expiresAt || 0);
       }
+
+      var bookingTtlNodes = document.querySelectorAll(".ac-booking-fixed__ttl");
+      for (var k = 0; k < bookingTtlNodes.length; k += 1) {
+        var bookingNode = bookingTtlNodes[k];
+        if (!bookingNode) continue;
+        if (String(bookingNode.textContent || "").indexOf("Действует до") !== 0) continue;
+        bookingNode.textContent = formatPromoDeadlineLine(promo.expiresAt || 0);
+      }
     }, 250);
   }
 
@@ -1043,10 +1121,43 @@
         promo.status = "draft";
         promo.priceStage = Math.max(1, Number(promo.priceStage || 1));
         promo.finalPrice = Number(promo.nextPrice || promo.finalPrice || meta.basePrice);
+        promo.code = String(promo.code || generatePromoCode());
         promo.checkStartedAt = 0;
         promo.checkDurationMs = 0;
         promo.nextPrice = 0;
         saveShiftPromo(promo);
+
+        var shiftForSnapshot = findShiftById(shiftId);
+        var leadAfterSearch = loadBookingLead() || {};
+        if (shiftForSnapshot && !leadAfterSearch.submitted) {
+          var baseAfterSearch = Number(meta.basePrice || 0);
+          var finalAfterSearch = Number(promo.finalPrice || baseAfterSearch);
+          if (!Number.isFinite(finalAfterSearch) || finalAfterSearch <= 0) {
+            finalAfterSearch = baseAfterSearch;
+          }
+          if (finalAfterSearch > baseAfterSearch && baseAfterSearch > 0) {
+            finalAfterSearch = baseAfterSearch;
+          }
+          var discountAfterSearch = Math.max(0, baseAfterSearch - finalAfterSearch);
+          saveBookingLead({
+            name: String(leadAfterSearch.name || ""),
+            phone: String(leadAfterSearch.phone || ""),
+            shiftId: shiftForSnapshot.id,
+            shiftText: meta.date + " • " + meta.days + " дн. • " + getShiftSummaryByAge(shiftForSnapshot, state.age),
+            priceText: formatPriceNumber(finalAfterSearch),
+            priceBase: baseAfterSearch,
+            priceFinal: finalAfterSearch,
+            discountText: discountAfterSearch > 0 ? ("− " + formatPriceNumber(discountAfterSearch)) : "—",
+            discountValue: discountAfterSearch,
+            promoCode: String(promo.code || ""),
+            consent: !!leadAfterSearch.consent,
+            submitted: false,
+            submittedAt: 0,
+            age: state.age,
+            expiresAt: Number(leadAfterSearch.expiresAt || 0)
+          });
+        }
+
         stage = Number(promo.priceStage || 1);
         status = String(promo.status || "draft");
         price = Number(promo.finalPrice || meta.basePrice);
@@ -1165,8 +1276,8 @@
 
     var nextPromo = {
       shiftId: shift.id,
-      shiftName: shift.summary || shift.line,
-      age: clamp(Number((same && promo && promo.age) || state.age || 7), 7, 14),
+      shiftName: getShiftSummaryByAge(shift, state.age),
+      age: clamp(Number((same && promo && promo.age) || state.age || 11), 7, 14),
       basePrice: meta.basePrice,
       finalPrice: same ? Number(promo.finalPrice || meta.basePrice) : meta.basePrice,
       code: same && promo.code ? String(promo.code) : generatePromoCode(),
@@ -1209,6 +1320,9 @@
     state.selectedShiftId = shift.id;
     state.direction = shift.direction;
     renderOverlays();
+    if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+      auditRuntime.stageSync();
+    }
   }
 
   function finalizeShiftPromo(shiftId, rawPhone) {
@@ -1237,7 +1351,7 @@
       name: "",
       phone: normalizedPhone,
       shiftId: shift.id,
-      shiftText: meta.date + " • " + meta.days + " дн. • " + shift.summary,
+      shiftText: meta.date + " • " + meta.days + " дн. • " + getShiftSummaryByAge(shift, state.age),
       promoCode: String(promo.code || ""),
       submitted: false,
       submittedAt: 0
@@ -1248,7 +1362,7 @@
       status: "preliminary",
       phone: normalizedPhone,
       shift_id: shift.id,
-      shift_name: shift.summary || shift.line || "",
+      shift_name: getShiftSummaryByAge(shift, state.age),
       shift_direction: shift.direction || "",
       shift_date: meta.date,
       shift_days: meta.days,
@@ -1293,7 +1407,7 @@
       name: String(lead.name || ""),
       phone: String(lead.phone || ""),
       shiftId: shift.id,
-      shiftText: meta.date + " • " + meta.days + " дн. • " + (shift.summary || shift.line || ""),
+      shiftText: meta.date + " • " + meta.days + " дн. • " + getShiftSummaryByAge(shift, state.age),
       priceText: formatPriceNumber(finalPrice),
       priceBase: basePrice,
       priceFinal: finalPrice,
@@ -1375,11 +1489,12 @@
   }
 
   function setMode(mode) {
-    if (mode !== "compact" && mode !== "full") return;
-    if (state.mode === mode) return;
+    var safeMode = typeof coreState.validateMode === "function" ? coreState.validateMode(mode) : mode;
+    if (safeMode !== "compact" && safeMode !== "full") return;
+    if (state.mode === safeMode) return;
 
-    state.mode = mode;
-    persistMode(mode);
+    state.mode = safeMode;
+    persistMode(safeMode);
 
     renderLayout();
     renderMenu();
@@ -1410,6 +1525,10 @@
       tab: state.activeTab,
       mode: state.mode
     });
+
+    if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+      auditRuntime.stageSync();
+    }
   }
 
   function applyStepTransition(nextStep, withFunnelStartTracking) {
@@ -1425,6 +1544,21 @@
         var promoShift = findShiftById(promoForBooking.shiftId);
         if (promoShift) {
           shift = promoShift;
+        }
+      } else {
+        var selectedForBooking = findShiftById(state.selectedShiftId);
+        var selectedIdx = SHIFTS.indexOf(selectedForBooking);
+        if (selectedForBooking && selectedIdx >= 0 && selectedIdx < SHIFT_PRICE_META.length) {
+          shift = selectedForBooking;
+        } else {
+          var leadForBooking = loadBookingLead();
+          if (leadForBooking && leadForBooking.shiftId) {
+            var leadShift = findExactShiftById(String(leadForBooking.shiftId));
+            var leadIdx = SHIFTS.indexOf(leadShift);
+            if (leadShift && leadIdx >= 0 && leadIdx < SHIFT_PRICE_META.length) {
+              shift = leadShift;
+            }
+          }
         }
       }
     }
@@ -1466,7 +1600,9 @@
     }
 
     var wasLocked = isAgeGateLocked();
-    var safeAge = clamp(nextAge, 7, 14);
+    var safeAge = typeof coreState.validateAge === "function"
+      ? coreState.validateAge(nextAge)
+      : clamp(nextAge, 7, 14);
     if (safeAge === state.age && !wasLocked) return;
 
     state.age = safeAge;
@@ -1479,6 +1615,9 @@
 
     renderInfoCard();
     renderFunnel();
+    if (state.overlays.shifts) {
+      renderOverlays();
+    }
 
     track("age_selected", {
       age: state.age,
@@ -1497,7 +1636,7 @@
   function resetAgeSelection() {
     ageSelectionConfirmed = false;
     ageGateNudge = false;
-    state.age = 9;
+    state.age = 11;
     state.step = 0;
     state.selectedShiftId = initialShift.id;
     state.direction = initialShift.direction;
@@ -1564,6 +1703,10 @@
       direction: state.direction,
       step: state.step + 1
     });
+
+    if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+      auditRuntime.stageSync();
+    }
   }
 
   function setDirection(directionId) {
@@ -1577,6 +1720,10 @@
     track("direction_selected", {
       direction: state.direction
     });
+
+    if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+      auditRuntime.stageSync();
+    }
   }
 
   function setOverlay(name, isOpen) {
@@ -1638,6 +1785,10 @@
           direction: state.direction
         });
       }
+
+      if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+        auditRuntime.stageSync();
+      }
     }
   }
 
@@ -1673,6 +1824,9 @@
       renderLayout();
       renderOverlays();
       if (hadShiftsOverlay && draftLead && !draftLead.submitted) {
+        var draftShift = draftLead.shiftId ? findExactShiftById(String(draftLead.shiftId)) : null;
+        var draftShiftIdx = draftShift ? SHIFTS.indexOf(draftShift) : -1;
+        var draftShiftMeta = draftShiftIdx >= 0 ? getShiftPriceMeta(draftShift, draftShiftIdx) : null;
         sendLeadNotification("booking_draft_saved", {
           lead_type: "booking_draft",
           status: "draft",
@@ -1680,6 +1834,8 @@
           name: String(draftLead.name || ""),
           shift_id: String(draftLead.shiftId || ""),
           shift_text: String(draftLead.shiftText || ""),
+          shift_date: draftShiftMeta ? String(draftShiftMeta.date || "") : "",
+          shift_days: draftShiftMeta ? Number(draftShiftMeta.days || 0) : 0,
           price_text: String(draftLead.priceText || ""),
           price_base: Number(draftLead.priceBase || 0),
           price_final: Number(draftLead.priceFinal || 0),
@@ -1694,6 +1850,10 @@
         return;
       }
       renderFunnel();
+
+      if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+        auditRuntime.stageSync();
+      }
     }
   }
 
@@ -1955,9 +2115,6 @@
       '<button id="acViewToggle" class="ac-mode-toggle" type="button" data-action="toggle-mode" aria-label="Режим просмотра" aria-pressed="' +
       String(state.mode === "full") +
       '">' +
-      '<span class="ac-mode-toggle__label">' +
-      CONTENT_MAP.ui.modeCompactLabel +
-      "</span>" +
       '<span class="ac-mode-toggle__track" aria-hidden="true"><span class="ac-mode-toggle__thumb"></span></span>' +
       '<span class="ac-mode-toggle__label">' +
       CONTENT_MAP.ui.modeFullLabel +
@@ -2177,6 +2334,7 @@
     var overlay = document.querySelector(".ac-hero-overlay");
     var heroRight = document.querySelector(".ac-hero-right");
     var resumePromoContext = getResumePromoContext();
+    var showResumeOnly = !!resumePromoContext && !isBookingStep;
 
     if (resumeCard) {
       resumeCard.hidden = true;
@@ -2188,6 +2346,7 @@
     if (overlay) {
       overlay.classList.toggle("is-intro", isIntroStep);
       overlay.classList.toggle("is-compact-tab-content", isCompactTabContent);
+      overlay.classList.toggle("is-resume-only", showResumeOnly);
     }
     if (heroRight) {
       heroRight.classList.toggle("is-intro", introLockedState);
@@ -2221,6 +2380,9 @@
     if (heroGrid) {
       applyDefaultHeroGridContent(heroGrid);
     }
+    if (overlayTitle) {
+      overlayTitle.style.display = "";
+    }
     if (status) status.hidden = false;
 
     if (isIntroStep) {
@@ -2253,7 +2415,7 @@
         var isBookingSubmitted = !!bookingLead.submitted;
         var hasDraftResume = !!(resumePromoContext && !resumePromoContext.submitted);
         var selectedShift = findShiftById(state.selectedShiftId);
-        var shiftSummary = selectedShift ? selectedShift.summary : "";
+        var shiftSummary = getShiftSummaryByAge(selectedShift, state.age);
         var shiftIdx = SHIFTS.indexOf(selectedShift);
         var shiftMeta = shiftIdx >= 0 ? getShiftPriceMeta(selectedShift, shiftIdx) : null;
         var priceBase = shiftMeta ? Number(shiftMeta.basePrice || 0) : 0;
@@ -2267,15 +2429,42 @@
         }
         bookingForm.hidden = false;
         if (bookingFixedCard) {
-          if (promo && promo.status === "active") {
+          var promoStatus = promo ? String(promo.status || "draft") : "";
+          var promoStage = promo ? Number(promo.priceStage || 0) : 0;
+          var hasPromoContext = !!(promo && (promoStatus === "active" || promoStage >= 1));
+          var hasLeadContext = !!(bookingLead && bookingLead.shiftId);
+          var shouldShowFixedCard = hasPromoContext || hasDraftResume || hasLeadContext;
+
+          if (shouldShowFixedCard) {
+            var fixedShift = selectedShift;
+            if ((!fixedShift || SHIFTS.indexOf(fixedShift) < 0) && hasLeadContext) {
+              fixedShift = findExactShiftById(String(bookingLead.shiftId));
+            }
+            var fixedShiftIdx = fixedShift ? SHIFTS.indexOf(fixedShift) : -1;
+            var fixedMeta = fixedShiftIdx >= 0 ? getShiftPriceMeta(fixedShift, fixedShiftIdx) : shiftMeta;
+            var fixedSummary = getShiftSummaryByAge(fixedShift || selectedShift, state.age);
+            var fixedBase = Number((hasDraftResume && resumePromoContext)
+              ? resumePromoContext.basePrice
+              : priceBase);
+            var fixedFinal = Number((hasDraftResume && resumePromoContext)
+              ? resumePromoContext.finalPrice
+              : priceFinal);
+            var fixedPromo = promo;
+            if (!fixedPromo && hasDraftResume && resumePromoContext && resumePromoContext.code) {
+              fixedPromo = { code: resumePromoContext.code };
+            }
+            if (!fixedPromo && bookingLead && bookingLead.promoCode) {
+              fixedPromo = { code: String(bookingLead.promoCode) };
+            }
             bookingFixedCard.hidden = false;
             bookingFixedCard.innerHTML = buildBookingFixedCardMarkup({
-              shiftMeta: shiftMeta,
-              shiftSummary: shiftSummary,
-              promo: promo,
+              shiftMeta: fixedMeta,
+              shiftSummary: fixedSummary,
+              promo: fixedPromo,
               age: state.age,
-              priceBase: priceBase,
-              priceFinal: priceFinal
+              priceBase: fixedBase,
+              priceFinal: fixedFinal,
+              hidePricing: !!bookingLead.consent
             });
           } else {
             bookingFixedCard.hidden = true;
@@ -2286,6 +2475,7 @@
           bookingNotice.hidden = true;
           bookingNotice.textContent = "";
         }
+        bookingForm.classList.toggle("is-submitted", isBookingSubmitted);
         if (bookingName && !bookingName.value) {
           bookingName.value = String(bookingLead.name || "");
         }
@@ -2310,12 +2500,17 @@
         }
         if (bookingConsent) {
           bookingConsent.checked = !!bookingLead.consent;
+          syncBookingFixedCardConsentState(bookingConsent.checked);
         }
         var bookingEditableFields = bookingForm.querySelectorAll(
           '[for="acBookingPhone"], #acBookingPhone, [for="acBookingName"], #acBookingName, .ac-booking-form__consent, [data-action="booking-submit"]'
         );
         for (var bf = 0; bf < bookingEditableFields.length; bf += 1) {
           bookingEditableFields[bf].hidden = isBookingSubmitted;
+        }
+        var consentBlock = bookingForm.querySelector(".ac-booking-form__consent");
+        if (consentBlock) {
+          consentBlock.hidden = isBookingSubmitted;
         }
         if (bookingSubmit) {
           bookingSubmit.disabled = !canSubmitBooking(
@@ -2333,7 +2528,7 @@
         line.textContent = shift.line;
       }
       if (summary) {
-        summary.textContent = shift.summary;
+        summary.textContent = getShiftSummaryByAge(shift, state.age);
         summary.style.display = "";
       }
       if (heroGrid) heroGrid.style.display = "";
@@ -2345,11 +2540,43 @@
     }
 
     if (resumeCard) {
-      var showResumeCard = !!resumePromoContext && !isBookingStep;
-      resumeCard.hidden = !showResumeCard;
-      resumeCard.innerHTML = showResumeCard
+      resumeCard.hidden = !showResumeOnly;
+      resumeCard.innerHTML = showResumeOnly
         ? buildHeroResumeCardMarkup(resumePromoContext)
         : "";
+    }
+
+    if (showResumeOnly) {
+      if (overlayTitle) {
+        overlayTitle.style.display = "none";
+      }
+      if (line) {
+        line.style.display = "none";
+        line.textContent = "";
+      }
+      if (summary) {
+        summary.style.display = "none";
+        summary.textContent = "";
+      }
+      if (heroGrid) {
+        heroGrid.style.display = "none";
+      }
+      if (bookingForm) {
+        bookingForm.hidden = true;
+      }
+      if (bookingFixedCard) {
+        bookingFixedCard.hidden = true;
+        bookingFixedCard.innerHTML = "";
+      }
+      if (status) {
+        status.hidden = true;
+      }
+      if (nextBtn) {
+        nextBtn.hidden = true;
+        nextBtn.disabled = true;
+        nextBtn.setAttribute("aria-disabled", "true");
+      }
+      return;
     }
 
     if (status) {
@@ -3323,7 +3550,7 @@
   }
 
   function renderShiftOverlay() {
-    var allShifts = SHIFTS.slice(0, 4);
+    var allShifts = SHIFTS.slice(0, SHIFT_PRICE_META.length);
     var visibleShifts = shiftsShowAll || allShifts.length <= 2 ? allShifts : allShifts.slice(0, 2);
     if (!visibleShifts.length) {
       return "";
@@ -3373,7 +3600,7 @@
         '<span class="ac-shift-item__name">' + meta.date + "</span>" +
         '<span class="ac-shift-item__days">' + meta.days + " дн.</span>" +
         "</div>" +
-        '<div class="ac-shift-item__meta">' + shift.summary + "</div>" +
+        '<div class="ac-shift-item__meta">' + getShiftSummaryByAge(shift, state.age) + "</div>" +
         "</div>" +
         "</button>"
       );
@@ -3393,15 +3620,24 @@
         actionClass += " is-upgrade";
       }
 
-      var showOccupancy = promoView.stage >= 1 && promoView.status !== "checking_first";
-      var occupancyTitle = showOccupancy ? "Смена заполнена" : "";
-      var occupancyPercent = showOccupancy ? meta.occupancyPercent : 0;
-      var occupancyLine = showOccupancy ? meta.occupancyLine : "";
+      var showOccupancy = promoView.status !== "checking_first";
+      var occupancyPercent = clamp(Number(meta.occupancyPercent || 0), 0, 100);
+      var seatsLeft = Math.max(0, Number(meta.seats || 0));
       var searchProgress = clamp(Number(promoView.searchProgress || 0), 0, 100);
-      var showSearchChecklist = promoView.status === "checking_first" || promoView.stage >= 1;
-      var showRejectStatus = promoView.status === "checking_first";
-      var status1Done = promoView.status !== "checking_first" || searchProgress >= 22;
-      var status2Done = promoView.status !== "checking_first" || searchProgress >= 58;
+      var showSearchProgress = promoView.status === "checking_first";
+      var showProcess = showSearchProgress || showOccupancy;
+      var processLine = "";
+      var processProgress = 0;
+      var processProgressClass = "";
+      if (showSearchProgress) {
+        processLine = getPriceSearchStatusLine(searchProgress);
+        processProgress = searchProgress;
+        processProgressClass = " is-search";
+      } else if (showOccupancy) {
+        processLine = String(occupancyPercent) + "% мест занято";
+        processProgress = occupancyPercent;
+        processProgressClass = " is-occupancy";
+      }
       var phoneGateLeftMarkup = "";
       if (promoView.status === "phone_gate") {
         phoneGateLeftMarkup =
@@ -3409,27 +3645,19 @@
           '<label class="ac-shift-item__phone-label" for="acShiftFixPhone">' +
           "Чтобы мы вас запомнили, введите телефон и зафиксируйте, пожалуйста, цену." +
           "</label>" +
-          '<input id="acShiftFixPhone" class="ac-shift-item__phone-input" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" value="' +
+          '<input id="acShiftFixPhone" class="ac-shift-item__phone-input" type="tel" inputmode="tel" autocomplete="tel" maxlength="11" placeholder="+7 (___) ___-__-__" value="' +
           formatPhoneInput(promoView.pendingPhone || "") +
           '">' +
           "</div>";
       }
-      var searchChecklistMarkup = "";
-      if (showSearchChecklist) {
-        searchChecklistMarkup =
-          '<div class="ac-shift-item__search">' +
-          '<div class="ac-shift-item__search-status' + (status1Done ? " is-done" : " is-active") + '">' +
-          "Проверяем наличие мест" +
-          "</div>" +
-          '<div class="ac-shift-item__search-status' + (status2Done ? " is-done" : " is-active") + '">' +
-          "Проверяем предварительное бронирование" +
-          "</div>" +
-          (showRejectStatus
-            ? '<div class="ac-shift-item__search-status is-active">Ищем отказы</div>'
+      var processMarkup = "";
+      if (showProcess) {
+        processMarkup =
+          '<div class="ac-shift-item__process">' +
+          (processLine
+            ? ('<div class="ac-shift-item__process-line">' + processLine + "</div>")
             : "") +
-          (promoView.status === "checking_first"
-            ? '<div class="ac-shift-item__search-progress"><span style="width:' + searchProgress + '%;"></span></div>'
-            : "") +
+          '<div class="ac-shift-item__process-progress' + processProgressClass + '"><span style="width:' + processProgress + '%;"></span></div>' +
           "</div>";
       }
       var promoMarkup = "";
@@ -3439,13 +3667,17 @@
           '<div class="ac-shift-item__promo-code">' + (promoView.code || "") + "</div>" +
           '<div class="ac-shift-item__promo-ttl">Действует: ' + (promoView.promoTtl || "00:00:00") + "</div>" +
           "</div>";
-      } else if (promoView.status === "phone_gate") {
-        promoMarkup = "";
-      } else if (promoView.stage >= 2) {
+      } else if (promoView.stage >= 1) {
+        var stagePromoTtl = "Промокод сохранён за вами";
+        if (promoView.status === "phone_gate") {
+          stagePromoTtl = "Зафиксируйте цену, чтобы активировать 72 ч";
+        } else if (promoView.stage >= 2) {
+          stagePromoTtl = promoView.promoTtl || "Активируется после фиксации";
+        }
         promoMarkup =
           '<div class="ac-shift-item__promo-live">' +
           '<div class="ac-shift-item__promo-code">' + (promoView.code || "") + "</div>" +
-          '<div class="ac-shift-item__promo-ttl">' + (promoView.promoTtl || "Активируется после фиксации") + "</div>" +
+          '<div class="ac-shift-item__promo-ttl">' + stagePromoTtl + "</div>" +
           "</div>";
       } else {
         promoMarkup =
@@ -3457,38 +3689,38 @@
 
       return (
         '<article class="ac-shift-item ac-shift-item--featured is-active">' +
-        '<div class="ac-shift-item--featured__left">' +
+        '<div class="ac-shift-item--featured__left ac-shift-item--featured__identity">' +
         (meta.badge ? '<span class="ac-shift-item__badge">' + meta.badge + "</span>" : "") +
-        '<div class="ac-shift-item__line">' +
+        '<div class="ac-shift-item__line ac-shift-item__line--main">' +
         '<span class="ac-shift-item__name">' + meta.date + "</span>" +
-        '<span class="ac-shift-item__days">' + meta.days + " дн.</span>" +
         '<button class="ac-shift-item__date-icon" type="button" data-action="shift-calendar-toggle" data-shift-id="' + shift.id + '" aria-label="Открыть календарь смены">' +
         '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.clipboard + '" alt="" aria-hidden="true">' +
         "</button>" +
         "</div>" +
-        '<div class="ac-shift-item__meta">' + shift.summary + "</div>" +
-        phoneGateLeftMarkup +
-        searchChecklistMarkup +
-        (showOccupancy
-          ? ('<div class="ac-shift-item__occupancy">' +
-            '<div class="ac-shift-item__occupancy-title">' + occupancyTitle + "</div>" +
-            '<div class="ac-shift-item__occupancy-kpi">' +
-            '<strong>' + occupancyPercent + "%</strong>" +
-            '<div class="ac-shift-item__occupancy-bar"><span class="is-animated" style="width:' + occupancyPercent + '%;"></span></div>' +
-            "</div>" +
-            '<div class="ac-shift-item__occupancy-meta">' + occupancyLine + "</div>" +
-            "</div>")
-          : "") +
-        '<div class="ac-shift-item__meta-hint">' + (promoView.metaText || "") + "</div>" +
+        '<div class="ac-shift-item__identity-meta">' +
+        '<span class="ac-shift-item__days">' + meta.days + " дн.</span>" +
+        '<span class="ac-shift-item__identity-dot" aria-hidden="true">•</span>' +
+        '<span class="ac-shift-item__seats">Осталось ' + seatsLeft + " мест</span>" +
         "</div>" +
-        '<div class="ac-shift-item--featured__right">' +
+        "</div>" +
+        '<div class="ac-shift-item--featured__center">' +
+        '<div class="ac-shift-item__meta">' + getShiftSummaryByAge(shift, state.age) + "</div>" +
+        processMarkup +
+        phoneGateLeftMarkup +
+        "</div>" +
+        '<div class="ac-shift-item--featured__right ac-shift-item--featured__actions-col">' +
         '<div class="ac-shift-item__price-caption">Цена подтверждена для вас</div>' +
         '<div class="ac-shift-item__price-shell">' +
         '<div class="ac-shift-item__price-old' + (promoView.oldPrice ? "" : " is-empty") + '">' + (promoView.oldPrice || "—") + "</div>" +
         '<div class="ac-shift-item__price">' + formatPriceNumber(promoView.price) + "</div>" +
         "</div>" +
         promoMarkup +
-        '<div class="ac-shift-item__actions">' +
+        '<div class="ac-shift-item__actions ac-shift-item__actions--primary">' +
+        '<button class="ac-primary-btn ac-shift-book-btn" type="button" data-action="shift-booking" data-shift-id="' + shift.id + '">' +
+        "Забронировать место" +
+        "</button>" +
+        "</div>" +
+        '<div class="ac-shift-item__actions ac-shift-item__actions--secondary">' +
         '<button class="ac-primary-btn ' + actionClass + '" type="button" data-action="' +
         (promoView.status === "phone_gate" ? "shift-fix" : "shift-price") +
         '" data-shift-id="' + shift.id + '"' +
@@ -3497,6 +3729,9 @@
         promoView.actionText +
         "</button>" +
         "</div>" +
+        '<button class="ac-shift-item__desc-link" type="button" data-action="shift-description" data-shift-id="' + shift.id + '">' +
+        'Посмотреть описание смены <img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronRight + '" alt="" aria-hidden="true">' +
+        "</button>" +
         (shiftCalendar.open && shiftCalendar.shiftId === shift.id ? buildShiftCalendarMarkup(meta, shift.id) : "") +
         "</div>" +
         "</article>"
@@ -3537,7 +3772,7 @@
         ? '<button class="ac-shift-more-btn" type="button" data-action="shift-show-more">' +
           (shiftsShowAll
             ? "Скрыть дополнительные смены"
-            : 'Показать ещё 2 смены <img class="ac-icon ac-icon--sm ac-shift-more-btn__icon" src="' +
+            : 'Показать смены <img class="ac-icon ac-icon--sm ac-shift-more-btn__icon" src="' +
               ICON_MAP.chevronRight +
               '" alt="" aria-hidden="true">') +
           "</button>"
@@ -3824,6 +4059,9 @@
         return;
       }
       if (promoBeforeReset) {
+        var cancelShift = promoBeforeReset.shiftId ? findExactShiftById(String(promoBeforeReset.shiftId)) : null;
+        var cancelShiftIdx = cancelShift ? SHIFTS.indexOf(cancelShift) : -1;
+        var cancelShiftMeta = cancelShiftIdx >= 0 ? getShiftPriceMeta(cancelShift, cancelShiftIdx) : null;
         sendLeadNotification("promo_cancelled", {
           lead_type: "booking_cancelled",
           status: "cancelled",
@@ -3831,6 +4069,8 @@
           name: String(bookingLeadBeforeReset.name || ""),
           shift_id: String(promoBeforeReset.shiftId || ""),
           shift_name: String(promoBeforeReset.shiftName || ""),
+          shift_date: cancelShiftMeta ? String(cancelShiftMeta.date || "") : "",
+          shift_days: cancelShiftMeta ? Number(cancelShiftMeta.days || 0) : 0,
           price_final: Number(promoBeforeReset.finalPrice || 0),
           promo_code: String(promoBeforeReset.code || ""),
           promo_expires_at_ts: Number(promoBeforeReset.expiresAt || 0),
@@ -3910,6 +4150,12 @@
       return;
     }
 
+    var shiftAgeButton = event.target.closest('[data-action="shift-age"]');
+    if (shiftAgeButton) {
+      setAge(Number(shiftAgeButton.dataset.age || 11));
+      return;
+    }
+
     var shiftButton = event.target.closest('[data-action="select-shift"]');
     if (shiftButton) {
       setSelectedShift(shiftButton.dataset.shiftId || SHIFTS[0].id);
@@ -3949,6 +4195,28 @@
       return;
     }
 
+    var shiftBookingButton = event.target.closest('[data-action="shift-booking"]');
+    if (shiftBookingButton) {
+      var bookingFromShiftId = shiftBookingButton.dataset.shiftId || SHIFTS[0].id;
+      var bookingFromShift = findShiftById(bookingFromShiftId);
+      if (bookingFromShift) {
+        state.selectedShiftId = bookingFromShift.id;
+        state.direction = bookingFromShift.direction;
+      }
+      shiftCalendar.open = false;
+      shiftCalendar.shiftId = "";
+      persistShiftSelectionSnapshot();
+      track("booking_clicked", {
+        step: state.step + 1,
+        shift_id: state.selectedShiftId,
+        direction: state.direction,
+        source: "shift_card_primary"
+      });
+      setOverlay("shifts", false);
+      setStep(SHIFTS.length - 1);
+      return;
+    }
+
     var shiftPriceButton = event.target.closest('[data-action="shift-price"]');
     if (shiftPriceButton) {
       if (
@@ -3962,6 +4230,26 @@
       shiftCalendar.open = false;
       shiftCalendar.shiftId = "";
       applyShiftPriceStep(shiftPriceButton.dataset.shiftId || SHIFTS[0].id);
+      return;
+    }
+
+    var shiftDescriptionButton = event.target.closest('[data-action="shift-description"]');
+    if (shiftDescriptionButton) {
+      var descriptionShiftId = shiftDescriptionButton.dataset.shiftId || SHIFTS[0].id;
+      var descriptionShift = findShiftById(descriptionShiftId);
+      if (descriptionShift) {
+        state.selectedShiftId = descriptionShift.id;
+        state.direction = descriptionShift.direction;
+      }
+      setOverlay("shifts", false);
+      if (state.mode === "compact") {
+        setActiveTab("info");
+      } else {
+        var programSection = document.getElementById("program");
+        if (programSection && typeof programSection.scrollIntoView === "function") {
+          programSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
       return;
     }
 
@@ -4047,7 +4335,7 @@
         phone: normalizedPhone,
         name: bookingName ? String(bookingName.value || "").trim() : "",
         shift_id: state.selectedShiftId,
-        shift_name: bookingShiftItem ? (bookingShiftItem.summary || bookingShiftItem.line || "") : "",
+        shift_name: bookingShiftItem ? getShiftSummaryByAge(bookingShiftItem, state.age) : "",
         shift_direction: bookingShiftItem ? (bookingShiftItem.direction || "") : "",
         shift_text: bookingShift ? String(bookingShift.value || "") : "",
         shift_date: bookingShiftMeta ? bookingShiftMeta.date : "",
@@ -4066,8 +4354,19 @@
         bookingNotice.hidden = false;
         bookingNotice.textContent = "Ваша бронь оформлена, ждите подтверждения от менеджера.";
       }
+      var bookingFormNode = document.getElementById("acBookingForm");
+      if (bookingFormNode) {
+        bookingFormNode.classList.add("is-submitted");
+        var bookingConsentBlock = bookingFormNode.querySelector(".ac-booking-form__consent");
+        if (bookingConsentBlock) {
+          bookingConsentBlock.hidden = true;
+        }
+      }
       renderInfoCard();
       renderFunnel();
+      if (auditRuntime.active && typeof auditRuntime.stageSync === "function") {
+        auditRuntime.stageSync();
+      }
       return;
     }
 
@@ -4183,7 +4482,9 @@
     var bookingPhone = event.target.closest("#acBookingPhone");
     if (bookingPhone) {
       bookingPhone.value = formatPhoneInput(bookingPhone.value);
-      bookingPhone.style.borderColor = isValidPhone(bookingPhone.value) ? "" : "#ef8300";
+      bookingPhone.style.borderColor = bookingPhone.value
+        ? (isValidPhone(bookingPhone.value) ? "" : "#ef8300")
+        : "";
 
       var bookingSubmit = document.querySelector('[data-action="booking-submit"]');
       var bookingLead = loadBookingLead() || {};
@@ -4210,13 +4511,16 @@
           !!leadState.submitted
         );
       }
+      syncBookingFixedCardConsentState(bookingConsentInput.checked);
       return;
     }
 
     var shiftFixPhone = event.target.closest("#acShiftFixPhone");
     if (shiftFixPhone) {
       shiftFixPhone.value = formatPhoneInput(shiftFixPhone.value);
-      shiftFixPhone.style.borderColor = isValidPhone(shiftFixPhone.value) ? "" : "#ef8300";
+      shiftFixPhone.style.borderColor = shiftFixPhone.value
+        ? (isValidPhone(shiftFixPhone.value) ? "" : "#ef8300")
+        : "";
       var promoState = loadShiftPromo();
       if (promoState && promoState.status === "phone_gate") {
         promoState.pendingPhone = normalizePhone(shiftFixPhone.value);
@@ -4334,7 +4638,6 @@
       { group: "funnel", selector: "#acProgramLine", label: "Funnel: строка программы" },
       { group: "funnel", selector: "#acProgramSummary", label: "Funnel: описание" },
       { group: "funnel", selector: ".ac-hero-grid__item", label: "Funnel: карточка безопасности", all: true },
-      { group: "funnel", selector: "#acStepStatus", label: "Funnel: статус шага" },
       { group: "funnel", selector: ".ac-funnel-controls [data-action='step-next']", label: "Funnel: кнопка далее/цены" },
 
       { group: "program", selector: "#program", label: "Программа: секция" },
@@ -4489,6 +4792,7 @@
     auditRuntime.normalizeToParent = true;
     auditRuntime.lockUntilAge = true;
     auditRuntime.ageSelected = false;
+    auditRuntime.secondaryLayer = true;
 
     var panel = document.createElement("aside");
     panel.className = "ac-audit-panel";
@@ -4531,6 +4835,7 @@
       "</div>" +
       '<div class="ac-audit-stage-panel__statuses">' +
       '<button class="ac-audit-status is-on" type="button" data-action="audit-stage-lock-toggle">LOCK UNTIL AGE ON</button>' +
+      '<button class="ac-audit-status is-on" type="button" data-action="audit-layer-toggle">LAYER B ON</button>' +
       '<button class="ac-audit-status" type="button" data-action="audit-stage-reset">RESET STAGES</button>' +
       "</div>" +
       '<ol class="ac-audit-stage-panel__list"></ol>';
@@ -4682,14 +4987,266 @@
       }
     }
 
+    function renderSecondaryNumberingLayer() {
+      for (var ri = 0; ri < nodes.length; ri += 1) {
+        if (!nodes[ri] || !nodes[ri].node) continue;
+        var oldBadge = nodes[ri].node.querySelector(".ac-audit-badge--layer2");
+        if (oldBadge && oldBadge.parentNode) {
+          oldBadge.parentNode.removeChild(oldBadge);
+        }
+      }
+
+      if (!auditRuntime.secondaryLayer) return;
+
+      var seq = 1;
+      for (var ni = 0; ni < nodes.length; ni += 1) {
+        var item = nodes[ni];
+        if (!item || !item.node) continue;
+        if (item.node.classList.contains("ac-audit-target--hidden")) continue;
+        var b = document.createElement("span");
+        b.className = "ac-audit-badge ac-audit-badge--layer2";
+        b.textContent = "B" + String(seq);
+        b.setAttribute("title", item.label || ("Block " + String(seq)));
+        item.node.appendChild(b);
+        seq += 1;
+      }
+    }
+
+    function setWorkflowMarker(key, node, code, title) {
+      var marker = document.querySelector('[data-audit-workflow-marker="' + key + '"]');
+      if (!node || !code) {
+        if (marker && marker.parentNode) {
+          marker.parentNode.removeChild(marker);
+        }
+        return;
+      }
+
+      if (!marker) {
+        marker = document.createElement("span");
+        marker.className = "ac-audit-workflow-marker";
+        marker.setAttribute("data-audit-workflow-marker", key);
+      }
+
+      if (marker.parentNode !== node) {
+        if (marker.parentNode) {
+          marker.parentNode.removeChild(marker);
+        }
+        node.appendChild(marker);
+      }
+
+      node.classList.add("ac-audit-state-host");
+      marker.textContent = code;
+      marker.setAttribute("title", title || code);
+      marker.setAttribute("aria-label", "Workflow state " + code);
+    }
+
+    function getBookingWorkflowState() {
+      var promo = loadShiftPromo();
+      var lead = loadBookingLead() || {};
+      var resumeContext = getResumePromoContext();
+      var isBookingStep = state.step === SHIFTS.length - 1;
+      var hasResumeCard = !!resumeContext && !isBookingStep;
+      var promoStatus = promo ? String(promo.status || "draft") : "none";
+      var promoStage = promo ? Number(promo.priceStage || 0) : 0;
+
+      if (!ageSelectionConfirmed && state.step === 0) {
+        return {
+          code: "B00",
+          title: "Ожидание выбора возраста",
+          meta: "Доступ к бронированию заблокирован",
+          done: false
+        };
+      }
+
+      if (state.overlays.shifts) {
+        if (promoStatus === "checking_first") {
+          return {
+            code: "B21",
+            title: "Поиск персональной цены",
+            meta: "Окно смен открыто: идёт первый расчёт",
+            done: false
+          };
+        }
+        if (promoStatus === "phone_gate") {
+          return {
+            code: "B23",
+            title: "Фиксация цены по телефону",
+            meta: "Окно смен открыто: ожидается ввод телефона",
+            done: false
+          };
+        }
+        if (promoStatus === "active") {
+          return {
+            code: "B24",
+            title: "Цена зафиксирована",
+            meta: "Окно смен открыто: активна 72ч фиксация",
+            done: false
+          };
+        }
+        if (promoStage >= 1) {
+          return {
+            code: "B22",
+            title: "Первое улучшение получено",
+            meta: "Окно смен открыто: есть улучшенная цена и промокод",
+            done: false
+          };
+        }
+        return {
+          code: "B20",
+          title: "Выбор смены",
+          meta: "Окно смен открыто: базовый список",
+          done: false
+        };
+      }
+
+      if (isBookingStep) {
+        if (lead.submitted) {
+          return {
+            code: "B40",
+            title: "Заявка отправлена",
+            meta: "Форма бронирования подтверждена",
+            done: true
+          };
+        }
+        if (promoStatus === "active") {
+          return {
+            code: "B33",
+            title: "Финальная форма с фиксацией",
+            meta: "Шаг бронирования: активный промокод 72ч",
+            done: false
+          };
+        }
+        if (promoStage >= 1) {
+          return {
+            code: "B32",
+            title: "Финальная форма с улучшенной ценой",
+            meta: "Шаг бронирования: применена персональная цена",
+            done: false
+          };
+        }
+        return {
+          code: "B30",
+          title: "Финальная форма бронирования",
+          meta: "Шаг бронирования без промокода",
+          done: false
+        };
+      }
+
+      if (hasResumeCard) {
+        if (resumeContext.submitted) {
+          return {
+            code: "B51",
+            title: "Возврат после отправки заявки",
+            meta: "В Hero Right показано сохранённое бронирование",
+            done: true
+          };
+        }
+        return {
+          code: "B50",
+          title: "Возврат к сохранённому подбору",
+          meta: "В Hero Right показан resume-блок",
+          done: false
+        };
+      }
+
+      return {
+        code: "B10",
+        title: "Базовый рабочий экран",
+        meta: "Интерфейс открыт, бронирование не начато",
+        done: false
+      };
+    }
+
+    function getPromoWorkflowState() {
+      var promo = loadShiftPromo();
+      if (!promo) {
+        return { code: "P00", meta: "Промо-состояние отсутствует" };
+      }
+
+      var status = String(promo.status || "draft");
+      var stage = Number(promo.priceStage || 0);
+      if (status === "checking_first") {
+        return { code: "P10", meta: "Идёт проверка и поиск первой цены" };
+      }
+      if (status === "phone_gate") {
+        return { code: "P20", meta: "Ожидается телефон для фиксации 72ч" };
+      }
+      if (status === "active") {
+        return { code: "P30", meta: "Цена зафиксирована, таймер активен" };
+      }
+      if (stage >= 1) {
+        return { code: "P11", meta: "Первая улучшенная цена и промокод сохранены" };
+      }
+      return { code: "P01", meta: "Черновик промо без улучшений" };
+    }
+
+    function renderWorkflowStateMarkers() {
+      var workflowState = getBookingWorkflowState();
+      var promoState = getPromoWorkflowState();
+
+      setWorkflowMarker(
+        "hero-right",
+        document.querySelector(".ac-hero-right"),
+        workflowState.code,
+        workflowState.title + " — " + workflowState.meta
+      );
+
+      var resumeHost = document.getElementById("acHeroResumeCard");
+      var resumeCard = resumeHost && !resumeHost.hidden
+        ? resumeHost.querySelector(".ac-booking-fixed__card")
+        : null;
+      setWorkflowMarker(
+        "hero-resume",
+        resumeCard,
+        resumeCard ? workflowState.code : "",
+        resumeCard ? ("Resume: " + workflowState.meta) : ""
+      );
+
+      var bookingFixedHost = document.getElementById("acBookingFixedCard");
+      var bookingFixedCard = bookingFixedHost && !bookingFixedHost.hidden
+        ? bookingFixedHost.querySelector(".ac-booking-fixed__card")
+        : null;
+      setWorkflowMarker(
+        "booking-fixed",
+        bookingFixedCard,
+        bookingFixedCard ? workflowState.code : "",
+        bookingFixedCard ? ("Booking fixed: " + workflowState.meta) : ""
+      );
+
+      var shiftsPriceHost = state.overlays.shifts
+        ? document.querySelector(".ac-overlay-card--shifts .ac-shift-item--featured .ac-shift-item__price-shell")
+        : null;
+      setWorkflowMarker(
+        "shift-price",
+        shiftsPriceHost,
+        shiftsPriceHost ? promoState.code : "",
+        shiftsPriceHost ? promoState.meta : ""
+      );
+
+      var shiftsInfoHost = state.overlays.shifts
+        ? document.querySelector(".ac-overlay-card--shifts .ac-shift-item--featured__center")
+        : null;
+      setWorkflowMarker(
+        "shift-info",
+        shiftsInfoHost,
+        shiftsInfoHost ? workflowState.code : "",
+        shiftsInfoHost ? workflowState.meta : ""
+      );
+    }
+
     function renderStagePanel() {
       var stageList = stagePanel.querySelector(".ac-audit-stage-panel__list");
       var lockBtn = stagePanel.querySelector('[data-action="audit-stage-lock-toggle"]');
+      var layerBtn = stagePanel.querySelector('[data-action="audit-layer-toggle"]');
       if (!stageList) return;
 
       if (lockBtn) {
         lockBtn.classList.toggle("is-on", auditRuntime.lockUntilAge);
         lockBtn.textContent = auditRuntime.lockUntilAge ? "LOCK UNTIL AGE ON" : "LOCK UNTIL AGE OFF";
+      }
+      if (layerBtn) {
+        layerBtn.classList.toggle("is-on", !!auditRuntime.secondaryLayer);
+        layerBtn.textContent = auditRuntime.secondaryLayer ? "LAYER B ON" : "LAYER B OFF";
       }
 
       var isCompact = state.mode === "compact";
@@ -4734,6 +5291,22 @@
           done: stepNumber >= 4
         }
       ];
+      var workflowState = getBookingWorkflowState();
+      var promoState = getPromoWorkflowState();
+      stages.push({
+        code: workflowState.code,
+        title: workflowState.title,
+        meta: workflowState.meta,
+        active: true,
+        done: !!workflowState.done
+      });
+      stages.push({
+        code: promoState.code,
+        title: "Состояние цены / промокода",
+        meta: promoState.meta,
+        active: true,
+        done: promoState.code === "P30"
+      });
 
       var html = "";
       for (var si = 0; si < stages.length; si += 1) {
@@ -4760,6 +5333,8 @@
       }
 
       stageList.innerHTML = html;
+      renderWorkflowStateMarkers();
+      renderSecondaryNumberingLayer();
     }
 
     function renderMovedList() {
@@ -5013,6 +5588,7 @@
         var isOn = groupsState[groupId] !== false;
         groupButtons[b].classList.toggle("is-on", isOn);
       }
+      renderSecondaryNumberingLayer();
     }
 
     function setActiveNode(targetNode) {
@@ -5276,6 +5852,12 @@
 
       if (event.target.closest('[data-action="audit-stage-lock-toggle"]')) {
         auditRuntime.lockUntilAge = !auditRuntime.lockUntilAge;
+        renderStagePanel();
+        return;
+      }
+
+      if (event.target.closest('[data-action="audit-layer-toggle"]')) {
+        auditRuntime.secondaryLayer = !auditRuntime.secondaryLayer;
         renderStagePanel();
         return;
       }

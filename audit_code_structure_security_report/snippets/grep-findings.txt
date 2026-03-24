@@ -1,0 +1,66 @@
+## main.js fetch/notify/storage/timeouts
+211:    let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
+329:      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+362:      heroTimer = setInterval(() => {
+796:    async function notifyLead(eventName, payload){
+801:        const response = await fetch(endpoint, {
+810:        localStorage.setItem('aidacamp_lead_fallback', JSON.stringify({
+818:        console.error('notifyLead error', error);
+819:        localStorage.setItem('aidacamp_lead_fallback', JSON.stringify({
+939:      const pairs = document.cookie ? document.cookie.split(';') : [];
+951:            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT${path}${domain}`;
+968:      try { localStorage.clear(); } catch(e) {}
+969:      try { sessionStorage.clear(); } catch(e) {}
+1198:      window.setTimeout(() => {
+1212:          inlineHint.__hideTimer = window.setTimeout(() => {
+2268:      offerTimeoutIds.push(setTimeout(() => {
+2276:      offerTimeoutIds.push(setTimeout(() => {
+2284:      offerTimeoutIds.push(setTimeout(() => {
+2289:      offerTimeoutIds.push(setTimeout(() => {
+2355:      timerId = setInterval(() => {
+2563:        const deliveryResult = await notifyLead('booking_submitted', payload);
+2743:      heroResizeTimer = setTimeout(() => {
+
+## main.js dynamic HTML
+408:      document.getElementById('mediaContent').innerHTML = '';
+624:      const clone = sourceSection.cloneNode(true);
+628:      bodyEl.innerHTML = '';
+629:      bodyEl.appendChild(clone);
+642:        content.innerHTML = `<img class="media-image" src="${item.src}" />`;
+650:          content.innerHTML = `
+660:        content.innerHTML = `
+1296:        if(info) info.innerHTML = '';
+1308:      if(info) info.innerHTML = isSummaryStage ? `
+1625:      grid.innerHTML = html;
+1764:      box.innerHTML = shifts.slice(0,2).map(s => `
+1789:      grid.innerHTML = shifts.map(s => `
+1871:        photoGrid.innerHTML = filteredPhotos.map((item, idx) => `
+1886:        videoList.innerHTML = mediaContent.videos.map((item, idx) => `
+1916:            mainVideoBox.innerHTML = `
+1922:            mainVideoBox.innerHTML = `
+1945:        reviewsGrid.innerHTML = mediaContent.reviews.map(item => `
+1964:        contactsGrid.innerHTML = mediaContent.contacts.map(item => `
+1973:        socialsGrid.innerHTML = mediaContent.socials.map(item => `
+1986:        faqGroups.innerHTML = filteredFaq.map(group => `
+2058:        teamGrid.innerHTML = `
+2090:        mobileInlinePhotoGrid.innerHTML = mediaContent.photos.slice(0,4).map(item => `
+2098:        mobileInlineVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
+2108:        mobileInlineReviewsList.innerHTML = mediaContent.reviews.slice(0,3).map(item => `
+2123:        mobileFaqList.innerHTML = flatFaq.slice(0, 6).map(item => `
+2132:        mobileInlineTeamList.innerHTML = mediaContent.team.slice(0, 4).map(item => `
+2154:        mobileInlineStayList.innerHTML = stayCards.slice(0, 3).map(item => `
+2167:        mobileInlineContactsList.innerHTML = primaryContacts.map(item => `
+2175:        mobileInlineSocials.innerHTML = mediaContent.socials.map(item => `
+2246:      card.innerHTML = `
+2318:      card.innerHTML = `
+2478:      if(bookingSummaryBox) bookingSummaryBox.innerHTML = buildBookingSummaryHtml();
+2491:      if(box) box.innerHTML = buildBookingSummaryHtml();
+
+## build artifact hashes
+index.html	46881	ab8a96fb078efed3
+dist/index.html	242120	99f9ed5f4d5e3b72
+gpt.html	242120	99f9ed5f4d5e3b72
+build/gpt.html	234326	c07a79987cff56ee
+src/pages/legal.html	5265	f196ec8232ba5259
+legal.html	5265	f196ec8232ba5259
+build/legal.html	5265	f196ec8232ba5259

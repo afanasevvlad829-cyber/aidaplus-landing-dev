@@ -1,0 +1,4 @@
+Files: src/styles/main.css
+- Reduced hero min-height and bottom padding to remove empty hero gap.
+- Softened booking-card overlap (translateY and margin-bottom).
+- Added compact section modal docking class to keep booking card visible.

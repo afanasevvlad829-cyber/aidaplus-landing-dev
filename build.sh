@@ -4,10 +4,11 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT_DIR"
 
-mkdir -p dist
+mkdir -p dist build
 
 python3 - <<'PY'
 import json
+import os
 import re
 import urllib.request
 from html import unescape
@@ -18,12 +19,38 @@ root = Path(".")
 base_path = root / "index.html"
 out_path = root / "dist" / "index.html"
 css_path = root / "src" / "styles" / "main.css"
-js_path = root / "src" / "scripts" / "main.js"
+script_paths = [
+    root / "src" / "scripts" / "main.js",
+]
 components_dir = root / "src" / "components"
 
 base = base_path.read_text(encoding="utf-8")
-css = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
-js = js_path.read_text(encoding="utf-8") if js_path.exists() else ""
+
+def load_css_bundle(path: Path, seen=None) -> str:
+    if seen is None:
+        seen = set()
+    path = path.resolve()
+    if path in seen or not path.exists():
+        return ""
+    seen.add(path)
+    raw = path.read_text(encoding="utf-8")
+    out = []
+    for line in raw.splitlines():
+        m = re.match(r'\s*@import\s+url\(["\']([^"\']+)["\']\)\s*;\s*$', line)
+        if m:
+            nested = (path.parent / m.group(1)).resolve()
+            out.append(load_css_bundle(nested, seen))
+        else:
+            out.append(line)
+    return "\n".join(out) + "\n"
+
+css = load_css_bundle(css_path) if css_path.exists() else ""
+script_chunks = []
+for script_path in script_paths:
+    if not script_path.exists():
+        continue
+    script_chunks.append(f"/* {script_path.as_posix()} */\n" + script_path.read_text(encoding="utf-8"))
+js = "\n\n".join(script_chunks)
 
 components = []
 if components_dir.exists():
@@ -47,6 +74,7 @@ def classify(caption: str):
     return tags
 
 MEDIA_URL = "https://aidacamp.ru/media"
+FETCH_REMOTE = (os.getenv("AC_BUILD_FETCH_REMOTE", "0") == "1")
 
 def clean_text(value: str) -> str:
     text = unescape(re.sub(r"<[^>]+>", " ", value or ""))
@@ -139,16 +167,20 @@ def load_team_manifest(html: str):
         })
     return cards
 
-try:
-    remote_media_html = load_remote_media_html()
-    media_manifest = load_media_manifest(remote_media_html)
-except Exception:
+if FETCH_REMOTE:
+    try:
+        remote_media_html = load_remote_media_html()
+        media_manifest = load_media_manifest(remote_media_html)
+    except Exception:
+        remote_media_html = ""
+        media_manifest = []
+    try:
+        team_manifest = load_team_manifest(remote_media_html) if remote_media_html else []
+    except Exception:
+        team_manifest = []
+else:
     remote_media_html = ""
     media_manifest = []
-
-try:
-    team_manifest = load_team_manifest(remote_media_html) if remote_media_html else []
-except Exception:
     team_manifest = []
 
 def replace_or_insert(src: str, start_marker: str, end_marker: str, payload: str, anchor: str) -> str:
@@ -180,6 +212,9 @@ script_block = (
 )
 
 out = base
+# Dist must be self-contained: strip runtime src links and inject built bundles only.
+out = re.sub(r'<link[^>]+href=["\']/src/styles/main\.css["\'][^>]*>\s*', "", out, flags=re.I)
+out = re.sub(r'<script[^>]+src=["\']/src/scripts/[^"\']+["\'][^>]*>\s*</script>\s*', "", out, flags=re.I)
 out = replace_or_insert(out, "<!-- AC_BUILD_STYLE_START -->", "<!-- AC_BUILD_STYLE_END -->", style_block, "</head>")
 out = replace_or_insert(out, "<!-- AC_BUILD_SCRIPT_START -->", "<!-- AC_BUILD_SCRIPT_END -->", script_block, "</body>")
 out_path.write_text(out, encoding="utf-8")
@@ -187,4 +222,36 @@ print(f"Built: {out_path}")
 PY
 
 echo "Build completed: dist/index.html"
+echo "Canonical release artifact: dist/index.html"
+cp dist/index.html gpt.html
+cp dist/index.html build/gpt.html
+echo "Artifacts updated: gpt.html, build/gpt.html"
 
+if [ -f src/pages/legal.html ]; then
+  cp src/pages/legal.html dist/legal.html
+  cp src/pages/legal.html legal.html
+  cp src/pages/legal.html build/legal.html
+  echo "Artifacts updated: legal.html, build/legal.html"
+fi
+
+if ! cmp -s dist/index.html gpt.html; then
+  echo "ERROR: gpt.html is not synchronized with dist/index.html" >&2
+  exit 1
+fi
+
+if ! cmp -s dist/index.html build/gpt.html; then
+  echo "ERROR: build/gpt.html is not synchronized with dist/index.html" >&2
+  exit 1
+fi
+
+if [ -f dist/legal.html ] && [ -f legal.html ] && ! cmp -s dist/legal.html legal.html; then
+  echo "ERROR: legal.html is not synchronized with dist/legal.html" >&2
+  exit 1
+fi
+
+if [ -f dist/legal.html ] && [ -f build/legal.html ] && ! cmp -s dist/legal.html build/legal.html; then
+  echo "ERROR: build/legal.html is not synchronized with dist/legal.html" >&2
+  exit 1
+fi
+
+echo "Artifact sync check: OK"

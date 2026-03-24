@@ -1,0 +1,23 @@
+{
+  "name": "tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@fullhuman/postcss-purgecss": "^8.0.0",
+    "@projectwallace/css-analyzer": "^9.4.0",
+    "css-tree": "^3.2.1",
+    "playwright": "^1.58.2",
+    "purgecss": "^8.0.0",
+    "stylelint": "^17.5.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-csstree-validator": "^4.0.0"
+  }
+}

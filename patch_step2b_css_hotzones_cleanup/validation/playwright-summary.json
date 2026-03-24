@@ -1,0 +1,81 @@
+{
+  "startedAt": "2026-03-24T07:52:21.067Z",
+  "url": "http://127.0.0.1:4173/gpt.html",
+  "checks": {
+    "baseline": {
+      "desktopViewVisible": true,
+      "mobileViewVisible": false,
+      "desktopJourneyExists": 1,
+      "desktopLegalExists": 1,
+      "mobileJourneyExists": 1,
+      "mobileLegalExists": 1
+    },
+    "desktopFull": {
+      "modalOpenedOnNav": false,
+      "journeyTopAfterNavPx": 51,
+      "sectionJourneyState": {
+        "exists": true,
+        "visible": true,
+        "display": "block"
+      },
+      "sectionLegalState": {
+        "exists": true,
+        "visible": true,
+        "display": "block"
+      },
+      "policyOk": true
+    },
+    "desktopCompact": {
+      "modalOnTeamNav": true,
+      "teamModalTitle": "Команда",
+      "modalOnLegalNav": true,
+      "legalModalTitle": "Документы и юридическая информация",
+      "sectionJourneyState": {
+        "exists": true,
+        "visible": true,
+        "display": "block"
+      },
+      "sectionLegalState": {
+        "exists": true,
+        "visible": true,
+        "display": "block"
+      },
+      "policyOk": true
+    },
+    "mobileFull": {
+      "modalOpenedOnNav": false,
+      "journeyTopAfterNavPx": 67,
+      "sectionJourneyState": {
+        "exists": true,
+        "visible": true,
+        "display": "block"
+      },
+      "sectionLegalState": {
+        "exists": true,
+        "visible": true,
+        "display": "block"
+      },
+      "policyOk": true
+    },
+    "mobileCompact": {
+      "modalOnFaqNav": true,
+      "faqModalTitle": "FAQ",
+      "modalOnLegalNav": true,
+      "legalModalTitle": "Документы и юридическая информация",
+      "sectionJourneyState": {
+        "exists": true,
+        "visible": true,
+        "display": "block"
+      },
+      "sectionLegalState": {
+        "exists": true,
+        "visible": true,
+        "display": "block"
+      },
+      "policyOk": true
+    }
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "finishedAt": "2026-03-24T07:52:26.995Z"
+}

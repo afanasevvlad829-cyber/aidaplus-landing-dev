@@ -1,0 +1,7 @@
+rule,before,after,delta
+alpha-value-notation,191,0,-191
+color-function-alias-notation,191,0,-191
+color-function-notation,191,0,-191
+color-hex-length,8,0,-8
+selector-id-pattern,12,12,0
+__TOTAL__,593,12,-581

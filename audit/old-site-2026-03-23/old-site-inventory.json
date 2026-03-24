@@ -1,0 +1,198 @@
+{
+  "source": "https://aidacamp.ru/",
+  "captured_at": "2026-03-23 Europe/Moscow",
+  "meta": {
+    "title": "Летний лагерь в Подмосковье летом 2026 — программирование и ИТ для детей",
+    "description": "Компьютерный летний лагерь для детей в Подмосковье у Москвы. Лето 2026 — IT, программирование и развитие в безопасной среде с профессиональными педагогами и уникальной образовательной программой. У нас есть бассейн.",
+    "canonical": "https://aidacamp.ru"
+  },
+  "anchors": [
+    "pool",
+    "format",
+    "camp_feature",
+    "timetable",
+    "program",
+    "conditions",
+    "security",
+    "photo",
+    "video",
+    "price",
+    "smeny",
+    "priceformat",
+    "price_scroll",
+    "vychet",
+    "faq",
+    "zapis",
+    "booking"
+  ],
+  "contacts": {
+    "telegram": [
+      {
+        "href": "https://t.me/aidacodit",
+        "text": ""
+      },
+      {
+        "href": "http://t.me/progaschool",
+        "text": "Telegram"
+      }
+    ],
+    "whatsapp": [
+      {
+        "href": "https://wa.me/79688086455?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BA%D1%83%D0%BF%D0%B8%D1%82%D1%8C%20%D0%BF%D1%83%D1%82%D0%B5%D0%B2%D0%BA%D1%83%20%D0%B2%20%D0%B4%D0%B5%D1%82%D1%81%D0%BA%D0%B8%D0%B9%20%D0%98%D0%A2-%D0%BB%D0%B0%D0%B3%D0%B5%D1%80%D1%8C",
+        "text": ""
+      },
+      {
+        "href": "https://api.whatsapp.com/send/?phone=79688086455&amp;text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21+%D0%A5%D0%BE%D1%87%D1%83+%D0%B7%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D1%82%D1%8C+%D1%80%D0%B5%D0%B1%D1%91%D0%BD%D0%BA%D0%B0+%D0%B2+%D0%BB%D0%B0%D0%B3%D0%B5%D1%80%D1%8C.&amp;type=phone_number&amp;app_absent=0",
+        "text": "WhatsApp"
+      },
+      {
+        "href": "http://wa.me/79688086455",
+        "text": "WhatsApp"
+      },
+      {
+        "href": "https://wa.me/79688086455",
+        "text": ""
+      }
+    ],
+    "phone_tel": [
+      {
+        "href": "tel:84951284429",
+        "text": "+7 (495) 128-44-29"
+      }
+    ],
+    "vk": [
+      {
+        "href": "https://vk.com/aida_codit",
+        "text": ""
+      }
+    ],
+    "yandex_maps": [],
+    "docs": [
+      {
+        "href": "https://www.codims.ru/dokumentaciya-k-letnemu-it-lageryu-sosny",
+        "text": "Документация и регламенты к летнему IT-лагерю"
+      },
+      {
+        "href": "https://codims.ru/privacy",
+        "text": "политикой обработки персональных данных"
+      },
+      {
+        "href": "https://tourism.gov.ru/reestry/reestr-turoperatorov/show.php?id=116555",
+        "text": "РТО 025773"
+      },
+      {
+        "href": "/requisites",
+        "text": "Сведения об организации"
+      },
+      {
+        "href": "/cookie",
+        "text": "cookie-файлы"
+      }
+    ]
+  },
+  "media": {
+    "videos": [
+      "https://vkvideo.ru/video-194976808_456239281",
+      "https://vkvideo.ru/video-194976808_456239296"
+    ],
+    "images_static_tilda_count": 37,
+    "images_sample": [
+      "https://static.tildacdn.com/tild3066-6565-4131-a633-303565343739/_.png",
+      "https://static.tildacdn.com/tild3139-3264-4463-a335-333332663062/telegram-cloud-photo.jpg",
+      "https://static.tildacdn.com/tild3161-6264-4535-b636-336364303563/photo_2025-10-24_163.jpeg",
+      "https://static.tildacdn.com/tild3230-3931-4331-b833-393332323964/photo_2024-07-21_20-.jpg",
+      "https://static.tildacdn.com/tild3232-3931-4364-a261-303962356165/aida-camp_logo-v2.jpg",
+      "https://static.tildacdn.com/tild3238-6633-4862-a535-373731303734/photo_2025-06-14_08-.jpg",
+      "https://static.tildacdn.com/tild3262-3838-4931-a664-353934353665/image.png",
+      "https://static.tildacdn.com/tild3330-3139-4534-a538-346562393461/telegram-cloud-photo.jpg",
+      "https://static.tildacdn.com/tild3362-3939-4130-a661-336132396463/photo_2024-07-14_14-.jpg",
+      "https://static.tildacdn.com/tild3430-3736-4336-b661-343164323537/_2.png",
+      "https://static.tildacdn.com/tild3432-3864-4437-b936-336333393633/photo_2024-07-28_20-.jpg",
+      "https://static.tildacdn.com/tild3437-3139-4039-b864-393535626338/photo_2024-07-28_22-.jpg",
+      "https://static.tildacdn.com/tild3438-3132-4234-b736-313436336361/photo_2024-07-28_22-.jpg",
+      "https://static.tildacdn.com/tild3463-3930-4265-b834-626132653032/photo_2024-02-04_161.jpeg",
+      "https://static.tildacdn.com/tild3534-6565-4238-a138-663237613535/_1.png",
+      "https://static.tildacdn.com/tild3766-3638-4564-b331-613963353232/_5.png",
+      "https://static.tildacdn.com/tild3834-6235-4261-b164-613835636663/photo_2025-10-24_163.jpeg",
+      "https://static.tildacdn.com/tild3838-3234-4836-a430-366137373430/IMG_1517.JPG",
+      "https://static.tildacdn.com/tild3839-3233-4064-a466-393364373834/45A010FA-DCCA-4A70-8.png",
+      "https://static.tildacdn.com/tild3937-3731-4463-b763-313539326233/telegram-cloud-photo.jpg",
+      "https://static.tildacdn.com/tild3939-6337-4137-a236-333239326638/photo_2025-10-24_163.jpeg",
+      "https://static.tildacdn.com/tild6130-3538-4736-b766-346564336161/_8.png",
+      "https://static.tildacdn.com/tild6138-6162-4263-a436-316336313964/noroot.png",
+      "https://static.tildacdn.com/tild6165-3133-4633-b462-383638353162/noroot.png",
+      "https://static.tildacdn.com/tild6232-3934-4134-b031-653765623362/45A010FA-DCCA-4A70-8.png",
+      "https://static.tildacdn.com/tild6233-6339-4261-a137-663433646463/_6.png",
+      "https://static.tildacdn.com/tild6331-6333-4161-a131-653930646431/Frame_55.png",
+      "https://static.tildacdn.com/tild6338-3263-4364-a336-313230643061/photo_2024-07-14_14-.jpg",
+      "https://static.tildacdn.com/tild6365-6630-4265-b735-373138623038/45A010FA-DCCA-4A70-8.png",
+      "https://static.tildacdn.com/tild6430-3636-4930-b939-346537663439/photo_2025-06-14_07-.jpg"
+    ]
+  },
+  "mechanics": {
+    "storage_key": "aidacampPromoStateV251",
+    "telegram_enabled": true,
+    "metrika_counter": 96499295,
+    "promo_hold_hours": 72,
+    "promo_initial_markup": 0.2,
+    "promo_first_click_discount_min": 0.04,
+    "promo_first_click_discount_max": 0.05,
+    "promo_second_click_discount": 0.0,
+    "has_two_click_price_flow": true,
+    "has_reminder_flows": true,
+    "has_booking_autofill": true,
+    "has_telegram_send": true,
+    "has_query_based_heading_swap_in_custom_script": false
+  },
+  "shifts": [
+    {
+      "id": "shift1",
+      "name": "1 смена (30 мая - 8 июня)",
+      "final_price": 79000,
+      "seats": 3,
+      "days": 8,
+      "promo_prefix": "AIDA1"
+    },
+    {
+      "id": "shift2",
+      "name": "2 смена (10 июня - 16 июня)",
+      "final_price": 48000,
+      "seats": 8,
+      "days": 6,
+      "promo_prefix": "AIDA2"
+    },
+    {
+      "id": "shift3",
+      "name": "3 смена (16 июня - 23 июня)",
+      "final_price": 65000,
+      "seats": 5,
+      "days": 7,
+      "promo_prefix": "AIDA3"
+    },
+    {
+      "id": "shift4",
+      "name": "4 смена (10 июня — 23 июня)",
+      "final_price": 95000,
+      "seats": 4,
+      "days": 13,
+      "promo_prefix": "AIDA4"
+    },
+    {
+      "id": "shift5",
+      "name": "5 смена (3 августа — 15 августа)",
+      "final_price": 89400,
+      "seats": 7,
+      "days": 12,
+      "promo_prefix": "AIDA5"
+    },
+    {
+      "id": "shift6",
+      "name": "6 смена (17 августа — 26 августа)",
+      "final_price": 69600,
+      "seats": 15,
+      "days": 9,
+      "promo_prefix": "AIDA6"
+    }
+  ],
+  "screenshot_pack": "/Users/vladimirafanasev/aidaplus-dev/audit/old-site-2026-03-23/screens-desktop"
+}

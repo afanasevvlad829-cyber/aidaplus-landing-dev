@@ -23,3 +23,5 @@
 ```
 
 Source of truth: `src/scripts/main.js`.
+Runtime host: `src/scripts/features/events.js` (main orchestrator is `src/scripts/main.js`).
+Validation helpers: `src/scripts/core/state.js`.

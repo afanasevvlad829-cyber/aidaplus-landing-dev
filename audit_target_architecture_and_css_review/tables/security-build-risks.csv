@@ -1,0 +1,10 @@
+Finding,Where,Severity,Risk,Recommended fix
+PII persisted in browser storage,"src/scripts/main.js (state.phone + STORAGE_KEY)",critical,"утечка/доступ к телефону через localStorage","не сохранять phone в persistent storage; хранить in-memory/session"
+Broad dynamic innerHTML usage,"src/scripts/main.js","major","если источник данных станет внешним -> XSS поверхность","перейти на безопасное DOM-строительство для user/remote data"
+Embed source over-permissive branch,"resolveVideoSource() allows generic /embed path","major","возможен embed непроверенных доменов","вести whitelist hostnames для embed"
+Lead endpoint unauthenticated assumption,"notifyLead -> /api/lead","major","spam/abuse если backend без rate-limit","добавить backend rate-limit, CAPTCHA/anti-bot"
+Debug controls in runtime DOM,"index.html debug-controls","major","случайный доступ пользователя к reset/debug","скрывать debug controls под build-time flag"
+Remote build side-load (optional),"build.sh AC_BUILD_FETCH_REMOTE=1","major","недетерминированная сборка + supply-chain drift","по умолчанию OFF (сейчас), добавить lock/snapshot если ON"
+Release artifact confusion residual,"multiple mirrors gpt/build/dist","minor","ручной просмотр не того файла","держать dist/index.html как canonical + pre-publish check"
+Deploy path hardcoded,"deploy.sh","minor","человеческая ошибка окружения","добавить env guard и echo active target before copy"
+External links safety,"index.html links","minor","часть ссылок может открываться без контроля","оставить rel=noopener noreferrer (уже применено)"

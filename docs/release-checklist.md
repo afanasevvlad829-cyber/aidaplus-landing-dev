@@ -1,5 +1,11 @@
 # Release Checklist
 
+- Run `./build.sh` (dist regenerated from canonical source).
+- Verify canonical target: `dist/index.html`.
+- Verify artifact sync: `dist/index.html` == `gpt.html` == `build/gpt.html`.
+- If legal page exists: `dist/legal.html` == `legal.html` == `build/legal.html`.
+- Verify `dist/index.html` has `ac-build-main-css` and `ac-build-main-js`.
+- Verify no `/src/scripts/` links remain in `dist/index.html`.
 - Desktop 1440: compact/full switch, no overflow-x.
 - Tablet 768: compact/full switch, funnel usable.
 - Mobile 390: menu/toggle/funnel usable.

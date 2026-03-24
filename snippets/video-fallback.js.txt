@@ -1,0 +1,210 @@
+      closeTransientModals('media');
+      mediaType = type;
+      mediaIndex = index;
+      if(type === 'photo'){
+        const source = activePhotoList.length ? activePhotoList : mediaContent.photos;
+        const item = source[index];
+        track('photo_open', {
+          category: item?.cat || '',
+          index: index + 1
+        });
+      }
+      if(type === 'video'){
+        const item = mediaContent.videos[index];
+        track('video_open', {
+          title: item?.title || '',
+          index: index + 1
+        });
+      }
+      renderMediaViewer();
+      document.getElementById('mediaLightbox').classList.remove('hidden');
+    }
+
+    function closeMedia(){
+      document.getElementById('mediaLightbox').classList.add('hidden');
+      document.getElementById('mediaContent').innerHTML = '';
+    }
+
+    function closeTransientModals(except = ''){
+      if(except !== 'section'){
+        document.getElementById('sectionModal')?.classList.add('hidden');
+      }
+      if(except !== 'media'){
+        document.getElementById('mediaLightbox')?.classList.add('hidden');
+      }
+      if(except !== 'video'){
+        const iframe = document.getElementById('videoFrame');
+        const inner = document.getElementById('videoInner');
+        const fallback = document.getElementById('videoFallback');
+        if(iframe){
+          iframe.src = '';
+          iframe.classList.remove('vertical');
+          iframe.classList.remove('hidden');
+        }
+        if(inner){
+          inner.classList.remove('vertical');
+        }
+        if(fallback){
+          fallback.classList.add('hidden');
+        }
+        document.getElementById('videoModal')?.classList.add('hidden');
+      }
+      if(except !== 'calendar'){
+        document.getElementById('calendarModal')?.classList.add('hidden');
+      }
+    }
+
+    function openVideo(url){
+      const modal = document.getElementById('videoModal');
+      const iframe = document.getElementById('videoFrame');
+      const inner = document.getElementById('videoInner');
+      const fallback = document.getElementById('videoFallback');
+      const fallbackLink = document.getElementById('videoFallbackLink');
+      if(!modal || !iframe || !inner || !fallback || !fallbackLink || !url) return;
+
+      closeTransientModals('video');
+      const source = resolveVideoSource(url);
+      const isVertical = source.orientation === 'vertical';
+      inner.classList.toggle('vertical', isVertical);
+      iframe.classList.toggle('vertical', isVertical);
+
+      if(source.canEmbed){
+        iframe.classList.remove('hidden');
+        fallback.classList.add('hidden');
+        iframe.src = source.embedUrl;
+      } else {
+        iframe.src = '';
+        iframe.classList.add('hidden');
+        fallback.classList.remove('hidden');
+        fallbackLink.href = source.externalUrl;
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeVideo(){
+      const modal = document.getElementById('videoModal');
+      const iframe = document.getElementById('videoFrame');
+      const inner = document.getElementById('videoInner');
+      const fallback = document.getElementById('videoFallback');
+      if(!modal || !iframe || !inner || !fallback) return;
+
+      iframe.src = '';
+      inner.classList.remove('vertical');
+      iframe.classList.remove('vertical');
+      iframe.classList.remove('hidden');
+      fallback.classList.add('hidden');
+      modal.classList.add('hidden');
+    }
+
+    function resolveVideoSource(url){
+      const externalUrl = String(url || '').trim();
+      const fallback = {
+        canEmbed: false,
+        embedUrl: '',
+        externalUrl,
+        orientation: isVerticalVideoUrl(externalUrl) ? 'vertical' : 'horizontal'
+      };
+      if(!externalUrl) return fallback;
+      try {
+        const u = new URL(externalUrl, window.location.origin);
+        const host = (u.hostname || '').replace(/^www\./, '');
+        const parts = u.pathname.split('/').filter(Boolean);
+
+        if(host.includes('rutube.ru')){
+          if(parts[0] === 'play' && parts[1] === 'embed' && parts[2]){
+            return {
+              canEmbed: true,
+              embedUrl: `https://rutube.ru/play/embed/${parts[2]}`,
+              externalUrl,
+              orientation: fallback.orientation
+            };
+          }
+          if(parts[0] === 'shorts' && parts[1]){
+            return {
+              canEmbed: true,
+              embedUrl: `https://rutube.ru/play/embed/${parts[1]}`,
+              externalUrl,
+              orientation: 'vertical'
+            };
+          }
+          if(parts[0] === 'video' && parts[1]){
+            return {
+              canEmbed: true,
+              embedUrl: `https://rutube.ru/play/embed/${parts[1]}`,
+              externalUrl,
+              orientation: 'horizontal'
+            };
+          }
+        }
+
+        if(host === 'youtu.be' && parts[0]){
+          return {
+            canEmbed: true,
+            embedUrl: `https://www.youtube.com/embed/${parts[0]}`,
+            externalUrl,
+            orientation: fallback.orientation
+          };
+        }
+
+        if(host.includes('youtube.com')){
+          if(parts[0] === 'watch' && u.searchParams.get('v')){
+            return {
+              canEmbed: true,
+              embedUrl: `https://www.youtube.com/embed/${u.searchParams.get('v')}`,
+              externalUrl,
+              orientation: 'horizontal'
+            };
+          }
+          if(parts[0] === 'shorts' && parts[1]){
+            return {
+              canEmbed: true,
+              embedUrl: `https://www.youtube.com/embed/${parts[1]}`,
+              externalUrl,
+              orientation: 'vertical'
+            };
+          }
+          if(parts[0] === 'embed' && parts[1]){
+            return {
+              canEmbed: true,
+              embedUrl: externalUrl,
+              externalUrl,
+              orientation: fallback.orientation
+            };
+          }
+        }
+
+        if(parts[0] === 'embed'){
+          return {
+            canEmbed: true,
+            embedUrl: externalUrl,
+            externalUrl,
+            orientation: fallback.orientation
+          };
+        }
+      } catch(e){
+      }
+      return fallback;
+    }
+
+    function isVerticalVideoUrl(url){
+      const value = String(url || '').toLowerCase();
+      return (
+        value.includes('/shorts/') ||
+        value.includes('shortvideo') ||
+        value.includes('/reel') ||
+        value.includes('vertical') ||
+        value.includes('story')
+      );
+    }
+
+    function closeSectionModal(){
+      document.getElementById('sectionModal')?.classList.add('hidden');
+    }
+
+    function openSectionModal(sectionId){
+      const modal = document.getElementById('sectionModal');
+      const titleEl = document.getElementById('sectionModalTitle');
+      const bodyEl = document.getElementById('sectionModalBody');
+      const sourceSection = document.getElementById(sectionId);
+      if(!modal || !titleEl || !bodyEl || !sourceSection) return false;
+      closeTransientModals('section');

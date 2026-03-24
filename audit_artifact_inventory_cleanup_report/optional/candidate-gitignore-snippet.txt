@@ -1,0 +1,18 @@
+# Generated artifacts
+build/
+dist/legal.html
+diff/*.diff
+
+# Binary bundles / exports
+*.zip
+!release/*.md
+
+# Visual debug artifacts
+screens/debug/
+screens/tmp/
+audit/playwright/artifacts/
+
+# Sandbox / exports
+prototype-export/
+ui-sandbox/prototype-export-*.zip
+archive/non-runtime/

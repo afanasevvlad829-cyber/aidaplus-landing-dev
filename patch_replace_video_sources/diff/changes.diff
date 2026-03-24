@@ -1,0 +1,48 @@
+diff --git a/src/scripts/main.js b/src/scripts/main.js
+--- a/src/scripts/main.js
++++ b/src/scripts/main.js
+@@
+-        {
+-          title:'За неделю в лагере ребёнок меняется больше, чем за год дома',
+-          url:'https://rutube.ru/shorts/f1538387b19f82f0305f7ae7222bf57d/',
++        {
++          title:'За неделю в лагере ребёнок меняется больше, чем за год дома',
++          url:'https://vkvideo.ru/clip-194976808_456239373',
+           cover:'/assets/video-covers/cover-week-change.jpg',
+           orientation:'vertical'
+         },
+@@
+-        {
+-          title:'Зачем детям копить деньги в лагере?',
+-          url:'https://rutube.ru/shorts/01ca8a077f86db0b95bb0adfebd8ebce/',
++        {
++          title:'Зачем детям копить деньги в лагере?',
++          url:'https://vkvideo.ru/clip-194976808_456239364',
+           cover:'/assets/video-covers/cover-week-change.jpg',
+           orientation:'vertical'
+         },
+@@
+-        {
+-          title:'Ребёнок сам откажется от телефона за 3 дня?',
+-          url:'https://rutube.ru/shorts/41bbae1d1b167cd49c7aad94cc76b133/',
++        {
++          title:'Ребёнок сам откажется от телефона за 3 дня?',
++          url:'https://vkvideo.ru/clip-194976808_456239371',
+           cover:'/assets/video-covers/cover-week-change.jpg',
+           orientation:'vertical'
+         }
+@@
+-        if(host.includes('rutube.ru')) fallback.sourceName = 'Rutube';
+-        if(host.includes('youtube.com') || host === 'youtu.be') fallback.sourceName = 'YouTube';
++        if(host.includes('rutube.ru')) fallback.sourceName = 'Rutube';
++        if(host.includes('youtube.com') || host === 'youtu.be') fallback.sourceName = 'YouTube';
++        if(host.includes('vkvideo.ru') || host === 'vk.com' || host.endsWith('.vk.com')) fallback.sourceName = 'VK Видео';
+@@
++    function videoSourceLabel(url){
++      const sourceName = resolveVideoSource(url).sourceName;
++      return sourceName === 'источнике' ? 'Видео' : sourceName;
++    }
++
+@@
+-              <div class="video-source-tag">${item.url.includes('rutube') ? 'Rutube' : 'YouTube'}</div>
++              <div class="video-source-tag">${videoSourceLabel(item.url)}</div>

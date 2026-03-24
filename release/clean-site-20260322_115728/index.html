@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AiDaCamp</title>
+  <meta name="description" content="AidaCamp — IT-лагерь для детей 7–14 лет: AI-проекты, бассейн, спорт, внутренняя экономика и бронирование смен.">
+  <link rel="icon" type="image/png" href="/assets/aida-logo-small.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body data-mode="compact">
+  <div id="acTechBadge" class="ac-tech-badge"></div>
+
+  <header class="ac-header">
+    <div class="ac-container ac-header__inner">
+      <a class="ac-brand" href="#top" aria-label="AidaCamp">
+        <img class="ac-brand__logo" src="/assets/aida-logo-small.png" alt="AidaCamp" width="36" height="36">
+        <span class="ac-brand__text">
+          <strong>AiDaCamp</strong>
+          <small id="acBrandSub"></small>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <nav id="acTopNav" class="ac-top-nav" aria-label="Навигация по разделам"></nav>
+
+  <main id="top" class="ac-main">
+    <section class="ac-hero" aria-label="Главный экран">
+      <div class="ac-container ac-hero__grid">
+        <aside class="ac-hero-left">
+          <div id="acCompactNav" class="ac-compact-nav" aria-label="Навигация по разделам"></div>
+
+          <article class="ac-card ac-card--hero">
+            <h1 id="acHeroTitle" class="ac-hero-title"></h1>
+            <p id="acHeroSubtitle" class="ac-hero-subtitle"></p>
+            <p id="acHeroProgress" class="ac-progress"></p>
+
+            <div class="ac-hero-benefits-row">
+              <ul id="acHeroBenefits" class="ac-hero-benefits"></ul>
+              <div class="ac-hero-motto" aria-hidden="true">
+                <img class="ac-hero-motto__logo" src="/assets/aida-logo-small.png" alt="">
+                <span class="ac-hero-motto__text">Мы не играем в игры - мы их создаём</span>
+              </div>
+            </div>
+            <section id="acPromoPinned" class="ac-promo-pinned" hidden></section>
+
+            <div class="ac-age-block">
+              <div class="ac-age-block__head">
+                <strong id="acAgeLabel"></strong>
+                <span id="acAgeText"></span>
+                <button
+                  id="acAgeReset"
+                  class="ac-age-reset"
+                  type="button"
+                  data-action="age-reset"
+                  aria-label="Сбросить выбранный возраст"
+                  hidden
+                >
+                  ×
+                </button>
+              </div>
+              <div class="ac-age-bar">
+                <input id="acAgeInput" class="ac-age-input" type="range" min="0" max="3" step="1" value="0" aria-label="Возраст ребенка">
+              </div>
+              <div class="ac-age-marks"><span>—</span><span>7-9</span><span>10-12</span><span>13-14</span></div>
+              <div class="ac-social-row">
+                <a class="ac-social ac-social--vk" href="https://vk.com/aida_codit" target="_blank" rel="noopener">vk</a>
+                <a class="ac-social ac-social--ig" href="https://www.instagram.com/" target="_blank" rel="noopener">ig</a>
+                <a class="ac-social ac-social--yt" href="https://www.youtube.com/channel/UCavd6BfrYQ32HQX_S4iZ02g" target="_blank" rel="noopener">yt</a>
+                <a class="ac-social ac-social--fb" href="https://www.facebook.com/" target="_blank" rel="noopener">fb</a>
+                <a class="ac-social ac-social--dz" href="https://dzen.ru/" target="_blank" rel="noopener">dz</a>
+                <a class="ac-social ac-social--yp" href="https://yappy.media/" target="_blank" rel="noopener">yp</a>
+                <a class="ac-social ac-social--in" href="https://www.linkedin.com/" target="_blank" rel="noopener">in</a>
+              </div>
+            </div>
+          </article>
+        </aside>
+
+        <section class="ac-hero-right" aria-label="Промо-панель смены">
+          <div class="ac-hero-right__bg"></div>
+          <div class="ac-hero-right__scrim"></div>
+
+          <div id="acContactPanel" class="ac-contact-panel">
+            <button id="acContactButton" class="ac-hero-pill ac-hero-pill--left ac-contact-trigger" type="button" data-action="open-contact" aria-expanded="false" aria-controls="acContactMenu">
+              <span id="acHeroContactLabel"></span>
+              <img class="ac-icon ac-icon--sm ac-contact-trigger__chevron" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+            </button>
+            <div id="acContactMenu" class="ac-contact-menu" hidden>
+              <a class="ac-contact-menu__item" href="tel:+74951234567">
+                <img class="ac-icon ac-icon--sm" src="/assets/icons/phone-city.svg" alt="" aria-hidden="true">
+                <span>+7 (495) 123-45-67</span>
+              </a>
+              <a class="ac-contact-menu__item" href="tel:+79688086455">
+                <img class="ac-icon ac-icon--sm" src="/assets/icons/phone-mobile.svg" alt="" aria-hidden="true">
+                <span>+7 (968) 808-64-55</span>
+              </a>
+              <a class="ac-contact-menu__item" href="https://wa.me/79688086455" target="_blank" rel="noopener">
+                <img class="ac-icon ac-icon--sm" src="/assets/icons/whatsapp.svg" alt="" aria-hidden="true">
+                <span>WhatsApp</span>
+              </a>
+              <a class="ac-contact-menu__item" href="https://t.me/proga_school" target="_blank" rel="noopener">
+                <img class="ac-icon ac-icon--sm" src="/assets/icons/telegram.svg" alt="" aria-hidden="true">
+                <span>@proga_school</span>
+              </a>
+            </div>
+          </div>
+          <div class="ac-hero-pill ac-hero-pill--right">
+            <img class="ac-icon ac-icon--sm" src="/assets/icons/sparkles.svg" alt="" aria-hidden="true">
+            <span id="acHeroCampaignLabel"></span>
+          </div>
+
+          <div class="ac-hero-overlay">
+            <div class="ac-funnel-body">
+              <h2 id="acHeroOverlayTitle"></h2>
+              <div id="acProgramLine" class="ac-hero-overlay__line"></div>
+              <p id="acProgramSummary"></p>
+              <section id="acHeroResumeCard" class="ac-booking-fixed ac-booking-fixed--resume" hidden></section>
+              <form id="acBookingForm" class="ac-booking-form" hidden>
+                <div id="acBookingPromoNotice" class="ac-booking-form__notice" hidden></div>
+                <section id="acBookingFixedCard" class="ac-booking-fixed" hidden></section>
+                <input id="acBookingShift" type="hidden">
+                <input id="acBookingPrice" type="hidden">
+                <input id="acBookingDiscount" type="hidden">
+                <input id="acBookingPromo" type="hidden">
+                <label class="ac-booking-form__label" for="acBookingPhone">Ваш телефон</label>
+                <input id="acBookingPhone" class="ac-booking-form__input" type="tel" inputmode="tel" maxlength="11" placeholder="+7 (___) ___-__-__" autocomplete="tel">
+                <label class="ac-booking-form__label" for="acBookingName">Ваше имя</label>
+                <input id="acBookingName" class="ac-booking-form__input" type="text" placeholder="Например, Саша" autocomplete="name">
+                <label class="ac-booking-form__consent">
+                  <input id="acBookingConsent" type="checkbox">
+                  <span>Согласен(на) на обработку персональных данных</span>
+                </label>
+                <button class="ac-primary-btn ac-booking-form__submit" type="button" data-action="booking-submit">Забронировать</button>
+              </form>
+              <div class="ac-hero-grid">
+                <div class="ac-hero-grid__item"><img class="ac-icon ac-icon--sm" src="/assets/icons/heart-pulse.svg" alt="" aria-hidden="true"><span class="ac-hero-grid__copy"><strong id="acHeroSafetyMedTitle"></strong><small id="acHeroSafetyMedDesc"></small></span></div>
+                <div class="ac-hero-grid__item"><img class="ac-icon ac-icon--sm" src="/assets/icons/shield-check.svg" alt="" aria-hidden="true"><span class="ac-hero-grid__copy"><strong id="acHeroSafetyLockTitle"></strong><small id="acHeroSafetyLockDesc"></small></span></div>
+                <div class="ac-hero-grid__item"><img class="ac-icon ac-icon--sm" src="/assets/icons/utensils-crossed.svg" alt="" aria-hidden="true"><span class="ac-hero-grid__copy"><strong id="acHeroSafetyFoodTitle"></strong><small id="acHeroSafetyFoodDesc"></small></span></div>
+                <div class="ac-hero-grid__item"><img class="ac-icon ac-icon--sm" src="/assets/icons/waves.svg" alt="" aria-hidden="true"><span class="ac-hero-grid__copy"><strong id="acHeroSafetyPoolTitle"></strong><small id="acHeroSafetyPoolDesc"></small></span></div>
+              </div>
+            </div>
+            <div class="ac-funnel-controls">
+              <span id="acStepStatus" class="ac-step-status"></span>
+              <button id="acStepNextBtn" class="ac-primary-btn" type="button" data-action="step-next"></button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="program" class="ac-section">
+      <div class="ac-container" id="acSectionProgram"></div>
+    </section>
+
+    <section id="format" class="ac-section">
+      <div class="ac-container" id="acSectionFormat"></div>
+    </section>
+
+    <section id="ai" class="ac-section ac-section--extended">
+      <div class="ac-container" id="acSectionAi"></div>
+    </section>
+
+    <section id="location" class="ac-section ac-section--extended">
+      <div class="ac-container" id="acSectionLocation"></div>
+    </section>
+
+    <section id="photos" class="ac-section ac-section--extended">
+      <div class="ac-container" id="acSectionPhotos"></div>
+    </section>
+
+    <section id="video" class="ac-section ac-section--extended">
+      <div class="ac-container" id="acSectionVideo"></div>
+    </section>
+
+    <section id="reviews" class="ac-section ac-section--extended">
+      <div class="ac-container" id="acSectionReviews"></div>
+    </section>
+
+    <section id="team" class="ac-section ac-section--extended">
+      <div class="ac-container" id="acSectionTeam"></div>
+    </section>
+
+    <section id="faq" class="ac-section ac-section--extended">
+      <div class="ac-container" id="acSectionFaq"></div>
+    </section>
+  </main>
+
+  <footer class="ac-footer">
+    <div class="ac-container ac-footer__inner">
+      <span id="acFooterBrand"></span>
+      <span id="acFooterTagline"></span>
+    </div>
+  </footer>
+
+  <div id="acOverlayRoot" class="ac-overlay-root" aria-live="polite"></div>
+
+  <script>
+    window.AC_NOTIFY_CONFIG = window.AC_NOTIFY_CONFIG || {
+      all: "",
+      promo_fixed: "",
+      booking_submitted: "",
+      telegramBotToken: "",
+      telegramChatId: ""
+    };
+  </script>
+
+  <script src="/src/scripts/data/icon-map.js"></script>
+  <script src="/src/scripts/data/content-map.js"></script>
+  <script src="/src/scripts/data/faq-data.js"></script>
+  <script src="/src/scripts/core/state.js"></script>
+  <script src="/src/scripts/core/render.js"></script>
+  <script src="/src/scripts/core/actions.js"></script>
+  <script src="/src/scripts/features/menu.js"></script>
+  <script src="/src/scripts/features/funnel.js"></script>
+  <script src="/src/scripts/features/overlays.js"></script>
+  <script src="/src/scripts/features/toggle.js"></script>
+  <script src="/src/scripts/features/analytics.js"></script>
+  <script src="/src/scripts/features/events.js"></script>
+  <script src="/src/scripts/main.js"></script>
+</body>
+</html>

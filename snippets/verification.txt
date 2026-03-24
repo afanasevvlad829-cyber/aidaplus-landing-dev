@@ -1,0 +1,7 @@
+Desktop/Mobile checks:
+- node --check src/scripts/main.js
+- ./build.sh
+- FAQ order: Медицина first, Все last
+- Reset hard: clears local/session/cookies + replaceState
+- Offer modal: staged progress with visible steps and close button
+- Mobile contacts compact rendering: WhatsApp + @proga_school

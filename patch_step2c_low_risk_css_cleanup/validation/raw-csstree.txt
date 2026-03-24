@@ -1,0 +1,1 @@
+[{"source":"/Users/vladimirafanasev/aidaplus-dev/src/styles/main.css","deprecations":[],"invalidOptionWarnings":[],"parseErrors":[],"errored":false,"warnings":[]}]

@@ -1,0 +1,10 @@
+rule,before,after,delta
+alpha-value-notation,190,191,1
+color-function-alias-notation,190,191,1
+color-function-notation,190,191,1
+selector-id-pattern,12,12,0
+declaration-block-single-line-max-declarations,9,0,-9
+color-hex-length,8,8,0
+keyframes-name-pattern,7,0,-7
+media-feature-range-notation,2,0,-2
+__TOTAL__,608,593,-15

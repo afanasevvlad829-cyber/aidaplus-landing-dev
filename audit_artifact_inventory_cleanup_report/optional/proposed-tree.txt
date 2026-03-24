@@ -1,0 +1,32 @@
+artifacts/
+  audits/
+    final/
+      YYYY-MM-DD_audit-name/
+        report.md
+        tables/*.csv
+    working/
+      (temporary generated audit files; gitignored)
+  screens/
+    final/
+      baseline-home-desktop.png
+      baseline-home-mobile.png
+      baseline-booking-step.png
+    debug/
+      (bulk screenshots; gitignored)
+  release/
+    YYYY-MM-DD_release-tag/
+      release-notes.md
+      checksums.txt
+      bundles/*.zip (optional, usually outside git)
+archive/
+  legacy/
+    (historical backups, old html/css/js snapshots)
+src/
+  pages/
+    gpt.html
+    legal.html
+docs/
+  contracts.md
+  state-schema.md
+  release-checklist.md
+  project-map.md

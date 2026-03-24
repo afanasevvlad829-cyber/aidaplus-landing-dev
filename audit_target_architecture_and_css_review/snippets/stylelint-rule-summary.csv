@@ -1,0 +1,11 @@
+rule,count
+alpha-value-notation,190
+color-function-alias-notation,190
+color-function-notation,190
+rule-empty-line-before,42
+selector-id-pattern,12
+declaration-block-single-line-max-declarations,9
+color-hex-length,8
+keyframes-name-pattern,7
+media-feature-range-notation,2
+declaration-block-no-redundant-longhand-properties,1

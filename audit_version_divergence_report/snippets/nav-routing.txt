@@ -1,0 +1,79 @@
+  2550	    }
+  2551	
+  2552	    function scrollToSection(id){
+  2553	      const cleanId = String(id || '').replace(/^#/, '');
+  2554	      if(!cleanId) return false;
+  2555	
+  2556	      const mobileMap = {
+  2557	        'section-about':'mobile-section-about',
+  2558	        'section-programs':'mobileBookingCard',
+  2559	        'section-photos':'mobile-section-photos',
+  2560	        'section-videos':'mobile-section-videos',
+  2561	        'section-reviews':'mobile-section-reviews',
+  2562	        'section-faq':'mobile-section-faq',
+  2563	        'section-team':'mobile-section-team',
+  2564	        'section-stay':'mobile-section-stay',
+  2565	        'section-contacts':'mobile-section-contacts'
+  2566	      };
+  2567	
+  2568	      const targetId = state.view === 'mobile'
+  2569	        ? (mobileMap[cleanId] || cleanId)
+  2570	        : cleanId;
+  2571	      const el = document.getElementById(targetId) || document.getElementById(cleanId);
+  2572	      if(!el) return false;
+  2573	
+  2574	      el.scrollIntoView({behavior:'smooth', block:'start'});
+  2575	      return true;
+  2576	    }
+  2577	
+  2578	    function navigateToSection(id){
+  2579	      const cleanId = String(id || '').replace(/^#/, '');
+  2580	      if(!cleanId) return;
+  2581	
+  2582	      if(state.view === 'mobile' && state.mobileMode === 'compact'){
+  2583	        switchMobileMode('full');
+  2584	        window.setTimeout(() => {
+  2585	          scrollToSection(cleanId);
+  2586	        }, 50);
+  2587	        return;
+  2588	      }
+  2589	
+  2590	      if(state.view === 'desktop' && state.desktopMode === 'compact'){
+  2591	        if(COMPACT_MODAL_SECTIONS.has(cleanId)){
+  2592	          openSectionModal(cleanId);
+  2593	          return;
+  2594	        }
+  2595	
+  2596	        switchDesktopMode('full');
+  2597	        window.setTimeout(() => {
+  2598	          scrollToSection(cleanId);
+  2599	        }, 50);
+  2600	        return;
+  2601	      }
+  2602	
+  2603	      scrollToSection(cleanId);
+  2604	    }
+  2605	
+  2606	    document.addEventListener('click', (e) => {
+  2607	      const navEl = e.target.closest('[data-nav]');
+  2608	      if(!navEl) return;
+  2609	
+  2610	      e.preventDefault();
+  2611	      const target = navEl.dataset.nav;
+  2612	      if(!target) return;
+  2613	
+  2614	      if(navEl.closest('#serviceMenu')){
+  2615	        document.querySelectorAll('#serviceMenu [data-nav]').forEach(x => x.classList.remove('active'));
+  2616	        navEl.classList.add('active');
+  2617	      }
+  2618	
+  2619	      if(navEl.closest('.mobile-hero-nav') && COMPACT_MODAL_SECTIONS.has(target)){
+  2620	        openSectionModal(target);
+  2621	        return;
+  2622	      }
+  2623	
+  2624	      navigateToSection(target);
+  2625	    });
+  2626	
+  2627	    document.addEventListener('click', (e) => {
+  2628	      const anchor = e.target.closest('a[href^="#section-"]');

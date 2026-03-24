@@ -1,0 +1,12 @@
+Блок,Desktop Full,Desktop Compact,Mobile Full,Mobile Compact,Structural divergence,Это допустимо?,Что делать
+hero,"Полный desktop hero + right booking","тот же DOM, body sections скрыты","отдельный mobile hero DOM","тот же mobile DOM + sections скрыты","две независимые DOM-ветки hero","частично","Свести к shared semantic block + view-specific wrappers"
+booking,"desktop booking card","тот же card + compact nav/modal","mobile booking card","тот же card, остальное через modal","два разных markup контейнера","допустимо","Оставить, но синхронизировать шаговые тексты и aria"
+journey,"full grid+results","через section modal clone","separate short band","через section modal clone desktop journey","mobile full теряет подробный контент","нет","Вернуть полноценный journey в mobile full"
+photos,"photoGrid + filters","section modal clone","mobileInlinePhotoGrid (4 фото)","section modal clone","разный объём и источник представления","частично","Убрать hard slice или добавить 'ещё'"
+videos,"desktop 4-up carousel","section modal clone","mobileInlineVideoList (simplified)","section modal clone","разные card templates и описание","частично","Нормализовать video card template"
+reviews,"full reviews hero + grid","section modal clone","mobileInlineReviewsList (3)","section modal clone","mobile full урезан social proof","нет","Синхронизировать richness в full"
+FAQ,"grouped filters + grouped answers","section modal clone","flat list top 6","section modal clone","группы/фильтры пропадают в mobile full","нет","Вернуть group model в mobile full"
+team,"book+core+carousel","section modal clone","mobile inline cards (4)","section modal clone","команда срезана в mobile full","нет","Показывать весь состав или добавить переход к полному списку"
+stay,"full stay-grid","section modal clone","mobileInlineStayList from desktop DOM","section modal clone","mobile uses derived data from rendered desktop section","нет","Перевести stay на data-driven source"
+contacts/map,"desktop map + contacts + socials","section modal clone","mobile contacts short + socials row","section modal clone","map и часть контактов исчезают в mobile full","нет","Добавить consistent contact/map availability policy"
+legal/footer,"desktop section + footer columns","section modal clone + footer hidden","mobile legal section","section modal clone legal","footer отсутствует в mobile layouts","частично","Сделать mobile footer-lite или legal entry persistent"

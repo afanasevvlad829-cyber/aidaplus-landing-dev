@@ -1,0 +1,6 @@
+metric,value
+originalCssBytes,85891
+purgedCssBytes,79697
+estimatedUnusedBytes,6194
+estimatedUnusedPercent,7.21
+note,"Estimate only, nothing removed from source"

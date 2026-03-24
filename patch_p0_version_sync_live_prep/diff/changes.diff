@@ -1,0 +1,172 @@
+diff --git a/index.html b/index.html
+--- a/index.html
++++ b/index.html
+@@
+-              <button class="menu-pill active" type="button" data-nav="section-about">О лагере</button>
++              <button class="menu-pill active" type="button" data-nav="section-about">О лагере</button>
++              <button class="menu-pill" type="button" data-nav="section-journey">Как проходит</button>
+               <button class="menu-pill" type="button" data-nav="section-programs">Смены</button>
+@@
+               <button class="menu-pill" type="button" data-nav="section-contacts">Контакты</button>
++              <button class="menu-pill" type="button" data-nav="section-legal">Документы</button>
+             </div>
+@@
++          <section class="section-card" id="section-legal">
++            <h3>Документы и юридическая информация</h3>
++            <p class="section-lead">Политики, договоры и сведения об организации доступны в любой версии страницы.</p>
++            <div class="legal-links-grid">
++              <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
++              <a href="https://www.codims.ru/dokumentaciya-k-letnemu-it-lageryu-sosny" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a>
++              <a href="https://www.codims.ru/dokumentaciya-k-letnemu-it-lageryu-sosny" target="_blank" rel="noopener noreferrer">Договор-оферта</a>
++              <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
++              <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
++            </div>
++            <div class="legal-meta-grid">
++              <div>© 2012-2026 © ООО «ВОИП КОННЕКТ»</div>
++              <div>ИНН 7729713637</div>
++              <div>Реестровый номер туроператора РТО 025773</div>
++            </div>
++          </section>
+@@
++              <a href="#section-journey">Как проходит</a>
+               <a href="#section-programs">Смены</a>
+@@
++              <a href="#section-legal">Документы</a>
+             </div>
+@@
++            <button class="mini-nav-link" type="button" data-nav="section-journey">Как проходит</button>
+             <button class="mini-nav-link" type="button" data-nav="section-programs">Смены</button>
+@@
++            <button class="mini-nav-link icon" type="button" data-nav="section-legal" aria-label="Документы">
++              <img class="ac-icon" src="/assets/icons/clipboard.svg" alt="" aria-hidden="true">
++            </button>
+           </div>
+@@
++          <section class="section-card" id="mobile-section-journey">
++            <h3>Как проходит смена</h3>
++            <p class="section-lead">Короткий маршрут смены: быстрое включение, практика, живая среда и финальный результат.</p>
++            <div class="results-band mobile-journey-band">
++              <div class="result-pill"><strong>1</strong><span>Быстрое включение</span></div>
++              <div class="result-pill"><strong>2</strong><span>Практика вместо теории</span></div>
++              <div class="result-pill"><strong>3</strong><span>Живая среда</span></div>
++              <div class="result-pill"><strong>4</strong><span>Финальный результат</span></div>
++            </div>
++          </section>
+@@
++          <section class="section-card" id="mobile-section-legal">
++            <h3>Документы</h3>
++            <p class="section-lead">Юридическая информация и данные организации доступны в мобильной версии.</p>
++            <div class="legal-links-grid">
++              <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
++              <a href="https://www.codims.ru/dokumentaciya-k-letnemu-it-lageryu-sosny" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a>
++              <a href="https://www.codims.ru/dokumentaciya-k-letnemu-it-lageryu-sosny" target="_blank" rel="noopener noreferrer">Договор-оферта</a>
++              <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
++              <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
++            </div>
++            <div class="legal-meta-grid">
++              <div>© 2012-2026 © ООО «ВОИП КОННЕКТ»</div>
++              <div>ИНН 7729713637</div>
++              <div>Реестровый номер туроператора РТО 025773</div>
++            </div>
++          </section>
++
+ diff --git a/src/styles/main.css b/src/styles/main.css
+--- a/src/styles/main.css
++++ b/src/styles/main.css
+@@
++    .legal-links-grid{
++      display:grid;
++      gap:8px;
++      margin-top:8px;
++    }
++
++    .legal-links-grid a{
++      color:#4a5568;
++      font-size:14px;
++      line-height:1.55;
++      text-decoration:none;
++    }
++
++    .legal-links-grid a:hover{
++      color:#1f2937;
++      text-decoration:underline;
++    }
++
++    .legal-meta-grid{
++      margin-top:10px;
++      padding-top:10px;
++      border-top:1px dashed #dce5f1;
++      display:grid;
++      gap:4px;
++      color:#6d7586;
++      font-size:12px;
++      line-height:1.55;
++    }
++
++    .mobile-journey-band{
++      margin-top:8px;
++    }
++
+ diff --git a/src/scripts/main.js b/src/scripts/main.js
+--- a/src/scripts/main.js
++++ b/src/scripts/main.js
+@@
+     const COMPACT_MODAL_SECTIONS = new Set([
+       'section-about',
++      'section-journey',
+       'section-programs',
+@@
+       'section-stay',
+-      'section-contacts'
++      'section-contacts',
++      'section-legal'
+     ]);
+@@
+       const mobileMap = {
+         'section-about':'mobile-section-about',
++        'section-journey':'mobile-section-journey',
+         'section-programs':'mobileBookingCard',
+@@
+         'section-team':'mobile-section-team',
+         'section-stay':'mobile-section-stay',
+-        'section-contacts':'mobile-section-contacts'
++        'section-contacts':'mobile-section-contacts',
++        'section-legal':'mobile-section-legal'
+       };
+@@
+-      if(state.view === 'mobile' && state.mobileMode === 'compact'){
+-        switchMobileMode('full');
+-        window.setTimeout(() => {
+-          scrollToSection(cleanId);
+-        }, 50);
+-        return;
+-      }
+-
+-      if(state.view === 'desktop' && state.desktopMode === 'compact'){
+-        if(COMPACT_MODAL_SECTIONS.has(cleanId)){
+-          openSectionModal(cleanId);
+-          return;
+-        }
+-
+-        switchDesktopMode('full');
+-        window.setTimeout(() => {
+-          scrollToSection(cleanId);
+-        }, 50);
++      const isDesktopCompact = state.view === 'desktop' && state.desktopMode === 'compact';
++      const isMobileCompact = state.view === 'mobile' && state.mobileMode === 'compact';
++
++      if(isDesktopCompact || isMobileCompact){
++        if(COMPACT_MODAL_SECTIONS.has(cleanId) && openSectionModal(cleanId)){
++          return;
++        }
++        scrollToSection(cleanId);
+         return;
+       }
+@@
+-      if(navEl.closest('.mobile-hero-nav') && COMPACT_MODAL_SECTIONS.has(target)){
+-        openSectionModal(target);
+-        return;
+-      }
+-
+       navigateToSection(target);
+     });

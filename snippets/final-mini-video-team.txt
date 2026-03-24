@@ -1,0 +1,7 @@
+// Stable external video previews + team book-card balancing
+videos: [
+  { cover:'https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg' },
+  { cover:'https://static.tildacdn.com/tild6135-3464-4332-b565-386630323830/photo_2025-06-14_08-.jpg' },
+  { cover:'https://static.tildacdn.com/tild3639-3532-4334-b035-316562666439/photo.jpg' }
+]
+.book-team-card{ grid-row:auto; }

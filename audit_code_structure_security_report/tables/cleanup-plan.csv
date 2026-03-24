@@ -1,0 +1,12 @@
+Priority,Problem,Why,Where,What to do
+P0,Artifact split and stale build target,"Can lead to wrong live artifact",build.sh + build/gpt.html + gpt.html,"Unify artifact path, remove stale build/gpt.html from acceptance flow"
+P0,Debug reset clears whole origin storage,"User-visible destructive behavior and cross-app side effects",main.js resetBookingFlowDebug,"Replace localStorage.clear/sessionStorage.clear with prefixed key deletion"
+P0,PII fallback in localStorage,"Data protection risk",main.js notifyLead fallback,"Store only retry marker; avoid raw name/phone persistence"
+P0,Parallel dead code trees (JS/CSS),"Edits can go into non-runtime files",src/scripts/features/** + src/styles/** split files,"Either wire into build or archive + lint block"
+P1,Hero seam/overlap hack chain,"High regression risk with design tweaks",main.css hero-shell/booking-card/body-sections first-child,"Refactor overlap into explicit layout wrapper and seam mask"
+P1,State/render coupling,"Hard to debug regressions",main.js renderSummary/renderBookingPanels + stage classes,"Introduce state transition map + targeted render updates"
+P1,Modal orchestration by scattered handlers,"Future modal conflicts likely",main.js closeTransientModals + keydown/backdrop handlers,"Central modal manager with stack + unified close policy"
+P1,Video block legacy+new composition coexist,"Increases CSS/JS complexity",index.html section-videos + main.css video-feature/video-list,"Remove deprecated main-video branch after final design decision"
+P2,Add CSP and security headers,"Defense in depth",hosting config + static html,"Add strict CSP, frame-src/connect-src allowlists"
+P2,Replace alert() with inline form errors,"Non-blocking UX and testability",main.js submitLead,"Use field-level error state instead of blocking alert"
+P2,Automate release checks,"Reduce manual mistakes",build/release scripts,"Add smoke script for 4 modes + artifact checksum gate"

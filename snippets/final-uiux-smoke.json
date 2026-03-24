@@ -1,0 +1,19 @@
+{
+  "desktop_age_lock": true,
+  "desktop_hint_text": "Сначала выберите возраст ребёнка",
+  "faq_order": [
+    "Медицина",
+    "Безопасность",
+    "Питание",
+    "Проживание",
+    "Связь",
+    "Все"
+  ],
+  "team_layout_exists": true,
+  "team_core_cards": 2,
+  "team_carousel_cards": 3,
+  "map_btn_styled": true,
+  "mobile_age_lock": true,
+  "mobile_hint_text": "Сначала выберите возраст ребёнка",
+  "mobile_menu_modal_open": true
+}

@@ -1,8 +1,9 @@
 # UI Contracts
 
 ## State Contract
-Runtime state is owned in `src/scripts/main.js` and includes:
+Runtime state is owned in `src/scripts/features/events.js` and includes:
 `mode, activeTab, step, direction, age, shiftView, selectedShiftId, overlays, photoCategory, photoPage, videoPage, reviewPage, teamPage, faqCategory`.
+Schema validators live in `src/scripts/core/state.js`.
 
 ## Render Contract
 Render entry points remain:
