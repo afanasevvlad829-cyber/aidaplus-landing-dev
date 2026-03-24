@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-03-24T11:00:00+03:00",
+  "baseUrl": "http://127.0.0.1:4173/gpt.html",
+  "scenarios": [
+    {
+      "name": "desktop-full-scroll-first",
+      "result": "pass",
+      "checks": {
+        "modeSwitch": "ok",
+        "navAction": "scroll",
+        "sectionModalHidden": true
+      }
+    },
+    {
+      "name": "desktop-compact-modal-first",
+      "result": "pass",
+      "checks": {
+        "modeSwitch": "ok",
+        "navAction": "modal-open",
+        "modalCloseButton": "ok"
+      }
+    },
+    {
+      "name": "mobile-full-scroll-first",
+      "result": "pass",
+      "checks": {
+        "viewSwitch": "ok",
+        "modeSwitch": "ok",
+        "navAction": "scroll",
+        "sectionModalHidden": true
+      }
+    },
+    {
+      "name": "mobile-compact-modal-first",
+      "result": "pass",
+      "checks": {
+        "viewSwitch": "ok",
+        "modeSwitch": "ok",
+        "navAction": "modal-open",
+        "modalCloseEsc": "ok"
+      }
+    }
+  ],
+  "consoleErrors": 0,
+  "pageErrors": 0,
+  "status": "ok"
+}
