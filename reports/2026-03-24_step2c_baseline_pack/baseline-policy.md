@@ -2,6 +2,7 @@
 
 ## Purpose
 `artifacts/baseline/` is the accepted visual reference baseline for AiDaCamp landing.
+This baseline is the main (canonical) visual state of the project and the permanent reference point for future changes.
 
 ## Rules
 1. Baseline is captured once and treated as reference.
@@ -24,3 +25,4 @@ Baseline covers:
 
 ## Ownership
 Baseline maintenance is manual and approval-driven; no CI auto-refresh.
+Baseline files are intended to stay in this reports package permanently as the long-lived accepted reference.
