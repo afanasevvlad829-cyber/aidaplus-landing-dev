@@ -2,3 +2,21 @@
 *.log
 node_modules/
 .env
+
+# Generated
+build/
+dist/legal.html
+diff/*.diff
+
+# Artifact bundles
+*.zip
+
+# Visual debug artifacts
+screens/debug/
+screens/tmp/
+audit/playwright/artifacts/
+
+# Sandbox / exports
+prototype-export/
+ui-sandbox/prototype-export-*.zip
+archive/non-runtime/
