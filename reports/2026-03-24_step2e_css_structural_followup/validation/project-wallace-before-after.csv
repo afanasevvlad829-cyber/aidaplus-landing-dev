@@ -1,0 +1,10 @@
+metric,before,after,delta
+sourceLinesOfCode,3108,3108,0
+compiledLinesOfCode,4236,4167,-69
+stylesheetSizeBytes,86945,85622,-1323
+complexityScore,8597,8597,0
+rulesTotal,548,539,-9
+selectorsTotal,616,607,-9
+selectorsUnique,534,525,-9
+importantTotal,14,13,-1
+mediaQueriesTotal,2,2,0
