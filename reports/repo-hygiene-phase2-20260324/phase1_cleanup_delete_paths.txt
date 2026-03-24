@@ -1,0 +1,207 @@
+aidacamp-zippy-workset.zip
+archive/non-runtime/audit_export_2026-03-21.tar.gz
+archive/non-runtime/audit_export_2026-03-21/README.md
+archive/non-runtime/audit_export_2026-03-21/audit_brief_ru.md
+archive/non-runtime/audit_export_2026-03-21/file_metrics.csv
+archive/non-runtime/audit_export_2026-03-21/git_head.txt
+archive/non-runtime/audit_export_2026-03-21/git_ls_files_s.txt
+archive/non-runtime/audit_export_2026-03-21/git_remote.txt
+archive/non-runtime/audit_export_2026-03-21/git_status.txt
+archive/non-runtime/audit_export_2026-03-21/project_file_map.md
+archive/non-runtime/audit_export_2026-03-21/project_summary.md
+archive/non-runtime/audit_export_2026-03-21/runtime_critical_files.md
+archive/non-runtime/audit_export_2026-03-21/tracked_files_current_state.tar.gz
+archive/non-runtime/release/aidaplus_rebuild_20260320_133945/.DS_Store
+archive/non-runtime/release/backups/full_backup_20260321_181206_MSK.zip
+archive/non-runtime/release/compact_after_latest.png
+archive/non-runtime/release/compact_mobile_check.png
+archive/non-runtime/release/debug_booking_after_fix_flow.png
+archive/non-runtime/release/debug_shift_phone_gate.png
+archive/non-runtime/release/debug_shift_phone_gate_after_css.png
+archive/non-runtime/release/desktop_1440_sanity_after_mechanism.png
+archive/non-runtime/release/full_after_latest.png
+archive/non-runtime/release/mobile_390_after_scaling_fix_full.png
+archive/non-runtime/release/mobile_390_full_validation_after_mechanism.png
+archive/non-runtime/release/mobile_390_fullmode_after_media_changes.png
+archive/non-runtime/release/mobile_390_hero_right_after_fix.png
+archive/non-runtime/release/mobile_500_hero_right_after_fix.png
+archive/non-runtime/release/mobile_500_validation_after_mechanism.png
+archive/non-runtime/release/mobile_emulated_390_after_fix.png
+archive/non-runtime/release/mobile_emulated_390_after_fix_scrolled.png
+archive/non-runtime/release/mobile_emulated_390_after_fix_v2.png
+archive/non-runtime/release/preview_shift_card_new_logic.png
+archive/non-runtime/tmp/dev_aidaplus_ru.html
+audit/old-site-2026-03-23/assets_export_v2.zip
+audit/old-site-2026-03-23/assets_export_v2/test_processing/test_processing_v2_package.zip
+audit/old-site-2026-03-23/assets_export_v2/test_processing_review_only.zip
+audit/old-site-2026-03-23/assets_export_v2/test_processing_sample.zip
+audit/old-site-2026-03-23/Архив.zip
+audit/playwright/artifacts/.DS_Store
+audit/playwright/artifacts/.gitignore
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/Cache_Data/5349fbae98c6d9a1_0
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/Cache_Data/b2861b98d3960665_0
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/Cache_Data/index
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/Cache_Data/index-dir/the-real-index
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/No_Vary_Search/journal.baj
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/No_Vary_Search/snapshot.baf
+audit/playwright/artifacts/chatgpt-profile/Default/Code Cache/js/index
+audit/playwright/artifacts/chatgpt-profile/Default/Code Cache/js/index-dir/the-real-index
+audit/playwright/artifacts/chatgpt-profile/Default/Code Cache/wasm/index
+audit/playwright/artifacts/chatgpt-profile/Default/Code Cache/wasm/index-dir/the-real-index
+audit/playwright/artifacts/chatgpt-profile/Default/Cookies
+audit/playwright/artifacts/chatgpt-profile/Default/Cookies-journal
+audit/playwright/artifacts/chatgpt-profile/Default/DIPS
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/data_0
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/data_1
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/data_2
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/data_3
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/index
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/data_0
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/data_1
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/data_2
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/data_3
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/index
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/data_0
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/data_1
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/data_2
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/data_3
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/index
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/000003.log
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/CURRENT
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/LOCK
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/LOG
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/MANIFEST-000001
+audit/playwright/artifacts/chatgpt-profile/Default/PersistentOriginTrials/LOCK
+audit/playwright/artifacts/chatgpt-profile/Default/PersistentOriginTrials/LOG
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/000003.log
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/CURRENT
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/LOCK
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/LOG
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/MANIFEST-000001
+audit/playwright/artifacts/chatgpt-profile/Default/Shared Dictionary/cache/index
+audit/playwright/artifacts/chatgpt-profile/Default/Shared Dictionary/cache/index-dir/the-real-index
+audit/playwright/artifacts/chatgpt-profile/Default/Shared Dictionary/db
+audit/playwright/artifacts/chatgpt-profile/Default/Shared Dictionary/db-journal
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/000003.log
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/CURRENT
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/LOCK
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/LOG
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/MANIFEST-000001
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/000003.log
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/CURRENT
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/LOCK
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/LOG
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/MANIFEST-000001
+audit/playwright/artifacts/reports/.DS_Store
+audit/playwright/artifacts/reports/.gitkeep
+audit/playwright/artifacts/reports/2026-03-22_14-16-58/127-0-0-1-ui-sandbox-order-flow-copy.json
+audit/playwright/artifacts/reports/2026-03-22_14-44-55/127-0-0-1-ui-sandbox-current-design-flow.json
+audit/playwright/artifacts/reports/2026-03-22_14-46-32/127-0-0-1-ui-sandbox-current-design-flow.json
+audit/playwright/artifacts/reports/compact-menu_2026-03-22_11-47-11/compact-menu.json
+audit/playwright/artifacts/reports/compact-menu_2026-03-22_11-47-11/index.md
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-41-26/flow-booking.json
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-41-26/index.md
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-50-09.zip
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-50-09/flow-booking.json
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-50-09/index.md
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/summary.json
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/короткий/index.md
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/короткий/report.json
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/полный/index.md
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/полный/report.json
+audit/playwright/artifacts/screenshots/.DS_Store
+audit/playwright/artifacts/screenshots/.gitkeep
+audit/playwright/artifacts/screenshots/2026-03-22_14-16-58/127-0-0-1-ui-sandbox-order-flow-copy.png
+audit/playwright/artifacts/screenshots/2026-03-22_14-44-55/127-0-0-1-ui-sandbox-current-design-flow.png
+audit/playwright/artifacts/screenshots/2026-03-22_14-46-32/127-0-0-1-ui-sandbox-current-design-flow.png
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11.zip
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/01-о-лагере.png
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/02-ai-программы.png
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/03-локация.png
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/04-фото.png
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/05-видео.png
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/06-faq.png
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/07-отзывы.png
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/08-команда.png
+audit/playwright/artifacts/screenshots/current-design-flow-after-age-selection.png
+audit/playwright/artifacts/screenshots/current-design-flow-age-gate.png
+audit/playwright/artifacts/screenshots/current-design-flow-final-offer.png
+audit/playwright/artifacts/screenshots/current-design-flow-offer-modal.png
+audit/playwright/artifacts/screenshots/current-design-flow-smoke-success.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/01-initial-locked.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/02-age-selected.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/03-shifts-overlay-open.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/04-price-click-1-checking.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/05-price-stage-1-ready.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/06-price-stage-2-phone-gate.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/07-booking-form-open.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/08-booking-phone-filled.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/01-initial-locked.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/02-age-selected.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/03-shifts-overlay-open.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/04-price-click-1-checking.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/05-price-stage-1-ready.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/06-price-stage-2-phone-gate.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/07-booking-form-open.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/08-booking-form-filled.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09 2.zip
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09.zip
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/01-initial-locked.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/02-age-selected.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/03-shifts-overlay-open.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/04-price-click-1-checking.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/05-price-stage-1-ready.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/06-price-stage-2-phone-gate.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/07-booking-form-open.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/08-booking-form-filled.png
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/09-booking-submitted.png
+audit/playwright/artifacts/screenshots/order-flow-final-offer.png
+audit/playwright/artifacts/screenshots/order-flow-smoke-success.png
+audit/playwright/artifacts/screenshots/Архив.zip
+audit/uiux-2026-03-23/uiux-2026-03-23.zip
+audit_artifact_inventory_cleanup_report.zip
+audit_code_structure_security_report.zip
+audit_target_architecture_and_css_review.zip
+audit_version_divergence_report.zip
+build/gpt.html
+build/legal.html
+diff/changes.diff
+dist/legal.html
+patch_approved_changes_master_bundle_report.zip
+patch_final_mini_sprint_report.zip
+patch_final_nav_contacts_offer_polish_report.zip
+patch_final_ui_ux_bundle_report.zip
+patch_hero_seam_cleanup.zip
+patch_mega_sprint_report.zip
+patch_next_big_sprint_report.zip
+patch_p0_version_sync_live_prep.zip
+patch_replace_video_sources.zip
+patch_standard_fixes_report.zip
+patch_step1_p0_cleanup_validation.zip
+patch_step2a_css_safe_cleanup.zip
+patch_step2b_css_hotzones_cleanup.zip
+prototype-export/.DS_Store
+prototype-export/content-transfer-export.json
+prototype-export/gpt-playwright-audit/audit-report.json
+prototype-export/gpt-playwright-audit/desktop after age selection.png
+prototype-export/gpt-playwright-audit/desktop after shift selection.png
+prototype-export/gpt-playwright-audit/desktop form drawer.png
+prototype-export/gpt-playwright-audit/desktop initial.png
+prototype-export/gpt-playwright-audit/desktop offer modal.png
+prototype-export/gpt-playwright-audit/desktop-after-age-selection.png
+prototype-export/gpt-playwright-audit/desktop-initial.png
+prototype-export/gpt-playwright-audit/desktop_after_age_selection.png
+prototype-export/gpt-playwright-audit/desktop_after_shift_selection.png
+prototype-export/gpt-playwright-audit/desktop_initial.png
+prototype-export/gpt-playwright-audit/desktop_offer_modal.png
+prototype-export/gpt-playwright-audit/mobile after age selection.png
+prototype-export/gpt-playwright-audit/mobile form drawer.png
+prototype-export/gpt-playwright-audit/mobile initial.png
+prototype-export/gpt-playwright-audit/mobile offer modal.png
+prototype-export/logo-check/aida-logo-original.svg
+prototype-export/logo-check/aida-logo-original.svg.zip
+prototype-export/logo-check/aida-logo-small.png
+prototype-export/logo-check/robot.svg
+release/aidacamp-clean-site-20260322_115728.zip
+release/patch_big_bundle_report.zip
+ui-sandbox/prototype-export-20260322_134231.zip

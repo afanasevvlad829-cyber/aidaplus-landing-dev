@@ -1,0 +1,210 @@
+path,category,git_state,reason,proposed_action
+aidacamp-zippy-workset.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+archive/non-runtime/audit_export_2026-03-21.tar.gz,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/README.md,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/audit_brief_ru.md,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/file_metrics.csv,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/git_head.txt,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/git_ls_files_s.txt,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/git_remote.txt,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/git_status.txt,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/project_file_map.md,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/project_summary.md,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/runtime_critical_files.md,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/audit_export_2026-03-21/tracked_files_current_state.tar.gz,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/aidaplus_rebuild_20260320_133945/.DS_Store,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/backups/full_backup_20260321_181206_MSK.zip,archive-non-runtime;zip-bundle,ignored,One-time bundle/archive artifact; Non-runtime archive storage,delete
+archive/non-runtime/release/compact_after_latest.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/compact_mobile_check.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/debug_booking_after_fix_flow.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/debug_shift_phone_gate.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/debug_shift_phone_gate_after_css.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/desktop_1440_sanity_after_mechanism.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/full_after_latest.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/mobile_390_after_scaling_fix_full.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/mobile_390_full_validation_after_mechanism.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/mobile_390_fullmode_after_media_changes.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/mobile_390_hero_right_after_fix.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/mobile_500_hero_right_after_fix.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/mobile_500_validation_after_mechanism.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/mobile_emulated_390_after_fix.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/mobile_emulated_390_after_fix_scrolled.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/mobile_emulated_390_after_fix_v2.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/release/preview_shift_card_new_logic.png,archive-non-runtime,ignored,Non-runtime archive storage,delete
+archive/non-runtime/tmp/dev_aidaplus_ru.html,archive-non-runtime,ignored,Non-runtime archive storage,delete
+audit/old-site-2026-03-23/assets_export_v2.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+audit/old-site-2026-03-23/assets_export_v2/test_processing/test_processing_v2_package.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+audit/old-site-2026-03-23/assets_export_v2/test_processing_review_only.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+audit/old-site-2026-03-23/assets_export_v2/test_processing_sample.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+audit/old-site-2026-03-23/Архив.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+audit/playwright/artifacts/.DS_Store,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/.gitignore,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/Cache_Data/5349fbae98c6d9a1_0,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/Cache_Data/b2861b98d3960665_0,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/Cache_Data/index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/Cache_Data/index-dir/the-real-index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/No_Vary_Search/journal.baj,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Cache/No_Vary_Search/snapshot.baf,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Code Cache/js/index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Code Cache/js/index-dir/the-real-index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Code Cache/wasm/index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Code Cache/wasm/index-dir/the-real-index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Cookies,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Cookies-journal,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DIPS,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/data_0,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/data_1,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/data_2,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/data_3,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnGraphiteCache/index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/data_0,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/data_1,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/data_2,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/data_3,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/DawnWebGPUCache/index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/data_0,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/data_1,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/data_2,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/data_3,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/GPUCache/index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/000003.log,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/CURRENT,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/LOCK,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/LOG,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Local Storage/leveldb/MANIFEST-000001,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/PersistentOriginTrials/LOCK,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/PersistentOriginTrials/LOG,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/000003.log,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/CURRENT,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/LOCK,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/LOG,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Session Storage/MANIFEST-000001,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Shared Dictionary/cache/index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Shared Dictionary/cache/index-dir/the-real-index,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Shared Dictionary/db,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/Shared Dictionary/db-journal,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/000003.log,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/CURRENT,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/LOCK,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/LOG,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/MANIFEST-000001,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/000003.log,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/CURRENT,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/LOCK,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/LOG,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/chatgpt-profile/Default/shared_proto_db/metadata/MANIFEST-000001,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/.DS_Store,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/.gitkeep,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/2026-03-22_14-16-58/127-0-0-1-ui-sandbox-order-flow-copy.json,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/2026-03-22_14-44-55/127-0-0-1-ui-sandbox-current-design-flow.json,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/2026-03-22_14-46-32/127-0-0-1-ui-sandbox-current-design-flow.json,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/compact-menu_2026-03-22_11-47-11/compact-menu.json,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/compact-menu_2026-03-22_11-47-11/index.md,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-41-26/flow-booking.json,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-41-26/index.md,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-50-09.zip,playwright-artifacts;zip-bundle,ignored,One-time bundle/archive artifact; Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-50-09/flow-booking.json,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/flow-booking_2026-03-22_11-50-09/index.md,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/summary.json,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/короткий/index.md,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/короткий/report.json,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/полный/index.md,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/reports/site-pack_2026-03-22_11-29-52/полный/report.json,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/.DS_Store,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/.gitkeep,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/2026-03-22_14-16-58/127-0-0-1-ui-sandbox-order-flow-copy.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/2026-03-22_14-44-55/127-0-0-1-ui-sandbox-current-design-flow.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/2026-03-22_14-46-32/127-0-0-1-ui-sandbox-current-design-flow.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11.zip,playwright-artifacts;zip-bundle,ignored,One-time bundle/archive artifact; Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/01-о-лагере.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/02-ai-программы.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/03-локация.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/04-фото.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/05-видео.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/06-faq.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/07-отзывы.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/compact-menu_2026-03-22_11-47-11/08-команда.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/current-design-flow-after-age-selection.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/current-design-flow-age-gate.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/current-design-flow-final-offer.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/current-design-flow-offer-modal.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/current-design-flow-smoke-success.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/01-initial-locked.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/02-age-selected.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/03-shifts-overlay-open.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/04-price-click-1-checking.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/05-price-stage-1-ready.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/06-price-stage-2-phone-gate.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/07-booking-form-open.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-41-26/08-booking-phone-filled.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/01-initial-locked.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/02-age-selected.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/03-shifts-overlay-open.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/04-price-click-1-checking.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/05-price-stage-1-ready.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/06-price-stage-2-phone-gate.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/07-booking-form-open.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-48-37/08-booking-form-filled.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09 2.zip,playwright-artifacts;zip-bundle,ignored,One-time bundle/archive artifact; Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09.zip,playwright-artifacts;zip-bundle,ignored,One-time bundle/archive artifact; Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/01-initial-locked.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/02-age-selected.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/03-shifts-overlay-open.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/04-price-click-1-checking.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/05-price-stage-1-ready.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/06-price-stage-2-phone-gate.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/07-booking-form-open.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/08-booking-form-filled.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/flow-booking_2026-03-22_11-50-09/09-booking-submitted.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/order-flow-final-offer.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/order-flow-smoke-success.png,playwright-artifacts,ignored,Debug/runtime capture artifacts,delete
+audit/playwright/artifacts/screenshots/Архив.zip,playwright-artifacts;zip-bundle,ignored,One-time bundle/archive artifact; Debug/runtime capture artifacts,delete
+audit/uiux-2026-03-23/uiux-2026-03-23.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+audit_artifact_inventory_cleanup_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+audit_code_structure_security_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+audit_target_architecture_and_css_review.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+audit_version_divergence_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+build/gpt.html,generated-build,ignored,Generated build output (non-canonical),delete
+build/legal.html,generated-build,ignored,Generated build output (non-canonical),delete
+diff/changes.diff,diff-generated,ignored,Generated diff artifact,delete
+dist/legal.html,generated-dist-legal,ignored,Generated legal page (non-canonical),delete
+gpt.html,generated-root-html-ambiguous,untracked,Potentially generated root html; keep until explicit confirmation,manual review
+legal.html,generated-root-html-ambiguous,untracked,Potentially generated root html; keep until explicit confirmation,manual review
+patch_approved_changes_master_bundle_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_final_mini_sprint_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_final_nav_contacts_offer_polish_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_final_ui_ux_bundle_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_hero_seam_cleanup.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_mega_sprint_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_next_big_sprint_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_p0_version_sync_live_prep.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_replace_video_sources.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_standard_fixes_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_step1_p0_cleanup_validation.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_step2a_css_safe_cleanup.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+patch_step2b_css_hotzones_cleanup.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+prototype-export/.DS_Store,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/content-transfer-export.json,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/audit-report.json,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop after age selection.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop after shift selection.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop form drawer.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop initial.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop offer modal.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop-after-age-selection.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop-initial.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop_after_age_selection.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop_after_shift_selection.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop_initial.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/desktop_offer_modal.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/mobile after age selection.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/mobile form drawer.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/mobile initial.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/gpt-playwright-audit/mobile offer modal.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/logo-check/aida-logo-original.svg,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/logo-check/aida-logo-original.svg.zip,prototype-export;zip-bundle,ignored,One-time bundle/archive artifact; Temporary prototype export artifacts,delete
+prototype-export/logo-check/aida-logo-small.png,prototype-export,ignored,Temporary prototype export artifacts,delete
+prototype-export/logo-check/robot.svg,prototype-export,ignored,Temporary prototype export artifacts,delete
+release/aidacamp-clean-site-20260322_115728.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+release/patch_big_bundle_report.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete
+ui-sandbox/prototype-export-20260322_134231.zip,zip-bundle,ignored,One-time bundle/archive artifact,delete

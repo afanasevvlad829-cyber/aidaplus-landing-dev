@@ -1,0 +1,3 @@
+path,category,git_state,reason,proposed_action
+gpt.html,generated-root-html-ambiguous,untracked,Potentially generated root html; keep until explicit confirmation,manual review
+legal.html,generated-root-html-ambiguous,untracked,Potentially generated root html; keep until explicit confirmation,manual review

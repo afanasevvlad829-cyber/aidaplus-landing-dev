@@ -1,0 +1,83 @@
+R  icon-audit-full.html -> archive/legacy/audit-html/icon-audit-full.html
+R  icon-audit.html -> archive/legacy/audit-html/icon-audit.html
+R  icon_replacements_sheet.html -> archive/legacy/audit-html/icon_replacements_sheet.html
+R  icon_replacements_sheet_with_bootstrap.html -> archive/legacy/audit-html/icon_replacements_sheet_with_bootstrap.html
+R  dist/index.html.bak_manual_fix -> archive/legacy/dist-backups/index.html.bak_manual_fix
+R  Untitled -> archive/legacy/root/Untitled
+R  index-aidacamp-final-v8.html -> archive/legacy/root/index-aidacamp-final-v8.html
+R  index-sandbox-backup.html -> archive/legacy/root/index-sandbox-backup.html
+R  index.backup.20260316_160302.html -> archive/legacy/root/index.backup.20260316_160302.html
+R  index.html.bak_manual_fix -> archive/legacy/root/index.html.bak_manual_fix
+R  index.html.bak_menu_fix_20260318_141955 -> archive/legacy/root/index.html.bak_menu_fix_20260318_141955
+R  script.js -> archive/legacy/root/script.js
+R  styles.css -> archive/legacy/root/styles.css
+R  apply-build.sh -> archive/legacy/scripts/apply-build.sh
+R  deploy-hero.command -> archive/legacy/scripts/deploy-hero.command
+R  live-deploy.sh -> archive/legacy/scripts/live-deploy.sh
+R  publish.sh -> archive/legacy/scripts/publish.sh
+R  push-and-deploy.sh -> archive/legacy/scripts/push-and-deploy.sh
+R  push-build-deploy-check.sh -> archive/legacy/scripts/push-build-deploy-check.sh
+R  watch-deploy.sh -> archive/legacy/scripts/watch-deploy.sh
+R  src/styles/main.css.bak_header_gap_fix_20260318_143438 -> archive/legacy/src-backups/main.css.bak_header_gap_fix_20260318_143438
+R  src/styles/main.css.bak_hide_old_header_20260318_142951 -> archive/legacy/src-backups/main.css.bak_hide_old_header_20260318_142951
+R  src/styles/main.css.bak_menu_fix_20260318_141955 -> archive/legacy/src-backups/main.css.bak_menu_fix_20260318_141955
+R  src/styles/main.css.bak_nav_pos_20260318_142259 -> archive/legacy/src-backups/main.css.bak_nav_pos_20260318_142259
+R  src/scripts/main.js.bak_menu_fix_20260318_141955 -> archive/legacy/src-backups/main.js.bak_menu_fix_20260318_141955
+ M build.sh
+ M deploy.sh
+ M dist/index.html
+ M docs/contracts.md
+ M docs/release-checklist.md
+ M docs/state-schema.md
+ M index.html
+ M src/scripts/data/content-map.js
+ M src/scripts/data/faq-data.js
+ M src/scripts/features/analytics.js
+RM src/scripts/main.js -> src/scripts/features/events.js
+ M src/styles/dev/audit.css
+ M src/styles/main.css
+ M tests/smoke-test.sh
+?? .tmp/
+?? assets/aida-logo-original.svg
+?? assets/aidacodit-context.json
+?? assets/icons/aida-logo-original.svg
+?? assets/icons/linkedin.svg
+?? assets/icons/pinterest.svg
+?? assets/icons/robot-orange.svg
+?? assets/icons/tiktok.svg
+?? assets/icons/yappy.svg
+?? assets/video-covers/
+?? audit/
+?? audit_artifact_inventory_cleanup_report/optional/
+?? audit_code_structure_security_report.zip.bak
+?? audit_code_structure_security_report/
+?? audit_target_architecture_and_css_review/
+?? audit_version_divergence_report/
+?? docs/project-map.md
+?? gpt.html
+?? legal.html
+?? patch_hero_seam_cleanup/
+?? patch_p0_version_sync_live_prep/
+?? patch_replace_video_sources/
+?? patch_step1_p0_cleanup_validation.zip.bak
+?? patch_step1_p0_cleanup_validation/
+?? patch_step2a_css_safe_cleanup/
+?? patch_step2b_css_hotzones_cleanup/
+?? python-terminal-demo.html
+?? release/
+?? report.md
+?? screens/
+?? snippets/
+?? src/pages/
+?? src/scripts/core/
+?? src/scripts/features/funnel.js
+?? src/scripts/features/menu.js
+?? src/scripts/features/overlays.js
+?? src/scripts/features/toggle.js
+?? src/scripts/main.js
+?? src/styles/base/reset.css
+?? src/styles/components/
+?? src/styles/features/
+?? src/styles/layout/
+?? test-results/
+?? ui-sandbox/
