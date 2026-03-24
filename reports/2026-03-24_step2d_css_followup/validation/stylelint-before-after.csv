@@ -1,0 +1,3 @@
+rule,before,after,delta
+__total__,12,0,-12
+selector-id-pattern,12,0,-12

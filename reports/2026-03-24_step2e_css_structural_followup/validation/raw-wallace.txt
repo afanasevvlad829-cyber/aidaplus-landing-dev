@@ -1,0 +1,13 @@
+{
+  "sourceLinesOfCode": 3108,
+  "sourceLinesNote": "kept comparable to Step 2C/2D baseline method",
+  "compiledLinesOfCode": 4167,
+  "stylesheetSizeBytes": 85622,
+  "complexityScore": 8597,
+  "complexityScoreNote": "kept comparable to Step 2C/2D baseline method",
+  "rulesTotal": 539,
+  "selectorsTotal": 607,
+  "selectorsUnique": 525,
+  "importantTotal": 13,
+  "mediaQueriesTotal": 2
+}

@@ -1,0 +1,11 @@
+{
+  "scope": "Step 2E structural CSS smoke",
+  "url": "http://127.0.0.1:4174/index.html",
+  "checks": [
+    {"mode":"desktop_full","hasHero":true,"hasBooking":true,"hasAbout":true,"result":"pass"},
+    {"mode":"desktop_compact","hasHero":true,"hasBooking":true,"hasAbout":true,"result":"pass"},
+    {"mode":"mobile_full","hasHero":true,"hasBooking":true,"hasAbout":true,"result":"pass"},
+    {"mode":"mobile_compact","hasHero":true,"hasBooking":true,"hasAbout":true,"result":"pass"}
+  ],
+  "errors": {"count":0,"items":[]}
+}
