@@ -20,3 +20,7 @@ audit/playwright/artifacts/
 prototype-export/
 ui-sandbox/prototype-export-*.zip
 archive/non-runtime/
+
+# Local heavy external snapshot folders (kept on disk, not in git)
+archive/local_wip/2026-03-25/external-workdirs/*
+!archive/local_wip/2026-03-25/external-workdirs/README.md

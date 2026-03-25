@@ -1,0 +1,8 @@
+change_date,commit_short,source_root,destination_root,comment
+2026-03-25,87d7ef8,accepted_ui_baseline_pack,archive/reference/accepted_ui_baseline_pack,root non-runtime baseline pack moved out of root
+2026-03-25,87d7ef8,ai,archive/reference/ai,root non-runtime assistant pack moved out of root
+2026-03-25,87d7ef8,aidacamp_icon_pack,archive/reference/aidacamp_icon_pack,root non-runtime icon pack moved out of root
+2026-03-25,355ef94,audit,archive/non-runtime/root_cleanup_2026-03-25/audit,bulk archive of root audit artifacts
+2026-03-25,355ef94,release,archive/non-runtime/root_cleanup_2026-03-25/release,bulk archive of root release artifacts
+2026-03-25,355ef94,ui-sandbox,archive/non-runtime/root_cleanup_2026-03-25/ui-sandbox,bulk archive of root sandbox artifacts
+2026-03-25,ac2616c,local untracked snapshots,archive/local_wip/2026-03-25/*.tar.gz,packed local WIP snapshots into archive tarballs

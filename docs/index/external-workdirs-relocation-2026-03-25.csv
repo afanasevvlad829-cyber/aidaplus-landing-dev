@@ -1,0 +1,7 @@
+folder_name,archived_to,size,is_git_repo,remote_origin,head_branch,head_commit,has_index_html,note
+"aidaplus-dev 2","archive/local_wip/2026-03-25/external-workdirs/aidaplus-dev 2","116M","no","","","","yes","external snapshot moved from parent workspace"
+"aidaplus-dev 3","archive/local_wip/2026-03-25/external-workdirs/aidaplus-dev 3","116M","no","","","","yes","external snapshot moved from parent workspace"
+"aidaplus-dev_backup_20260317_102924","archive/local_wip/2026-03-25/external-workdirs/aidaplus-dev_backup_20260317_102924","1.8M","no","","","","yes","external snapshot moved from parent workspace"
+"aidaplus-dev_backup_20260324_104406","archive/local_wip/2026-03-25/external-workdirs/aidaplus-dev_backup_20260324_104406","2.9G","yes","https://github.com/afanasevvlad829-cyber/aidaplus-landing-dev.git","codex/order-flow-sandbox","71ab889","yes","external snapshot moved from parent workspace"
+"aidaplus-dev-35b09ab","archive/local_wip/2026-03-25/external-workdirs/aidaplus-dev-35b09ab","4.0M","no","","","","yes","external snapshot moved from parent workspace"
+"aidaplus-dev-06413b4","archive/local_wip/2026-03-25/external-workdirs/aidaplus-dev-06413b4","4.4M","no","","","","yes","external snapshot moved from parent workspace"
