@@ -256,6 +256,9 @@
     state.mobileFaqGroup = state.mobileFaqGroup || state.faqFilter || 'Медицина';
     state.mobileFaqOpenKey = state.mobileFaqOpenKey || '';
     state.mobileTeamIndex = Number.isFinite(state.mobileTeamIndex) ? state.mobileTeamIndex : 0;
+    state.mobileJourneyStep = Number.isFinite(state.mobileJourneyStep) ? state.mobileJourneyStep : 0;
+    state.mobileProgramShiftId = state.mobileProgramShiftId || '';
+    state.mobileDocsExpanded = typeof state.mobileDocsExpanded === 'boolean' ? state.mobileDocsExpanded : false;
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
     let offerTimeoutIds = [];
@@ -976,6 +979,33 @@
             persist();
           }
         }
+        return true;
+      }
+
+      if(action === 'mobile-journey-step'){
+        const index = Number(actionEl.dataset.stepIndex || 0);
+        if(Number.isFinite(index)){
+          state.mobileJourneyStep = Math.max(0, Math.min(index, 3));
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-program-select'){
+        const shiftId = (actionEl.dataset.shiftId || '').trim();
+        if(shiftId){
+          state.mobileProgramShiftId = shiftId;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-docs-toggle'){
+        state.mobileDocsExpanded = !state.mobileDocsExpanded;
+        renderCompactTrustPanelContent();
+        persist();
         return true;
       }
 
@@ -2623,6 +2653,123 @@
       const mobileInlineStayList = document.getElementById('mobileInlineStayList');
       const mobileInlineContactsList = document.getElementById('mobileInlineContactsList');
       const mobileInlineSocials = document.getElementById('mobileInlineSocials');
+      const mobileAboutFeatures = document.getElementById('mobileAboutFeatures');
+      const mobileJourneyContent = document.getElementById('mobileJourneyContent');
+      const mobileProgramsContent = document.getElementById('mobileProgramsContent');
+      const mobileDocsRequisites = document.getElementById('mobileDocsRequisites');
+      const mobileDocsAccordion = document.getElementById('mobileDocsAccordion');
+
+      if (mobileAboutFeatures) {
+        mobileAboutFeatures.innerHTML = `
+          <article class="mobile-about-feature-item">
+            <small>Проекты</small>
+            <strong>AI и программирование</strong>
+            <p>Scratch, Python, Minecraft и нейросети через реальные командные задачи.</p>
+          </article>
+          <article class="mobile-about-feature-item">
+            <small>Среда</small>
+            <strong>Бассейн и живая лагерная среда</strong>
+            <p>Каждый день спорт, коммуникация и режим без бессмысленного скроллинга.</p>
+          </article>
+          <article class="mobile-about-feature-item">
+            <small>Результат</small>
+            <strong>Итог за смену</strong>
+            <p>Ребёнок уезжает с проектом, опытом защиты и более уверенной самостоятельностью.</p>
+          </article>
+        `;
+      }
+
+      if (mobileJourneyContent) {
+        const steps = [
+          {
+            title: 'Быстрое включение',
+            text: 'В первый день дети знакомятся, собираются в команды и быстро входят в игровой формат смены.'
+          },
+          {
+            title: 'Практика вместо теории',
+            text: 'Scratch, Python, Minecraft, AI и мини-проекты — без пересказа, с реальной работой руками.'
+          },
+          {
+            title: 'Живая среда',
+            text: 'Бассейн, спорт и внутренняя экономика лагеря формируют дисциплину, ритм и командность.'
+          },
+          {
+            title: 'Финальный результат',
+            text: 'К концу смены у ребёнка есть понятный проект, защита и видимый рост по навыкам.'
+          }
+        ];
+        const safeStep = Math.max(0, Math.min(state.mobileJourneyStep || 0, steps.length - 1));
+        state.mobileJourneyStep = safeStep;
+        const activeStep = steps[safeStep];
+
+        mobileJourneyContent.innerHTML = `
+          <article class="mobile-journey-active">
+            <div class="mobile-journey-active-index">${safeStep + 1}</div>
+            <strong>${activeStep.title}</strong>
+            <p>${activeStep.text}</p>
+          </article>
+          <div class="mobile-journey-switcher">
+            ${steps.map((step, idx) => `
+              <button
+                type="button"
+                class="mobile-journey-switch ${idx === safeStep ? 'active' : ''}"
+                data-action="mobile-journey-step"
+                data-step-index="${idx}"
+              >
+                <span>${idx + 1}</span>${step.title}
+              </button>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      if (mobileProgramsContent) {
+        const shortShiftIds = new Set(['shift-2','shift-3']);
+        const mainShifts = shifts.filter((shift) => !shortShiftIds.has(shift.id));
+        if(mainShifts.length){
+          const activeShiftId = mainShifts.some((shift) => shift.id === state.mobileProgramShiftId)
+            ? state.mobileProgramShiftId
+            : mainShifts[0].id;
+          state.mobileProgramShiftId = activeShiftId;
+          const activeShift = mainShifts.find((shift) => shift.id === activeShiftId) || mainShifts[0];
+
+          mobileProgramsContent.innerHTML = `
+            <div class="mobile-program-selector">
+              ${mainShifts.map((shift) => `
+                <button
+                  type="button"
+                  class="mobile-program-chip ${shift.id === activeShift.id ? 'active' : ''}"
+                  data-action="mobile-program-select"
+                  data-shift-id="${shift.id}"
+                >${shift.title}</button>
+              `).join('')}
+            </div>
+            <article class="mobile-program-active-card">
+              <strong>${activeShift.title} · ${activeShift.dates}</strong>
+              <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
+              <div class="mobile-program-meta">
+                <span>${shiftDaysLabel(activeShift)}</span>
+                <span>Осталось ${activeShift.left} мест</span>
+              </div>
+              <p>${activeShift.desc}</p>
+              <button
+                class="shift-calendar-btn"
+                type="button"
+                data-action="open-calendar"
+                data-shift-id="${activeShift.id}"
+                aria-label="Календарь ${activeShift.title}"
+              >
+                <span aria-hidden="true">📅</span><span>Календарь</span>
+              </button>
+              ${hasSelectedAge()
+                ? ''
+                : '<div class="mobile-program-hint">Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.</div>'}
+            </article>
+          `;
+        } else {
+          mobileProgramsContent.innerHTML = '';
+        }
+      }
 
       if (mobilePhotoGallery) {
         const photoByFilter = {
@@ -2903,6 +3050,37 @@
             <span class="mobile-social-label">${item.key}</span>
           </a>
         `).join('');
+      }
+
+      if (mobileDocsRequisites) {
+        mobileDocsRequisites.innerHTML = `
+          <article class="mobile-docs-card">
+            <strong>ООО «ВОИП КОННЕКТ»</strong>
+            <div>ИНН 7729713637</div>
+            <div>РТО 025773</div>
+            <div><a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a></div>
+            <div><a href="mailto:hello@codims.ru">hello@codims.ru</a></div>
+          </article>
+        `;
+      }
+
+      if (mobileDocsAccordion) {
+        mobileDocsAccordion.innerHTML = `
+          <article class="mobile-docs-accordion-item ${state.mobileDocsExpanded ? 'open' : ''}">
+            <button type="button" class="mobile-docs-toggle" data-action="mobile-docs-toggle">
+              <span>Все документы и юридическая информация</span>
+              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+            </button>
+            <div class="mobile-docs-links">
+              <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+              <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
+              <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
+              <a href="legal.html#children-rest" target="_blank" rel="noopener noreferrer">Отдых и оздоровление детей</a>
+              <a href="legal.html#partners-info" target="_blank" rel="noopener noreferrer">Условия для партнёров</a>
+              <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
+            </div>
+          </article>
+        `;
       }
     }
 
@@ -3310,14 +3488,15 @@
       const mobileMap = {
         'section-about':'mobile-section-about',
         'section-journey':'mobile-section-journey',
-        'section-programs':'mobileBookingCard',
+        'section-programs':'mobile-section-programs',
         'section-photos':'mobile-section-photos',
         'section-videos':'mobile-section-videos',
         'section-reviews':'mobile-section-reviews',
         'section-faq':'mobile-section-faq',
         'section-team':'mobile-section-team',
         'section-stay':'mobile-section-stay',
-        'section-contacts':'mobile-section-contacts'
+        'section-contacts':'mobile-section-contacts',
+        'section-legal':'mobile-section-docs'
       };
 
       const targetId = state.view === 'mobile'

@@ -3569,6 +3569,226 @@
       margin-top:8px;
     }
 
+    .mobile-about-features{
+      display:grid;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .mobile-about-feature-item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:grid;
+      gap:4px;
+    }
+
+    .mobile-about-feature-item small{
+      color:#6b7280;
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+
+    .mobile-about-feature-item strong{
+      color:#111827;
+      font-size:15px;
+      line-height:1.3;
+    }
+
+    .mobile-about-feature-item p{
+      margin:0;
+      color:#5b6474;
+      font-size:13px;
+      line-height:1.48;
+    }
+
+    .mobile-journey-flow{
+      margin-top:10px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-journey-active{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:grid;
+      gap:6px;
+    }
+
+    .mobile-journey-active-index{
+      width:26px;
+      height:26px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .mobile-journey-active strong{
+      font-size:16px;
+      line-height:1.3;
+      color:#111827;
+    }
+
+    .mobile-journey-active p{
+      margin:0;
+      color:#5b6474;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .mobile-journey-switcher{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .mobile-journey-switch{
+      border:1px solid var(--line);
+      border-radius:12px;
+      min-height:40px;
+      padding:8px 10px;
+      background:#fff;
+      color:#253247;
+      text-align:left;
+      font-size:12px;
+      font-weight:700;
+      line-height:1.3;
+      cursor:pointer;
+      display:flex;
+      gap:6px;
+      align-items:center;
+      box-shadow:var(--shadow);
+    }
+
+    .mobile-journey-switch span{
+      width:18px;
+      height:18px;
+      border-radius:999px;
+      background:#edf2f8;
+      color:#374151;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:10px;
+      font-weight:900;
+      flex:0 0 auto;
+    }
+
+    .mobile-journey-switch.active{
+      border-color:transparent;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+    }
+
+    .mobile-journey-switch.active span{
+      background:rgb(255 255 255 / 22%);
+      color:#fff;
+    }
+
+    .mobile-programs-flow{
+      margin-top:10px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-program-selector{
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-program-selector::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-program-chip{
+      border:none;
+      border-radius:999px;
+      min-height:32px;
+      padding:0 12px;
+      white-space:nowrap;
+      background:#eef3f9;
+      color:#162235;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .mobile-program-chip.active{
+      color:#fff;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 8px 16px rgb(255 138 0 / 24%);
+    }
+
+    .mobile-program-active-card{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-program-active-card strong{
+      color:#111827;
+      font-size:15px;
+      line-height:1.35;
+    }
+
+    .mobile-program-price{
+      color:#111827;
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:-.02em;
+    }
+
+    .mobile-program-meta{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .mobile-program-meta span{
+      min-height:24px;
+      padding:0 10px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      background:#eff3f9;
+      color:#334155;
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .mobile-program-active-card p{
+      margin:0;
+      color:#5b6474;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .mobile-program-hint{
+      color:#6b7280;
+      font-size:12px;
+      line-height:1.4;
+    }
+
     .overlay{
       position:fixed;
       inset:0;
@@ -4449,6 +4669,109 @@
     .mobile-social-label{
       font-size:11px;
       font-weight:700;
+    }
+
+    .mobile-docs-requisites{
+      margin-top:10px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-docs-card{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:grid;
+      gap:4px;
+      color:#4b5563;
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .mobile-docs-card strong{
+      color:#111827;
+      font-size:15px;
+      line-height:1.3;
+      margin-bottom:4px;
+    }
+
+    .mobile-docs-card a{
+      color:#334155;
+      text-decoration:none;
+    }
+
+    .mobile-docs-card a:hover{
+      text-decoration:underline;
+    }
+
+    .mobile-docs-accordion{
+      margin-top:8px;
+    }
+
+    .mobile-docs-accordion-item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .mobile-docs-toggle{
+      width:100%;
+      border:none;
+      background:transparent;
+      min-height:46px;
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      text-align:left;
+      cursor:pointer;
+    }
+
+    .mobile-docs-toggle span{
+      color:#111827;
+      font-size:13px;
+      font-weight:800;
+      line-height:1.3;
+    }
+
+    .mobile-docs-toggle .ac-icon{
+      width:14px;
+      height:14px;
+      transform:rotate(90deg);
+      opacity:.68;
+      transition:transform .18s ease;
+    }
+
+    .mobile-docs-accordion-item.open .mobile-docs-toggle .ac-icon{
+      transform:rotate(-90deg);
+    }
+
+    .mobile-docs-links{
+      display:none;
+      padding:0 12px 12px;
+      gap:8px;
+      grid-template-columns:1fr;
+    }
+
+    .mobile-docs-accordion-item.open .mobile-docs-links{
+      display:grid;
+    }
+
+    .mobile-docs-links a{
+      color:#4b5563;
+      text-decoration:none;
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .mobile-docs-links a:hover{
+      text-decoration:underline;
+      color:#253247;
     }
 
     .big-price{
@@ -5755,18 +6078,20 @@
         <div class="mobile-body-sections" style="padding:18px;display:grid;gap:14px;">
           <section class="section-card" id="mobile-section-about">
             <h3>О лагере</h3>
-            <p class="section-lead">AiDaCamp — это формат, где ребёнок не просто занят, а реально создаёт: проекты, друзья, спорт, защита результатов и среда без бессмысленного скроллинга.</p>
+            <p class="section-lead">AiDaCamp — это лагерь, где ребёнок не просто занят, а растёт через проекты, спорт и живую командную среду.</p>
+            <div class="mobile-about-features" id="mobileAboutFeatures"></div>
           </section>
 
           <section class="section-card" id="mobile-section-journey">
             <h3>Как проходит смена</h3>
-            <p class="section-lead">Короткий маршрут смены: быстрое включение, практика, живая среда и финальный результат.</p>
-            <div class="results-band mobile-journey-band">
-              <div class="result-pill"><strong>1</strong><span>Быстрое включение</span></div>
-              <div class="result-pill"><strong>2</strong><span>Практика вместо теории</span></div>
-              <div class="result-pill"><strong>3</strong><span>Живая среда</span></div>
-              <div class="result-pill"><strong>4</strong><span>Финальный результат</span></div>
-            </div>
+            <p class="section-lead">Маршрут смены: от быстрого включения к понятному результату за 7–14 дней.</p>
+            <div class="mobile-journey-flow" id="mobileJourneyContent"></div>
+          </section>
+
+          <section class="section-card" id="mobile-section-programs">
+            <h3>Описание смен</h3>
+            <p class="section-lead">Выберите смену и сразу сравните даты, цену, длительность и формат.</p>
+            <div class="mobile-programs-flow" id="mobileProgramsContent"></div>
           </section>
 
           <section class="section-card compact-mobile-hidden" id="mobile-section-photos">
@@ -5818,6 +6143,13 @@
             <p class="section-lead">Быстрая связь и маршрут до лагеря.</p>
             <div class="mobile-contacts-list" id="mobileInlineContactsList"></div>
             <div class="mobile-socials-row" id="mobileInlineSocials"></div>
+          </section>
+
+          <section class="section-card" id="mobile-section-docs">
+            <h3>Документы</h3>
+            <p class="section-lead">В открытом виде — только ключевые реквизиты. Остальные документы по раскрытию.</p>
+            <div class="mobile-docs-requisites" id="mobileDocsRequisites"></div>
+            <div class="mobile-docs-accordion" id="mobileDocsAccordion"></div>
           </section>
 
         </div>
@@ -6225,6 +6557,9 @@
     state.mobileFaqGroup = state.mobileFaqGroup || state.faqFilter || 'Медицина';
     state.mobileFaqOpenKey = state.mobileFaqOpenKey || '';
     state.mobileTeamIndex = Number.isFinite(state.mobileTeamIndex) ? state.mobileTeamIndex : 0;
+    state.mobileJourneyStep = Number.isFinite(state.mobileJourneyStep) ? state.mobileJourneyStep : 0;
+    state.mobileProgramShiftId = state.mobileProgramShiftId || '';
+    state.mobileDocsExpanded = typeof state.mobileDocsExpanded === 'boolean' ? state.mobileDocsExpanded : false;
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
     let offerTimeoutIds = [];
@@ -6945,6 +7280,33 @@
             persist();
           }
         }
+        return true;
+      }
+
+      if(action === 'mobile-journey-step'){
+        const index = Number(actionEl.dataset.stepIndex || 0);
+        if(Number.isFinite(index)){
+          state.mobileJourneyStep = Math.max(0, Math.min(index, 3));
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-program-select'){
+        const shiftId = (actionEl.dataset.shiftId || '').trim();
+        if(shiftId){
+          state.mobileProgramShiftId = shiftId;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-docs-toggle'){
+        state.mobileDocsExpanded = !state.mobileDocsExpanded;
+        renderCompactTrustPanelContent();
+        persist();
         return true;
       }
 
@@ -8592,6 +8954,123 @@
       const mobileInlineStayList = document.getElementById('mobileInlineStayList');
       const mobileInlineContactsList = document.getElementById('mobileInlineContactsList');
       const mobileInlineSocials = document.getElementById('mobileInlineSocials');
+      const mobileAboutFeatures = document.getElementById('mobileAboutFeatures');
+      const mobileJourneyContent = document.getElementById('mobileJourneyContent');
+      const mobileProgramsContent = document.getElementById('mobileProgramsContent');
+      const mobileDocsRequisites = document.getElementById('mobileDocsRequisites');
+      const mobileDocsAccordion = document.getElementById('mobileDocsAccordion');
+
+      if (mobileAboutFeatures) {
+        mobileAboutFeatures.innerHTML = `
+          <article class="mobile-about-feature-item">
+            <small>Проекты</small>
+            <strong>AI и программирование</strong>
+            <p>Scratch, Python, Minecraft и нейросети через реальные командные задачи.</p>
+          </article>
+          <article class="mobile-about-feature-item">
+            <small>Среда</small>
+            <strong>Бассейн и живая лагерная среда</strong>
+            <p>Каждый день спорт, коммуникация и режим без бессмысленного скроллинга.</p>
+          </article>
+          <article class="mobile-about-feature-item">
+            <small>Результат</small>
+            <strong>Итог за смену</strong>
+            <p>Ребёнок уезжает с проектом, опытом защиты и более уверенной самостоятельностью.</p>
+          </article>
+        `;
+      }
+
+      if (mobileJourneyContent) {
+        const steps = [
+          {
+            title: 'Быстрое включение',
+            text: 'В первый день дети знакомятся, собираются в команды и быстро входят в игровой формат смены.'
+          },
+          {
+            title: 'Практика вместо теории',
+            text: 'Scratch, Python, Minecraft, AI и мини-проекты — без пересказа, с реальной работой руками.'
+          },
+          {
+            title: 'Живая среда',
+            text: 'Бассейн, спорт и внутренняя экономика лагеря формируют дисциплину, ритм и командность.'
+          },
+          {
+            title: 'Финальный результат',
+            text: 'К концу смены у ребёнка есть понятный проект, защита и видимый рост по навыкам.'
+          }
+        ];
+        const safeStep = Math.max(0, Math.min(state.mobileJourneyStep || 0, steps.length - 1));
+        state.mobileJourneyStep = safeStep;
+        const activeStep = steps[safeStep];
+
+        mobileJourneyContent.innerHTML = `
+          <article class="mobile-journey-active">
+            <div class="mobile-journey-active-index">${safeStep + 1}</div>
+            <strong>${activeStep.title}</strong>
+            <p>${activeStep.text}</p>
+          </article>
+          <div class="mobile-journey-switcher">
+            ${steps.map((step, idx) => `
+              <button
+                type="button"
+                class="mobile-journey-switch ${idx === safeStep ? 'active' : ''}"
+                data-action="mobile-journey-step"
+                data-step-index="${idx}"
+              >
+                <span>${idx + 1}</span>${step.title}
+              </button>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      if (mobileProgramsContent) {
+        const shortShiftIds = new Set(['shift-2','shift-3']);
+        const mainShifts = shifts.filter((shift) => !shortShiftIds.has(shift.id));
+        if(mainShifts.length){
+          const activeShiftId = mainShifts.some((shift) => shift.id === state.mobileProgramShiftId)
+            ? state.mobileProgramShiftId
+            : mainShifts[0].id;
+          state.mobileProgramShiftId = activeShiftId;
+          const activeShift = mainShifts.find((shift) => shift.id === activeShiftId) || mainShifts[0];
+
+          mobileProgramsContent.innerHTML = `
+            <div class="mobile-program-selector">
+              ${mainShifts.map((shift) => `
+                <button
+                  type="button"
+                  class="mobile-program-chip ${shift.id === activeShift.id ? 'active' : ''}"
+                  data-action="mobile-program-select"
+                  data-shift-id="${shift.id}"
+                >${shift.title}</button>
+              `).join('')}
+            </div>
+            <article class="mobile-program-active-card">
+              <strong>${activeShift.title} · ${activeShift.dates}</strong>
+              <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
+              <div class="mobile-program-meta">
+                <span>${shiftDaysLabel(activeShift)}</span>
+                <span>Осталось ${activeShift.left} мест</span>
+              </div>
+              <p>${activeShift.desc}</p>
+              <button
+                class="shift-calendar-btn"
+                type="button"
+                data-action="open-calendar"
+                data-shift-id="${activeShift.id}"
+                aria-label="Календарь ${activeShift.title}"
+              >
+                <span aria-hidden="true">📅</span><span>Календарь</span>
+              </button>
+              ${hasSelectedAge()
+                ? ''
+                : '<div class="mobile-program-hint">Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.</div>'}
+            </article>
+          `;
+        } else {
+          mobileProgramsContent.innerHTML = '';
+        }
+      }
 
       if (mobilePhotoGallery) {
         const photoByFilter = {
@@ -8872,6 +9351,37 @@
             <span class="mobile-social-label">${item.key}</span>
           </a>
         `).join('');
+      }
+
+      if (mobileDocsRequisites) {
+        mobileDocsRequisites.innerHTML = `
+          <article class="mobile-docs-card">
+            <strong>ООО «ВОИП КОННЕКТ»</strong>
+            <div>ИНН 7729713637</div>
+            <div>РТО 025773</div>
+            <div><a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a></div>
+            <div><a href="mailto:hello@codims.ru">hello@codims.ru</a></div>
+          </article>
+        `;
+      }
+
+      if (mobileDocsAccordion) {
+        mobileDocsAccordion.innerHTML = `
+          <article class="mobile-docs-accordion-item ${state.mobileDocsExpanded ? 'open' : ''}">
+            <button type="button" class="mobile-docs-toggle" data-action="mobile-docs-toggle">
+              <span>Все документы и юридическая информация</span>
+              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+            </button>
+            <div class="mobile-docs-links">
+              <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+              <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
+              <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
+              <a href="legal.html#children-rest" target="_blank" rel="noopener noreferrer">Отдых и оздоровление детей</a>
+              <a href="legal.html#partners-info" target="_blank" rel="noopener noreferrer">Условия для партнёров</a>
+              <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
+            </div>
+          </article>
+        `;
       }
     }
 
@@ -9279,14 +9789,15 @@
       const mobileMap = {
         'section-about':'mobile-section-about',
         'section-journey':'mobile-section-journey',
-        'section-programs':'mobileBookingCard',
+        'section-programs':'mobile-section-programs',
         'section-photos':'mobile-section-photos',
         'section-videos':'mobile-section-videos',
         'section-reviews':'mobile-section-reviews',
         'section-faq':'mobile-section-faq',
         'section-team':'mobile-section-team',
         'section-stay':'mobile-section-stay',
-        'section-contacts':'mobile-section-contacts'
+        'section-contacts':'mobile-section-contacts',
+        'section-legal':'mobile-section-docs'
       };
 
       const targetId = state.view === 'mobile'
