@@ -250,6 +250,9 @@
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
     state.photoFilter = state.photoFilter || 'camp';
     state.faqFilter = state.faqFilter || 'Медицина';
+    state.mobilePhotoIndex = Number.isFinite(state.mobilePhotoIndex) ? state.mobilePhotoIndex : 0;
+    state.mobileVideoIndex = Number.isFinite(state.mobileVideoIndex) ? state.mobileVideoIndex : 0;
+    state.mobileReviewIndex = Number.isFinite(state.mobileReviewIndex) ? state.mobileReviewIndex : 0;
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
     let offerTimeoutIds = [];
@@ -862,6 +865,17 @@
 
       if(action === 'open-photo'){
         const index = Number(actionEl.dataset.photoIndex || 0);
+        if(actionEl.closest('#mobilePhotoGallery')){
+          const photoByFilter = {
+            camp: ['all'],
+            pool: ['pool'],
+            sport: ['sport'],
+            study: ['study'],
+            food: ['food']
+          };
+          const tags = photoByFilter[state.photoFilter] || ['all'];
+          activePhotoList = mediaContent.photos.filter(item => tags.includes(item.cat));
+        }
         openMedia('photo', index);
         return true;
       }
@@ -884,6 +898,36 @@
         const index = Number(actionEl.dataset.videoIndex || 0);
         const item = mediaContent.videos[index];
         if(item?.url) openVideo(item.url);
+        return true;
+      }
+
+      if(action === 'mobile-photo-select'){
+        const index = Number(actionEl.dataset.photoIndex || 0);
+        if(Number.isFinite(index)){
+          state.mobilePhotoIndex = Math.max(0, index);
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-video-select'){
+        const index = Number(actionEl.dataset.videoIndex || 0);
+        if(Number.isFinite(index)){
+          state.mobileVideoIndex = Math.max(0, index);
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-review-select'){
+        const index = Number(actionEl.dataset.reviewIndex || 0);
+        if(Number.isFinite(index)){
+          state.mobileReviewIndex = Math.max(0, index);
+          renderCompactTrustPanelContent();
+          persist();
+        }
         return true;
       }
 
@@ -2523,41 +2567,129 @@
     }
 
     function renderCompactTrustPanelContent(){
-      const mobileInlinePhotoGrid = document.getElementById('mobileInlinePhotoGrid');
-      const mobileInlineVideoList = document.getElementById('mobileInlineVideoList');
-      const mobileInlineReviewsList = document.getElementById('mobileInlineReviewsList');
+      const mobilePhotoGallery = document.getElementById('mobilePhotoGallery');
+      const mobileVideoGallery = document.getElementById('mobileVideoGallery');
+      const mobileReviewsGallery = document.getElementById('mobileReviewsGallery');
       const mobileFaqList = document.getElementById('mobileFaqList');
       const mobileInlineTeamList = document.getElementById('mobileInlineTeamList');
       const mobileInlineStayList = document.getElementById('mobileInlineStayList');
       const mobileInlineContactsList = document.getElementById('mobileInlineContactsList');
       const mobileInlineSocials = document.getElementById('mobileInlineSocials');
 
-      if (mobileInlinePhotoGrid) {
-        mobileInlinePhotoGrid.innerHTML = mediaContent.photos.slice(0,4).map(item => `
-          <div class="compact-panel-photo">
-            <img src="${item.src}" alt="${item.alt}">
-          </div>
-        `).join('');
+      if (mobilePhotoGallery) {
+        const photoByFilter = {
+          camp: ['all'],
+          pool: ['pool'],
+          sport: ['sport'],
+          study: ['study'],
+          food: ['food']
+        };
+        const tags = photoByFilter[state.photoFilter] || ['all'];
+        const list = mediaContent.photos.filter(item => tags.includes(item.cat));
+        const activeIndex = Math.min(Math.max(state.mobilePhotoIndex || 0, 0), Math.max(list.length - 1, 0));
+        state.mobilePhotoIndex = activeIndex;
+        const active = list[activeIndex];
+
+        const filters = document.getElementById('mobilePhotoFilters');
+        if(filters){
+          filters.querySelectorAll('[data-photo-filter]').forEach((btn) => {
+            btn.classList.toggle('active', btn.dataset.photoFilter === state.photoFilter);
+          });
+        }
+
+        if(active){
+          mobilePhotoGallery.innerHTML = `
+            <div class="mobile-media-stage">
+              <button type="button" data-action="open-photo" data-photo-index="${activeIndex}">
+                <img src="${active.src}" alt="${active.alt || 'Фото лагеря'}">
+                <div class="mobile-media-overlay">
+                  <strong>${(active.alt || 'Атмосфера лагеря').replace(/^all$/i, 'Атмосфера')}</strong>
+                  <span>Тапните, чтобы открыть фото</span>
+                </div>
+              </button>
+            </div>
+            <div class="mobile-media-strip">
+              ${list.map((item, idx) => `
+                <button class="mobile-media-thumb ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-photo-select" data-photo-index="${idx}">
+                  <img src="${item.src}" alt="${item.alt || 'Фото'}">
+                </button>
+              `).join('')}
+            </div>
+          `;
+        } else {
+          mobilePhotoGallery.innerHTML = '';
+        }
       }
 
-      if (mobileInlineVideoList) {
-        mobileInlineVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <button class="compact-panel-video-card" type="button" data-video="${item.url}">
-            <h4>${item.title}</h4>
-            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
-            <span class="compact-panel-link">Смотреть видео</span>
-          </button>
-        `).join('');
+      if (mobileVideoGallery) {
+        const list = mediaContent.videos || [];
+        const activeIndex = Math.min(Math.max(state.mobileVideoIndex || 0, 0), Math.max(list.length - 1, 0));
+        state.mobileVideoIndex = activeIndex;
+        const active = list[activeIndex];
+
+        if(active){
+          mobileVideoGallery.innerHTML = `
+            <div class="mobile-media-stage">
+              <button type="button" data-video="${active.url}">
+                <img src="${active.cover}" alt="${active.title}">
+                <span class="mobile-media-play"><img class="ac-icon" src="/assets/icons/play.svg" alt="" aria-hidden="true"></span>
+                <div class="mobile-media-overlay">
+                  <strong>${active.title}</strong>
+                  <span>Смотреть видео</span>
+                </div>
+              </button>
+            </div>
+            <div class="mobile-media-strip">
+              ${list.map((item, idx) => `
+                <button class="mobile-media-thumb ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-video-select" data-video-index="${idx}">
+                  <img src="${item.cover}" alt="${item.title}">
+                </button>
+              `).join('')}
+            </div>
+          `;
+        } else {
+          mobileVideoGallery.innerHTML = '';
+        }
       }
 
-      if (mobileInlineReviewsList) {
-        mobileInlineReviewsList.innerHTML = mediaContent.reviews.slice(0,3).map(item => `
-          <div class="compact-panel-review-card">
-            <strong>${item.name}</strong>
-            <div class="review-stars">★★★★★</div>
-            <span>${item.quote}</span>
-          </div>
-        `).join('');
+      if (mobileReviewsGallery) {
+        const list = mediaContent.reviews || [];
+        const activeIndex = Math.min(Math.max(state.mobileReviewIndex || 0, 0), Math.max(list.length - 1, 0));
+        state.mobileReviewIndex = activeIndex;
+        const active = list[activeIndex];
+        if(active){
+          mobileReviewsGallery.innerHTML = `
+            <div class="mobile-review-social-proof">
+              <div class="mobile-review-top">
+                <div>
+                  <strong>5.0</strong><span class="mobile-review-stars">★★★★★</span>
+                </div>
+                <a class="inline-link-btn primary" href="${mediaContent.references.yandexReviewsUrl}" target="_blank" rel="noopener noreferrer">Отзывы на Яндекс Картах</a>
+              </div>
+              <div class="mobile-review-proof">Более 40 реальных отзывов на Яндекс.Картах</div>
+            </div>
+            <div class="mobile-review-main">
+              <div class="mobile-review-card">
+                <div class="mobile-review-head">
+                  <img src="${active.avatar}" alt="${active.name}">
+                  <div>
+                    <strong>${active.name}</strong>
+                    <span>${active.meta}</span>
+                    <span class="mobile-review-stars">★★★★★</span>
+                  </div>
+                </div>
+                <div class="mobile-review-text">${active.quote}</div>
+              </div>
+              <div class="mobile-review-dots">
+                ${list.map((_, idx) => `
+                  <button class="mobile-review-dot ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-review-select" data-review-index="${idx}" aria-label="Показать отзыв ${idx + 1}"></button>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        } else {
+          mobileReviewsGallery.innerHTML = '';
+        }
       }
 
       if (mobileFaqList) {
