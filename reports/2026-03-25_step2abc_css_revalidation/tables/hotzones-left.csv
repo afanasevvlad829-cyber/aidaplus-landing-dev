@@ -1,0 +1,9 @@
+hot_zone,findings_before,changes_applied,reason,status
+hero,0,0,no stylelint findings in protected zone,untouched
+booking-card,0,0,no stylelint findings in protected zone,untouched
+seam,0,0,no stylelint findings in protected zone,untouched
+compact-modals,0,0,no stylelint findings in protected zone,untouched
+mobile-menu,0,0,no stylelint findings in protected zone,untouched
+video,0,0,no stylelint findings in protected zone,untouched
+team,0,0,no stylelint findings in protected zone,untouched
+contacts-socials,0,0,no stylelint findings in protected zone,untouched

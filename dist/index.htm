@@ -1420,26 +1420,26 @@
       box-shadow:0 8px 14px rgb(17 24 39 / 10%);
     }
 
-    #desktopShiftOptions .shift-option{
+    #desktop-shift-options .shift-option{
       padding:16px 16px 14px;
       gap:12px;
       border-radius:18px;
       margin-bottom:12px;
     }
 
-    #desktopShiftOptions .shift-option strong{
+    #desktop-shift-options .shift-option strong{
       font-size:19px;
       line-height:1.2;
       letter-spacing:-.01em;
     }
 
-    #desktopShiftOptions .shift-option-head small{
+    #desktop-shift-options .shift-option-head small{
       font-size:14px;
       line-height:1.25;
       color:#5f6779;
     }
 
-    #desktopShiftOptions .shift-option-action{
+    #desktop-shift-options .shift-option-action{
       min-height:36px;
       font-size:13px;
       padding:0 12px;
@@ -6213,7 +6213,7 @@
               </div>
               <div class="guided-inline-hint" id="desktopInlineHint"></div>
               <div class="shift-list" id="desktopShiftList">
-                <div id="desktopShiftOptions"></div>
+                <div id="desktop-shift-options"></div>
               </div>
               <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
               <button class="booking-all-shifts-link" type="button" data-action="open-all-shifts">
@@ -8845,7 +8845,7 @@
         }
       }
 
-      const shiftWrap = e.target.closest('#desktopShiftOptions, #mobileShiftOptions');
+      const shiftWrap = e.target.closest('#desktop-shift-options, #mobileShiftOptions');
       const shiftBtn = e.target.closest('button, .shift-option, .slot-card');
       if(shiftWrap && shiftBtn){
         const shiftText = (shiftBtn.textContent || '').trim().split('\n')[0];
@@ -8956,7 +8956,7 @@
       const safeView = viewKey === 'mobile' ? 'mobile' : 'desktop';
       const current = shiftOptionPanels[safeView]?.[panelType] || null;
       shiftOptionPanels[safeView][panelType] = current === shiftId ? null : shiftId;
-      renderShiftOptions(safeView === 'mobile' ? 'mobileShiftOptions' : 'desktopShiftOptions');
+      renderShiftOptions(safeView === 'mobile' ? 'mobileShiftOptions' : 'desktop-shift-options');
     }
 
     function clearShiftOptionPanels(){
@@ -10004,7 +10004,7 @@
 
     function renderAll(){
       renderShiftCards();
-      renderShiftOptions('desktopShiftOptions');
+      renderShiftOptions('desktop-shift-options');
       renderShiftOptions('mobileShiftOptions');
       renderBookingPanels();
       renderGuidedState('desktop');
@@ -10597,7 +10597,7 @@
     initHero();
     loadVideoMetaCache();
 
-    renderShiftOptions('desktopShiftOptions');
+    renderShiftOptions('desktop-shift-options');
     renderShiftOptions('mobileShiftOptions');
     renderShiftCards();
     renderMediaSections();

@@ -4658,7 +4658,7 @@
               </div>
               <div class="guided-inline-hint" id="desktopInlineHint"></div>
               <div class="shift-list" id="desktopShiftList">
-                <div id="desktopShiftOptions"></div>
+                <div id="desktop-shift-options"></div>
               </div>
               <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
               <button class="booking-all-shifts-link" type="button" data-action="open-all-shifts">
@@ -7082,7 +7082,7 @@
         }
       }
 
-      const shiftWrap = e.target.closest('#desktopShiftOptions, #mobileShiftOptions');
+      const shiftWrap = e.target.closest('#desktop-shift-options, #mobileShiftOptions');
       const shiftBtn = e.target.closest('button, .shift-option, .slot-card');
       if(shiftWrap && shiftBtn){
         const shiftText = (shiftBtn.textContent || '').trim().split('\n')[0];
@@ -7193,7 +7193,7 @@
       const safeView = viewKey === 'mobile' ? 'mobile' : 'desktop';
       const current = shiftOptionPanels[safeView]?.[panelType] || null;
       shiftOptionPanels[safeView][panelType] = current === shiftId ? null : shiftId;
-      renderShiftOptions(safeView === 'mobile' ? 'mobileShiftOptions' : 'desktopShiftOptions');
+      renderShiftOptions(safeView === 'mobile' ? 'mobileShiftOptions' : 'desktop-shift-options');
     }
 
     function clearShiftOptionPanels(){
@@ -7899,7 +7899,7 @@
     }
 
     function renderAll(){
-      renderShiftOptions('desktopShiftOptions');
+      renderShiftOptions('desktop-shift-options');
       renderShiftOptions('mobileShiftOptions');
       renderBookingPanels();
       renderGuidedState('desktop');
@@ -8470,7 +8470,7 @@
     initHero();
     loadVideoMetaCache();
 
-    renderShiftOptions('desktopShiftOptions');
+    renderShiftOptions('desktop-shift-options');
     renderShiftOptions('mobileShiftOptions');
     renderShiftCards();
     renderMediaSections();

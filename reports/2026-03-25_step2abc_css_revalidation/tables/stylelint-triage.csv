@@ -1,0 +1,3 @@
+finding_type,count,bucket,why,action
+selector-id-pattern,4,caution,Touches canonical desktop shift selector id and requires coordinated HTML+JS+CSS change,Fix with runtime-safe selector/id rename
+none_after_fix,0,defer,No remaining enforced-rule findings,No action

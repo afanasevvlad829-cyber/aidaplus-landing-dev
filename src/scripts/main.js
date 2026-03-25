@@ -1979,7 +1979,7 @@
         }
       }
 
-      const shiftWrap = e.target.closest('#desktopShiftOptions, #mobileShiftOptions');
+      const shiftWrap = e.target.closest('#desktop-shift-options, #mobileShiftOptions');
       const shiftBtn = e.target.closest('button, .shift-option, .slot-card');
       if(shiftWrap && shiftBtn){
         const shiftText = (shiftBtn.textContent || '').trim().split('\n')[0];
@@ -2090,7 +2090,7 @@
       const safeView = viewKey === 'mobile' ? 'mobile' : 'desktop';
       const current = shiftOptionPanels[safeView]?.[panelType] || null;
       shiftOptionPanels[safeView][panelType] = current === shiftId ? null : shiftId;
-      renderShiftOptions(safeView === 'mobile' ? 'mobileShiftOptions' : 'desktopShiftOptions');
+      renderShiftOptions(safeView === 'mobile' ? 'mobileShiftOptions' : 'desktop-shift-options');
     }
 
     function clearShiftOptionPanels(){
@@ -3138,7 +3138,7 @@
 
     function renderAll(){
       renderShiftCards();
-      renderShiftOptions('desktopShiftOptions');
+      renderShiftOptions('desktop-shift-options');
       renderShiftOptions('mobileShiftOptions');
       renderBookingPanels();
       renderGuidedState('desktop');
@@ -3731,7 +3731,7 @@
     initHero();
     loadVideoMetaCache();
 
-    renderShiftOptions('desktopShiftOptions');
+    renderShiftOptions('desktop-shift-options');
     renderShiftOptions('mobileShiftOptions');
     renderShiftCards();
     renderMediaSections();
