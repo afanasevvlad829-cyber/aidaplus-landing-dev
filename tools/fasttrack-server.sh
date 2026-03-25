@@ -24,12 +24,23 @@ start_server() {
     return 0
   fi
   mkdir -p "$ROOT_DIR/.runtime"
-  nohup sh -c "cd '$ROOT_DIR' && exec python3 -m http.server '$PORT' --bind '$HOST'" >"$LOG_FILE" 2>&1 &
+  local runner
+  if command -v caffeinate >/dev/null 2>&1; then
+    runner="caffeinate -dimsu python3 -m http.server '$PORT' --bind '$HOST'"
+  else
+    runner="python3 -m http.server '$PORT' --bind '$HOST'"
+  fi
+  nohup sh -c "cd '$ROOT_DIR' && exec $runner" >"$LOG_FILE" 2>&1 &
   local pid=$!
   echo "$pid" > "$PID_FILE"
   sleep 0.8
   if kill -0 "$pid" 2>/dev/null; then
     echo "started: pid=$pid url=http://127.0.0.1:$PORT/dist/index.html"
+    if command -v caffeinate >/dev/null 2>&1; then
+      echo "sleep protection: enabled (caffeinate)"
+    else
+      echo "sleep protection: unavailable (caffeinate not found)"
+    fi
   else
     echo "failed to start server" >&2
     exit 1

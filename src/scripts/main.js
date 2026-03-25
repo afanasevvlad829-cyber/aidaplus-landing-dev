@@ -253,6 +253,9 @@
     state.mobilePhotoIndex = Number.isFinite(state.mobilePhotoIndex) ? state.mobilePhotoIndex : 0;
     state.mobileVideoIndex = Number.isFinite(state.mobileVideoIndex) ? state.mobileVideoIndex : 0;
     state.mobileReviewIndex = Number.isFinite(state.mobileReviewIndex) ? state.mobileReviewIndex : 0;
+    state.mobileFaqGroup = state.mobileFaqGroup || state.faqFilter || 'Медицина';
+    state.mobileFaqOpenKey = state.mobileFaqOpenKey || '';
+    state.mobileTeamIndex = Number.isFinite(state.mobileTeamIndex) ? state.mobileTeamIndex : 0;
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
     let offerTimeoutIds = [];
@@ -927,6 +930,51 @@
           state.mobileReviewIndex = Math.max(0, index);
           renderCompactTrustPanelContent();
           persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-faq-filter'){
+        const group = (actionEl.dataset.faqGroup || '').trim();
+        if(group){
+          state.mobileFaqGroup = group;
+          state.mobileFaqOpenKey = '';
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-faq-toggle'){
+        const key = (actionEl.dataset.faqKey || '').trim();
+        if(key){
+          state.mobileFaqOpenKey = state.mobileFaqOpenKey === key ? '' : key;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-team-prev' || action === 'mobile-team-next'){
+        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
+        if(list.length){
+          const delta = action === 'mobile-team-next' ? 1 : -1;
+          state.mobileTeamIndex = (state.mobileTeamIndex + delta + list.length) % list.length;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-team-select'){
+        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
+        if(list.length){
+          const index = Number(actionEl.dataset.teamIndex || 0);
+          if(Number.isFinite(index)){
+            state.mobileTeamIndex = Math.max(0, Math.min(index, list.length - 1));
+            renderCompactTrustPanelContent();
+            persist();
+          }
         }
         return true;
       }
@@ -2630,7 +2678,7 @@
         if(active){
           mobileVideoGallery.innerHTML = `
             <div class="mobile-media-stage">
-              <button type="button" data-video="${active.url}">
+              <button type="button" data-action="open-video" data-video="${active.url}">
                 <img src="${active.cover}" alt="${active.title}">
                 <span class="mobile-media-play"><img class="ac-icon" src="/assets/icons/play.svg" alt="" aria-hidden="true"></span>
                 <div class="mobile-media-overlay">
@@ -2693,31 +2741,108 @@
       }
 
       if (mobileFaqList) {
-        const flatFaq = mediaContent.faq.flatMap(group => group.items.map(item => ({
-          group: group.group,
+        const groups = mediaContent.faq.map((group) => group.group);
+        const safeGroup = groups.includes(state.mobileFaqGroup) ? state.mobileFaqGroup : (groups[0] || 'Медицина');
+        state.mobileFaqGroup = safeGroup;
+        const activeFaqGroup = mediaContent.faq.find((group) => group.group === safeGroup);
+        const faqItems = (activeFaqGroup?.items || []).map((item, index) => ({
+          key: `${safeGroup}:${index}`,
           q: item.q,
           a: item.a
-        })));
-        mobileFaqList.innerHTML = flatFaq.slice(0, 6).map(item => `
-          <div class="mobile-faq-card">
-            <strong>${item.group} · ${item.q}</strong>
-            <span>${item.a}</span>
-          </div>
+        }));
+        const fallbackKey = faqItems[0]?.key || '';
+        const activeKey = faqItems.some((item) => item.key === state.mobileFaqOpenKey) ? state.mobileFaqOpenKey : fallbackKey;
+        state.mobileFaqOpenKey = activeKey;
+
+        const mobileFaqFilters = document.getElementById('mobileFaqFilters');
+        if(mobileFaqFilters){
+          mobileFaqFilters.innerHTML = groups.map((group) => `
+            <button
+              type="button"
+              class="mobile-faq-filter-chip ${group === safeGroup ? 'active' : ''}"
+              data-action="mobile-faq-filter"
+              data-faq-group="${group}"
+            >${group}</button>
+          `).join('');
+        }
+
+        mobileFaqList.innerHTML = faqItems.map((item) => `
+          <article class="mobile-faq-item ${item.key === activeKey ? 'open' : ''}">
+            <button
+              type="button"
+              class="mobile-faq-question"
+              data-action="mobile-faq-toggle"
+              data-faq-key="${item.key}"
+            >
+              <span>${item.q}</span>
+              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+            </button>
+            <div class="mobile-faq-answer">${item.a}</div>
+          </article>
         `).join('');
       }
 
       if (mobileInlineTeamList) {
-        mobileInlineTeamList.innerHTML = mediaContent.team.slice(0, 4).map(item => `
-          <div class="mobile-team-card">
-            <div class="mobile-team-avatar">
-              <img src="${item.avatarUrl}" alt="${item.fio}">
+        const founder = mediaContent.team.find((item) => item.fio === 'Дарья Афанасьева') || mediaContent.team[0];
+        const teachers = mediaContent.team.filter((item) => item.fio !== founder?.fio);
+        const safeIndex = teachers.length ? ((state.mobileTeamIndex % teachers.length) + teachers.length) % teachers.length : 0;
+        state.mobileTeamIndex = safeIndex;
+        const activeTeacher = teachers[safeIndex];
+
+        mobileInlineTeamList.innerHTML = `
+          <article class="mobile-team-feature-card">
+            <div class="mobile-team-feature-cover-wrap">
+              <img class="mobile-team-feature-cover" src="/assets/images/cdn-cache/8fc8172e_8991804334.webp" alt="Собственная книга по Python">
             </div>
-            <div>
-              <strong>${item.fio}</strong>
-              <span>${item.role}</span>
+            <strong>Собственная книга по Python</strong>
+            <span>Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики.</span>
+            <a class="mobile-team-feature-cta" href="${mediaContent.references.programmingBookUrl}" target="_blank" rel="noopener noreferrer">Смотреть книгу</a>
+          </article>
+          ${founder ? `
+            <article class="mobile-team-founder-card">
+              <div class="mobile-team-avatar">
+                <img src="${founder.avatarUrl}" alt="${founder.fio}">
+              </div>
+              <strong>${founder.fio}</strong>
+              <span class="mobile-team-role">${founder.role}</span>
+              <p>${founder.bio}</p>
+            </article>
+          ` : ''}
+          ${activeTeacher ? `
+            <div class="mobile-team-carousel-block">
+              <div class="mobile-team-carousel-head">
+                <strong>Преподаватели</strong>
+                <div class="mobile-team-carousel-controls">
+                  <button type="button" data-action="mobile-team-prev" aria-label="Предыдущий преподаватель">
+                    <img class="ac-icon" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true">
+                  </button>
+                  <button type="button" data-action="mobile-team-next" aria-label="Следующий преподаватель">
+                    <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+                  </button>
+                </div>
+              </div>
+              <article class="mobile-team-teacher-card">
+                <div class="mobile-team-avatar">
+                  <img src="${activeTeacher.avatarUrl}" alt="${activeTeacher.fio}">
+                </div>
+                <strong>${activeTeacher.fio}</strong>
+                <span class="mobile-team-role">${activeTeacher.role}</span>
+                <p>${activeTeacher.bio}</p>
+              </article>
+              <div class="mobile-team-carousel-dots">
+                ${teachers.map((_, index) => `
+                  <button
+                    type="button"
+                    class="mobile-team-dot ${index === safeIndex ? 'active' : ''}"
+                    data-action="mobile-team-select"
+                    data-team-index="${index}"
+                    aria-label="Переключить преподавателя"
+                  ></button>
+                `).join('')}
+              </div>
             </div>
-          </div>
-        `).join('');
+          ` : ''}
+        `;
       }
 
       if (mobileInlineStayList) {
@@ -2741,12 +2866,34 @@
       }
 
       if (mobileInlineContactsList) {
-        const primaryContacts = mediaContent.contacts.filter(item => item.label === 'whatsapp' || item.label === 'telegram');
-        mobileInlineContactsList.innerHTML = primaryContacts.map(item => `
-          <div class="mobile-contact-card">
-            <a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.label === 'whatsapp' ? 'WhatsApp' : '@proga_school'}</a>
+        const mapUrl = mediaContent.references.locationMapUrl;
+        const mapEmbedUrl = mediaContent.references.locationMapEmbedUrl;
+        const cityPhone = mediaContent.contacts.find((item) => item.label === 'city_phone');
+        const mobilePhone = mediaContent.contacts.find((item) => item.label === 'mobile_phone');
+        const whatsapp = mediaContent.contacts.find((item) => item.label === 'whatsapp');
+        const telegram = mediaContent.contacts.find((item) => item.label === 'telegram');
+
+        mobileInlineContactsList.innerHTML = `
+          <article class="mobile-map-preview-card">
+            <div class="mobile-map-preview">
+              <iframe
+                src="${mapEmbedUrl}"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Карта локации лагеря"
+              ></iframe>
+            </div>
+            <strong>66 км от Москвы · Киевское шоссе</strong>
+            <span>Удобный заезд на машине, маршрут открывается в Яндекс Картах.</span>
+            <a class="mobile-map-open-btn" href="${mapUrl}" target="_blank" rel="noopener noreferrer">Открыть карту</a>
+          </article>
+          <div class="mobile-contact-grid">
+            ${cityPhone ? `<a class="mobile-contact-card" href="${cityPhone.href}"><small>Телефон 1</small><strong>${cityPhone.text}</strong></a>` : ''}
+            ${mobilePhone ? `<a class="mobile-contact-card" href="${mobilePhone.href}"><small>Телефон 2</small><strong>${mobilePhone.text}</strong></a>` : ''}
+            ${whatsapp ? `<a class="mobile-contact-card" href="${whatsapp.href}" target="_blank" rel="noopener noreferrer"><small>WhatsApp</small><strong>WhatsApp</strong></a>` : ''}
+            ${telegram ? `<a class="mobile-contact-card" href="${telegram.href}" target="_blank" rel="noopener noreferrer"><small>Telegram</small><strong>@proga_school</strong></a>` : ''}
           </div>
-        `).join('');
+        `;
       }
 
       if (mobileInlineSocials) {
