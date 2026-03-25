@@ -6738,9 +6738,8 @@
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
       const isMobile = prefix === 'mobile';
       const stepOne = isMobile ? document.querySelector('#mobileBookingCard .booking-step-1') : null;
-      const stepTwo = isMobile ? document.querySelector('#mobileBookingCard .booking-step-2') : null;
-      if(isMobile && stepTwo && shiftChip.parentElement !== stepTwo){
-        stepTwo.insertBefore(shiftChip, stepTwo.firstChild || null);
+      if(isMobile && stepOne && shiftChip.parentElement !== stepOne){
+        stepOne.insertBefore(shiftChip, ageTabs);
       }
 
       shiftList.classList.remove('disabled','highlight','collapsed');
@@ -6770,8 +6769,7 @@
       const shift = getSelectedShift();
       if(shift){
         shiftChipText.textContent = isMobile ? shift.dates : `Смена: ${shift.title} · ${shift.dates}`;
-        if(isMobile && stepOne){
-          stepOne.insertBefore(shiftChip, ageTabs);
+        if(isMobile){
           document.getElementById('mobileBookingCard')?.classList.add('has-mobile-summary-chips');
         }
         shiftChip.classList.add('visible');
