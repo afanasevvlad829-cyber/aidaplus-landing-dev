@@ -1,9 +1,0 @@
-path,category,git_state,likely_role,risk_level,recommended_action,rationale
-.tmp/cached_after_gitignore.txt,tmp-workfiles,untracked,local temporary analysis scratch,low,delete,"Temporary local files, non-canonical and reproducible"
-.tmp/cached_before_gitignore.txt,tmp-workfiles,untracked,local temporary analysis scratch,low,delete,"Temporary local files, non-canonical and reproducible"
-.tmp/gitignore_before.txt,tmp-workfiles,untracked,local temporary analysis scratch,low,delete,"Temporary local files, non-canonical and reproducible"
-.tmp/noisy_removed_by_gitignore.txt,tmp-workfiles,untracked,local temporary analysis scratch,low,delete,"Temporary local files, non-canonical and reproducible"
-.tmp/status_after_gitignore.txt,tmp-workfiles,untracked,local temporary analysis scratch,low,delete,"Temporary local files, non-canonical and reproducible"
-.tmp/status_before_gitignore.txt,tmp-workfiles,untracked,local temporary analysis scratch,low,delete,"Temporary local files, non-canonical and reproducible"
-.tmp/untracked_after_gitignore.txt,tmp-workfiles,untracked,local temporary analysis scratch,low,delete,"Temporary local files, non-canonical and reproducible"
-.tmp/untracked_before_gitignore.txt,tmp-workfiles,untracked,local temporary analysis scratch,low,delete,"Temporary local files, non-canonical and reproducible"

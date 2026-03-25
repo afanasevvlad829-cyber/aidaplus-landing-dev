@@ -1,8 +1,0 @@
-Уникальный элемент,Где есть,Где нет,Почему появился,Это проблема?,Что с ним делать
-serviceMenu desktop pills,"desktop full/compact","mobile","desktop-specific dense nav","нет","Оставить как desktop presentation"
-mobile icon/text nav,"mobile full/compact","desktop","экономия места на mobile","нет","Оставить, но синхронизировать порядок/доступность"
-debug-controls block,"all modes (если не скрыт)","production expectations","инженерный инструмент QA","да","Сделать DEBUG_UI-gated в production"
-sectionModal clone renderer,"compact modes + mobile compact","full modes","modal-first policy","нет","Оставить, но усилить обработку cloned controls"
-mobileInline* reduced lists,"mobile full","desktop full","облегчение mobile","да","Снизить степень среза в full-mode"
-team book+core+carousel composition,"desktop","mobile full compact inline","дизайн приоритет desktop","частично","Сделать mobile representation ближе по составу данных"
-map iframe desktop-only,"desktop contacts","mobile contacts section","экономия высоты mobile","частично","Добавить quick map access в mobile full"

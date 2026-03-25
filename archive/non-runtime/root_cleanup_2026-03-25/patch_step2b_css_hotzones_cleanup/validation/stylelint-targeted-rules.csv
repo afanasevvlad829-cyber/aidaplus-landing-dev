@@ -1,4 +1,0 @@
-rule,before,after,delta
-declaration-block-single-line-max-declarations,9,0,-9
-keyframes-name-pattern,7,0,-7
-media-feature-range-notation,2,0,-2

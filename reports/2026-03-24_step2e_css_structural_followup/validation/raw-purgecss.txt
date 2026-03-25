@@ -1,6 +1,0 @@
-{
-  "originalBytes": 85622,
-  "purgedBytes": 85622,
-  "rejectedSelectorsEstimate": 0,
-  "keptPercent": 100
-}

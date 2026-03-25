@@ -1,5 +1,0 @@
-Files: src/scripts/main.js
-- Added data-action debug reset flow: localStorage/sessionStorage cleanup, booking-cookie cleanup, state reset.
-- Improved video source/preview behavior and cover paths for Pages-safe relative URLs.
-- Added mobile full parity renderers: FAQ/team/stay/contacts lists.
-- Updated mobile section mapping for anchors and photo label normalization.

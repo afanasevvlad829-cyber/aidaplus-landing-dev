@@ -1,9 +1,0 @@
-Zone,Risk,Evidence,Severity,Recommended fix
-Artifact divergence,"build/gpt.html stale vs gpt.html/dist/index.html","SHA: build/gpt.html c07a79987cff56ee vs gpt.html/dist 99f9ed5f4d5e3b72",critical,"Stop using build/gpt.html or update build.sh to write it deterministically"
-Multiple publish targets,"dist/index.html + gpt.html + build/gpt.html + index.html deploy copy","build.sh and deploy.sh produce/consume different targets",major,"Define single release artifact and enforce in scripts"
-Optional remote fetch complexity,"AC_BUILD_FETCH_REMOTE HTML parsing by regex in build.sh","Brittle parser branch with network dependency",major,"Disable by default (already), move to separate data-import tool"
-No CI guard for src leakage,"dist check only manual","release-checklist is manual, no automated fail gate",major,"Add script check to fail if /src/ links remain"
-No checksum freshness check,"No post-build consistency validation","Manual process can publish stale assets",major,"Add checksum compare for dist/index.html, gpt.html, legal.html"
-Build side-effects in repo root,"build.sh overwrites gpt.html/legal.html in root","Easy to commit generated artifacts unintentionally",minor,"Separate build output directory and explicit copy step"
-Deploy script overwrites index.html,"deploy.sh copies dist/index.html to index.html on server path","Can blur source template vs runtime artifact",major,"Use dedicated webroot artifact path and keep source immutable"
-Legacy scripts in archive,"Many historical deploy scripts still present in repo","Operator confusion risk",minor,"Keep only canonical script docs and lock others under archive policy"

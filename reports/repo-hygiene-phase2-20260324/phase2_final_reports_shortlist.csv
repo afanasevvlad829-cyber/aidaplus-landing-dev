@@ -1,3 +1,0 @@
-path,category,git_state,likely_role,risk_level,recommended_action,rationale
-audit/old-site-2026-03-23/assets_export_v2/test_processing/test_processing_report.md,audit-legacy-export,untracked,legacy audit export snapshot,medium,archive,Historical export; preserve outside active tree
-release/patch_big_bundle_report/report.md,release-doc-artifact,untracked,release process metadata,medium,manual keep,May be operationally relevant; manual review before archive

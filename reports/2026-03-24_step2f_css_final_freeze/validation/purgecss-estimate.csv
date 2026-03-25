@@ -1,6 +1,0 @@
-metric,before,after,delta
-originalCssBytes,85622,85622,0
-purgedCssBytes,85622,85622,0
-estimatedUnusedBytes,0,0,0
-estimatedUnusedPercent,0.0,0.0,0.0
-note,Estimate only; nothing removed from source,Estimate only; nothing removed from source,n/a

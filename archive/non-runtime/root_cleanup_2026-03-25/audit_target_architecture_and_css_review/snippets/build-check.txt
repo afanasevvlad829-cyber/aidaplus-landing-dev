@@ -1,6 +1,0 @@
-Built: dist/index.html
-Build completed: dist/index.html
-Canonical release artifact: dist/index.html
-Artifacts updated: gpt.html, build/gpt.html
-Artifacts updated: legal.html, build/legal.html
-Artifact sync check: OK
