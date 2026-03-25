@@ -1081,6 +1081,32 @@
       flex:0 0 auto;
     }
 
+    .mobile-booking-card .booking-step-1{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+
+    .mobile-booking-card .booking-step-1 .age-tabs{
+      width:100%;
+      margin-bottom:0;
+    }
+
+    .mobile-booking-card.has-mobile-summary-chips .booking-step-1 .selected-age-chip,
+    .mobile-booking-card.has-mobile-summary-chips .booking-step-1 .selected-shift-chip{
+      margin:0;
+      width:auto;
+      max-width:calc(50% - 4px);
+      min-width:0;
+      padding:8px 10px;
+      border-radius:12px;
+      font-size:11px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
     .age-tabs.hidden{
       display:none !important;
     }
@@ -1590,6 +1616,13 @@
       gap:10px;
     }
 
+    .journey-heading{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
     .journey-num{
       width:34px;
       height:34px;
@@ -1659,7 +1692,7 @@
       display:grid;
       grid-template-columns:minmax(0, 2fr) minmax(280px, 360px);
       gap:12px;
-      align-items:start;
+      align-items:end;
     }
 
     .programs-main-grid{
@@ -1671,10 +1704,11 @@
       background:linear-gradient(135deg,#f9fbff,#fff);
       border:1px solid var(--line);
       border-radius:20px;
-      padding:14px;
+      padding:12px;
       box-shadow:var(--shadow);
-      display:grid;
-      gap:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
     }
 
     .programs-short-block h4{
@@ -1688,17 +1722,21 @@
       margin:0;
       font-size:13px;
       color:var(--muted);
-      line-height:1.5;
+      line-height:1.42;
+      display:-webkit-box;
+      -webkit-line-clamp:4;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
     }
 
     .short-shifts-list{
       display:grid;
-      gap:10px;
+      gap:6px;
     }
 
     .short-shift-card{
-      padding:12px;
-      border-radius:16px;
+      padding:8px 9px;
+      border-radius:12px;
       box-shadow:none;
       background:#fff;
     }
@@ -1707,23 +1745,23 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:8px;
-      margin-bottom:8px;
+      gap:6px;
+      margin-bottom:4px;
     }
 
     .short-shift-head h4{
       margin:0;
-      font-size:14px;
+      font-size:13px;
       letter-spacing:-.01em;
     }
 
     .short-shift-tag{
       display:inline-flex;
       align-items:center;
-      height:22px;
-      padding:0 8px;
+      height:18px;
+      padding:0 6px;
       border-radius:999px;
-      font-size:11px;
+      font-size:9px;
       font-weight:700;
       color:#56627a;
       background:#eef3fb;
@@ -1732,12 +1770,12 @@
     }
 
     .short-shift-meta{
-      margin-top:7px;
+      margin-top:2px;
       display:grid;
-      gap:4px;
-      font-size:12px;
+      gap:1px;
+      font-size:10px;
       color:#556175;
-      line-height:1.45;
+      line-height:1.25;
     }
 
     .mini-card{
@@ -4175,12 +4213,13 @@
 
     @media (width <= 1180px){
       .hero-booking-card{
-        position:static;
+        position:relative;
         width:100%;
         max-width:none;
         margin-top:16px;
         margin-bottom:0;
         transform:none;
+        z-index:6;
       }
 
       .hero-content,.hero-content.full{
@@ -4530,8 +4569,8 @@
               <div class="hero-brand-meta">
                 <div class="hero-brand-label">IT-лагерь для детей 7–14 лет</div>
                 <div class="mode-switch hero-mode-inline" id="desktopModeWrap">
-                  <button class="mode-btn active" id="fullModeBtn">Полная версия</button>
-                  <button class="mode-btn" id="compactModeBtn">Сокращённая версия</button>
+                  <button class="mode-btn active" id="fullModeBtn">Полная</button>
+                  <button class="mode-btn" id="compactModeBtn">Сокращённая</button>
                 </div>
               </div>
             </div>
@@ -4554,25 +4593,23 @@
             <h2 class="hero-title">Лагерь, где ребёнок создаёт, а не потребляет</h2>
             <div class="hero-sub">Программирование, спорт, бассейн и живая лагерная среда без бессмысленного залипания в телефоне.</div>
             <div class="hero-slogan">Мы не играем в игры — мы их создаём</div>
-            <div class="hero-proofline">
-              <span>● реальные проекты за смену</span>
-              <span>● бассейн и спорт каждый день</span>
-              <span>● собственная учебная программа</span>
-            </div>
-
-            <div class="feature-row">
-              <div class="feature-pill">
-                <strong>IT-проекты</strong>
-                Scratch и Python
-              </div>
-              <div class="feature-pill">
-                <strong>Экономика</strong>
-                База финансовой грамотности
-              </div>
-              <div class="feature-pill">
-                <strong>Бассейн</strong>
-                Каждый день
-              </div>
+            <div class="hero-benefits-grid">
+              <article class="hero-benefit-card">
+                <strong>Реальные проекты за смену</strong>
+                <span>Scratch, Python, Minecraft, AI</span>
+              </article>
+              <article class="hero-benefit-card">
+                <strong>Бассейн и спорт каждый день</strong>
+                <span>Движение, свежий воздух, активные игры</span>
+              </article>
+              <article class="hero-benefit-card">
+                <strong>Без телефонов — живая среда</strong>
+                <span>Общение, команда, режим без гаджетов</span>
+              </article>
+              <article class="hero-benefit-card">
+                <strong>Собственная программа и методика</strong>
+                <span>Не просто анимация, а понятный результат</span>
+              </article>
             </div>
 
             <div class="occupancy-badge" id="occupancyBadge">⚡ 63% мест уже занято</div>
@@ -4586,8 +4623,8 @@
               <div class="booking-step">Цена</div>
               <div class="booking-step">Заявка</div>
             </div>
-            <h3 id="desktopBookingTitle">Выберите смену</h3>
-            <p id="desktopBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
+            <h3 id="desktopBookingTitle">Выберите возраст ребёнка</h3>
+            <p id="desktopBookingLead">Мы покажем подходящие смены, программу и условия именно для этого возраста.</p>
 
             <div class="booking-step-block booking-step-1">
               <div class="selected-age-chip" id="desktopAgeChip">
@@ -4595,9 +4632,21 @@
                 <button type="button" data-action="reset-age-selection">×</button>
               </div>
               <div class="age-tabs" id="desktopAgeTabs">
-                <button class="age-tab" data-age="7-9">7–9 лет</button>
-                <button class="age-tab" data-age="10-12">10–12 лет</button>
-                <button class="age-tab" data-age="13-14">13–14 лет</button>
+                <button class="age-tab" data-age="7-9" data-track="track-1">
+                  <span class="age-tab-range">7–9 лет</span>
+                  <span class="age-tab-track">Scratch + Minecraft</span>
+                  <span class="age-tab-note">Первые проекты, визуальная логика, игровые механики</span>
+                </button>
+                <button class="age-tab" data-age="10-12" data-track="track-2">
+                  <span class="age-tab-range">10–12 лет</span>
+                  <span class="age-tab-track">Python</span>
+                  <span class="age-tab-note">Игры, боты и первые проекты</span>
+                </button>
+                <button class="age-tab" data-age="13-14" data-track="track-3">
+                  <span class="age-tab-range">13–14 лет</span>
+                  <span class="age-tab-track">Python + JavaScript + AI</span>
+                  <span class="age-tab-note">Сложнее проекты, нейросети, логика продуктов и презентация</span>
+                </button>
               </div>
             </div>
 
@@ -4612,6 +4661,9 @@
                 <div id="desktopShiftOptions"></div>
               </div>
               <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
+              <button class="booking-all-shifts-link" type="button" data-action="open-all-shifts">
+                Смотреть все смены для текущего возраста
+              </button>
             </div>
 
             <div class="booking-step-block booking-step-3">
@@ -4620,11 +4672,17 @@
               </div>
               <div class="under-cta" id="desktopBookingHint"></div>
               <div class="booking-hint" id="desktopBookingHintInline" aria-live="polite"></div>
-              <div class="trust-mini">
-                <span>45 мест в смене</span>
-                <span>IT + спорт</span>
-                <span>Без гаджетов</span>
+              <div class="booking-step1-hooks">
+                <span><img class="ac-icon" src="/assets/icons/check.svg" alt="" aria-hidden="true">Реальные проекты, а не занятия</span>
+                <span><img class="ac-icon" src="/assets/icons/pool.svg" alt="" aria-hidden="true">Бассейн и движение каждый день</span>
+                <span><img class="ac-icon" src="/assets/icons/lock.svg" alt="" aria-hidden="true">Живая среда без телефонов</span>
               </div>
+              <div class="trust-mini">
+                <span>IT-проекты по возрасту: Scratch, Python, Minecraft, AI</span>
+                <span>Бассейн, спорт и свежий воздух каждый день</span>
+                <span>Безопасность и команда наставников 24/7</span>
+              </div>
+              <div class="booking-scarcity">63% мест уже занято</div>
             </div>
           </div>
           <!-- /@block:booking-card -->
@@ -4658,23 +4716,31 @@
 
             <div class="journey-grid">
               <div class="journey-card">
-                <div class="journey-num">1</div>
-                <h4>Быстрое включение</h4>
+                <div class="journey-heading">
+                  <div class="journey-num">1</div>
+                  <h4>Быстрое включение</h4>
+                </div>
                 <p>В первый же день дети знакомятся, собираются в команды и входят в игровую механику лагеря без длинной раскачки.</p>
               </div>
               <div class="journey-card">
-                <div class="journey-num">2</div>
-                <h4>Практика вместо теории</h4>
+                <div class="journey-heading">
+                  <div class="journey-num">2</div>
+                  <h4>Практика вместо теории</h4>
+                </div>
                 <p>Scratch, Python, Minecraft, AI и мини-проекты — не пересказ, а работа руками и головой каждый день.</p>
               </div>
               <div class="journey-card">
-                <div class="journey-num">3</div>
-                <h4>Живая среда</h4>
+                <div class="journey-heading">
+                  <div class="journey-num">3</div>
+                  <h4>Живая среда</h4>
+                </div>
                 <p>Бассейн, спорт, внутренняя экономика, командные задания и настоящая лагерная жизнь без залипания в телефоне.</p>
               </div>
               <div class="journey-card">
-                <div class="journey-num">4</div>
-                <h4>Финальный результат</h4>
+                <div class="journey-heading">
+                  <div class="journey-num">4</div>
+                  <h4>Финальный результат</h4>
+                </div>
                 <p>К концу смены у ребёнка есть проект, опыт защиты, новые друзья и ощущение: «я реально умею больше, чем неделю назад».</p>
               </div>
             </div>
@@ -4896,8 +4962,19 @@
                 </div>
               </div>
               <div class="mobile-mode-switch mobile-mode-inline">
-                <button class="mobile-mode-btn active" id="mobileFullModeBtn">Полная</button>
-                <button class="mobile-mode-btn" id="mobileCompactModeBtn">Сокращённая</button>
+                <button
+                  class="mobile-mode-toggle"
+                  id="mobileModeToggle"
+                  type="button"
+                  role="switch"
+                  aria-checked="true"
+                  aria-label="Переключить подробный режим"
+                >
+                  <span class="mobile-mode-toggle-track" aria-hidden="true">
+                    <span class="mobile-mode-toggle-thumb"></span>
+                  </span>
+                  <span class="mobile-mode-toggle-label">Подробный</span>
+                </button>
               </div>
             </div>
           </div>
@@ -4930,10 +5007,22 @@
             <div class="mobile-age-gate" id="mobileAgeGateCard" data-mobile-age-gate>
               <h3>Выберите возраст ребёнка</h3>
               <p>Сначала выберите возраст, чтобы увидеть подходящие смены и условия.</p>
-              <div class="age-tabs" id="mobileAgeTabs">
-                <button class="age-tab" data-age="7-9">7–9 лет</button>
-                <button class="age-tab" data-age="10-12">10–12 лет</button>
-                <button class="age-tab" data-age="13-14">13–14 лет</button>
+              <div class="age-tabs mobile-age-cards" id="mobileAgeTabs">
+                <button class="age-tab" data-age="7-9" data-track="track-1">
+                  <span class="age-tab-range">7–9 лет</span>
+                  <span class="age-tab-track">Scratch + Minecraft</span>
+                  <span class="age-tab-note">Первые проекты, визуальная логика, игровые механики</span>
+                </button>
+                <button class="age-tab" data-age="10-12" data-track="track-2">
+                  <span class="age-tab-range">10–12 лет</span>
+                  <span class="age-tab-track">Python</span>
+                  <span class="age-tab-note">Игры, боты, мини-проекты и уверенный вход в код</span>
+                </button>
+                <button class="age-tab" data-age="13-14" data-track="track-3">
+                  <span class="age-tab-range">13–14 лет</span>
+                  <span class="age-tab-track">Python + JavaScript + AI</span>
+                  <span class="age-tab-note">Сложнее проекты, нейросети, логика продуктов и презентация</span>
+                </button>
               </div>
             </div>
 
@@ -4956,8 +5045,8 @@
                 <div class="booking-step">Цена</div>
                 <div class="booking-step">Заявка</div>
               </div>
-              <h3 id="mobileBookingTitle">Выберите смену</h3>
-              <p id="mobileBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
+              <h3 id="mobileBookingTitle">Выберите возраст ребёнка</h3>
+              <p id="mobileBookingLead">Мы покажем подходящие смены, программу и условия именно для этого возраста.</p>
 
               <div class="booking-step-block booking-step-1">
                 <div class="selected-age-chip" id="mobileAgeChip">
@@ -4986,10 +5075,11 @@
                 <div class="cta-subtext" id="mobileBookingHint"></div>
                 <div class="booking-hint" id="mobileBookingHintInline" aria-live="polite"></div>
                 <div class="trust-mini">
-                  <span>45 мест в смене</span>
-                  <span>IT + спорт</span>
-                  <span>Без гаджетов</span>
+                  <span>IT-проекты по возрасту: Scratch, Python, Minecraft, AI</span>
+                  <span>Бассейн, спорт и свежий воздух каждый день</span>
+                  <span>Безопасность и команда наставников 24/7</span>
                 </div>
+                <div class="booking-scarcity">63% мест уже занято</div>
               </div>
             </div>
           </div>
@@ -5220,12 +5310,12 @@
 <script id="ac-build-main-js">
 /* src/scripts/main.js */
     const shifts = [
-      {id:'shift-1',title:'1 смена',dates:'30 мая — 8 июня',start:'2025-05-30',end:'2025-06-08',price:94800,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
-      {id:'shift-2',title:'2 смена',dates:'10 июня — 16 июня',start:'2025-06-10',end:'2025-06-16',price:57600,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
-      {id:'shift-3',title:'3 смена',dates:'16 июня — 23 июня',start:'2025-06-16',end:'2025-06-23',price:78000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
-      {id:'shift-4',title:'4 смена',dates:'10 июня — 23 июня',start:'2025-06-10',end:'2025-06-23',price:114000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'},
-      {id:'shift-5',title:'5 смена',dates:'3 августа — 15 августа',start:'2025-08-03',end:'2025-08-15',price:107280,left:10,occupied:29,badge:'',desc:'Летняя смена: проекты, спорт и командный формат с фокусом на результат.'},
-      {id:'shift-6',title:'6 смена',dates:'17 августа — 26 августа',start:'2025-08-17',end:'2025-08-26',price:83520,left:9,occupied:27,badge:'',desc:'Финальная смена сезона: закрепление навыков и защита мини-проектов.'}
+      {id:'shift-1',title:'1',dates:'30 мая — 8 июня',start:'2025-05-30',end:'2025-06-08',price:94800,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
+      {id:'shift-2',title:'2.1',dates:'10 июня — 16 июня',start:'2025-06-10',end:'2025-06-16',price:57600,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
+      {id:'shift-3',title:'2.2',dates:'16 июня — 23 июня',start:'2025-06-16',end:'2025-06-23',price:78000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
+      {id:'shift-4',title:'2',dates:'10 июня — 23 июня',start:'2025-06-10',end:'2025-06-23',price:114000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'},
+      {id:'shift-5',title:'3',dates:'3 августа — 15 августа',start:'2025-08-03',end:'2025-08-15',price:107280,left:10,occupied:29,badge:'',desc:'Летняя смена: проекты, спорт и командный формат с фокусом на результат.'},
+      {id:'shift-6',title:'4',dates:'17 августа — 26 августа',start:'2025-08-17',end:'2025-08-26',price:83520,left:9,occupied:27,badge:'',desc:'Финальная смена сезона: закрепление навыков и защита мини-проектов.'}
     ];
 
     const mediaContent = {
@@ -6527,7 +6617,7 @@
     function getShiftContextLine(shift){
       if(!shift) return '';
       if(!hasSelectedAge()){
-        return 'Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.';
+        return '';
       }
       const age = ageLabel(state.age);
       if(shift.id === 'shift-1'){
@@ -6561,7 +6651,7 @@
       const shift = getSelectedShift();
       if(!hasSelectedAge()){
         return {
-          text:'Выберите возраст',
+          text:'Показать подходящие смены',
           disabled:true,
           hint:''
         };
@@ -6629,12 +6719,9 @@
       root.querySelectorAll('.booking-step').forEach((el, idx) => {
         const num = idx + 1;
         el.classList.remove('active','done');
-        el.classList.remove('pulse');
+        el.dataset.step = String(num);
         if(num < current) el.classList.add('done');
-        if(num === current){
-          el.classList.add('active');
-          el.classList.add('pulse');
-        }
+        if(num === current) el.classList.add('active');
       });
     }
 
@@ -6649,19 +6736,28 @@
       const shiftChipText = document.getElementById(`${prefix}ShiftChipText`);
 
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
+      const isMobile = prefix === 'mobile';
+      const stepOne = isMobile ? document.querySelector('#mobileBookingCard .booking-step-1') : null;
+      const stepTwo = isMobile ? document.querySelector('#mobileBookingCard .booking-step-2') : null;
+      if(isMobile && stepTwo && shiftChip.parentElement !== stepTwo){
+        stepTwo.insertBefore(shiftChip, stepTwo.firstChild || null);
+      }
 
       shiftList.classList.remove('disabled','highlight','collapsed');
       ctaWrap.classList.remove('highlight');
       ageTabs.classList.remove('hidden');
       ageChip.classList.remove('visible');
       shiftChip.classList.remove('visible');
+      if(isMobile){
+        document.getElementById('mobileBookingCard')?.classList.remove('has-mobile-summary-chips');
+      }
 
       if(!hasSelectedAge()){
         shiftList.classList.add('disabled');
         return;
       }
 
-      ageChipText.textContent = `Возраст: ${ageLabel(state.age)}`;
+      ageChipText.textContent = isMobile ? ageLabel(state.age) : `Возраст: ${ageLabel(state.age)}`;
       ageChip.classList.add('visible');
       ageTabs.classList.add('hidden');
 
@@ -6673,7 +6769,11 @@
 
       const shift = getSelectedShift();
       if(shift){
-        shiftChipText.textContent = `Смена: ${shift.title} · ${shift.dates}`;
+        shiftChipText.textContent = isMobile ? shift.dates : `Смена: ${shift.title} · ${shift.dates}`;
+        if(isMobile && stepOne){
+          stepOne.insertBefore(shiftChip, ageTabs);
+          document.getElementById('mobileBookingCard')?.classList.add('has-mobile-summary-chips');
+        }
         shiftChip.classList.add('visible');
         shiftList.classList.add('collapsed');
       }
@@ -6802,7 +6902,7 @@
 
       if(!hasSelectedAge()){
         if(title) title.textContent = 'Выберите возраст ребёнка';
-        if(lead) lead.textContent = 'Сначала выберите возраст, чтобы активировать список смен.';
+        if(lead) lead.textContent = 'Мы покажем подходящие смены, программу и условия именно для этого возраста.';
         if(info) info.innerHTML = '';
         return;
       }
@@ -7404,15 +7504,15 @@
             </span>
           </div>
           <p>${s.desc}</p>
-          <div class="shift-context-line">${getShiftContextLine(s)}</div>
+          ${getShiftContextLine(s) ? `<div class="shift-context-line">${getShiftContextLine(s)}</div>` : ''}
         </div>
       `).join('');
 
       if(shortGrid){
-        shortGrid.innerHTML = shortShifts.map((s, idx) => `
+        shortGrid.innerHTML = shortShifts.map((s) => `
           <div class="mini-card short-shift-card">
             <div class="short-shift-head">
-              <h4>Смена 2.${idx + 1}</h4>
+              <h4>${s.title}</h4>
               <span class="short-shift-tag">короткий формат</span>
             </div>
             <div class="price-row">

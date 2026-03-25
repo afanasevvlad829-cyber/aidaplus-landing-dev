@@ -29,9 +29,9 @@
       --z-debug:120;
       --hero-min-height-desktop:600px;
       --hero-overlap-bottom:-32px;
-      --hero-overlap-y:18px;
-      --hero-overlap-y-hover:16px;
-      --desktop-booking-height:560px;
+      --hero-overlap-y:30px;
+      --hero-overlap-y-hover:28px;
+      --desktop-booking-height:520px;
       --section-modal-compact-width:clamp(360px,48vw,640px);
       --section-modal-compact-max-height:min(56vh,500px);
       --video-card-gap:12px;
@@ -45,6 +45,8 @@
     body{
       margin:0;
       padding:0;
+      max-width:100%;
+      overflow-x:hidden;
     }
 
     body{
@@ -149,6 +151,64 @@
       display:flex;
       gap:6px;
       align-items:center;
+    }
+
+    .mobile-mode-toggle{
+      border:none;
+      border-radius:999px;
+      min-height:34px;
+      padding:3px 6px 3px 4px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:rgb(255 255 255 / 10%);
+      border:1px solid rgb(255 255 255 / 16%);
+      color:rgb(255 255 255 / 86%);
+      cursor:pointer;
+      transition:background .2s ease, border-color .2s ease;
+    }
+
+    .mobile-mode-toggle-track{
+      width:30px;
+      height:18px;
+      border-radius:999px;
+      background:rgb(255 255 255 / 24%);
+      display:flex;
+      align-items:center;
+      padding:2px;
+      transition:background .2s ease;
+      flex:0 0 auto;
+    }
+
+    .mobile-mode-toggle-thumb{
+      width:14px;
+      height:14px;
+      border-radius:50%;
+      background:#fff;
+      transform:translateX(0);
+      transition:transform .2s ease;
+      box-shadow:0 2px 8px rgb(15 23 42 / 25%);
+    }
+
+    .mobile-mode-toggle-label{
+      font-size:11px;
+      font-weight:800;
+      white-space:nowrap;
+      letter-spacing:.01em;
+      padding-right:1px;
+    }
+
+    .mobile-mode-toggle.is-full{
+      background:rgb(255 138 0 / 20%);
+      border-color:rgb(255 159 47 / 40%);
+    }
+
+    .mobile-mode-toggle.is-full .mobile-mode-toggle-track{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    }
+
+    .mobile-mode-toggle.is-full .mobile-mode-toggle-thumb{
+      transform:translateX(12px);
     }
 
     .mobile-mode-btn{
@@ -315,10 +375,10 @@
     .hero-shell{
       position:relative;
       display:grid;
-      grid-template-columns:minmax(0, 1fr) 356px;
+      grid-template-columns:minmax(0, 1fr) 360px;
       column-gap:24px;
       align-items:start;
-      padding:22px 22px 2px;
+      padding:36px 26px 40px;
       min-height:var(--hero-min-height-desktop);
       background:
         linear-gradient(180deg, rgb(11 16 24 / 20%) 0%, rgb(11 16 24 / 74%) 100%),
@@ -593,12 +653,12 @@
     }
 
     .hero-title{
-      margin:0 0 12px;
-      font-size:38px;
+      margin:0 0 20px;
+      font-size:clamp(56px, 4.15vw, 64px);
       font-weight:800;
-      line-height:1.08;
+      line-height:1;
       letter-spacing:-.03em;
-      max-width:760px;
+      max-width:680px;
     }
 
     .mobile-hero .hero-content h2{
@@ -609,9 +669,10 @@
 
     .hero-sub{
       color:rgb(255 255 255 / 84%);
-      font-size:17px;
+      font-size:18px;
       line-height:1.5;
-      margin-bottom:20px;
+      margin-bottom:28px;
+      max-width:820px;
     }
 
     .mobile-hero .hero-sub{
@@ -621,13 +682,13 @@
 
     .hero-slogan{
       display:inline-block;
-      margin-top:12px;
-      font-size:14px;
+      margin-top:0;
+      font-size:15px;
       font-weight:600;
       color:#fff;
       background:rgb(255 255 255 / 12%);
       border:1px solid rgb(255 255 255 / 18%);
-      padding:6px 10px;
+      padding:10px 18px;
       border-radius:999px;
       backdrop-filter:blur(6px);
     }
@@ -666,6 +727,48 @@
       display:flex;
       gap:10px;
       flex-wrap:wrap;
+    }
+
+    .hero-benefits-grid{
+      margin-top:20px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px 16px;
+      width:100%;
+      max-width:980px;
+    }
+
+    .hero-benefit-card{
+      border:1px solid rgb(255 255 255 / 16%);
+      background:linear-gradient(135deg, rgb(8 12 18 / 48%), rgb(8 12 18 / 34%));
+      border-radius:20px;
+      padding:18px 20px;
+      box-shadow:0 18px 34px rgb(0 0 0 / 20%);
+      backdrop-filter:blur(8px);
+      min-height:96px;
+      display:grid;
+      gap:8px;
+    }
+
+    .hero-benefits-grid .hero-benefit-card:first-child{
+      min-height:108px;
+      border-color:rgb(255 159 47 / 34%);
+      box-shadow:0 22px 36px rgb(255 138 0 / 14%);
+    }
+
+    .hero-benefit-card strong{
+      display:block;
+      color:#fff;
+      font-size:20px;
+      line-height:1.25;
+      letter-spacing:-.01em;
+    }
+
+    .hero-benefit-card span{
+      display:block;
+      color:rgb(255 255 255 / 78%);
+      font-size:16px;
+      line-height:1.4;
     }
 
     .hero-shell:not(.mobile-hero) .feature-row{
@@ -726,10 +829,10 @@
       width:100%;
       max-width:356px;
       margin-left:auto;
-      margin-top:0;
+      margin-top:42px;
       margin-bottom:var(--hero-overlap-bottom);
-      padding:20px;
-      border-radius:26px;
+      padding:24px;
+      border-radius:30px;
       background:rgb(12 17 24 / 76%);
       border:1px solid rgb(255 255 255 / 10%);
       backdrop-filter:blur(18px);
@@ -762,18 +865,9 @@
     }
 
     #desktop-booking-card .shift-list{
-      max-height:176px;
-      overflow:auto;
-      padding-right:2px;
-    }
-
-    #desktop-booking-card .shift-list::-webkit-scrollbar{
-      width:6px;
-    }
-
-    #desktop-booking-card .shift-list::-webkit-scrollbar-thumb{
-      border-radius:999px;
-      background:rgb(255 255 255 / 22%);
+      max-height:none;
+      overflow:visible;
+      padding-right:0;
     }
 
     #desktop-booking-card .booking-step-3{
@@ -815,6 +909,11 @@
       border-color:rgb(255 255 255 / 8%);
     }
 
+    .mobile-booking-card .booking-step-2{
+      align-content:start;
+      gap:6px;
+    }
+
     .booking-step-block{
       display:grid;
       gap:8px;
@@ -834,7 +933,7 @@
     .booking-stage-1 .booking-step-2 .shift-calendar-discovery,
     .booking-stage-1 .booking-step-2 .selected-shift-chip,
     .booking-stage-1 .booking-step-2 .shift-list,
-    .booking-stage-1 .booking-step-3,
+    .booking-stage-1 .booking-step-2 .booking-all-shifts-link,
     .booking-stage-2 .booking-step-3{
       display:none;
     }
@@ -906,13 +1005,13 @@
 
     .mobile-booking-card h3{
       font-size:20px;
-      margin:0 0 8px;
+      margin:0 0 6px;
     }
 
     .mobile-booking-card p{
       font-size:13px;
       line-height:1.5;
-      margin:0 0 14px;
+      margin:0 0 10px;
     }
 
     .hero-booking-card h3{
@@ -929,52 +1028,104 @@
     }
 
     .booking-steps{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:6px;
-      margin-bottom:16px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:0;
+      margin-bottom:20px;
+      padding:2px 2px 0;
+      pointer-events:none;
     }
 
     .booking-step{
-      padding:9px 6px;
-      border-radius:999px;
+      position:relative;
+      flex:1 1 0;
+      min-width:0;
+      display:grid;
+      justify-items:center;
+      gap:6px;
+      padding:0 6px;
       text-align:center;
-      font-size:11px;
+      font-size:12px;
       font-weight:800;
-      background:rgb(255 255 255 / 6%);
-      color:rgb(255 255 255 / 54%);
-      border:1px solid rgb(255 255 255 / 8%);
-      transition:background .18s ease, color .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+      color:rgb(255 255 255 / 60%);
+      transition:color .18s ease;
+      cursor:default;
+      user-select:none;
+    }
+
+    .booking-step::before{
+      content:attr(data-step);
+      width:28px;
+      height:28px;
+      border-radius:50%;
+      border:1px solid rgb(255 255 255 / 24%);
+      background:rgb(255 255 255 / 8%);
+      color:rgb(255 255 255 / 74%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:900;
+      box-sizing:border-box;
+    }
+
+    .booking-step::after{
+      content:"";
+      position:absolute;
+      top:14px;
+      left:calc(50% + 20px);
+      width:calc(100% - 40px);
+      height:2px;
+      border-radius:999px;
+      background:rgb(255 255 255 / 18%);
+      pointer-events:none;
+    }
+
+    .booking-step:last-child::after{
+      display:none;
     }
 
     .mobile-booking-card .booking-step{
       font-size:10px;
-      padding:8px 4px;
+      padding:0 4px;
     }
 
     .booking-step.active{
+      color:#fff;
+    }
+
+    .booking-step.active::before{
+      border-color:transparent;
       background:linear-gradient(135deg,var(--accent),var(--accent-2));
       color:#fff;
-      border-color:transparent;
-      transform:translateY(-1px) scale(1.05);
-      box-shadow:0 10px 22px rgb(255 138 0 / 36%);
+      box-shadow:0 10px 22px rgb(255 138 0 / 34%);
     }
 
     .booking-step.done{
+      color:#fff;
+    }
+
+    .booking-step.done::before{
+      content:"✓";
+      border-color:rgb(255 255 255 / 26%);
       background:rgb(255 255 255 / 16%);
       color:#fff;
-      border-color:rgb(255 255 255 / 22%);
+    }
+
+    .booking-step.done::after{
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
     }
 
     .booking-step.pulse{
-      box-shadow:0 0 0 4px rgb(255 138 0 / 14%);
-      animation:step-pulse 1.6s ease-in-out infinite;
+      animation:none;
     }
 
     .age-tabs{
       display:flex;
-      gap:10px;
+      gap:12px;
       margin-bottom:8px;
+      align-items:stretch;
     }
 
     .guided-label{
@@ -1029,6 +1180,13 @@
       transform:translateY(0);
     }
 
+    .mobile-booking-card .guided-inline-hint:not(.visible){
+      display:none;
+      margin:0;
+      padding:0;
+      border:0;
+    }
+
     .guided-pulse{
       animation:guided-pulse 1.2s ease 2;
     }
@@ -1081,31 +1239,132 @@
       flex:0 0 auto;
     }
 
+    .mobile-booking-card .booking-step-1{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+
+    .mobile-booking-card .booking-step-1 .age-tabs{
+      width:100%;
+      margin-bottom:0;
+    }
+
+    .mobile-booking-card.has-mobile-summary-chips .booking-step-1 .selected-age-chip,
+    .mobile-booking-card.has-mobile-summary-chips .booking-step-1 .selected-shift-chip{
+      margin:0;
+      width:auto;
+      max-width:calc(50% - 4px);
+      min-width:0;
+      padding:8px 10px;
+      border-radius:12px;
+      font-size:11px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
     .age-tabs.hidden{
       display:none !important;
     }
 
     .age-tab{
       flex:1;
-      border:none;
-      border-radius:14px;
-      padding:13px 10px;
-      min-height:48px;
+      border:1px solid rgb(255 255 255 / 14%);
+      border-radius:19px;
+      padding:16px 14px;
+      min-height:170px;
       background:rgb(255 255 255 / 10%);
       color:#fff;
-      font-size:13px;
-      font-weight:800;
       cursor:pointer;
-      transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+      transition:transform .15s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease;
+      text-align:left;
+      display:grid;
+      gap:7px;
+      align-content:start;
+      position:relative;
+      overflow:hidden;
     }
 
     .age-tab.active{
       background:linear-gradient(135deg, var(--accent), var(--accent-2));
       box-shadow:0 8px 18px rgb(255 138 0 / 18%);
+      border-color:transparent;
     }
 
     .age-tab:hover{
       transform:translateY(-1px);
+    }
+
+    .age-tab-range{
+      display:block;
+      font-size:20px;
+      font-weight:900;
+      line-height:1;
+      letter-spacing:-.02em;
+      color:#fff;
+      margin-bottom:4px;
+    }
+
+    .age-tab-track{
+      display:block;
+      font-size:16px;
+      font-weight:800;
+      line-height:1.3;
+      color:rgb(255 255 255 / 96%);
+    }
+
+    .age-tab-note{
+      display:block;
+      font-size:13px;
+      line-height:1.42;
+      color:rgb(255 255 255 / 80%);
+    }
+
+    .age-tab::after{
+      content:"";
+      position:absolute;
+      right:10px;
+      bottom:10px;
+      width:22px;
+      height:22px;
+      border-radius:8px;
+      background:rgb(255 255 255 / 12%);
+      background-repeat:no-repeat;
+      background-position:center;
+      background-size:14px 14px;
+      opacity:.86;
+    }
+
+    .age-tab[data-track="track-1"]{
+      background:
+        radial-gradient(circle at 18% 18%, rgb(255 191 84 / 30%), transparent 48%),
+        linear-gradient(135deg, rgb(255 169 33 / 30%), rgb(255 138 0 / 22%));
+    }
+
+    .age-tab[data-track="track-1"]::after{
+      background-image:url('/assets/icons/clipboard.svg');
+    }
+
+    .age-tab[data-track="track-2"]{
+      background:
+        radial-gradient(circle at 18% 18%, rgb(115 180 255 / 24%), transparent 48%),
+        linear-gradient(135deg, rgb(38 67 110 / 48%), rgb(20 39 70 / 42%));
+    }
+
+    .age-tab[data-track="track-2"]::after{
+      background-image:url('/assets/icons/code-xml.svg');
+    }
+
+    .age-tab[data-track="track-3"]{
+      background:
+        radial-gradient(circle at 18% 18%, rgb(138 173 255 / 26%), transparent 48%),
+        linear-gradient(135deg, rgb(44 45 74 / 58%), rgb(24 26 44 / 48%));
+    }
+
+    .age-tab[data-track="track-3"]::after{
+      background-image:url('/assets/icons/sparkle.svg');
     }
 
     .shift-option{
@@ -1159,6 +1418,53 @@
       transform:translateY(-1px);
       border-color:#c4cede;
       box-shadow:0 8px 14px rgb(17 24 39 / 10%);
+    }
+
+    #desktopShiftOptions .shift-option{
+      padding:16px 16px 14px;
+      gap:12px;
+      border-radius:18px;
+      margin-bottom:12px;
+    }
+
+    #desktopShiftOptions .shift-option strong{
+      font-size:19px;
+      line-height:1.2;
+      letter-spacing:-.01em;
+    }
+
+    #desktopShiftOptions .shift-option-head small{
+      font-size:14px;
+      line-height:1.25;
+      color:#5f6779;
+    }
+
+    #desktopShiftOptions .shift-option-action{
+      min-height:36px;
+      font-size:13px;
+      padding:0 12px;
+    }
+
+    .booking-all-shifts-link{
+      display:block;
+      width:max-content;
+      max-width:100%;
+      margin:6px auto 0;
+      padding:0;
+      border:0;
+      background:none;
+      color:rgb(255 255 255 / 74%);
+      font-size:12px;
+      font-weight:600;
+      line-height:1.4;
+      text-decoration:underline;
+      text-underline-offset:3px;
+      cursor:pointer;
+      transition:color .15s ease;
+    }
+
+    .booking-all-shifts-link:hover{
+      color:rgb(255 255 255 / 92%);
     }
 
     .shift-inline-panel{
@@ -1238,6 +1544,11 @@
     .mobile-booking-card .shift-option{
       padding:11px 12px;
       border-radius:16px;
+      margin-bottom:8px;
+    }
+
+    .mobile-booking-card .shift-option:last-child{
+      margin-bottom:0;
     }
 
     .mobile-booking-card .shift-option strong{
@@ -1382,10 +1693,22 @@
       transition:transform .15s ease, box-shadow .15s ease;
     }
 
+    .hero-booking-card .cta-main{
+      min-height:56px;
+      font-size:24px;
+      font-weight:700;
+      letter-spacing:-.01em;
+      margin-top:18px;
+      margin-bottom:12px;
+      border-radius:18px;
+    }
+
     .mobile-booking-card .cta-main{
       padding:15px 16px;
       font-size:15px;
       border-radius:15px;
+      margin-top:0;
+      margin-bottom:0;
     }
 
     .cta-main:hover{
@@ -1460,6 +1783,38 @@
       font-size:11px;
     }
 
+    .booking-step1-hooks{
+      display:none;
+      margin-top:14px;
+      margin-bottom:8px;
+      gap:10px;
+    }
+
+    .booking-step1-hooks span{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:rgb(255 255 255 / 92%);
+      font-size:16px;
+      line-height:1.4;
+      font-weight:600;
+    }
+
+    .booking-step1-hooks .ac-icon{
+      width:16px;
+      height:16px;
+      flex:0 0 auto;
+      object-fit:contain;
+    }
+
+    .booking-stage-1 .booking-step-3 .booking-step1-hooks{
+      display:grid;
+    }
+
+    .booking-stage-1 .booking-step-3 .trust-mini{
+      display:none;
+    }
+
     .trust-mini span{
       background:rgb(255 255 255 / 6%);
       padding:5px 8px;
@@ -1469,6 +1824,45 @@
     .mobile-booking-card .trust-mini span{
       padding:5px 8px;
       border-radius:9px;
+      font-size:10px;
+    }
+
+    .mobile-booking-card .selected-shift-chip{
+      margin-bottom:4px;
+    }
+
+    .mobile-booking-card .shift-list{
+      margin:0;
+      padding:0;
+    }
+
+    .mobile-booking-card.booking-stage-2{
+      padding-bottom:14px;
+    }
+
+    .mobile-booking-card.booking-stage-2 .booking-step-block + .booking-step-block{
+      margin-top:8px;
+    }
+
+    .booking-scarcity{
+      margin-top:10px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:10px 16px;
+      border-radius:999px;
+      border:1px solid rgb(255 156 64 / 55%);
+      background:rgb(255 138 0 / 12%);
+      color:#ffd6a8;
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:-.01em;
+      box-shadow:0 14px 26px rgb(255 138 0 / 12%);
+    }
+
+    .hero-booking-card .booking-scarcity{
+      margin:2px auto 0;
     }
 
     .under-cta{
@@ -1590,6 +1984,13 @@
       gap:10px;
     }
 
+    .journey-heading{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
     .journey-num{
       width:34px;
       height:34px;
@@ -1659,7 +2060,7 @@
       display:grid;
       grid-template-columns:minmax(0, 2fr) minmax(280px, 360px);
       gap:12px;
-      align-items:start;
+      align-items:end;
     }
 
     .programs-main-grid{
@@ -1671,10 +2072,11 @@
       background:linear-gradient(135deg,#f9fbff,#fff);
       border:1px solid var(--line);
       border-radius:20px;
-      padding:14px;
+      padding:12px;
       box-shadow:var(--shadow);
-      display:grid;
-      gap:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
     }
 
     .programs-short-block h4{
@@ -1688,17 +2090,21 @@
       margin:0;
       font-size:13px;
       color:var(--muted);
-      line-height:1.5;
+      line-height:1.42;
+      display:-webkit-box;
+      -webkit-line-clamp:4;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
     }
 
     .short-shifts-list{
       display:grid;
-      gap:10px;
+      gap:6px;
     }
 
     .short-shift-card{
-      padding:12px;
-      border-radius:16px;
+      padding:8px 9px;
+      border-radius:12px;
       box-shadow:none;
       background:#fff;
     }
@@ -1707,23 +2113,23 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:8px;
-      margin-bottom:8px;
+      gap:6px;
+      margin-bottom:4px;
     }
 
     .short-shift-head h4{
       margin:0;
-      font-size:14px;
+      font-size:13px;
       letter-spacing:-.01em;
     }
 
     .short-shift-tag{
       display:inline-flex;
       align-items:center;
-      height:22px;
-      padding:0 8px;
+      height:18px;
+      padding:0 6px;
       border-radius:999px;
-      font-size:11px;
+      font-size:9px;
       font-weight:700;
       color:#56627a;
       background:#eef3fb;
@@ -1732,12 +2138,12 @@
     }
 
     .short-shift-meta{
-      margin-top:7px;
+      margin-top:2px;
       display:grid;
-      gap:4px;
-      font-size:12px;
+      gap:1px;
+      font-size:10px;
       color:#556175;
-      line-height:1.45;
+      line-height:1.25;
     }
 
     .mini-card{
@@ -1974,6 +2380,10 @@
       display:flex;
       align-items:center;
       justify-content:center;
+    }
+
+    .media-stage.single-item .media-nav{
+      display:none;
     }
 
     .media-image{
@@ -3019,17 +3429,18 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      min-height:180px;
+      min-height:240px;
       border-radius:16px;
       background:
         radial-gradient(circle at 20% 20%, rgb(255 138 0 / 10%), transparent 26%),
         linear-gradient(135deg,#fff8f1,#fff);
       overflow:hidden;
+      cursor:pointer;
     }
 
     .book-team-cover{
       width:100%;
-      max-width:170px;
+      max-width:220px;
       height:auto;
       display:block;
       object-fit:contain;
@@ -3622,6 +4033,13 @@
       gap:6px;
     }
 
+    .mobile-journey-active-heading{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+
     .mobile-journey-active-index{
       width:26px;
       height:26px;
@@ -3652,6 +4070,10 @@
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:8px;
+      width:100%;
+      min-width:0;
+      max-width:100%;
+      overflow:hidden;
     }
 
     .mobile-journey-switch{
@@ -3666,10 +4088,17 @@
       font-weight:700;
       line-height:1.3;
       cursor:pointer;
-      display:flex;
-      gap:6px;
+      display:grid;
+      grid-template-columns:18px minmax(0,1fr);
+      column-gap:6px;
       align-items:center;
       box-shadow:var(--shadow);
+      width:100%;
+      min-width:0;
+      max-width:100%;
+      overflow:hidden;
+      white-space:normal;
+      word-break:break-word;
     }
 
     .mobile-journey-switch span{
@@ -4446,6 +4875,7 @@
       align-items:center;
       justify-content:center;
       min-height:170px;
+      cursor:pointer;
     }
 
     .mobile-team-feature-cover{
@@ -5236,12 +5666,13 @@
 
     @media (width <= 1180px){
       .hero-booking-card{
-        position:static;
+        position:relative;
         width:100%;
         max-width:none;
         margin-top:16px;
         margin-bottom:0;
         transform:none;
+        z-index:6;
       }
 
       .hero-content,.hero-content.full{
@@ -5357,6 +5788,45 @@
     }
 
     @media (width <= 820px){
+      html,
+      body{
+        max-width:100%;
+        overflow-x:hidden;
+      }
+
+      .page,
+      .screen,
+      .hero-shell,
+      .mobile-hero,
+      .mobile-body-sections,
+      .section-card{
+        width:100%;
+        max-width:100%;
+        min-width:0;
+        overflow-x:clip;
+      }
+
+      .mobile-booking-card,
+      .mobile-booking-card .booking-step-block,
+      .mobile-booking-card .booking-step-1,
+      .mobile-booking-card .booking-step-2,
+      .mobile-booking-card .booking-step-3{
+        max-width:100%;
+        min-width:0;
+      }
+
+      .mobile-booking-card .selected-age-chip,
+      .mobile-booking-card .selected-shift-chip{
+        min-width:0;
+      }
+
+      .mobile-booking-card .selected-age-chip span,
+      .mobile-booking-card .selected-shift-chip span{
+        min-width:0;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+
       .page{
         padding:20px 14px 120px;
       }
@@ -5397,6 +5867,24 @@
         gap:8px;
       }
 
+      .hero-benefits-grid{
+        grid-template-columns:1fr;
+        gap:8px;
+      }
+
+      .hero-benefit-card{
+        min-height:auto;
+        padding:11px 12px;
+      }
+
+      .hero-benefit-card strong{
+        font-size:14px;
+      }
+
+      .hero-benefit-card span{
+        font-size:12px;
+      }
+
       .feature-pill{
         min-width:0;
         width:100%;
@@ -5405,6 +5893,27 @@
 
       .occupancy-badge{
         margin-top:14px;
+      }
+
+      .age-tabs{
+        gap:8px;
+      }
+
+      .age-tab{
+        min-height:96px;
+        padding:10px 8px;
+      }
+
+      .age-tab-range{
+        font-size:17px;
+      }
+
+      .age-tab-track{
+        font-size:11px;
+      }
+
+      .age-tab-note{
+        display:none;
       }
 
       .reviews-score-row{
@@ -5455,10 +5964,15 @@
 
       .mobile-mode-inline{
         flex:1;
+        justify-content:flex-end;
       }
 
       .mobile-mode-inline .mobile-mode-btn{
         flex:1;
+      }
+
+      .mobile-mode-inline .mobile-mode-toggle{
+        margin-left:auto;
       }
 
       .mobile-age-sticky{
@@ -5610,8 +6124,8 @@
               <div class="hero-brand-meta">
                 <div class="hero-brand-label">IT-лагерь для детей 7–14 лет</div>
                 <div class="mode-switch hero-mode-inline" id="desktopModeWrap">
-                  <button class="mode-btn active" id="fullModeBtn">Полная версия</button>
-                  <button class="mode-btn" id="compactModeBtn">Сокращённая версия</button>
+                  <button class="mode-btn active" id="fullModeBtn">Полная</button>
+                  <button class="mode-btn" id="compactModeBtn">Сокращённая</button>
                 </div>
               </div>
             </div>
@@ -5634,25 +6148,23 @@
             <h2 class="hero-title">Лагерь, где ребёнок создаёт, а не потребляет</h2>
             <div class="hero-sub">Программирование, спорт, бассейн и живая лагерная среда без бессмысленного залипания в телефоне.</div>
             <div class="hero-slogan">Мы не играем в игры — мы их создаём</div>
-            <div class="hero-proofline">
-              <span>● реальные проекты за смену</span>
-              <span>● бассейн и спорт каждый день</span>
-              <span>● собственная учебная программа</span>
-            </div>
-
-            <div class="feature-row">
-              <div class="feature-pill">
-                <strong>IT-проекты</strong>
-                Scratch и Python
-              </div>
-              <div class="feature-pill">
-                <strong>Экономика</strong>
-                База финансовой грамотности
-              </div>
-              <div class="feature-pill">
-                <strong>Бассейн</strong>
-                Каждый день
-              </div>
+            <div class="hero-benefits-grid">
+              <article class="hero-benefit-card">
+                <strong>Реальные проекты за смену</strong>
+                <span>Scratch, Python, Minecraft, AI</span>
+              </article>
+              <article class="hero-benefit-card">
+                <strong>Бассейн и спорт каждый день</strong>
+                <span>Движение, свежий воздух, активные игры</span>
+              </article>
+              <article class="hero-benefit-card">
+                <strong>Без телефонов — живая среда</strong>
+                <span>Общение, команда, режим без гаджетов</span>
+              </article>
+              <article class="hero-benefit-card">
+                <strong>Собственная программа и методика</strong>
+                <span>Не просто анимация, а понятный результат</span>
+              </article>
             </div>
 
             <div class="occupancy-badge" id="occupancyBadge">⚡ 63% мест уже занято</div>
@@ -5666,8 +6178,8 @@
               <div class="booking-step">Цена</div>
               <div class="booking-step">Заявка</div>
             </div>
-            <h3 id="desktopBookingTitle">Выберите смену</h3>
-            <p id="desktopBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
+            <h3 id="desktopBookingTitle">Выберите возраст ребёнка</h3>
+            <p id="desktopBookingLead">Мы покажем подходящие смены, программу и условия именно для этого возраста.</p>
 
             <div class="booking-step-block booking-step-1">
               <div class="selected-age-chip" id="desktopAgeChip">
@@ -5675,9 +6187,21 @@
                 <button type="button" data-action="reset-age-selection">×</button>
               </div>
               <div class="age-tabs" id="desktopAgeTabs">
-                <button class="age-tab" data-age="7-9">7–9 лет</button>
-                <button class="age-tab" data-age="10-12">10–12 лет</button>
-                <button class="age-tab" data-age="13-14">13–14 лет</button>
+                <button class="age-tab" data-age="7-9" data-track="track-1">
+                  <span class="age-tab-range">7–9 лет</span>
+                  <span class="age-tab-track">Scratch + Minecraft</span>
+                  <span class="age-tab-note">Первые проекты, визуальная логика, игровые механики</span>
+                </button>
+                <button class="age-tab" data-age="10-12" data-track="track-2">
+                  <span class="age-tab-range">10–12 лет</span>
+                  <span class="age-tab-track">Python</span>
+                  <span class="age-tab-note">Игры, боты и первые проекты</span>
+                </button>
+                <button class="age-tab" data-age="13-14" data-track="track-3">
+                  <span class="age-tab-range">13–14 лет</span>
+                  <span class="age-tab-track">Python + JavaScript + AI</span>
+                  <span class="age-tab-note">Сложнее проекты, нейросети, логика продуктов и презентация</span>
+                </button>
               </div>
             </div>
 
@@ -5692,6 +6216,9 @@
                 <div id="desktopShiftOptions"></div>
               </div>
               <div class="shift-list-veil">Сначала выберите возраст, чтобы активировать список смен.</div>
+              <button class="booking-all-shifts-link" type="button" data-action="open-all-shifts">
+                Смотреть все смены для текущего возраста
+              </button>
             </div>
 
             <div class="booking-step-block booking-step-3">
@@ -5700,11 +6227,17 @@
               </div>
               <div class="under-cta" id="desktopBookingHint"></div>
               <div class="booking-hint" id="desktopBookingHintInline" aria-live="polite"></div>
-              <div class="trust-mini">
-                <span>45 мест в смене</span>
-                <span>IT + спорт</span>
-                <span>Без гаджетов</span>
+              <div class="booking-step1-hooks">
+                <span><img class="ac-icon" src="/assets/icons/check.svg" alt="" aria-hidden="true">Реальные проекты, а не занятия</span>
+                <span><img class="ac-icon" src="/assets/icons/pool.svg" alt="" aria-hidden="true">Бассейн и движение каждый день</span>
+                <span><img class="ac-icon" src="/assets/icons/lock.svg" alt="" aria-hidden="true">Живая среда без телефонов</span>
               </div>
+              <div class="trust-mini">
+                <span>IT-проекты по возрасту: Scratch, Python, Minecraft, AI</span>
+                <span>Бассейн, спорт и свежий воздух каждый день</span>
+                <span>Безопасность и команда наставников 24/7</span>
+              </div>
+              <div class="booking-scarcity">63% мест уже занято</div>
             </div>
           </div>
           <!-- /@block:booking-card -->
@@ -5738,23 +6271,31 @@
 
             <div class="journey-grid">
               <div class="journey-card">
-                <div class="journey-num">1</div>
-                <h4>Быстрое включение</h4>
+                <div class="journey-heading">
+                  <div class="journey-num">1</div>
+                  <h4>Быстрое включение</h4>
+                </div>
                 <p>В первый же день дети знакомятся, собираются в команды и входят в игровую механику лагеря без длинной раскачки.</p>
               </div>
               <div class="journey-card">
-                <div class="journey-num">2</div>
-                <h4>Практика вместо теории</h4>
+                <div class="journey-heading">
+                  <div class="journey-num">2</div>
+                  <h4>Практика вместо теории</h4>
+                </div>
                 <p>Scratch, Python, Minecraft, AI и мини-проекты — не пересказ, а работа руками и головой каждый день.</p>
               </div>
               <div class="journey-card">
-                <div class="journey-num">3</div>
-                <h4>Живая среда</h4>
+                <div class="journey-heading">
+                  <div class="journey-num">3</div>
+                  <h4>Живая среда</h4>
+                </div>
                 <p>Бассейн, спорт, внутренняя экономика, командные задания и настоящая лагерная жизнь без залипания в телефоне.</p>
               </div>
               <div class="journey-card">
-                <div class="journey-num">4</div>
-                <h4>Финальный результат</h4>
+                <div class="journey-heading">
+                  <div class="journey-num">4</div>
+                  <h4>Финальный результат</h4>
+                </div>
                 <p>К концу смены у ребёнка есть проект, опыт защиты, новые друзья и ощущение: «я реально умею больше, чем неделю назад».</p>
               </div>
             </div>
@@ -5976,8 +6517,19 @@
                 </div>
               </div>
               <div class="mobile-mode-switch mobile-mode-inline">
-                <button class="mobile-mode-btn active" id="mobileFullModeBtn">Полная</button>
-                <button class="mobile-mode-btn" id="mobileCompactModeBtn">Сокращённая</button>
+                <button
+                  class="mobile-mode-toggle"
+                  id="mobileModeToggle"
+                  type="button"
+                  role="switch"
+                  aria-checked="true"
+                  aria-label="Переключить подробный режим"
+                >
+                  <span class="mobile-mode-toggle-track" aria-hidden="true">
+                    <span class="mobile-mode-toggle-thumb"></span>
+                  </span>
+                  <span class="mobile-mode-toggle-label">Подробный</span>
+                </button>
               </div>
             </div>
           </div>
@@ -6010,10 +6562,22 @@
             <div class="mobile-age-gate" id="mobileAgeGateCard" data-mobile-age-gate>
               <h3>Выберите возраст ребёнка</h3>
               <p>Сначала выберите возраст, чтобы увидеть подходящие смены и условия.</p>
-              <div class="age-tabs" id="mobileAgeTabs">
-                <button class="age-tab" data-age="7-9">7–9 лет</button>
-                <button class="age-tab" data-age="10-12">10–12 лет</button>
-                <button class="age-tab" data-age="13-14">13–14 лет</button>
+              <div class="age-tabs mobile-age-cards" id="mobileAgeTabs">
+                <button class="age-tab" data-age="7-9" data-track="track-1">
+                  <span class="age-tab-range">7–9 лет</span>
+                  <span class="age-tab-track">Scratch + Minecraft</span>
+                  <span class="age-tab-note">Первые проекты, визуальная логика, игровые механики</span>
+                </button>
+                <button class="age-tab" data-age="10-12" data-track="track-2">
+                  <span class="age-tab-range">10–12 лет</span>
+                  <span class="age-tab-track">Python</span>
+                  <span class="age-tab-note">Игры, боты, мини-проекты и уверенный вход в код</span>
+                </button>
+                <button class="age-tab" data-age="13-14" data-track="track-3">
+                  <span class="age-tab-range">13–14 лет</span>
+                  <span class="age-tab-track">Python + JavaScript + AI</span>
+                  <span class="age-tab-note">Сложнее проекты, нейросети, логика продуктов и презентация</span>
+                </button>
               </div>
             </div>
 
@@ -6036,8 +6600,8 @@
                 <div class="booking-step">Цена</div>
                 <div class="booking-step">Заявка</div>
               </div>
-              <h3 id="mobileBookingTitle">Выберите смену</h3>
-              <p id="mobileBookingLead">Сначала выберите возраст, затем смену — и мы покажем актуальную цену и условия.</p>
+              <h3 id="mobileBookingTitle">Выберите возраст ребёнка</h3>
+              <p id="mobileBookingLead">Мы покажем подходящие смены, программу и условия именно для этого возраста.</p>
 
               <div class="booking-step-block booking-step-1">
                 <div class="selected-age-chip" id="mobileAgeChip">
@@ -6066,10 +6630,11 @@
                 <div class="cta-subtext" id="mobileBookingHint"></div>
                 <div class="booking-hint" id="mobileBookingHintInline" aria-live="polite"></div>
                 <div class="trust-mini">
-                  <span>45 мест в смене</span>
-                  <span>IT + спорт</span>
-                  <span>Без гаджетов</span>
+                  <span>IT-проекты по возрасту: Scratch, Python, Minecraft, AI</span>
+                  <span>Бассейн, спорт и свежий воздух каждый день</span>
+                  <span>Безопасность и команда наставников 24/7</span>
                 </div>
+                <div class="booking-scarcity">63% мест уже занято</div>
               </div>
             </div>
           </div>
@@ -6300,13 +6865,14 @@
 <script id="ac-build-main-js">
 /* src/scripts/main.js */
     const shifts = [
-      {id:'shift-1',title:'1 смена',dates:'30 мая — 8 июня',start:'2025-05-30',end:'2025-06-08',price:94800,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
-      {id:'shift-2',title:'2 смена',dates:'10 июня — 16 июня',start:'2025-06-10',end:'2025-06-16',price:57600,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
-      {id:'shift-3',title:'3 смена',dates:'16 июня — 23 июня',start:'2025-06-16',end:'2025-06-23',price:78000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
-      {id:'shift-4',title:'4 смена',dates:'10 июня — 23 июня',start:'2025-06-10',end:'2025-06-23',price:114000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'},
-      {id:'shift-5',title:'5 смена',dates:'3 августа — 15 августа',start:'2025-08-03',end:'2025-08-15',price:107280,left:10,occupied:29,badge:'',desc:'Летняя смена: проекты, спорт и командный формат с фокусом на результат.'},
-      {id:'shift-6',title:'6 смена',dates:'17 августа — 26 августа',start:'2025-08-17',end:'2025-08-26',price:83520,left:9,occupied:27,badge:'',desc:'Финальная смена сезона: закрепление навыков и защита мини-проектов.'}
+      {id:'shift-1',title:'1',dates:'30 мая — 8 июня',start:'2025-05-30',end:'2025-06-08',price:79000,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
+      {id:'shift-2',title:'2.1',dates:'10 июня — 16 июня',start:'2025-06-10',end:'2025-06-16',price:48000,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
+      {id:'shift-3',title:'2.2',dates:'16 июня — 23 июня',start:'2025-06-16',end:'2025-06-23',price:65000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
+      {id:'shift-4',title:'2',dates:'10 июня — 23 июня',start:'2025-06-10',end:'2025-06-23',price:95000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'},
+      {id:'shift-5',title:'3',dates:'3 августа — 15 августа',start:'2025-08-03',end:'2025-08-15',price:89400,left:10,occupied:29,badge:'',desc:'Летняя смена: проекты, спорт и командный формат с фокусом на результат.'},
+      {id:'shift-6',title:'4',dates:'17 августа — 26 августа',start:'2025-08-17',end:'2025-08-26',price:69600,left:9,occupied:27,badge:'',desc:'Финальная смена сезона: закрепление навыков и защита мини-проектов.'}
     ];
+    const OFFER_DISCOUNT_FACTOR = 0.95;
 
     const mediaContent = {
       references: {
@@ -6546,6 +7112,7 @@
     let mediaIndex = 0;
     let mediaType = 'photo';
     let activePhotoList = [];
+    let mediaCustomCaption = '';
     state.desktopMode = state.desktopMode || 'full';
     state.mobileMode = state.mobileMode || 'full';
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
@@ -6708,12 +7275,29 @@
       }, 5500);
     }
 
-    function openMedia(type, index){
+    function getActiveMediaList(){
+      if(mediaType === 'photo'){
+        return activePhotoList.length ? activePhotoList : mediaContent.photos;
+      }
+      return mediaContent.videos;
+    }
+
+    function updateMediaNavState(){
+      const stage = document.getElementById('mediaStage');
+      const list = getActiveMediaList();
+      const single = list.length <= 1;
+      if(stage){
+        stage.classList.toggle('single-item', single);
+      }
+    }
+
+    function openMedia(type, index, options = {}){
       closeTransientModals('media');
       mediaType = type;
       mediaIndex = index;
+      mediaCustomCaption = options.caption || '';
       if(type === 'photo'){
-        const source = activePhotoList.length ? activePhotoList : mediaContent.photos;
+        const source = getActiveMediaList();
         const item = source[index];
         track('photo_open', {
           category: item?.cat || '',
@@ -6728,12 +7312,14 @@
         });
       }
       renderMediaViewer();
+      updateMediaNavState();
       document.getElementById('mediaLightbox').classList.remove('hidden');
     }
 
     function closeMedia(){
       document.getElementById('mediaLightbox').classList.add('hidden');
       document.getElementById('mediaContent').innerHTML = '';
+      mediaCustomCaption = '';
     }
 
     function closeTransientModals(except = ''){
@@ -7114,11 +7700,11 @@
       const caption = document.getElementById('mediaCaption');
 
       if(mediaType === 'photo'){
-        const source = activePhotoList.length ? activePhotoList : mediaContent.photos;
+        const source = getActiveMediaList();
         const item = source[mediaIndex];
         if(!item) return;
         content.innerHTML = `<img class="media-image" src="${item.src}" />`;
-        caption.textContent = `${photoCatLabel(item.cat)} · ${mediaIndex + 1}/${source.length}`;
+        caption.textContent = mediaCustomCaption || `${photoCatLabel(item.cat)} · ${mediaIndex + 1}/${source.length}`;
       }
 
       if(mediaType === 'video'){
@@ -7149,17 +7735,15 @@
     }
 
     function nextMedia(){
-      const list = mediaType === 'photo'
-        ? (activePhotoList.length ? activePhotoList : mediaContent.photos)
-        : mediaContent.videos;
+      const list = getActiveMediaList();
+      if(list.length <= 1) return;
       mediaIndex = (mediaIndex + 1) % list.length;
       renderMediaViewer();
     }
 
     function prevMedia(){
-      const list = mediaType === 'photo'
-        ? (activePhotoList.length ? activePhotoList : mediaContent.photos)
-        : mediaContent.videos;
+      const list = getActiveMediaList();
+      if(list.length <= 1) return;
       mediaIndex = (mediaIndex - 1 + list.length) % list.length;
       renderMediaViewer();
     }
@@ -7193,6 +7777,16 @@
         if(!stayGallery.length) return true;
         activePhotoList = stayGallery;
         openMedia('photo', Math.max(0, Math.min(index, stayGallery.length - 1)));
+        return true;
+      }
+
+      if(action === 'open-book-photo'){
+        activePhotoList = [{
+          src:'/assets/images/cdn-cache/8fc8172e_8991804334.webp',
+          cat:'all',
+          alt:'Собственная книга по Python'
+        }];
+        openMedia('photo', 0, {caption:'Собственная книга по Python'});
         return true;
       }
 
@@ -7335,6 +7929,11 @@
         if(shiftId){
           toggleShiftOptionPanel(viewKey, 'calendarId', shiftId);
         }
+        return true;
+      }
+
+      if(action === 'open-all-shifts'){
+        navigateToSection('section-programs');
         return true;
       }
 
@@ -7742,7 +8341,7 @@
     function getShiftContextLine(shift){
       if(!shift) return '';
       if(!hasSelectedAge()){
-        return 'Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.';
+        return '';
       }
       const age = ageLabel(state.age);
       if(shift.id === 'shift-1'){
@@ -7784,7 +8383,7 @@
 
       if(!shift){
         return {
-          text:'Выберите смену',
+          text:'Показать смены',
           disabled:true,
           hint:''
         };
@@ -7844,12 +8443,9 @@
       root.querySelectorAll('.booking-step').forEach((el, idx) => {
         const num = idx + 1;
         el.classList.remove('active','done');
-        el.classList.remove('pulse');
+        el.dataset.step = String(num);
         if(num < current) el.classList.add('done');
-        if(num === current){
-          el.classList.add('active');
-          el.classList.add('pulse');
-        }
+        if(num === current) el.classList.add('active');
       });
     }
 
@@ -7864,19 +8460,28 @@
       const shiftChipText = document.getElementById(`${prefix}ShiftChipText`);
 
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
+      const isMobile = prefix === 'mobile';
+      const stepOne = isMobile ? document.querySelector('#mobileBookingCard .booking-step-1') : null;
+      const stepTwo = isMobile ? document.querySelector('#mobileBookingCard .booking-step-2') : null;
+      if(isMobile && stepTwo && shiftChip.parentElement !== stepTwo){
+        stepTwo.insertBefore(shiftChip, stepTwo.firstChild || null);
+      }
 
       shiftList.classList.remove('disabled','highlight','collapsed');
       ctaWrap.classList.remove('highlight');
       ageTabs.classList.remove('hidden');
       ageChip.classList.remove('visible');
       shiftChip.classList.remove('visible');
+      if(isMobile){
+        document.getElementById('mobileBookingCard')?.classList.remove('has-mobile-summary-chips');
+      }
 
       if(!hasSelectedAge()){
         shiftList.classList.add('disabled');
         return;
       }
 
-      ageChipText.textContent = `Возраст: ${ageLabel(state.age)}`;
+      ageChipText.textContent = isMobile ? ageLabel(state.age) : `Возраст: ${ageLabel(state.age)}`;
       ageChip.classList.add('visible');
       ageTabs.classList.add('hidden');
 
@@ -7888,7 +8493,11 @@
 
       const shift = getSelectedShift();
       if(shift){
-        shiftChipText.textContent = `Смена: ${shift.title} · ${shift.dates}`;
+        shiftChipText.textContent = isMobile ? shift.dates : `Смена: ${shift.title} · ${shift.dates}`;
+        if(isMobile && stepOne){
+          stepOne.insertBefore(shiftChip, ageTabs);
+          document.getElementById('mobileBookingCard')?.classList.add('has-mobile-summary-chips');
+        }
         shiftChip.classList.add('visible');
         shiftList.classList.add('collapsed');
       }
@@ -8017,7 +8626,7 @@
 
       if(!hasSelectedAge()){
         if(title) title.textContent = 'Выберите возраст ребёнка';
-        if(lead) lead.textContent = 'Сначала выберите возраст, чтобы активировать список смен.';
+        if(lead) lead.textContent = 'Мы покажем подходящие смены, программу и условия именно для этого возраста.';
         if(info) info.innerHTML = '';
         return;
       }
@@ -8170,11 +8779,19 @@
       const mobileView = document.getElementById('mobileView');
       const fullBtn = document.getElementById('mobileFullModeBtn');
       const compactBtn = document.getElementById('mobileCompactModeBtn');
-      if(!mobileView || !fullBtn || !compactBtn) return;
+      const mobileModeToggle = document.getElementById('mobileModeToggle');
+      if(!mobileView) return;
 
       mobileView.classList.toggle('mobile-compact-mode', state.mobileMode === 'compact');
-      fullBtn.classList.toggle('active', state.mobileMode === 'full');
-      compactBtn.classList.toggle('active', state.mobileMode === 'compact');
+      if(fullBtn && compactBtn){
+        fullBtn.classList.toggle('active', state.mobileMode === 'full');
+        compactBtn.classList.toggle('active', state.mobileMode === 'compact');
+      }
+      if(mobileModeToggle){
+        const isFull = state.mobileMode === 'full';
+        mobileModeToggle.classList.toggle('is-full', isFull);
+        mobileModeToggle.setAttribute('aria-checked', String(isFull));
+      }
       updateMobileAgeGateUi();
     }
 
@@ -8188,8 +8805,11 @@
     document.getElementById('mobileBtn').addEventListener('click', () => switchView('mobile'));
     document.getElementById('fullModeBtn').addEventListener('click', () => switchDesktopMode('full'));
     document.getElementById('compactModeBtn').addEventListener('click', () => switchDesktopMode('compact'));
-    document.getElementById('mobileFullModeBtn').addEventListener('click', () => switchMobileMode('full'));
-    document.getElementById('mobileCompactModeBtn').addEventListener('click', () => switchMobileMode('compact'));
+    document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => switchMobileMode('full'));
+    document.getElementById('mobileCompactModeBtn')?.addEventListener('click', () => switchMobileMode('compact'));
+    document.getElementById('mobileModeToggle')?.addEventListener('click', () => {
+      switchMobileMode(state.mobileMode === 'full' ? 'compact' : 'full');
+    });
 
     document.addEventListener('click', (e) => {
       if(handleDataActionClick(e.target)){
@@ -8654,7 +9274,7 @@
             </span>
           </div>
           <p>${s.desc}</p>
-          <div class="shift-context-line">${getShiftContextLine(s)}</div>
+          ${getShiftContextLine(s) ? `<div class="shift-context-line">${getShiftContextLine(s)}</div>` : ''}
         </div>
       `).join('');
 
@@ -8662,7 +9282,7 @@
         shortGrid.innerHTML = shortShifts.map((s, idx) => `
           <div class="mini-card short-shift-card">
             <div class="short-shift-head">
-              <h4>Смена 2.${idx + 1}</h4>
+              <h4>${s.title}</h4>
               <span class="short-shift-tag">короткий формат</span>
             </div>
             <div class="price-row">
@@ -8896,7 +9516,7 @@
 
         const bookCard = `
         <div class="team-card book-team-card">
-          <div class="book-team-cover-wrap">
+          <div class="book-team-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
             <img
               class="book-team-cover"
               src="/assets/images/cdn-cache/8fc8172e_8991804334.webp"
@@ -9005,8 +9625,10 @@
 
         mobileJourneyContent.innerHTML = `
           <article class="mobile-journey-active">
-            <div class="mobile-journey-active-index">${safeStep + 1}</div>
-            <strong>${activeStep.title}</strong>
+            <div class="mobile-journey-active-heading">
+              <div class="mobile-journey-active-index">${safeStep + 1}</div>
+              <strong>${activeStep.title}</strong>
+            </div>
             <p>${activeStep.text}</p>
           </article>
           <div class="mobile-journey-switcher">
@@ -9062,9 +9684,6 @@
               >
                 <span aria-hidden="true">📅</span><span>Календарь</span>
               </button>
-              ${hasSelectedAge()
-                ? ''
-                : '<div class="mobile-program-hint">Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.</div>'}
             </article>
           `;
         } else {
@@ -9239,7 +9858,7 @@
 
         mobileInlineTeamList.innerHTML = `
           <article class="mobile-team-feature-card">
-            <div class="mobile-team-feature-cover-wrap">
+            <div class="mobile-team-feature-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
               <img class="mobile-team-feature-cover" src="/assets/images/cdn-cache/8fc8172e_8991804334.webp" alt="Собственная книга по Python">
             </div>
             <strong>Собственная книга по Python</strong>
@@ -9386,6 +10005,7 @@
     }
 
     function renderAll(){
+      renderShiftCards();
       renderShiftOptions('desktopShiftOptions');
       renderShiftOptions('mobileShiftOptions');
       renderBookingPanels();
@@ -9513,14 +10133,12 @@
     function showOffer(){
       const card = document.getElementById('offerCard');
 
-      if(state.offerStage === 0){
-        state.offerPrice = Math.round(state.basePrice * 0.96);
+      const selectedShift = getSelectedShift();
+      const basePrice = state.basePrice || (selectedShift ? selectedShift.price : null);
+      if(basePrice){
+        state.offerPrice = Math.round(basePrice * OFFER_DISCOUNT_FACTOR);
         state.expiresAt = Date.now() + 72 * 60 * 60 * 1000;
         state.offerStage = 1;
-      } else if(state.offerStage === 1 && state.expiresAt && Date.now() < state.expiresAt){
-        state.offerPrice = Math.round(state.offerPrice * 0.97);
-        state.expiresAt = Date.now() + 24 * 60 * 60 * 1000;
-        state.offerStage = 2;
       }
 
       state.code = generateCode();
@@ -9530,10 +10148,10 @@
 
       card.innerHTML = `
         <div class="offer-headline">
-          <h3>${state.offerStage === 2 ? 'Рады, что вы вернулись' : 'Удалось закрепить цену'}</h3>
+          <h3>Удалось закрепить цену</h3>
           <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
         </div>
-        <p>${state.offerStage === 2 ? 'Мы смогли ещё немного улучшить условия. Эта цена действует 24 часа.' : 'Ваша цена сохранится на ограниченное время, чтобы вы могли спокойно принять решение.'}</p>
+        <p>Ваша цена сохранится на ограниченное время, чтобы вы могли спокойно принять решение.</p>
         <div class="big-price">${formatPrice(state.offerPrice)}</div>
         <div class="summary-timer" id="offerTimer"></div>
         <div class="offer-code">Код бронирования: ${state.code}</div>
@@ -9760,7 +10378,7 @@
         price_final: price || null,
         price_text: price ? formatPrice(price) : '—',
         promo_code: state.code || '',
-        promo_status: state.offerPrice ? (state.offerStage >= 2 ? 'improved_again' : 'fixed') : 'none',
+        promo_status: state.offerPrice ? 'fixed' : 'none',
         mode: state.view === 'mobile'
           ? `mobile:${state.mobileMode || 'full'}`
           : `desktop:${state.desktopMode || 'full'}`,

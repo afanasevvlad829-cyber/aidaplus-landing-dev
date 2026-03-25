@@ -1,11 +1,12 @@
     const shifts = [
-      {id:'shift-1',title:'1 смена',dates:'30 мая — 8 июня',start:'2025-05-30',end:'2025-06-08',price:94800,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
-      {id:'shift-2',title:'2 смена',dates:'10 июня — 16 июня',start:'2025-06-10',end:'2025-06-16',price:57600,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
-      {id:'shift-3',title:'3 смена',dates:'16 июня — 23 июня',start:'2025-06-16',end:'2025-06-23',price:78000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
-      {id:'shift-4',title:'4 смена',dates:'10 июня — 23 июня',start:'2025-06-10',end:'2025-06-23',price:114000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'},
-      {id:'shift-5',title:'5 смена',dates:'3 августа — 15 августа',start:'2025-08-03',end:'2025-08-15',price:107280,left:10,occupied:29,badge:'',desc:'Летняя смена: проекты, спорт и командный формат с фокусом на результат.'},
-      {id:'shift-6',title:'6 смена',dates:'17 августа — 26 августа',start:'2025-08-17',end:'2025-08-26',price:83520,left:9,occupied:27,badge:'',desc:'Финальная смена сезона: закрепление навыков и защита мини-проектов.'}
+      {id:'shift-1',title:'1',dates:'30 мая — 8 июня',start:'2025-05-30',end:'2025-06-08',price:79000,left:12,occupied:33,badge:'HIT',desc:'Визуальное программирование, первые игры, логика.'},
+      {id:'shift-2',title:'2.1',dates:'10 июня — 16 июня',start:'2025-06-10',end:'2025-06-16',price:48000,left:8,occupied:37,badge:'',desc:'Python, веб-проекты и командные мини-спринты.'},
+      {id:'shift-3',title:'2.2',dates:'16 июня — 23 июня',start:'2025-06-16',end:'2025-06-23',price:65000,left:5,occupied:40,badge:'',desc:'AI-практика, анализ данных, проектная защита.'},
+      {id:'shift-4',title:'2',dates:'10 июня — 23 июня',start:'2025-06-10',end:'2025-06-23',price:95000,left:14,occupied:31,badge:'',desc:'Длинная смена: полный цикл обучения и проектной практики.'},
+      {id:'shift-5',title:'3',dates:'3 августа — 15 августа',start:'2025-08-03',end:'2025-08-15',price:89400,left:10,occupied:29,badge:'',desc:'Летняя смена: проекты, спорт и командный формат с фокусом на результат.'},
+      {id:'shift-6',title:'4',dates:'17 августа — 26 августа',start:'2025-08-17',end:'2025-08-26',price:69600,left:9,occupied:27,badge:'',desc:'Финальная смена сезона: закрепление навыков и защита мини-проектов.'}
     ];
+    const OFFER_DISCOUNT_FACTOR = 0.95;
 
     const mediaContent = {
       references: {
@@ -245,6 +246,7 @@
     let mediaIndex = 0;
     let mediaType = 'photo';
     let activePhotoList = [];
+    let mediaCustomCaption = '';
     state.desktopMode = state.desktopMode || 'full';
     state.mobileMode = state.mobileMode || 'full';
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
@@ -407,12 +409,29 @@
       }, 5500);
     }
 
-    function openMedia(type, index){
+    function getActiveMediaList(){
+      if(mediaType === 'photo'){
+        return activePhotoList.length ? activePhotoList : mediaContent.photos;
+      }
+      return mediaContent.videos;
+    }
+
+    function updateMediaNavState(){
+      const stage = document.getElementById('mediaStage');
+      const list = getActiveMediaList();
+      const single = list.length <= 1;
+      if(stage){
+        stage.classList.toggle('single-item', single);
+      }
+    }
+
+    function openMedia(type, index, options = {}){
       closeTransientModals('media');
       mediaType = type;
       mediaIndex = index;
+      mediaCustomCaption = options.caption || '';
       if(type === 'photo'){
-        const source = activePhotoList.length ? activePhotoList : mediaContent.photos;
+        const source = getActiveMediaList();
         const item = source[index];
         track('photo_open', {
           category: item?.cat || '',
@@ -427,12 +446,14 @@
         });
       }
       renderMediaViewer();
+      updateMediaNavState();
       document.getElementById('mediaLightbox').classList.remove('hidden');
     }
 
     function closeMedia(){
       document.getElementById('mediaLightbox').classList.add('hidden');
       document.getElementById('mediaContent').innerHTML = '';
+      mediaCustomCaption = '';
     }
 
     function closeTransientModals(except = ''){
@@ -813,11 +834,11 @@
       const caption = document.getElementById('mediaCaption');
 
       if(mediaType === 'photo'){
-        const source = activePhotoList.length ? activePhotoList : mediaContent.photos;
+        const source = getActiveMediaList();
         const item = source[mediaIndex];
         if(!item) return;
         content.innerHTML = `<img class="media-image" src="${item.src}" />`;
-        caption.textContent = `${photoCatLabel(item.cat)} · ${mediaIndex + 1}/${source.length}`;
+        caption.textContent = mediaCustomCaption || `${photoCatLabel(item.cat)} · ${mediaIndex + 1}/${source.length}`;
       }
 
       if(mediaType === 'video'){
@@ -848,17 +869,15 @@
     }
 
     function nextMedia(){
-      const list = mediaType === 'photo'
-        ? (activePhotoList.length ? activePhotoList : mediaContent.photos)
-        : mediaContent.videos;
+      const list = getActiveMediaList();
+      if(list.length <= 1) return;
       mediaIndex = (mediaIndex + 1) % list.length;
       renderMediaViewer();
     }
 
     function prevMedia(){
-      const list = mediaType === 'photo'
-        ? (activePhotoList.length ? activePhotoList : mediaContent.photos)
-        : mediaContent.videos;
+      const list = getActiveMediaList();
+      if(list.length <= 1) return;
       mediaIndex = (mediaIndex - 1 + list.length) % list.length;
       renderMediaViewer();
     }
@@ -892,6 +911,16 @@
         if(!stayGallery.length) return true;
         activePhotoList = stayGallery;
         openMedia('photo', Math.max(0, Math.min(index, stayGallery.length - 1)));
+        return true;
+      }
+
+      if(action === 'open-book-photo'){
+        activePhotoList = [{
+          src:'/assets/images/cdn-cache/8fc8172e_8991804334.webp',
+          cat:'all',
+          alt:'Собственная книга по Python'
+        }];
+        openMedia('photo', 0, {caption:'Собственная книга по Python'});
         return true;
       }
 
@@ -1034,6 +1063,11 @@
         if(shiftId){
           toggleShiftOptionPanel(viewKey, 'calendarId', shiftId);
         }
+        return true;
+      }
+
+      if(action === 'open-all-shifts'){
+        navigateToSection('section-programs');
         return true;
       }
 
@@ -1441,7 +1475,7 @@
     function getShiftContextLine(shift){
       if(!shift) return '';
       if(!hasSelectedAge()){
-        return 'Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.';
+        return '';
       }
       const age = ageLabel(state.age);
       if(shift.id === 'shift-1'){
@@ -1483,7 +1517,7 @@
 
       if(!shift){
         return {
-          text:'Выберите смену',
+          text:'Показать смены',
           disabled:true,
           hint:''
         };
@@ -1543,12 +1577,9 @@
       root.querySelectorAll('.booking-step').forEach((el, idx) => {
         const num = idx + 1;
         el.classList.remove('active','done');
-        el.classList.remove('pulse');
+        el.dataset.step = String(num);
         if(num < current) el.classList.add('done');
-        if(num === current){
-          el.classList.add('active');
-          el.classList.add('pulse');
-        }
+        if(num === current) el.classList.add('active');
       });
     }
 
@@ -1563,19 +1594,28 @@
       const shiftChipText = document.getElementById(`${prefix}ShiftChipText`);
 
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
+      const isMobile = prefix === 'mobile';
+      const stepOne = isMobile ? document.querySelector('#mobileBookingCard .booking-step-1') : null;
+      const stepTwo = isMobile ? document.querySelector('#mobileBookingCard .booking-step-2') : null;
+      if(isMobile && stepTwo && shiftChip.parentElement !== stepTwo){
+        stepTwo.insertBefore(shiftChip, stepTwo.firstChild || null);
+      }
 
       shiftList.classList.remove('disabled','highlight','collapsed');
       ctaWrap.classList.remove('highlight');
       ageTabs.classList.remove('hidden');
       ageChip.classList.remove('visible');
       shiftChip.classList.remove('visible');
+      if(isMobile){
+        document.getElementById('mobileBookingCard')?.classList.remove('has-mobile-summary-chips');
+      }
 
       if(!hasSelectedAge()){
         shiftList.classList.add('disabled');
         return;
       }
 
-      ageChipText.textContent = `Возраст: ${ageLabel(state.age)}`;
+      ageChipText.textContent = isMobile ? ageLabel(state.age) : `Возраст: ${ageLabel(state.age)}`;
       ageChip.classList.add('visible');
       ageTabs.classList.add('hidden');
 
@@ -1587,7 +1627,11 @@
 
       const shift = getSelectedShift();
       if(shift){
-        shiftChipText.textContent = `Смена: ${shift.title} · ${shift.dates}`;
+        shiftChipText.textContent = isMobile ? shift.dates : `Смена: ${shift.title} · ${shift.dates}`;
+        if(isMobile && stepOne){
+          stepOne.insertBefore(shiftChip, ageTabs);
+          document.getElementById('mobileBookingCard')?.classList.add('has-mobile-summary-chips');
+        }
         shiftChip.classList.add('visible');
         shiftList.classList.add('collapsed');
       }
@@ -1716,7 +1760,7 @@
 
       if(!hasSelectedAge()){
         if(title) title.textContent = 'Выберите возраст ребёнка';
-        if(lead) lead.textContent = 'Сначала выберите возраст, чтобы активировать список смен.';
+        if(lead) lead.textContent = 'Мы покажем подходящие смены, программу и условия именно для этого возраста.';
         if(info) info.innerHTML = '';
         return;
       }
@@ -1869,11 +1913,19 @@
       const mobileView = document.getElementById('mobileView');
       const fullBtn = document.getElementById('mobileFullModeBtn');
       const compactBtn = document.getElementById('mobileCompactModeBtn');
-      if(!mobileView || !fullBtn || !compactBtn) return;
+      const mobileModeToggle = document.getElementById('mobileModeToggle');
+      if(!mobileView) return;
 
       mobileView.classList.toggle('mobile-compact-mode', state.mobileMode === 'compact');
-      fullBtn.classList.toggle('active', state.mobileMode === 'full');
-      compactBtn.classList.toggle('active', state.mobileMode === 'compact');
+      if(fullBtn && compactBtn){
+        fullBtn.classList.toggle('active', state.mobileMode === 'full');
+        compactBtn.classList.toggle('active', state.mobileMode === 'compact');
+      }
+      if(mobileModeToggle){
+        const isFull = state.mobileMode === 'full';
+        mobileModeToggle.classList.toggle('is-full', isFull);
+        mobileModeToggle.setAttribute('aria-checked', String(isFull));
+      }
       updateMobileAgeGateUi();
     }
 
@@ -1887,8 +1939,11 @@
     document.getElementById('mobileBtn').addEventListener('click', () => switchView('mobile'));
     document.getElementById('fullModeBtn').addEventListener('click', () => switchDesktopMode('full'));
     document.getElementById('compactModeBtn').addEventListener('click', () => switchDesktopMode('compact'));
-    document.getElementById('mobileFullModeBtn').addEventListener('click', () => switchMobileMode('full'));
-    document.getElementById('mobileCompactModeBtn').addEventListener('click', () => switchMobileMode('compact'));
+    document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => switchMobileMode('full'));
+    document.getElementById('mobileCompactModeBtn')?.addEventListener('click', () => switchMobileMode('compact'));
+    document.getElementById('mobileModeToggle')?.addEventListener('click', () => {
+      switchMobileMode(state.mobileMode === 'full' ? 'compact' : 'full');
+    });
 
     document.addEventListener('click', (e) => {
       if(handleDataActionClick(e.target)){
@@ -2353,7 +2408,7 @@
             </span>
           </div>
           <p>${s.desc}</p>
-          <div class="shift-context-line">${getShiftContextLine(s)}</div>
+          ${getShiftContextLine(s) ? `<div class="shift-context-line">${getShiftContextLine(s)}</div>` : ''}
         </div>
       `).join('');
 
@@ -2361,7 +2416,7 @@
         shortGrid.innerHTML = shortShifts.map((s, idx) => `
           <div class="mini-card short-shift-card">
             <div class="short-shift-head">
-              <h4>Смена 2.${idx + 1}</h4>
+              <h4>${s.title}</h4>
               <span class="short-shift-tag">короткий формат</span>
             </div>
             <div class="price-row">
@@ -2595,7 +2650,7 @@
 
         const bookCard = `
         <div class="team-card book-team-card">
-          <div class="book-team-cover-wrap">
+          <div class="book-team-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
             <img
               class="book-team-cover"
               src="/assets/images/cdn-cache/8fc8172e_8991804334.webp"
@@ -2704,8 +2759,10 @@
 
         mobileJourneyContent.innerHTML = `
           <article class="mobile-journey-active">
-            <div class="mobile-journey-active-index">${safeStep + 1}</div>
-            <strong>${activeStep.title}</strong>
+            <div class="mobile-journey-active-heading">
+              <div class="mobile-journey-active-index">${safeStep + 1}</div>
+              <strong>${activeStep.title}</strong>
+            </div>
             <p>${activeStep.text}</p>
           </article>
           <div class="mobile-journey-switcher">
@@ -2761,9 +2818,6 @@
               >
                 <span aria-hidden="true">📅</span><span>Календарь</span>
               </button>
-              ${hasSelectedAge()
-                ? ''
-                : '<div class="mobile-program-hint">Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.</div>'}
             </article>
           `;
         } else {
@@ -2938,7 +2992,7 @@
 
         mobileInlineTeamList.innerHTML = `
           <article class="mobile-team-feature-card">
-            <div class="mobile-team-feature-cover-wrap">
+            <div class="mobile-team-feature-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
               <img class="mobile-team-feature-cover" src="/assets/images/cdn-cache/8fc8172e_8991804334.webp" alt="Собственная книга по Python">
             </div>
             <strong>Собственная книга по Python</strong>
@@ -3085,6 +3139,7 @@
     }
 
     function renderAll(){
+      renderShiftCards();
       renderShiftOptions('desktopShiftOptions');
       renderShiftOptions('mobileShiftOptions');
       renderBookingPanels();
@@ -3212,14 +3267,12 @@
     function showOffer(){
       const card = document.getElementById('offerCard');
 
-      if(state.offerStage === 0){
-        state.offerPrice = Math.round(state.basePrice * 0.96);
+      const selectedShift = getSelectedShift();
+      const basePrice = state.basePrice || (selectedShift ? selectedShift.price : null);
+      if(basePrice){
+        state.offerPrice = Math.round(basePrice * OFFER_DISCOUNT_FACTOR);
         state.expiresAt = Date.now() + 72 * 60 * 60 * 1000;
         state.offerStage = 1;
-      } else if(state.offerStage === 1 && state.expiresAt && Date.now() < state.expiresAt){
-        state.offerPrice = Math.round(state.offerPrice * 0.97);
-        state.expiresAt = Date.now() + 24 * 60 * 60 * 1000;
-        state.offerStage = 2;
       }
 
       state.code = generateCode();
@@ -3229,10 +3282,10 @@
 
       card.innerHTML = `
         <div class="offer-headline">
-          <h3>${state.offerStage === 2 ? 'Рады, что вы вернулись' : 'Удалось закрепить цену'}</h3>
+          <h3>Удалось закрепить цену</h3>
           <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
         </div>
-        <p>${state.offerStage === 2 ? 'Мы смогли ещё немного улучшить условия. Эта цена действует 24 часа.' : 'Ваша цена сохранится на ограниченное время, чтобы вы могли спокойно принять решение.'}</p>
+        <p>Ваша цена сохранится на ограниченное время, чтобы вы могли спокойно принять решение.</p>
         <div class="big-price">${formatPrice(state.offerPrice)}</div>
         <div class="summary-timer" id="offerTimer"></div>
         <div class="offer-code">Код бронирования: ${state.code}</div>
@@ -3459,7 +3512,7 @@
         price_final: price || null,
         price_text: price ? formatPrice(price) : '—',
         promo_code: state.code || '',
-        promo_status: state.offerPrice ? (state.offerStage >= 2 ? 'improved_again' : 'fixed') : 'none',
+        promo_status: state.offerPrice ? 'fixed' : 'none',
         mode: state.view === 'mobile'
           ? `mobile:${state.mobileMode || 'full'}`
           : `desktop:${state.desktopMode || 'full'}`,
