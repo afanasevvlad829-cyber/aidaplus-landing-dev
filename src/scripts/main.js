@@ -63,7 +63,7 @@
           bindKey:'дарья_афанасьева',
           fio:'Дарья Афанасьева',
           role:'основатель и вдохновитель АйДаКемп',
-          avatarUrl:'https://static.tildacdn.com/tild3633-3838-4462-a338-336166376565/photo.png',
+          avatarUrl:'/assets/images/cdn-cache/15b41072_photo.png',
           bio:'предприниматель в сфере детского IT-образования и мама подростка, которая строит лагерь таким, каким сама хотела бы видеть обучение своего ребёнка.'
         },
         {
@@ -71,7 +71,7 @@
           bindKey:'никита_брагин',
           fio:'Никита Брагин',
           role:'преподаватель Scratch, Minecraft и Python',
-          avatarUrl:'https://static.tildacdn.com/tild3830-6337-4038-b634-333236613738/photo.png',
+          avatarUrl:'/assets/images/cdn-cache/dc9ef9b6_photo.png',
           bio:'автор учебника по разработке игр; специализируется на геймдеве и помогает детям создавать собственные игровые миры.'
         },
         {
@@ -79,7 +79,7 @@
           bindKey:'александр_ташкин',
           fio:'Александр Ташкин',
           role:'преподаватель Scratch, Minecraft и Python',
-          avatarUrl:'https://static.tildacdn.com/tild3639-3337-4636-a233-306337633035/photo.png',
+          avatarUrl:'/assets/images/cdn-cache/1e93e3b8_photo.png',
           bio:'соавтор учебника по разработке игр; умеет зажигать интерес к программированию через практические задачи и командные проекты.'
         },
         {
@@ -87,7 +87,7 @@
           bindKey:'омар_алхамви',
           fio:'Омар Алхамви',
           role:'преподаватель Python и нейросетей',
-          avatarUrl:'https://static.tildacdn.com/tild3737-3334-4538-a139-656430373836/photo.png',
+          avatarUrl:'/assets/images/cdn-cache/67852b0a_photo.png',
           bio:'работает со старшими и продвинутыми группами, часть занятий ведёт на английском и показывает, как применять AI в реальных проектах.'
         },
         {
@@ -95,30 +95,30 @@
           bindKey:'дарья_воронцова',
           fio:'Дарья Воронцова',
           role:'преподаватель Python и Scratch',
-          avatarUrl:'https://static.tildacdn.com/tild3931-6630-4534-b239-373333393430/ChatGPT_Image_18__20.png',
+          avatarUrl:'/assets/images/cdn-cache/791a236a_ChatGPT_Image_18__20.png',
           bio:'помогает детям легко войти в программирование через игры, логику и первые самостоятельные программы.'
         }
       ],
       photos: [
         {cat:'all',src:'/assets/images/atmosphere-pool-kids.jpeg',alt:'Атмосфера лагеря'},
-        {cat:'all',src:'https://static.tildacdn.com/tild3632-6563-4432-b438-346535383038/photo_2025-06-14_08-.jpg',alt:'all'},
-        {cat:'all',src:'https://static.tildacdn.com/tild6436-6337-4466-b637-623363613935/photo.jpg',alt:'all'},
-        {cat:'all',src:'https://static.tildacdn.com/tild6666-3333-4534-a639-386666343634/photo_2025-06-14_08-.jpg',alt:'all'},
-        {cat:'all',src:'https://static.tildacdn.com/tild6336-6536-4238-a436-303937666565/photo_2025-06-17_13-.jpg',alt:'all'},
-        {cat:'study',src:'https://static.tildacdn.com/tild3263-3537-4961-b536-363837386238/IMG_1543.JPG',alt:'study'},
-        {cat:'food',src:'https://static.tildacdn.com/tild6330-6330-4664-b762-666363643137/photo_2025-06-14_08-.jpg',alt:'food'},
-        {cat:'food',src:'https://static.tildacdn.com/tild3864-3738-4763-b633-303434303665/photo_2025-06-14_08-.jpg',alt:'food'},
-        {cat:'food',src:'https://static.tildacdn.com/tild3134-3366-4638-b331-366662396639/photo.jpg',alt:'food'},
-        {cat:'study',src:'https://static.tildacdn.com/tild3066-3464-4137-a537-626336356335/photo_2025-06-14_08-.jpg',alt:'study'},
-        {cat:'study',src:'https://static.tildacdn.com/tild3637-6139-4636-b261-386434323832/photo_2025-06-14_08-.jpg',alt:'study'},
-        {cat:'study',src:'https://static.tildacdn.com/tild6266-6134-4235-b166-393766376531/photo_2025-06-14_08-.jpg',alt:'study'},
-        {cat:'study',src:'https://static.tildacdn.com/tild3238-6633-4862-a535-373731303734/photo_2025-06-14_08-.jpg',alt:'study'},
+        {cat:'all',src:'/assets/images/cdn-cache/a5f92a14_photo_2025-06-14_08-.jpg',alt:'all'},
+        {cat:'all',src:'/assets/images/cdn-cache/8cca10f8_photo.jpg',alt:'all'},
+        {cat:'all',src:'/assets/images/cdn-cache/1ac9b8f7_photo_2025-06-14_08-.jpg',alt:'all'},
+        {cat:'all',src:'/assets/images/cdn-cache/1063273d_photo_2025-06-17_13-.jpg',alt:'all'},
+        {cat:'study',src:'/assets/images/cdn-cache/a591ceb9_IMG_1543.JPG',alt:'study'},
+        {cat:'food',src:'/assets/images/cdn-cache/9e4f4646_photo_2025-06-14_08-.jpg',alt:'food'},
+        {cat:'food',src:'/assets/images/cdn-cache/8aee104b_photo_2025-06-14_08-.jpg',alt:'food'},
+        {cat:'food',src:'/assets/images/cdn-cache/5babf9c8_photo.jpg',alt:'food'},
+        {cat:'study',src:'/assets/images/cdn-cache/d8b90de0_photo_2025-06-14_08-.jpg',alt:'study'},
+        {cat:'study',src:'/assets/images/cdn-cache/7e509c20_photo_2025-06-14_08-.jpg',alt:'study'},
+        {cat:'study',src:'/assets/images/cdn-cache/81652cd9_photo_2025-06-14_08-.jpg',alt:'study'},
+        {cat:'study',src:'/assets/images/cdn-cache/0e2e55a2_photo_2025-06-14_08-.jpg',alt:'study'},
         {cat:'pool',src:'/assets/images/pool-kids-training.webp',alt:'Бассейн'},
-        {cat:'pool',src:'https://static.tildacdn.com/tild6135-3464-4332-b565-386630323830/photo_2025-06-14_08-.jpg',alt:'pool'},
-        {cat:'pool',src:'https://static.tildacdn.com/tild3932-3632-4530-b038-613561623337/photo_2025-06-14_08-.jpg',alt:'pool'},
-        {cat:'sport',src:'https://static.tildacdn.com/tild3639-3532-4334-b035-316562666439/photo.jpg',alt:'sport'},
-        {cat:'sport',src:'https://static.tildacdn.com/tild3963-3938-4335-b335-656531616265/photo_2025-06-14_07-.jpg',alt:'sport'},
-        {cat:'sport',src:'https://static.tildacdn.com/tild6538-6438-4432-b737-313138346237/photo_2025-06-14_08-.jpg',alt:'sport'}
+        {cat:'pool',src:'/assets/images/cdn-cache/0d2ab9ef_photo_2025-06-14_08-.jpg',alt:'pool'},
+        {cat:'pool',src:'/assets/images/cdn-cache/6a17713f_photo_2025-06-14_08-.jpg',alt:'pool'},
+        {cat:'sport',src:'/assets/images/cdn-cache/cab7c193_photo.jpg',alt:'sport'},
+        {cat:'sport',src:'/assets/images/cdn-cache/841dac3d_photo_2025-06-14_07-.jpg',alt:'sport'},
+        {cat:'sport',src:'/assets/images/cdn-cache/e7095a88_photo_2025-06-14_08-.jpg',alt:'sport'}
       ],
       videos: [
         {
@@ -323,13 +323,13 @@
     }
 
     const HERO_IMAGES = [
-      'https://static.tildacdn.com/tild6163-6430-4337-b034-636439306264/day.png',
-      'https://static.tildacdn.com/tild3262-6236-4330-a631-323063383933/photo.png',
-      'https://static.tildacdn.com/tild3939-6137-4633-a635-303734373930/photo.png'
+      '/assets/images/cdn-cache/0b6b9a8c_day.png',
+      '/assets/images/cdn-cache/4e868442_photo.png',
+      '/assets/images/cdn-cache/ce98dc63_photo.png'
     ];
 
     const HERO_MOBILE =
-      'https://static.tildacdn.com/tild3939-6137-4633-a635-303734373930/photo.png';
+      '/assets/images/cdn-cache/ce98dc63_photo.png';
 
     let heroIndex = 0;
     let heroTimer = null;
@@ -2428,7 +2428,7 @@
           <div class="book-team-cover-wrap">
             <img
               class="book-team-cover"
-              src="https://static.tildacdn.com/tild6165-3133-4138-a638-333532306465/8991804334.webp"
+              src="/assets/images/cdn-cache/8fc8172e_8991804334.webp"
               alt="Книга Python для детей"
             >
           </div>

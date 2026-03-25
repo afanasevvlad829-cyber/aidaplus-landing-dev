@@ -627,7 +627,7 @@
   }
 
   function getHeroSlides() {
-    var fallback = "https://static.tildacdn.com/tild3130-3234-4630-b533-343030653636/photo_2024-02-04_171.jpeg";
+    var fallback = "/assets/images/cdn-cache/6b2fa5d1_photo_2024-02-04_171.jpeg";
     var list = [fallback];
     var seen = {};
     seen[fallback] = true;
