@@ -225,6 +225,7 @@
 
     const METRIKA_ID = 96499295;
     const DEBUG_UI = false;
+    const MOBILE_AGE_GATE_SHOWN_KEY = 'aidacamp_mobile_age_gate_shown_v1';
     const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v1';
     const VIDEO_META_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
     const VIDEO_META_REFRESH_INTERVAL_MS = 1000 * 60 * 60 * 4;
@@ -286,6 +287,16 @@
       track(event, params);
     }
 
+    function trackOncePerSession(event, sessionKey, params = {}){
+      try {
+        if(sessionStorage.getItem(sessionKey)) return;
+        sessionStorage.setItem(sessionKey, '1');
+      } catch (error){
+        // ignore and still track
+      }
+      track(event, params);
+    }
+
     function initScrollTracking(){
       window.addEventListener('scroll', () => {
         const h = document.documentElement;
@@ -328,9 +339,6 @@
       '/assets/images/cdn-cache/ce98dc63_photo.png'
     ];
 
-    const HERO_MOBILE =
-      '/assets/images/cdn-cache/ce98dc63_photo.png';
-
     let heroIndex = 0;
     let heroTimer = null;
     let heroResizeTimer = null;
@@ -351,11 +359,11 @@
       }
 
       if(isMobile){
-        bg1.style.backgroundImage = `url(${HERO_MOBILE})`;
+        bg1.style.backgroundImage = 'none';
         bg1.classList.add('active');
         bg1.classList.remove('hidden');
         if(bg2){
-          bg2.style.backgroundImage = `url(${HERO_MOBILE})`;
+          bg2.style.backgroundImage = 'none';
           bg2.classList.remove('active');
           bg2.classList.add('hidden');
         }
@@ -925,6 +933,11 @@
 
       if(action === 'primary-cta'){
         handlePrimaryCTA();
+        return true;
+      }
+
+      if(action === 'mobile-focus-age'){
+        focusMobileAgeGate();
         return true;
       }
 
@@ -1663,6 +1676,32 @@
       applyBookingStageClass('desktop');
       applyBookingStageClass('mobile');
       syncBookingHints();
+      updateMobileAgeGateUi();
+    }
+
+    function focusMobileAgeGate(){
+      const gate = document.getElementById('mobileAgeGateCard');
+      const tabs = document.getElementById('mobileAgeTabs');
+      if(gate){
+        gate.scrollIntoView({behavior:'smooth', block:'center'});
+        pulseNode(gate);
+      }
+      if(tabs){
+        pulseNode(tabs);
+      }
+    }
+
+    function updateMobileAgeGateUi(){
+      const sticky = document.getElementById('mobileAgeStickyBar');
+      if(!sticky) return;
+      const showSticky = state.view === 'mobile' && !hasSelectedAge();
+      sticky.classList.toggle('hidden', !showSticky);
+
+      if(showSticky){
+        trackOncePerSession('mobile_age_gate_shown', MOBILE_AGE_GATE_SHOWN_KEY, {
+          mode: state.mobileMode || 'full'
+        });
+      }
     }
 
     function switchView(view){
@@ -1678,6 +1717,7 @@
       if(view !== 'desktop'){
         closeSectionModal();
       }
+      updateMobileAgeGateUi();
       persist();
       requestAnimationFrame(() => {
         window.dispatchEvent(new Event('resize'));
@@ -1712,6 +1752,7 @@
       mobileView.classList.toggle('mobile-compact-mode', state.mobileMode === 'compact');
       fullBtn.classList.toggle('active', state.mobileMode === 'full');
       compactBtn.classList.toggle('active', state.mobileMode === 'compact');
+      updateMobileAgeGateUi();
     }
 
     function switchMobileMode(mode){
@@ -2010,6 +2051,7 @@
 
     function bindAgeTabs(rootId){
       const root = document.getElementById(rootId);
+      if(!root) return;
       root.querySelectorAll('[data-age]').forEach(btn => {
         btn.addEventListener('click', () => {
           root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
@@ -2022,6 +2064,12 @@
           state.code = null;
           state.expiresAt = null;
           state.offerStage = 0;
+          if(rootId === 'mobileAgeTabs'){
+            track('mobile_age_selected', {
+              age: state.age || '',
+              age_label: ageLabel(state.age)
+            });
+          }
           renderAll();
           persist();
         });
@@ -2619,6 +2667,13 @@
       if(action.disabled) return;
 
       if(state.offerStage === 0){
+        if(state.view === 'mobile'){
+          track('mobile_price_or_booking_started', {
+            mode: state.mobileMode || 'full',
+            age: state.age || '',
+            shift_id: state.shiftId || ''
+          });
+        }
         runOfferSearch();
         return;
       }
@@ -2999,6 +3054,22 @@
     function navigateToSection(id){
       const cleanId = String(id || '').replace(/^#/, '');
       if(!cleanId) return;
+
+      if(state.view === 'mobile' && cleanId === 'section-programs' && !hasSelectedAge()){
+        track('mobile_shifts_click_without_age', {
+          mode: state.mobileMode || 'full'
+        });
+        showHint('Сначала выберите возраст ребёнка', 'age');
+        focusMobileAgeGate();
+        return;
+      }
+
+      if(state.view === 'mobile' && cleanId === 'section-programs' && hasSelectedAge()){
+        track('mobile_shifts_opened_after_age', {
+          mode: state.mobileMode || 'full',
+          age: state.age || ''
+        });
+      }
 
       const isDesktopCompact = state.view === 'desktop' && state.desktopMode === 'compact';
       const isMobileCompact = state.view === 'mobile' && state.mobileMode === 'compact';

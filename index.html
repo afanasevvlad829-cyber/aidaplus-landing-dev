@@ -4885,10 +4885,15 @@
         <div class="hero-shell mobile-hero">
           <div class="hero-topbar">
             <div class="hero-left-tools mobile-hero-tools">
-              <div class="brand mobile-brand" aria-label="AiDaCamp">
-                <span class="brand-logo" aria-hidden="true">
-                  <img src="/assets/aida-logo-small.png" alt="Логотип AiDaCamp">
-                </span>
+              <div class="mobile-brand-wrap">
+                <div class="brand mobile-brand" aria-label="AiDaCamp">
+                  <span class="brand-logo" aria-hidden="true">
+                    <img src="/assets/aida-logo-small.png" alt="Логотип AiDaCamp">
+                  </span>
+                </div>
+                <div class="mobile-brand-meta">
+                  <div class="mobile-brand-label">IT-лагерь 7–14 лет</div>
+                </div>
               </div>
               <div class="mobile-mode-switch mobile-mode-inline">
                 <button class="mobile-mode-btn active" id="mobileFullModeBtn">Полная</button>
@@ -4897,12 +4902,13 @@
             </div>
           </div>
 
-          <div class="mobile-hero-nav">
-            <button class="mini-nav-link" type="button" data-nav="section-journey">Как проходит</button>
+          <div class="mobile-hero-nav mobile-hero-nav-primary">
             <button class="mini-nav-link" type="button" data-nav="section-programs">Смены</button>
-            <button class="mini-nav-link" type="button" data-nav="section-reviews">Отзывы</button>
             <button class="mini-nav-link" type="button" data-nav="section-stay">Размещение</button>
-            <button class="mini-nav-link" type="button" data-nav="section-contacts">Контакты</button>
+            <button class="mini-nav-link" type="button" data-nav="section-reviews">Отзывы</button>
+          </div>
+
+          <div class="mobile-hero-nav mobile-hero-nav-secondary">
             <button class="mini-nav-link icon" type="button" data-nav="section-photos" aria-label="Фото">
               <img class="ac-icon" src="/assets/icons/images.svg" alt="" aria-hidden="true">
             </button>
@@ -4918,26 +4924,29 @@
           </div>
 
           <div class="hero-content" style="max-width:100%;">
-            <div class="hero-tag">IT-лагерь для детей 7–14 лет</div>
             <h2 style="font-size:24px;">Лагерь, где ребёнок создаёт, а не потребляет</h2>
-            <div class="hero-sub">Программирование, спорт, бассейн и сильная лагерная среда без лишнего экранного шума.</div>
+            <div class="hero-sub">Программирование, спорт, бассейн и живая лагерная среда без бессмысленного залипания в телефоне.</div>
+
+            <div class="mobile-age-gate" id="mobileAgeGateCard" data-mobile-age-gate>
+              <h3>Выберите возраст ребёнка</h3>
+              <p>Сначала выберите возраст, чтобы увидеть подходящие смены и условия.</p>
+              <div class="age-tabs" id="mobileAgeTabs">
+                <button class="age-tab" data-age="7-9">7–9 лет</button>
+                <button class="age-tab" data-age="10-12">10–12 лет</button>
+                <button class="age-tab" data-age="13-14">13–14 лет</button>
+              </div>
+            </div>
 
             <div class="hero-slogan">
               Мы не играем в игры — мы их создаём
             </div>
 
-            <div class="feature-row">
-              <div class="feature-pill"><strong>IT-проекты</strong>Scratch и Python</div>
-              <div class="feature-pill"><strong>Экономика</strong>Финансовая грамотность</div>
-              <div class="feature-pill"><strong>Бассейн</strong>Каждый день</div>
-            </div>
-
             <div class="occupancy-badge" id="mobileOccupancyBadge">⚡ 65% мест уже занято</div>
 
             <div class="hero-proofline">
-              <span>● проекты за смену</span>
-              <span>● бассейн каждый день</span>
-              <span>● своя программа</span>
+              <span>● Реальные проекты</span>
+              <span>● Бассейн каждый день</span>
+              <span>● Собственная программа</span>
             </div>
 
             <div class="hero-booking-card mobile-booking-card" id="mobileBookingCard" style="position:static;width:100%;margin-top:18px;">
@@ -4954,11 +4963,6 @@
                 <div class="selected-age-chip" id="mobileAgeChip">
                   <span id="mobileAgeChipText">Возраст: —</span>
                   <button type="button" data-action="reset-age-selection">×</button>
-                </div>
-                <div class="age-tabs" id="mobileAgeTabs">
-                  <button class="age-tab" data-age="7-9">7–9 лет</button>
-                  <button class="age-tab" data-age="10-12">10–12 лет</button>
-                  <button class="age-tab" data-age="13-14">13–14 лет</button>
                 </div>
               </div>
 
@@ -5049,6 +5053,10 @@
           </section>
 
         </div>
+      </div>
+      <div class="mobile-age-sticky hidden" id="mobileAgeStickyBar" role="region" aria-live="polite">
+        <span>Чтобы открыть смены, выберите возраст</span>
+        <button type="button" class="mobile-age-sticky-btn" data-action="mobile-focus-age">Выбрать возраст</button>
       </div>
     </div>
   </div>

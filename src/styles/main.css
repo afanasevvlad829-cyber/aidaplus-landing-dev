@@ -3084,12 +3084,44 @@
     .mobile-hero-nav{
       display:flex;
       gap:8px;
-      flex-wrap:wrap;
       margin:10px 0 0;
       position:relative;
       z-index:2;
       align-items:center;
       min-width:0;
+    }
+
+    .mobile-hero-nav-primary{
+      justify-content:space-between;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .mobile-hero-nav-primary .mini-nav-link{
+      flex:1 1 0;
+      min-height:38px;
+      padding:0 12px;
+      font-size:13px;
+      font-weight:800;
+      background:#fff;
+      color:#111827;
+      border:1px solid rgb(229 231 235 / 85%);
+      box-shadow:0 8px 16px rgb(15 23 42 / 16%);
+      backdrop-filter:none;
+    }
+
+    .mobile-hero-nav-secondary{
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .mobile-hero-nav-secondary .mini-nav-link{
+      min-height:34px;
+      min-width:34px;
+      width:34px;
+      padding:0;
+      background:rgb(255 255 255 / 12%);
+      border:1px solid rgb(255 255 255 / 20%);
     }
 
     .mini-nav-link{
@@ -3130,11 +3162,114 @@
       border-radius:12px;
     }
 
+    .mobile-brand-wrap{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+
+    .mobile-brand-meta{
+      min-width:0;
+    }
+
+    .mobile-brand-label{
+      display:inline-flex;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgb(255 255 255 / 18%);
+      background:rgb(255 255 255 / 10%);
+      color:#f8fafc;
+      font-size:13px;
+      font-weight:700;
+      line-height:1;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+      overflow:hidden;
+      max-width:190px;
+    }
+
     .mobile-hero-tools{
       width:100%;
       justify-content:space-between;
       gap:8px;
       min-width:0;
+    }
+
+    .mobile-hero .hero-tag{
+      display:none;
+    }
+
+    .mobile-hero .feature-row{
+      display:none;
+    }
+
+    .mobile-age-gate{
+      margin-top:12px;
+      border-radius:18px;
+      border:1px solid rgb(255 255 255 / 18%);
+      background:rgb(15 23 42 / 42%);
+      padding:12px;
+      box-shadow:0 14px 26px rgb(2 6 23 / 18%);
+    }
+
+    .mobile-age-gate h3{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+      letter-spacing:-.01em;
+      color:#fff;
+    }
+
+    .mobile-age-gate p{
+      margin:6px 0 0;
+      color:#d1d5db;
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .mobile-age-gate .age-tabs{
+      margin-top:10px;
+    }
+
+    .mobile-age-sticky{
+      position:fixed;
+      left:50%;
+      bottom:12px;
+      transform:translateX(-50%);
+      width:min(520px,calc(100vw - 24px));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgb(255 255 255 / 18%);
+      background:rgb(15 23 42 / 92%);
+      color:#f8fafc;
+      box-shadow:0 14px 34px rgb(2 6 23 / 32%);
+      z-index:calc(var(--z-overlay) + 1);
+      backdrop-filter:blur(8px);
+    }
+
+    .mobile-age-sticky span{
+      font-size:12px;
+      line-height:1.35;
+      color:#e5e7eb;
+    }
+
+    .mobile-age-sticky-btn{
+      min-height:36px;
+      padding:0 12px;
+      border-radius:10px;
+      border:none;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      white-space:nowrap;
     }
 
     .trust-callout{
@@ -4343,6 +4478,18 @@
       }
 
       .mobile-hero-nav{
+        width:100%;
+      }
+
+      .mobile-hero-nav-primary{
+        flex-wrap:nowrap;
+      }
+
+      .mobile-hero-nav-primary .mini-nav-link{
+        white-space:nowrap;
+      }
+
+      .mobile-hero-nav-secondary{
         flex-wrap:nowrap;
         overflow-x:auto;
         padding-bottom:4px;
@@ -4350,12 +4497,8 @@
         scrollbar-width:none;
       }
 
-      .mobile-hero-nav::-webkit-scrollbar{
+      .mobile-hero-nav-secondary::-webkit-scrollbar{
         display:none;
-      }
-
-      .mobile-hero-nav .mini-nav-link{
-        white-space:nowrap;
       }
 
       .mobile-brand{
@@ -4365,12 +4508,23 @@
         border-radius:10px;
       }
 
+      .mobile-brand-label{
+        font-size:12px;
+        padding:7px 10px;
+        max-width:152px;
+      }
+
       .mobile-mode-inline{
         flex:1;
       }
 
       .mobile-mode-inline .mobile-mode-btn{
         flex:1;
+      }
+
+      .mobile-age-sticky{
+        width:calc(100vw - 16px);
+        bottom:8px;
       }
 
       .hero-mode-inline{

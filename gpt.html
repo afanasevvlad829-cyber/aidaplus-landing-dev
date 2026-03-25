@@ -3097,12 +3097,44 @@
     .mobile-hero-nav{
       display:flex;
       gap:8px;
-      flex-wrap:wrap;
       margin:10px 0 0;
       position:relative;
       z-index:2;
       align-items:center;
       min-width:0;
+    }
+
+    .mobile-hero-nav-primary{
+      justify-content:space-between;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .mobile-hero-nav-primary .mini-nav-link{
+      flex:1 1 0;
+      min-height:38px;
+      padding:0 12px;
+      font-size:13px;
+      font-weight:800;
+      background:#fff;
+      color:#111827;
+      border:1px solid rgb(229 231 235 / 85%);
+      box-shadow:0 8px 16px rgb(15 23 42 / 16%);
+      backdrop-filter:none;
+    }
+
+    .mobile-hero-nav-secondary{
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .mobile-hero-nav-secondary .mini-nav-link{
+      min-height:34px;
+      min-width:34px;
+      width:34px;
+      padding:0;
+      background:rgb(255 255 255 / 12%);
+      border:1px solid rgb(255 255 255 / 20%);
     }
 
     .mini-nav-link{
@@ -3143,11 +3175,114 @@
       border-radius:12px;
     }
 
+    .mobile-brand-wrap{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+
+    .mobile-brand-meta{
+      min-width:0;
+    }
+
+    .mobile-brand-label{
+      display:inline-flex;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgb(255 255 255 / 18%);
+      background:rgb(255 255 255 / 10%);
+      color:#f8fafc;
+      font-size:13px;
+      font-weight:700;
+      line-height:1;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+      overflow:hidden;
+      max-width:190px;
+    }
+
     .mobile-hero-tools{
       width:100%;
       justify-content:space-between;
       gap:8px;
       min-width:0;
+    }
+
+    .mobile-hero .hero-tag{
+      display:none;
+    }
+
+    .mobile-hero .feature-row{
+      display:none;
+    }
+
+    .mobile-age-gate{
+      margin-top:12px;
+      border-radius:18px;
+      border:1px solid rgb(255 255 255 / 18%);
+      background:rgb(15 23 42 / 42%);
+      padding:12px;
+      box-shadow:0 14px 26px rgb(2 6 23 / 18%);
+    }
+
+    .mobile-age-gate h3{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+      letter-spacing:-.01em;
+      color:#fff;
+    }
+
+    .mobile-age-gate p{
+      margin:6px 0 0;
+      color:#d1d5db;
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .mobile-age-gate .age-tabs{
+      margin-top:10px;
+    }
+
+    .mobile-age-sticky{
+      position:fixed;
+      left:50%;
+      bottom:12px;
+      transform:translateX(-50%);
+      width:min(520px,calc(100vw - 24px));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgb(255 255 255 / 18%);
+      background:rgb(15 23 42 / 92%);
+      color:#f8fafc;
+      box-shadow:0 14px 34px rgb(2 6 23 / 32%);
+      z-index:calc(var(--z-overlay) + 1);
+      backdrop-filter:blur(8px);
+    }
+
+    .mobile-age-sticky span{
+      font-size:12px;
+      line-height:1.35;
+      color:#e5e7eb;
+    }
+
+    .mobile-age-sticky-btn{
+      min-height:36px;
+      padding:0 12px;
+      border-radius:10px;
+      border:none;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      white-space:nowrap;
     }
 
     .trust-callout{
@@ -4356,6 +4491,18 @@
       }
 
       .mobile-hero-nav{
+        width:100%;
+      }
+
+      .mobile-hero-nav-primary{
+        flex-wrap:nowrap;
+      }
+
+      .mobile-hero-nav-primary .mini-nav-link{
+        white-space:nowrap;
+      }
+
+      .mobile-hero-nav-secondary{
         flex-wrap:nowrap;
         overflow-x:auto;
         padding-bottom:4px;
@@ -4363,12 +4510,8 @@
         scrollbar-width:none;
       }
 
-      .mobile-hero-nav::-webkit-scrollbar{
+      .mobile-hero-nav-secondary::-webkit-scrollbar{
         display:none;
-      }
-
-      .mobile-hero-nav .mini-nav-link{
-        white-space:nowrap;
       }
 
       .mobile-brand{
@@ -4378,12 +4521,23 @@
         border-radius:10px;
       }
 
+      .mobile-brand-label{
+        font-size:12px;
+        padding:7px 10px;
+        max-width:152px;
+      }
+
       .mobile-mode-inline{
         flex:1;
       }
 
       .mobile-mode-inline .mobile-mode-btn{
         flex:1;
+      }
+
+      .mobile-age-sticky{
+        width:calc(100vw - 16px);
+        bottom:8px;
       }
 
       .hero-mode-inline{
@@ -4885,10 +5039,15 @@
         <div class="hero-shell mobile-hero">
           <div class="hero-topbar">
             <div class="hero-left-tools mobile-hero-tools">
-              <div class="brand mobile-brand" aria-label="AiDaCamp">
-                <span class="brand-logo" aria-hidden="true">
-                  <img src="/assets/aida-logo-small.png" alt="Логотип AiDaCamp">
-                </span>
+              <div class="mobile-brand-wrap">
+                <div class="brand mobile-brand" aria-label="AiDaCamp">
+                  <span class="brand-logo" aria-hidden="true">
+                    <img src="/assets/aida-logo-small.png" alt="Логотип AiDaCamp">
+                  </span>
+                </div>
+                <div class="mobile-brand-meta">
+                  <div class="mobile-brand-label">IT-лагерь 7–14 лет</div>
+                </div>
               </div>
               <div class="mobile-mode-switch mobile-mode-inline">
                 <button class="mobile-mode-btn active" id="mobileFullModeBtn">Полная</button>
@@ -4897,12 +5056,13 @@
             </div>
           </div>
 
-          <div class="mobile-hero-nav">
-            <button class="mini-nav-link" type="button" data-nav="section-journey">Как проходит</button>
+          <div class="mobile-hero-nav mobile-hero-nav-primary">
             <button class="mini-nav-link" type="button" data-nav="section-programs">Смены</button>
-            <button class="mini-nav-link" type="button" data-nav="section-reviews">Отзывы</button>
             <button class="mini-nav-link" type="button" data-nav="section-stay">Размещение</button>
-            <button class="mini-nav-link" type="button" data-nav="section-contacts">Контакты</button>
+            <button class="mini-nav-link" type="button" data-nav="section-reviews">Отзывы</button>
+          </div>
+
+          <div class="mobile-hero-nav mobile-hero-nav-secondary">
             <button class="mini-nav-link icon" type="button" data-nav="section-photos" aria-label="Фото">
               <img class="ac-icon" src="/assets/icons/images.svg" alt="" aria-hidden="true">
             </button>
@@ -4918,26 +5078,29 @@
           </div>
 
           <div class="hero-content" style="max-width:100%;">
-            <div class="hero-tag">IT-лагерь для детей 7–14 лет</div>
             <h2 style="font-size:24px;">Лагерь, где ребёнок создаёт, а не потребляет</h2>
-            <div class="hero-sub">Программирование, спорт, бассейн и сильная лагерная среда без лишнего экранного шума.</div>
+            <div class="hero-sub">Программирование, спорт, бассейн и живая лагерная среда без бессмысленного залипания в телефоне.</div>
+
+            <div class="mobile-age-gate" id="mobileAgeGateCard" data-mobile-age-gate>
+              <h3>Выберите возраст ребёнка</h3>
+              <p>Сначала выберите возраст, чтобы увидеть подходящие смены и условия.</p>
+              <div class="age-tabs" id="mobileAgeTabs">
+                <button class="age-tab" data-age="7-9">7–9 лет</button>
+                <button class="age-tab" data-age="10-12">10–12 лет</button>
+                <button class="age-tab" data-age="13-14">13–14 лет</button>
+              </div>
+            </div>
 
             <div class="hero-slogan">
               Мы не играем в игры — мы их создаём
             </div>
 
-            <div class="feature-row">
-              <div class="feature-pill"><strong>IT-проекты</strong>Scratch и Python</div>
-              <div class="feature-pill"><strong>Экономика</strong>Финансовая грамотность</div>
-              <div class="feature-pill"><strong>Бассейн</strong>Каждый день</div>
-            </div>
-
             <div class="occupancy-badge" id="mobileOccupancyBadge">⚡ 65% мест уже занято</div>
 
             <div class="hero-proofline">
-              <span>● проекты за смену</span>
-              <span>● бассейн каждый день</span>
-              <span>● своя программа</span>
+              <span>● Реальные проекты</span>
+              <span>● Бассейн каждый день</span>
+              <span>● Собственная программа</span>
             </div>
 
             <div class="hero-booking-card mobile-booking-card" id="mobileBookingCard" style="position:static;width:100%;margin-top:18px;">
@@ -4954,11 +5117,6 @@
                 <div class="selected-age-chip" id="mobileAgeChip">
                   <span id="mobileAgeChipText">Возраст: —</span>
                   <button type="button" data-action="reset-age-selection">×</button>
-                </div>
-                <div class="age-tabs" id="mobileAgeTabs">
-                  <button class="age-tab" data-age="7-9">7–9 лет</button>
-                  <button class="age-tab" data-age="10-12">10–12 лет</button>
-                  <button class="age-tab" data-age="13-14">13–14 лет</button>
                 </div>
               </div>
 
@@ -5049,6 +5207,10 @@
           </section>
 
         </div>
+      </div>
+      <div class="mobile-age-sticky hidden" id="mobileAgeStickyBar" role="region" aria-live="polite">
+        <span>Чтобы открыть смены, выберите возраст</span>
+        <button type="button" class="mobile-age-sticky-btn" data-action="mobile-focus-age">Выбрать возраст</button>
       </div>
     </div>
   </div>
@@ -5418,6 +5580,7 @@
 
     const METRIKA_ID = 96499295;
     const DEBUG_UI = false;
+    const MOBILE_AGE_GATE_SHOWN_KEY = 'aidacamp_mobile_age_gate_shown_v1';
     const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v1';
     const VIDEO_META_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
     const VIDEO_META_REFRESH_INTERVAL_MS = 1000 * 60 * 60 * 4;
@@ -5479,6 +5642,16 @@
       track(event, params);
     }
 
+    function trackOncePerSession(event, sessionKey, params = {}){
+      try {
+        if(sessionStorage.getItem(sessionKey)) return;
+        sessionStorage.setItem(sessionKey, '1');
+      } catch (error){
+        // ignore and still track
+      }
+      track(event, params);
+    }
+
     function initScrollTracking(){
       window.addEventListener('scroll', () => {
         const h = document.documentElement;
@@ -5521,9 +5694,6 @@
       '/assets/images/cdn-cache/ce98dc63_photo.png'
     ];
 
-    const HERO_MOBILE =
-      '/assets/images/cdn-cache/ce98dc63_photo.png';
-
     let heroIndex = 0;
     let heroTimer = null;
     let heroResizeTimer = null;
@@ -5544,11 +5714,11 @@
       }
 
       if(isMobile){
-        bg1.style.backgroundImage = `url(${HERO_MOBILE})`;
+        bg1.style.backgroundImage = 'none';
         bg1.classList.add('active');
         bg1.classList.remove('hidden');
         if(bg2){
-          bg2.style.backgroundImage = `url(${HERO_MOBILE})`;
+          bg2.style.backgroundImage = 'none';
           bg2.classList.remove('active');
           bg2.classList.add('hidden');
         }
@@ -6118,6 +6288,11 @@
 
       if(action === 'primary-cta'){
         handlePrimaryCTA();
+        return true;
+      }
+
+      if(action === 'mobile-focus-age'){
+        focusMobileAgeGate();
         return true;
       }
 
@@ -6856,6 +7031,32 @@
       applyBookingStageClass('desktop');
       applyBookingStageClass('mobile');
       syncBookingHints();
+      updateMobileAgeGateUi();
+    }
+
+    function focusMobileAgeGate(){
+      const gate = document.getElementById('mobileAgeGateCard');
+      const tabs = document.getElementById('mobileAgeTabs');
+      if(gate){
+        gate.scrollIntoView({behavior:'smooth', block:'center'});
+        pulseNode(gate);
+      }
+      if(tabs){
+        pulseNode(tabs);
+      }
+    }
+
+    function updateMobileAgeGateUi(){
+      const sticky = document.getElementById('mobileAgeStickyBar');
+      if(!sticky) return;
+      const showSticky = state.view === 'mobile' && !hasSelectedAge();
+      sticky.classList.toggle('hidden', !showSticky);
+
+      if(showSticky){
+        trackOncePerSession('mobile_age_gate_shown', MOBILE_AGE_GATE_SHOWN_KEY, {
+          mode: state.mobileMode || 'full'
+        });
+      }
     }
 
     function switchView(view){
@@ -6871,6 +7072,7 @@
       if(view !== 'desktop'){
         closeSectionModal();
       }
+      updateMobileAgeGateUi();
       persist();
       requestAnimationFrame(() => {
         window.dispatchEvent(new Event('resize'));
@@ -6905,6 +7107,7 @@
       mobileView.classList.toggle('mobile-compact-mode', state.mobileMode === 'compact');
       fullBtn.classList.toggle('active', state.mobileMode === 'full');
       compactBtn.classList.toggle('active', state.mobileMode === 'compact');
+      updateMobileAgeGateUi();
     }
 
     function switchMobileMode(mode){
@@ -7203,6 +7406,7 @@
 
     function bindAgeTabs(rootId){
       const root = document.getElementById(rootId);
+      if(!root) return;
       root.querySelectorAll('[data-age]').forEach(btn => {
         btn.addEventListener('click', () => {
           root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
@@ -7215,6 +7419,12 @@
           state.code = null;
           state.expiresAt = null;
           state.offerStage = 0;
+          if(rootId === 'mobileAgeTabs'){
+            track('mobile_age_selected', {
+              age: state.age || '',
+              age_label: ageLabel(state.age)
+            });
+          }
           renderAll();
           persist();
         });
@@ -7812,6 +8022,13 @@
       if(action.disabled) return;
 
       if(state.offerStage === 0){
+        if(state.view === 'mobile'){
+          track('mobile_price_or_booking_started', {
+            mode: state.mobileMode || 'full',
+            age: state.age || '',
+            shift_id: state.shiftId || ''
+          });
+        }
         runOfferSearch();
         return;
       }
@@ -8192,6 +8409,22 @@
     function navigateToSection(id){
       const cleanId = String(id || '').replace(/^#/, '');
       if(!cleanId) return;
+
+      if(state.view === 'mobile' && cleanId === 'section-programs' && !hasSelectedAge()){
+        track('mobile_shifts_click_without_age', {
+          mode: state.mobileMode || 'full'
+        });
+        showHint('Сначала выберите возраст ребёнка', 'age');
+        focusMobileAgeGate();
+        return;
+      }
+
+      if(state.view === 'mobile' && cleanId === 'section-programs' && hasSelectedAge()){
+        track('mobile_shifts_opened_after_age', {
+          mode: state.mobileMode || 'full',
+          age: state.age || ''
+        });
+      }
 
       const isDesktopCompact = state.view === 'desktop' && state.desktopMode === 'compact';
       const isMobileCompact = state.view === 'mobile' && state.mobileMode === 'compact';
