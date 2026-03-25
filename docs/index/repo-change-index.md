@@ -26,12 +26,17 @@ Machine-readable file-level move/archive ledger:
 Root-level relocation summary:
 - `docs/index/root-relocations-2026-03-25.csv`
 
+Additional external-workdirs index:
+- `docs/index/external-workdirs-relocation-2026-03-25.csv`
+- `docs/index/external-workdirs-relocation-2026-03-25.md`
+
 ## 4) Where archived content is now
 - `archive/reference/accepted_ui_baseline_pack/`
 - `archive/reference/ai/`
 - `archive/reference/aidacamp_icon_pack/`
 - `archive/non-runtime/root_cleanup_2026-03-25/`
 - `archive/local_wip/2026-03-25/`
+- `archive/local_wip/2026-03-25/external-workdirs/` (local external snapshots archive)
 
 ## 5) Fast lookup recipes
 Find change history for a file:
