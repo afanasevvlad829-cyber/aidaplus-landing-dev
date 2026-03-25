@@ -223,9 +223,10 @@ PY
 
 echo "Build completed: dist/index.html"
 echo "Canonical release artifact: dist/index.html"
+cp dist/index.html dist/index.htm
 cp dist/index.html gpt.html
 cp dist/index.html build/gpt.html
-echo "Artifacts updated: gpt.html, build/gpt.html"
+echo "Artifacts updated: dist/index.htm, gpt.html, build/gpt.html"
 
 if [ -f src/pages/legal.html ]; then
   cp src/pages/legal.html dist/legal.html
