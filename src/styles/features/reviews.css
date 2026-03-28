@@ -1,0 +1,132 @@
+.review-avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  overflow:hidden;
+  flex:0 0 auto;
+  background:#f5f7fb;
+  border:1px solid var(--line);
+}
+
+.review-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.mobile-review-social-proof{
+  margin-top:10px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:var(--shadow);
+  padding:12px;
+  display:grid;
+  gap:8px;
+}
+
+.mobile-review-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.mobile-review-top strong{
+  font-size:32px;
+  line-height:1;
+  color:#d97706;
+  letter-spacing:-.02em;
+}
+
+.mobile-review-stars{
+  color:#f59e0b;
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:1px;
+  margin-left:4px;
+}
+
+.mobile-review-proof{
+  font-size:13px;
+  line-height:1.45;
+  color:#111827;
+  font-weight:700;
+}
+
+.mobile-review-main{
+  margin-top:10px;
+}
+
+.mobile-review-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:var(--shadow);
+  padding:12px;
+  display:grid;
+  gap:8px;
+}
+
+.mobile-review-head{
+  display:grid;
+  grid-template-columns:44px 1fr;
+  gap:10px;
+  align-items:center;
+}
+
+.mobile-review-head img{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid var(--line);
+}
+
+.mobile-review-head strong{
+  font-size:14px;
+  line-height:1.2;
+  color:#111827;
+  display:block;
+}
+
+.mobile-review-head span{
+  font-size:12px;
+  line-height:1.3;
+  color:var(--muted);
+  display:block;
+  margin-top:2px;
+}
+
+.mobile-review-text{
+  color:#1f2937;
+  font-size:13px;
+  line-height:1.5;
+  display:-webkit-box;
+  -webkit-line-clamp:6;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.mobile-review-dots{
+  margin-top:10px;
+  display:flex;
+  gap:6px;
+  justify-content:center;
+}
+
+.mobile-review-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  border:none;
+  background:#cbd5e1;
+  padding:0;
+  cursor:pointer;
+}
+
+.mobile-review-dot.active{
+  background:var(--accent);
+  box-shadow:0 0 0 3px rgb(255 138 0 / 18%);
+}

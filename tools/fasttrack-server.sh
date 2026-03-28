@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PORT="${FASTTRACK_PORT:-4180}"
 HOST="${FASTTRACK_HOST:-0.0.0.0}"
+ENV_FILE="${FASTTRACK_ENV_FILE:-$ROOT_DIR/.runtime/server.env}"
 PID_FILE="$ROOT_DIR/.runtime/fasttrack-server.pid"
 LOG_FILE="$ROOT_DIR/.runtime/fasttrack-server.log"
 
@@ -24,11 +25,17 @@ start_server() {
     return 0
   fi
   mkdir -p "$ROOT_DIR/.runtime"
+  if [[ -f "$ENV_FILE" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    set +a
+  fi
   local runner
-  if command -v caffeinate >/dev/null 2>&1; then
-    runner="caffeinate -dimsu python3 -m http.server '$PORT' --bind '$HOST'"
+  if [[ "${FASTTRACK_USE_CAFFEINATE:-0}" == "1" ]] && command -v caffeinate >/dev/null 2>&1; then
+    runner="caffeinate -dimsu -- python3 tools/fasttrack_server.py --port '$PORT' --host '$HOST' --root '$ROOT_DIR'"
   else
-    runner="python3 -m http.server '$PORT' --bind '$HOST'"
+    runner="python3 tools/fasttrack_server.py --port '$PORT' --host '$HOST' --root '$ROOT_DIR'"
   fi
   nohup sh -c "cd '$ROOT_DIR' && exec $runner" >"$LOG_FILE" 2>&1 &
   local pid=$!
@@ -36,10 +43,21 @@ start_server() {
   sleep 0.8
   if kill -0 "$pid" 2>/dev/null; then
     echo "started: pid=$pid url=http://127.0.0.1:$PORT/dist/index.html"
-    if command -v caffeinate >/dev/null 2>&1; then
+    echo "env file: $ENV_FILE"
+    if [[ -n "${AIDAPLUS_TELEGRAM_BOT_TOKEN:-}${TELEGRAM_BOT_TOKEN:-}${AIDACAMP_TG_TOKEN:-}${TG_BOT_TOKEN:-}" ]]; then
+      echo "telegram token: loaded"
+    else
+      echo "telegram token: missing"
+    fi
+    if [[ -n "${AIDAPLUS_TELEGRAM_CHAT_ID:-}${TELEGRAM_CHAT_ID:-}${AIDACAMP_TG_CHAT_ID:-}${TG_CHAT_ID:-}" ]]; then
+      echo "telegram chat id: loaded"
+    else
+      echo "telegram chat id: missing"
+    fi
+    if [[ "${FASTTRACK_USE_CAFFEINATE:-0}" == "1" ]] && command -v caffeinate >/dev/null 2>&1; then
       echo "sleep protection: enabled (caffeinate)"
     else
-      echo "sleep protection: unavailable (caffeinate not found)"
+      echo "sleep protection: disabled (set FASTTRACK_USE_CAFFEINATE=1 to enable)"
     fi
   else
     echo "failed to start server" >&2
@@ -82,7 +100,7 @@ restart_server() {
 }
 
 healthcheck() {
-  curl -sS -I "http://127.0.0.1:$PORT/dist/index.html" | sed -n '1,5p'
+  curl -sS "http://127.0.0.1:$PORT/health" | sed -n '1,20p'
 }
 
 cmd="${1:-status}"

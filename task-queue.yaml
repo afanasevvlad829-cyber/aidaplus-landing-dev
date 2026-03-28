@@ -1,0 +1,84 @@
+version: 2
+updated_at: "2026-03-28"
+owner: "booking-ui"
+status: in_progress
+tasks:
+  - id: N1
+    priority: 1
+    title: "Fix compact modal nested media close behavior"
+    source: "user request: closing photo/video should not close parent modal"
+    status: done
+    estimate_steps: "1"
+    notes: "openMedia/openVideo now keep section modal open; synced in src + index + dist"
+
+  - id: N2
+    priority: 2
+    title: "Tighten hero benefit title/body spacing"
+    source: "user request: remove empty gap in benefits blocks"
+    status: done
+    estimate_steps: "1"
+    notes: "reduced heading/body line-height and removed extra margin for hero benefit cards"
+
+  - id: N3
+    priority: 3
+    title: "Normalize countdown to HH:MM:SS in all booking timers"
+    source: "user request: one format without D/Ч/M labels"
+    status: done
+    estimate_steps: "2"
+    notes: "formatRemainingClock now returns HH:MM:SS in src + dist; compact parser normalizes legacy text to HH:MM:SS only"
+
+  - id: N4
+    priority: 4
+    title: "Ensure single visible 'Оформить заявку' CTA"
+    source: "user request: hero CTA and bottom bar must not be shown simultaneously"
+    status: done
+    estimate_steps: "2"
+    notes: "synced visibility logic for summary bar and primary CTA; added robust viewport/disabled checks in src/main + inline/dist"
+
+  - id: N5
+    priority: 5
+    title: "Align compact offer modals to fixed equal size"
+    source: "user request: 'ищем цену' and 'нашли условия' should not jump in size"
+    status: done
+    estimate_steps: "1"
+    notes: "normalized offer modal min-height for .offer-card-stable and .offer-state-shell across src/dist with mobile override"
+
+  - id: N6
+    priority: 6
+    title: "Restore hero lower corner rounding and remove seam artifacts"
+    source: "user request: lower corners break after refresh"
+    status: done
+    estimate_steps: "2"
+    notes: "removed diagnostic clip-path/mask seams in hero inline styles (index/dist) and aligned hero-bg/shell painting with stable bottom radii; added GPU-accelerated rounding stabilization for hero-bg in source CSS"
+
+  - id: N7
+    priority: 7
+    title: "Compact mode popup anchor and close button offsets"
+    source: "user request: compact popup anchor/close alignment"
+    status: done
+    estimate_steps: "2"
+    notes: "Adjusted compact section modal anchor to hero top-left with compact offset and switched floating close placement to card-relative absolute positioning."
+
+  - id: N8
+    priority: 8
+    title: "Step 4 post-submit simplified booked state"
+    source: "user request: after phone, show only booked card block"
+    status: done
+    estimate_steps: "2"
+    notes: "added booked-state summary rendering and ensured form summary timer is not shown in success modal in src + dist/index.html + dist/index.htm"
+
+  - id: N9
+    priority: 9
+    title: "Full/compact regression pass for booking flow"
+    source: "stability check after UI deltas"
+    status: done
+    estimate_steps: "2"
+    notes: "full/compact flow checked in src + dist: completed booking hides summary bar and keeps single booked-state UI block"
+
+  - id: N10
+    priority: 10
+    title: "Rebuild and sync dist artifacts"
+    source: "keep runtime parity"
+    status: pending
+    estimate_steps: "1"
+    notes: ""

@@ -433,10 +433,3 @@ body[data-mode="compact"] .ac-booking-fixed--resume {
   opacity: 0.45;
   cursor: default;
 }
-
-:where(
-  .ac-primary-btn,
-  .ac-round-btn:not(:disabled),
-  .ac-hero-pill,
-  .ac-direction-btn,
-  .ac-shift-toggle,

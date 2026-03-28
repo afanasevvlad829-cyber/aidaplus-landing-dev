@@ -46,14 +46,14 @@
           group:'Проживание',
           icon:'/assets/icons/check.svg',
           items:[
-            {q:'Сколько детей в комнате?',a:'2–4 человека, все удобства на этаже.'}
+            {q:'Сколько детей в комнате?',a:'2-4 человека, оборудованные санузлы в каждой комнате.'}
           ]
         },
         {
           group:'Связь',
           icon:'/assets/icons/phone-mobile.svg',
           items:[
-            {q:'Будет ли телефон у ребёнка?',a:'Лагерь «без телефонов». Сдаётся на хранение, звонки родителям 1–2 раза в день.'},
+            {q:'Будет ли телефон у ребёнка?',a:'Лагерь «без телефонов». Телефон сдаётся на хранение: звонки родителям — раз в день или по запросу в любое время. В любое время можно связаться с вожатым, вожатые и старшие смены на связи 24/7.'},
             {q:'Как следить что происходит?',a:'Родительский Telegram-чат, фото каждый день.'}
           ]
         }
@@ -211,8 +211,12 @@
     };
 
     const STORAGE_KEY = 'aidacamp_proto_state_v3';
+    const BOOKING_SCARCITY_KEY = 'aidacamp_booking_scarcity_v1';
+    const BOOKING_SCARCITY_BASE = 63;
+    const BOOKING_SCARCITY_STEP = 7;
+    const BOOKING_SCARCITY_MAX = 98;
 
-    let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
       age:null,
       shiftId:null,
       basePrice:null,
@@ -220,14 +224,16 @@
       code:null,
       expiresAt:null,
       offerStage:0,
+      bookingCompleted:false,
       view:'desktop',
       phone:''
-    };
+};
 
     const METRIKA_ID = 96499295;
     const DEBUG_UI = false;
+    const BUILD_VERSION_LABEL = 'v0.0.112 (debug-offer-layout-switch)';
     const MOBILE_AGE_GATE_SHOWN_KEY = 'aidacamp_mobile_age_gate_shown_v1';
-    const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v1';
+    const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v2';
     const VIDEO_META_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
     const VIDEO_META_REFRESH_INTERVAL_MS = 1000 * 60 * 60 * 4;
     const COMPACT_MODAL_SECTIONS = new Set([
@@ -249,6 +255,9 @@
     let mediaCustomCaption = '';
     state.desktopMode = state.desktopMode || 'full';
     state.mobileMode = state.mobileMode || 'full';
+    state.heroContrastMode = ['before', 'after', 'after-soft'].includes(state.heroContrastMode) ? state.heroContrastMode : 'after-soft';
+    state.offerModalTheme = state.offerModalTheme === 'dark' ? 'dark' : 'light';
+    state.offerLayout = state.offerLayout === 'current' ? 'current' : 'legacy';
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
     state.photoFilter = state.photoFilter || 'camp';
     state.faqFilter = state.faqFilter || 'Медицина';
@@ -264,15 +273,42 @@
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
     let offerTimeoutIds = [];
+    let offerProgressRafId = null;
     let offerRunId = 0;
     let leadSubmitInProgress = false;
     let videoMetaRefreshTimer = null;
+    let lastRenderedBookingStage = 0;
+    let bookingScarcityState = (() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(BOOKING_SCARCITY_KEY) || 'null');
+        const visits = Number(saved && saved.visits);
+        return {
+          visits: Number.isFinite(visits) && visits > 0 ? Math.floor(visits) : 0
+        };
+      } catch (error){
+        return { visits: 0 };
+      }
+    })();
     let shiftOptionPanels = {
       desktop:{aboutId:null, calendarId:null},
       mobile:{aboutId:null, calendarId:null}
     };
+    let desktopAgeTapHintTimer = null;
+    let desktopAgeTapHintRunning = false;
+    let desktopAgeTapHintPlayed = false;
+    let desktopAgeTapHintToken = 0;
+    const desktopAgeTapHintStartedAt = Date.now();
 
     function track(event, params = {}){
+      const featureTrack = window.AC_FEATURES && window.AC_FEATURES.track;
+      if(typeof featureTrack === 'function' && featureTrack !== track){
+        try {
+          featureTrack(event, params);
+          return;
+        } catch (error){
+          console.warn('Feature track fallback to local metrika:', event, error);
+        }
+      }
       try {
         if(typeof ym !== 'undefined'){
           ym(METRIKA_ID, 'reachGoal', event, params);
@@ -288,10 +324,21 @@
     function applyDebugUiState(){
       const badge = document.getElementById('version-badge');
       if(!badge) return;
+      const label = String(badge.dataset.version || BUILD_VERSION_LABEL || '').trim();
+      if(label){
+        badge.textContent = label;
+        badge.title = label;
+        badge.classList.remove('hidden');
+        return;
+      }
       badge.classList.toggle('hidden', !DEBUG_UI);
     }
 
     function trackOnce(event, params = {}){
+      const featureTracking = window.AC_FEATURES && window.AC_FEATURES.tracking;
+      if(featureTracking && typeof featureTracking.trackOnce === 'function'){
+        return featureTracking.trackOnce(track, metrikaSeen, event, params);
+      }
       const key = `${event}:${JSON.stringify(params)}`;
       if(metrikaSeen.has(key)) return;
       metrikaSeen.add(key);
@@ -299,6 +346,10 @@
     }
 
     function trackOncePerSession(event, sessionKey, params = {}){
+      const featureTracking = window.AC_FEATURES && window.AC_FEATURES.tracking;
+      if(featureTracking && typeof featureTracking.trackOncePerSession === 'function'){
+        return featureTracking.trackOncePerSession(track, event, sessionKey, params);
+      }
       try {
         if(sessionStorage.getItem(sessionKey)) return;
         sessionStorage.setItem(sessionKey, '1');
@@ -309,6 +360,10 @@
     }
 
     function initScrollTracking(){
+      const featureTracking = window.AC_FEATURES && window.AC_FEATURES.tracking;
+      if(featureTracking && typeof featureTracking.initScrollTracking === 'function'){
+        return featureTracking.initScrollTracking(track, scrollMarks);
+      }
       window.addEventListener('scroll', () => {
         const h = document.documentElement;
         const max = h.scrollHeight - h.clientHeight;
@@ -320,10 +375,31 @@
             track(`scroll_${p}`);
           }
         });
+        if(typeof updateSummaryBarVisibility === 'function'){
+          updateSummaryBarVisibility();
+        }
       }, {passive:true});
     }
 
+    function initSummaryBarViewportSync(){
+      const sync = () => {
+        if(typeof updateSummaryBarVisibility === 'function'){
+          updateSummaryBarVisibility();
+        }
+      };
+      window.addEventListener('scroll', sync, {passive:true});
+      window.addEventListener('orientationchange', sync, {passive:true});
+      document.addEventListener('visibilitychange', () => {
+        if(document.hidden) return;
+        sync();
+      });
+    }
+
     function initSectionViewTracking(){
+      const featureTracking = window.AC_FEATURES && window.AC_FEATURES.tracking;
+      if(featureTracking && typeof featureTracking.initSectionViewTracking === 'function'){
+        return featureTracking.initSectionViewTracking(track, trackOnce);
+      }
       const targets = [
         {id:'section-stay', event:'stay_view'},
         {id:'section-reviews', event:'reviews_view'},
@@ -345,9 +421,7 @@
     }
 
     const HERO_IMAGES = [
-      '/assets/images/cdn-cache/0b6b9a8c_day.png',
-      '/assets/images/cdn-cache/4e868442_photo.png',
-      '/assets/images/cdn-cache/ce98dc63_photo.png'
+      '/assets/images/hero-camp-sunset-20260328.jpeg'
     ];
 
     let heroIndex = 0;
@@ -356,6 +430,22 @@
 
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function persistBookingScarcity(){
+      try {
+        localStorage.setItem(BOOKING_SCARCITY_KEY, JSON.stringify({
+          visits: bookingScarcityState.visits
+        }));
+      } catch (error){
+        // ignore storage failures
+      }
+    }
+
+    function getBookingScarcityPercent(){
+      const visits = Math.max(1, Number(bookingScarcityState.visits || 0));
+      const raw = BOOKING_SCARCITY_BASE + ((visits - 1) * BOOKING_SCARCITY_STEP);
+      return Math.min(BOOKING_SCARCITY_MAX, raw);
     }
 
     function initHero(){
@@ -381,12 +471,18 @@
         return;
       }
 
-      bg1.style.backgroundImage = `url(${HERO_IMAGES[0]})`;
+      heroIndex = 0;
+      bg1.style.backgroundImage = `url(${HERO_IMAGES[heroIndex]})`;
       bg1.classList.add('active');
       bg1.classList.remove('hidden');
       if(!bg2) return;
       bg2.classList.remove('active');
       bg2.classList.add('hidden');
+
+      if(HERO_IMAGES.length <= 1){
+        bg2.style.backgroundImage = 'none';
+        return;
+      }
 
       heroTimer = setInterval(() => {
         heroIndex = (heroIndex + 1) % HERO_IMAGES.length;
@@ -426,7 +522,7 @@
     }
 
     function openMedia(type, index, options = {}){
-      closeTransientModals('media');
+      closeTransientModals('media', {keepSection: true});
       mediaType = type;
       mediaIndex = index;
       mediaCustomCaption = options.caption || '';
@@ -456,8 +552,9 @@
       mediaCustomCaption = '';
     }
 
-    function closeTransientModals(except = ''){
-      if(except !== 'section'){
+    function closeTransientModals(except = '', options = {}){
+      const keepSection = !!options.keepSection;
+      if(except !== 'section' && !keepSection){
         document.getElementById('sectionModal')?.classList.add('hidden');
       }
       if(except !== 'media'){
@@ -493,7 +590,7 @@
       const fallbackLink = document.getElementById('videoFallbackLink');
       if(!modal || !iframe || !inner || !fallback || !fallbackLink || !url) return;
 
-      closeTransientModals('video');
+      closeTransientModals('video', {keepSection: true});
       const source = resolveVideoSource(url);
       const isVertical = source.orientation === 'vertical';
       inner.classList.toggle('vertical', isVertical);
@@ -781,9 +878,17 @@
     function closeSectionModal(){
       const modal = document.getElementById('sectionModal');
       if(!modal) return;
+      const card = modal.querySelector('.section-modal-card');
       modal.classList.add('hidden');
       modal.classList.remove('section-modal-compact');
       modal.classList.remove('section-modal-mobile');
+      if(card){
+        card.style.left = '';
+        card.style.top = '';
+        card.style.right = '';
+        card.style.width = '';
+        card.style.height = '';
+      }
     }
 
     function scrollVideoCarousel(direction = 1){
@@ -804,6 +909,54 @@
       list.scrollBy({left: step * direction, behavior:'smooth'});
     }
 
+    function applyCompactSectionModalLayout(){
+      const modal = document.getElementById('sectionModal');
+      const hero = document.getElementById('hero') || document.querySelector('#desktopView .hero-shell');
+      const booking = document.getElementById('desktop-booking-card');
+      const topbar = hero?.querySelector('.hero-topbar');
+      const card = modal?.querySelector('.section-modal-card');
+      if(!modal || !hero || !card || !modal.classList.contains('section-modal-compact')) return;
+
+      const heroRect = hero.getBoundingClientRect();
+      const bookingRoot = booking?.closest('.hero-booking-card') || booking;
+      const bookingRect = bookingRoot ? bookingRoot.getBoundingClientRect() : null;
+      const topbarRect = topbar ? topbar.getBoundingClientRect() : null;
+      const inset = 14;
+      const bookingGap = 14;
+      const maxCompactWidth = 980;
+      const minCompactWidth = 460;
+
+      const left = Math.max(inset, Math.floor(heroRect.left + inset));
+      const topAnchor = Math.floor(topbarRect ? (topbarRect.bottom + 8) : (heroRect.top + 10));
+      const top = Math.max(inset, topAnchor);
+
+      const heroRight = Math.floor(heroRect.right - inset);
+      let slotRight = heroRight;
+      if(bookingRect && bookingRect.width > 140 && bookingRect.left > left){
+        slotRight = Math.min(slotRight, Math.floor(bookingRect.left - bookingGap));
+      }
+
+      const slotWidth = Math.floor(slotRight - left);
+      if(slotWidth <= 0) return;
+
+      const width = Math.max(Math.min(maxCompactWidth, slotWidth), Math.min(minCompactWidth, slotWidth));
+      const rightEdge = left + width;
+      const runtimeRight = Math.max(inset, Math.floor(window.innerWidth - rightEdge));
+      const availableHeight = Math.floor((heroRect.bottom - inset) - top);
+      if(availableHeight <= 0) return;
+
+      modal.style.setProperty('--section-modal-compact-runtime-left', `${left}px`);
+      modal.style.setProperty('--section-modal-compact-runtime-top', `${top}px`);
+      modal.style.setProperty('--section-modal-compact-runtime-right', `${runtimeRight}px`);
+      modal.style.setProperty('--section-modal-compact-runtime-width', `${width}px`);
+      modal.style.setProperty('--section-modal-compact-runtime-height', `${availableHeight}px`);
+      card.style.left = `${left}px`;
+      card.style.top = `${top}px`;
+      card.style.right = 'auto';
+      card.style.width = `${width}px`;
+      card.style.height = `${availableHeight}px`;
+    }
+
     function openSectionModal(sectionId){
       const modal = document.getElementById('sectionModal');
       const titleEl = document.getElementById('sectionModalTitle');
@@ -822,10 +975,15 @@
       const clone = sourceSection.cloneNode(true);
       clone.removeAttribute('id');
       clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+      clone.classList.remove('section-modal-contacts');
+      if(sectionId === 'section-contacts'){
+        clone.classList.add('section-modal-contacts');
+      }
 
       bodyEl.innerHTML = '';
       bodyEl.appendChild(clone);
       modal.classList.remove('hidden');
+      applyCompactSectionModalLayout();
       return true;
     }
 
@@ -882,292 +1040,373 @@
       renderMediaViewer();
     }
 
+    function runRoutedAction(action, featureRouter, methodName, handlers, fallbackMap){
+      if(featureRouter && typeof featureRouter[methodName] === 'function'){
+        const handled = featureRouter[methodName](action, handlers);
+        return !!handled;
+      }
+      const handlerKey = fallbackMap[action];
+      if(handlerKey && typeof handlers[handlerKey] === 'function'){
+        return !!handlers[handlerKey]();
+      }
+      return false;
+    }
+
     function handleDataActionClick(target){
       const actionEl = target.closest('[data-action]');
       if(!actionEl) return false;
 
       const action = actionEl.dataset.action;
-
-      if(action === 'open-photo'){
-        const index = Number(actionEl.dataset.photoIndex || 0);
-        if(actionEl.closest('#mobilePhotoGallery')){
-          const photoByFilter = {
-            camp: ['all'],
-            pool: ['pool'],
-            sport: ['sport'],
-            study: ['study'],
-            food: ['food']
-          };
-          const tags = photoByFilter[state.photoFilter] || ['all'];
-          activePhotoList = mediaContent.photos.filter(item => tags.includes(item.cat));
-        }
-        openMedia('photo', index);
-        return true;
-      }
-
-      if(action === 'open-stay-photo'){
-        const index = Number(actionEl.dataset.stayIndex || 0);
-        const stayGallery = getStayGallery();
-        if(!stayGallery.length) return true;
-        activePhotoList = stayGallery;
-        openMedia('photo', Math.max(0, Math.min(index, stayGallery.length - 1)));
-        return true;
-      }
-
-      if(action === 'open-book-photo'){
-        activePhotoList = [{
-          src:'/assets/images/cdn-cache/8fc8172e_8991804334.webp',
-          cat:'all',
-          alt:'Собственная книга по Python'
-        }];
-        openMedia('photo', 0, {caption:'Собственная книга по Python'});
-        return true;
-      }
-
-      if(action === 'open-video'){
-        const directUrl = actionEl.dataset.video || '';
-        if(directUrl){
-          openVideo(directUrl);
+      const featureActionRouterMedia = window.AC_FEATURES && window.AC_FEATURES.actionRouterMedia;
+      const mediaHandlers = {
+        openPhoto: () => {
+          const index = Number(actionEl.dataset.photoIndex || 0);
+          if(actionEl.closest('#mobilePhotoGallery')){
+            const photoByFilter = {
+              camp: ['all'],
+              pool: ['pool'],
+              sport: ['sport'],
+              study: ['study'],
+              food: ['food']
+            };
+            const tags = photoByFilter[state.photoFilter] || ['all'];
+            activePhotoList = mediaContent.photos.filter(item => tags.includes(item.cat));
+          }
+          openMedia('photo', index);
+          return true;
+        },
+        openStayPhoto: () => {
+          const index = Number(actionEl.dataset.stayIndex || 0);
+          const stayGallery = getStayGallery();
+          if(!stayGallery.length) return true;
+          activePhotoList = stayGallery;
+          openMedia('photo', Math.max(0, Math.min(index, stayGallery.length - 1)));
+          return true;
+        },
+        openBookPhoto: () => {
+          activePhotoList = [{
+            src:'/assets/images/cdn-cache/8fc8172e_8991804334.webp',
+            cat:'all',
+            alt:'Собственная книга по Python'
+          }];
+          openMedia('photo', 0, {caption:'Собственная книга по Python'});
+          return true;
+        },
+        openVideo: () => {
+          const directUrl = actionEl.dataset.video || '';
+          if(directUrl){
+            openVideo(directUrl);
+            return true;
+          }
+          const index = Number(actionEl.dataset.videoIndex || 0);
+          const item = mediaContent.videos[index];
+          if(item?.url) openVideo(item.url);
+          return true;
+        },
+        videoCarouselPrev: () => {
+          scrollVideoCarousel(-1);
+          return true;
+        },
+        videoCarouselNext: () => {
+          scrollVideoCarousel(1);
+          return true;
+        },
+        toggleShiftAbout: () => {
+          const shiftId = actionEl.dataset.shiftId || '';
+          const viewKey = actionEl.dataset.shiftView || 'desktop';
+          if(shiftId){
+            if(viewKey === 'desktop'){
+              openShiftAboutModal(shiftId);
+            } else {
+              toggleShiftOptionPanel(viewKey, 'aboutId', shiftId);
+            }
+          }
+          return true;
+        },
+        toggleShiftCalendarInline: () => {
+          const shiftId = actionEl.dataset.shiftId || '';
+          const viewKey = actionEl.dataset.shiftView || 'desktop';
+          if(shiftId){
+            if(viewKey === 'desktop'){
+              openCalendar(shiftId);
+            } else {
+              toggleShiftOptionPanel(viewKey, 'calendarId', shiftId);
+            }
+          }
+          return true;
+        },
+        openAllShifts: () => {
+          openAllShiftsFromBooking();
+          return true;
+        },
+        teamCarouselPrev: () => {
+          scrollTeamCarousel(-1);
+          return true;
+        },
+        teamCarouselNext: () => {
+          scrollTeamCarousel(1);
+          return true;
+        },
+        openCalendar: () => {
+          const shiftId = actionEl.dataset.shiftId || '';
+          if(shiftId) openCalendar(shiftId);
+          return true;
+        },
+        primaryCta: () => {
+          handlePrimaryCTA();
+          return true;
+        },
+        mobileFocusAge: () => {
+          focusMobileAgeGate();
+          return true;
+        },
+        resetAgeSelection: () => {
+          resetAgeSelection();
+          return true;
+        },
+        resetShiftSelection: () => {
+          resetShiftSelection();
           return true;
         }
-        const index = Number(actionEl.dataset.videoIndex || 0);
-        const item = mediaContent.videos[index];
-        if(item?.url) openVideo(item.url);
-        return true;
-      }
-
-      if(action === 'mobile-photo-select'){
-        const index = Number(actionEl.dataset.photoIndex || 0);
-        if(Number.isFinite(index)){
-          state.mobilePhotoIndex = Math.max(0, index);
-          renderCompactTrustPanelContent();
-          persist();
+      };
+      if(runRoutedAction(
+        action,
+        featureActionRouterMedia,
+        'handleMediaAction',
+        mediaHandlers,
+        {
+          'open-photo':'openPhoto',
+          'open-stay-photo':'openStayPhoto',
+          'open-book-photo':'openBookPhoto',
+          'open-video':'openVideo',
+          'video-carousel-prev':'videoCarouselPrev',
+          'video-carousel-next':'videoCarouselNext',
+          'toggle-shift-about':'toggleShiftAbout',
+          'toggle-shift-calendar-inline':'toggleShiftCalendarInline',
+          'open-all-shifts':'openAllShifts',
+          'team-carousel-prev':'teamCarouselPrev',
+          'team-carousel-next':'teamCarouselNext',
+          'open-calendar':'openCalendar',
+          'primary-cta':'primaryCta',
+          'mobile-focus-age':'mobileFocusAge',
+          'reset-age-selection':'resetAgeSelection',
+          'reset-shift-selection':'resetShiftSelection'
         }
+      )){
         return true;
       }
 
-      if(action === 'mobile-video-select'){
-        const index = Number(actionEl.dataset.videoIndex || 0);
-        if(Number.isFinite(index)){
-          state.mobileVideoIndex = Math.max(0, index);
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-review-select'){
-        const index = Number(actionEl.dataset.reviewIndex || 0);
-        if(Number.isFinite(index)){
-          state.mobileReviewIndex = Math.max(0, index);
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-faq-filter'){
-        const group = (actionEl.dataset.faqGroup || '').trim();
-        if(group){
-          state.mobileFaqGroup = group;
-          state.mobileFaqOpenKey = '';
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-faq-toggle'){
-        const key = (actionEl.dataset.faqKey || '').trim();
-        if(key){
-          state.mobileFaqOpenKey = state.mobileFaqOpenKey === key ? '' : key;
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-team-prev' || action === 'mobile-team-next'){
-        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
-        if(list.length){
-          const delta = action === 'mobile-team-next' ? 1 : -1;
-          state.mobileTeamIndex = (state.mobileTeamIndex + delta + list.length) % list.length;
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-team-select'){
-        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
-        if(list.length){
-          const index = Number(actionEl.dataset.teamIndex || 0);
+      const featureActionRouterMobile = window.AC_FEATURES && window.AC_FEATURES.actionRouterMobile;
+      const mobileHandlers = {
+        mobilePhotoSelect: () => {
+          const index = Number(actionEl.dataset.photoIndex || 0);
           if(Number.isFinite(index)){
-            state.mobileTeamIndex = Math.max(0, Math.min(index, list.length - 1));
+            state.mobilePhotoIndex = Math.max(0, index);
             renderCompactTrustPanelContent();
             persist();
           }
-        }
-        return true;
-      }
-
-      if(action === 'mobile-journey-step'){
-        const index = Number(actionEl.dataset.stepIndex || 0);
-        if(Number.isFinite(index)){
-          state.mobileJourneyStep = Math.max(0, Math.min(index, 3));
+          return true;
+        },
+        mobileVideoSelect: () => {
+          const index = Number(actionEl.dataset.videoIndex || 0);
+          if(Number.isFinite(index)){
+            state.mobileVideoIndex = Math.max(0, index);
+            renderCompactTrustPanelContent();
+            persist();
+          }
+          return true;
+        },
+        mobileReviewSelect: () => {
+          const index = Number(actionEl.dataset.reviewIndex || 0);
+          if(Number.isFinite(index)){
+            state.mobileReviewIndex = Math.max(0, index);
+            renderCompactTrustPanelContent();
+            persist();
+          }
+          return true;
+        },
+        mobileFaqFilter: () => {
+          const group = (actionEl.dataset.faqGroup || '').trim();
+          if(group){
+            state.mobileFaqGroup = group;
+            state.mobileFaqOpenKey = '';
+            renderCompactTrustPanelContent();
+            persist();
+          }
+          return true;
+        },
+        mobileFaqToggle: () => {
+          const key = (actionEl.dataset.faqKey || '').trim();
+          if(key){
+            state.mobileFaqOpenKey = state.mobileFaqOpenKey === key ? '' : key;
+            renderCompactTrustPanelContent();
+            persist();
+          }
+          return true;
+        },
+        mobileTeamPrev: () => {
+          const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
+          if(list.length){
+            state.mobileTeamIndex = (state.mobileTeamIndex - 1 + list.length) % list.length;
+            renderCompactTrustPanelContent();
+            persist();
+          }
+          return true;
+        },
+        mobileTeamNext: () => {
+          const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
+          if(list.length){
+            state.mobileTeamIndex = (state.mobileTeamIndex + 1 + list.length) % list.length;
+            renderCompactTrustPanelContent();
+            persist();
+          }
+          return true;
+        },
+        mobileTeamSelect: () => {
+          const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
+          if(list.length){
+            const index = Number(actionEl.dataset.teamIndex || 0);
+            if(Number.isFinite(index)){
+              state.mobileTeamIndex = Math.max(0, Math.min(index, list.length - 1));
+              renderCompactTrustPanelContent();
+              persist();
+            }
+          }
+          return true;
+        },
+        mobileJourneyStep: () => {
+          const index = Number(actionEl.dataset.stepIndex || 0);
+          if(Number.isFinite(index)){
+            state.mobileJourneyStep = Math.max(0, Math.min(index, 3));
+            renderCompactTrustPanelContent();
+            persist();
+          }
+          return true;
+        },
+        mobileProgramSelect: () => {
+          const shiftId = (actionEl.dataset.shiftId || '').trim();
+          if(shiftId){
+            state.mobileProgramShiftId = shiftId;
+            renderCompactTrustPanelContent();
+            persist();
+          }
+          return true;
+        },
+        mobileDocsToggle: () => {
+          state.mobileDocsExpanded = !state.mobileDocsExpanded;
           renderCompactTrustPanelContent();
           persist();
+          return true;
         }
+      };
+      if(runRoutedAction(
+        action,
+        featureActionRouterMobile,
+        'handleMobileAction',
+        mobileHandlers,
+        {
+          'mobile-photo-select':'mobilePhotoSelect',
+          'mobile-video-select':'mobileVideoSelect',
+          'mobile-review-select':'mobileReviewSelect',
+          'mobile-faq-filter':'mobileFaqFilter',
+          'mobile-faq-toggle':'mobileFaqToggle',
+          'mobile-team-prev':'mobileTeamPrev',
+          'mobile-team-next':'mobileTeamNext',
+          'mobile-team-select':'mobileTeamSelect',
+          'mobile-journey-step':'mobileJourneyStep',
+          'mobile-program-select':'mobileProgramSelect',
+          'mobile-docs-toggle':'mobileDocsToggle'
+        }
+      )){
         return true;
       }
 
-      if(action === 'mobile-program-select'){
-        const shiftId = (actionEl.dataset.shiftId || '').trim();
-        if(shiftId){
-          state.mobileProgramShiftId = shiftId;
-          renderCompactTrustPanelContent();
+      const featureActionRouter = window.AC_FEATURES && window.AC_FEATURES.actionRouter;
+      const commonHandlers = {
+        closeOffer: () => {
+          offerRunId += 1;
+          clearOfferTimeout();
+          document.getElementById('offerOverlay')?.classList.add('hidden');
+          resetOfferProgressUI();
+          return true;
+        },
+        saveOnDevice: () => {
+          saveOfferAndClose();
+          showHint('Условия сохранены на этом устройстве.');
+          return true;
+        },
+        applyOffer: () => {
+          clearOfferTimeout();
+          state.offerStage = Math.max(state.offerStage, 1);
           persist();
+          renderAll();
+          document.getElementById('offerOverlay')?.classList.add('hidden');
+          openForm();
+          return true;
+        },
+        closeForm: () => {
+          closeForm();
+          return true;
+        },
+        submitForm: () => {
+          submitLead();
+          return true;
+        },
+        submitInlineLead: () => {
+          const scope = (actionEl.dataset.inlineScope || '').trim();
+          submitLeadFromScope(scope);
+          return true;
+        },
+        closeSuccess: () => {
+          closeSuccessModal();
+          return true;
+        },
+        closeNotice: () => {
+          closeNoticeModal();
+          return true;
+        },
+        closeCalendar: () => {
+          closeCalendar();
+          return true;
+        },
+        closeSectionModal: () => {
+          closeSectionModal();
+          return true;
+        },
+        closeVideoModal: () => {
+          closeVideo();
+          return true;
+        },
+        debugResetBooking: () => {
+          resetBookingFlowDebug();
+          return true;
+        },
+        closeDebugControls: () => {
+          document.getElementById('debugControls')?.classList.add('hidden');
+          return true;
         }
-        return true;
-      }
-
-      if(action === 'mobile-docs-toggle'){
-        state.mobileDocsExpanded = !state.mobileDocsExpanded;
-        renderCompactTrustPanelContent();
-        persist();
-        return true;
-      }
-
-      if(action === 'video-carousel-prev'){
-        scrollVideoCarousel(-1);
-        return true;
-      }
-
-      if(action === 'video-carousel-next'){
-        scrollVideoCarousel(1);
-        return true;
-      }
-
-      if(action === 'toggle-shift-about'){
-        const shiftId = actionEl.dataset.shiftId || '';
-        const viewKey = actionEl.dataset.shiftView || 'desktop';
-        if(shiftId){
-          toggleShiftOptionPanel(viewKey, 'aboutId', shiftId);
+      };
+      if(runRoutedAction(
+        action,
+        featureActionRouter,
+        'handleCommonAction',
+        commonHandlers,
+        {
+          'close-offer':'closeOffer',
+          'save-on-device':'saveOnDevice',
+          'apply-offer':'applyOffer',
+          'close-form':'closeForm',
+          'submit-form':'submitForm',
+          'submit-inline-lead':'submitInlineLead',
+          'close-success':'closeSuccess',
+          'close-notice':'closeNotice',
+          'close-calendar':'closeCalendar',
+          'close-section-modal':'closeSectionModal',
+          'close-video-modal':'closeVideoModal',
+          'debug-reset-booking':'debugResetBooking',
+          'close-debug-controls':'closeDebugControls'
         }
-        return true;
-      }
-
-      if(action === 'toggle-shift-calendar-inline'){
-        const shiftId = actionEl.dataset.shiftId || '';
-        const viewKey = actionEl.dataset.shiftView || 'desktop';
-        if(shiftId){
-          toggleShiftOptionPanel(viewKey, 'calendarId', shiftId);
-        }
-        return true;
-      }
-
-      if(action === 'open-all-shifts'){
-        navigateToSection('section-programs');
-        return true;
-      }
-
-      if(action === 'team-carousel-prev'){
-        scrollTeamCarousel(-1);
-        return true;
-      }
-
-      if(action === 'team-carousel-next'){
-        scrollTeamCarousel(1);
-        return true;
-      }
-
-      if(action === 'open-calendar'){
-        const shiftId = actionEl.dataset.shiftId || '';
-        if(shiftId) openCalendar(shiftId);
-        return true;
-      }
-
-      if(action === 'primary-cta'){
-        handlePrimaryCTA();
-        return true;
-      }
-
-      if(action === 'mobile-focus-age'){
-        focusMobileAgeGate();
-        return true;
-      }
-
-      if(action === 'reset-age-selection'){
-        resetAgeSelection();
-        return true;
-      }
-
-      if(action === 'reset-shift-selection'){
-        resetShiftSelection();
-        return true;
-      }
-
-      if(action === 'close-offer'){
-        offerRunId += 1;
-        clearOfferTimeout();
-        document.getElementById('offerOverlay')?.classList.add('hidden');
-        resetOfferProgressUI();
-        return true;
-      }
-
-      if(action === 'save-on-device'){
-        saveOfferAndClose();
-        showHint('Условия сохранены на этом устройстве.');
-        return true;
-      }
-
-      if(action === 'apply-offer'){
-        clearOfferTimeout();
-        state.offerStage = Math.max(state.offerStage, 1);
-        document.getElementById('offerOverlay')?.classList.add('hidden');
-        renderAll();
-        openForm();
-        persist();
-        return true;
-      }
-
-      if(action === 'close-form'){
-        closeForm();
-        return true;
-      }
-
-      if(action === 'submit-form'){
-        submitLead();
-        return true;
-      }
-
-      if(action === 'close-success'){
-        closeSuccessModal();
-        return true;
-      }
-
-      if(action === 'close-calendar'){
-        closeCalendar();
-        return true;
-      }
-
-      if(action === 'close-section-modal'){
-        closeSectionModal();
-        return true;
-      }
-
-      if(action === 'close-video-modal'){
-        closeVideo();
-        return true;
-      }
-
-      if(action === 'debug-reset-booking'){
-        resetBookingFlowDebug();
-        return true;
-      }
-
-      if(action === 'close-debug-controls'){
-        document.getElementById('debugControls')?.classList.add('hidden');
+      )){
         return true;
       }
 
@@ -1175,97 +1414,213 @@
     }
 
     async function notifyLead(eventName, payload){
+      const cfg = resolveNotifyConfig();
+      const featureNotifyLead = window.AC_FEATURES && window.AC_FEATURES.notifyLead;
+      if(typeof featureNotifyLead === 'function' && featureNotifyLead !== notifyLead){
+        try {
+          const result = await featureNotifyLead(eventName, payload);
+          if(result && typeof result === 'object' && 'ok' in result){
+            if(result.ok || result.ok === false && result.fallback === false){
+              return result;
+            }
+            if(result.ok === false){
+              console.warn('[LEAD_NOTIFY_FEATURE] fallback to local transport', {eventName, result});
+            }
+          }
+          if(result === true){
+            return {ok: true, delivered: true, endpoint: 'feature_notify'};
+          }
+          if(result === false){
+            console.warn('[LEAD_NOTIFY_FEATURE] explicit false, fallback to local transport', {eventName});
+          } else if(result){
+            console.warn('[LEAD_NOTIFY_FEATURE] unexpected result, fallback to local transport', {eventName, result});
+          } else {
+            console.warn('[LEAD_NOTIFY_FEATURE] falsy result, fallback to local transport', {eventName});
+          }
+        } catch (error){
+          console.warn('Feature notifyLead fallback to local transport:', error);
+        }
+      }
+
       try {
-        const cfg = window.AC_NOTIFY_CONFIG || {};
         const body = {event: eventName, payload};
         const endpoint = cfg.leadEndpoint || '/api/lead';
         const response = await fetch(endpoint, {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(body)
+          body:JSON.stringify(body),
+          keepalive:true
         });
         if(response.ok){
           return {ok: true, delivered: true, endpoint};
         }
 
-        saveLeadFallbackMeta(eventName, endpoint, `http_${response.status}`);
+        const telegramResult = await sendLeadToTelegram(eventName, payload, cfg);
+        if(telegramResult.ok){
+          saveLeadFallbackMeta(eventName, endpoint, `http_${response.status}_telegram_ok`);
+          return telegramResult;
+        }
+
+        saveLeadFallbackMeta(eventName, endpoint, `http_${response.status}`, telegramResult.reason || 'telegram_not_delivered');
         console.warn('[LEAD_MOCK_FALLBACK]', {endpoint, body});
-        return {ok: false, delivered: false, fallback: true};
+        return {
+          ok: false,
+          delivered: false,
+          fallback: true,
+          reason: `api_http_${response.status}`,
+          details: telegramResult
+        };
       } catch(error){
-        console.error('notifyLead error', error);
-        const cfg = window.AC_NOTIFY_CONFIG || {};
+        const cfg = resolveNotifyConfig();
         const endpoint = cfg.leadEndpoint || '/api/lead';
-        saveLeadFallbackMeta(eventName, endpoint, String(error));
-        return {ok: false, delivered: false, fallback: true, error: String(error)};
+        const telegramResult = await sendLeadToTelegram(eventName, payload, cfg);
+        if(telegramResult.ok){
+          saveLeadFallbackMeta(eventName, endpoint, 'network_telegram_ok');
+          return telegramResult;
+        }
+        console.error('notifyLead error', error);
+        saveLeadFallbackMeta(
+          eventName,
+          endpoint,
+          error && error.message ? error.message : String(error),
+          telegramResult
+        );
+        return {
+          ok: false,
+          delivered: false,
+          fallback: true,
+          reason: error && error.message ? error.message : String(error),
+          details: telegramResult
+        };
       }
     }
 
-    function formatTelegramMessage(eventName, payload){
-      const lines = [];
-
-      if(eventName === 'promo_fixed'){
-        lines.push('AiDaCamp • Фиксация цены');
-        lines.push('');
-        lines.push(`Тип: ${payload.promo_status === 'improved_again' ? 'повторное улучшение' : 'первая фиксация'}`);
-        lines.push(`Телефон: ${payload.phone || 'не указан'}`);
-        lines.push(`Возраст: ${payload.age || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || '—'}`);
-        lines.push(`Даты: ${payload.shift_date || '—'}`);
-        lines.push(`Цена: ${payload.price_final ? formatPrice(payload.price_final) : '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push(`Действует до: ${payload.promo_expires_at_local || '—'}`);
-        lines.push('');
-        lines.push(`Режим: ${payload.mode || '—'}`);
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
+    async function sendLeadToTelegram(eventName, payload, cfg){
+      const safeCfg = resolveNotifyConfig(cfg);
+      const token = String(safeCfg?.telegramBotToken || '');
+      const chatId = String(safeCfg?.telegramChatId || '');
+      if(!token || !chatId){
+        return {ok:false, delivered:false, fallback:true, reason:'telegram_not_configured'};
       }
-
-      if(eventName === 'booking_submitted'){
-        lines.push('AiDaCamp • Новая заявка');
-        lines.push('');
-        lines.push(`Имя: ${payload.name || '—'}`);
-        lines.push(`Телефон: ${payload.phone || '—'}`);
-        lines.push(`Возраст: ${payload.age || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || '—'}`);
-        lines.push(`Даты: ${payload.shift_date || '—'}`);
-        lines.push(`Цена: ${payload.price_text || '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push(`Статус промо: ${payload.promo_status || '—'}`);
-        lines.push('');
-        lines.push(`Режим: ${payload.mode || '—'}`);
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
+      try {
+        const tgResponse = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            chat_id: chatId,
+            text: buildTelegramLeadText(eventName, payload),
+            disable_web_page_preview: true
+          }),
+          keepalive:true
+        });
+        if(tgResponse.ok){
+          return {ok:true, delivered:true, endpoint:'telegram_bot', fallback:true};
+        }
+        let telegramError = '';
+        try {
+          telegramError = await tgResponse.text();
+        } catch (_err){
+          telegramError = '';
+        }
+        return {
+          ok:false,
+          delivered:false,
+          fallback:true,
+          reason:`telegram_http_${tgResponse.status}`,
+          details: telegramError ? telegramError.slice(0, 300) : ''
+        };
+      } catch(error){
+        return {
+          ok:false,
+          delivered:false,
+          fallback:true,
+          reason:'telegram_network_error',
+          details:String(error || '')
+        };
       }
+    }
 
-      if(eventName === 'booking_draft_saved'){
-        lines.push('AiDaCamp • Черновик заявки');
-        lines.push('');
-        lines.push(`Имя: ${payload.name || '—'}`);
-        lines.push(`Телефон: ${payload.phone || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || payload.shift_text || '—'}`);
-        lines.push(`Цена: ${payload.price_text || '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push('');
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
+    function formatLeadDeliveryStateText(deliveryResult){
+      if(!deliveryResult || deliveryResult.ok) return '';
+      const reason = String(deliveryResult.reason || '').trim();
+      const details = deliveryResult.details
+        ? (typeof deliveryResult.details === 'string'
+            ? deliveryResult.details
+            : JSON.stringify(deliveryResult.details))
+        : '';
+      const compact = details ? `${reason ? `${reason}: ` : ''}${details}` : reason;
+      return compact ? `Внимание: заявка временно не дошла до основного канала. ${compact.slice(0, 250)}` : '';
+    }
+
+    function resolveNotifyConfig(overrides = null){
+      const cfg = window.AC_NOTIFY_CONFIG || {};
+      const legacyAC = window.AC && window.AC.CFG ? window.AC.CFG : {};
+      const safeRead = (name) => {
+        try {
+          if(!window.localStorage) return '';
+          const raw = window.localStorage.getItem(name);
+          return raw == null ? '' : String(raw).trim();
+        } catch (_err) {
+          return '';
+        }
+      };
+      const merged = Object.assign({}, cfg, overrides || {});
+      const tokenFromStorage = String(
+        safeRead('aidacamp_tg_token') ||
+        safeRead('ac_tg_token') ||
+        safeRead('tg_token') ||
+        ''
+      );
+      const chatIdFromStorage = String(
+        safeRead('aidacamp_tg_chat_id') ||
+        safeRead('ac_tg_chat_id') ||
+        safeRead('tg_chat_id') ||
+        ''
+      );
+      const token = merged.telegramBotToken || merged.tgToken || legacyAC.tgToken || window.tgToken || tokenFromStorage;
+      const chatId = merged.telegramChatId || merged.tgChatId || legacyAC.tgChatId || window.tgChatId || chatIdFromStorage;
+      return {
+        ...merged,
+        telegramBotToken: token ? String(token) : '',
+        telegramChatId: chatId ? String(chatId) : ''
+      };
+    }
+
+    function buildTelegramLeadText(eventName, payload){
+      const lines = ['AiDaCamp • lead event', `Тип: ${String(eventName || '')}`];
+      if(payload && typeof payload === 'object'){
+        const ordered = [
+          'name',
+          'phone',
+          'age',
+          'shift_name',
+          'shift_date',
+          'price_text',
+          'promo_code',
+          'promo_status',
+          'mode',
+          'sent_at_local'
+        ];
+        ordered.forEach((key) => {
+          const value = payload[key];
+          if(value === '' || value === null || typeof value === 'undefined') return;
+          lines.push(`${key}: ${String(value)}`);
+        });
       }
-
-      if(eventName === 'promo_cancelled'){
-        lines.push('AiDaCamp • Отмена промо / брони');
-        lines.push('');
-        lines.push(`Имя: ${payload.name || '—'}`);
-        lines.push(`Телефон: ${payload.phone || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push(`Цена: ${payload.price_final ? formatPrice(payload.price_final) : '—'}`);
-        lines.push('');
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
-      }
-
-      if(lines.length === 0){
-        lines.push('AiDaCamp lead');
-        lines.push(`Event: ${eventName}`);
-        lines.push(JSON.stringify(payload, null, 2));
-      }
-
       return lines.join('\n');
+    }
+
+    function isAdminDebugSession(){
+      try {
+        if(window.AC_DEBUG === true) return true;
+        const search = new URLSearchParams(window.location.search || '');
+        const adminFlag = (search.get('admin') || search.get('debug') || '').toLowerCase();
+        if(['1', 'true', 'yes', 'on'].includes(adminFlag)) return true;
+        const storedFlag = String(localStorage.getItem('aidacamp_admin_debug') || '').toLowerCase();
+        return ['1', 'true', 'yes', 'on'].includes(storedFlag);
+      } catch(error){
+        return false;
+      }
     }
 
     function getSelectedShift(){
@@ -1383,7 +1738,7 @@
       }
     }
 
-    function saveLeadFallbackMeta(eventName, endpoint, reason = ''){
+    function saveLeadFallbackMeta(eventName, endpoint, reason = '', details = ''){
       try {
         const key = 'aidacamp_lead_fallback_meta';
         const prevRaw = localStorage.getItem(key);
@@ -1394,6 +1749,7 @@
           event: String(eventName || ''),
           endpoint: String(endpoint || ''),
           reason: String(reason || ''),
+          details: String(details || ''),
           count
         };
         localStorage.setItem(key, JSON.stringify(safeMeta));
@@ -1424,6 +1780,8 @@
       const keepView = state.view || 'desktop';
       const keepDesktopMode = state.desktopMode || 'full';
       const keepMobileMode = state.mobileMode || 'full';
+      const keepOfferModalTheme = state.offerModalTheme === 'dark' ? 'dark' : 'light';
+      const keepOfferLayout = state.offerLayout === 'current' ? 'current' : 'legacy';
       state = {
         age: null,
         ageSelected: false,
@@ -1433,10 +1791,13 @@
         code: null,
         expiresAt: null,
         offerStage: 0,
+        bookingCompleted: false,
         view: keepView,
         phone: '',
         desktopMode: keepDesktopMode,
         mobileMode: keepMobileMode,
+        offerModalTheme: keepOfferModalTheme,
+        offerLayout: keepOfferLayout,
         photoFilter: 'camp',
         faqFilter: 'Медицина',
         offerSearching: false
@@ -1449,6 +1810,13 @@
       const consentCheck = document.getElementById('consentCheck');
       if(consentCheck) consentCheck.checked = false;
       setPhoneError(false);
+      ['desktopInlineLeadHost','mobileInlineLeadHost','offerInlineLeadHost'].forEach((id) => {
+        const host = document.getElementById(id);
+        if(host){
+          host.classList.add('hidden');
+          host.innerHTML = '';
+        }
+      });
       ['desktopBookingHintInline', 'mobileBookingHintInline', 'desktopInlineHint', 'mobileInlineHint'].forEach((id) => {
         const el = document.getElementById(id);
         if(!el) return;
@@ -1473,6 +1841,14 @@
     }
 
     function getShiftContextLine(shift){
+      const featureBookingCopy = window.AC_FEATURES && window.AC_FEATURES.bookingCopy;
+      if(featureBookingCopy && typeof featureBookingCopy.getShiftContextLine === 'function'){
+        return featureBookingCopy.getShiftContextLine({
+          shiftId: shift ? shift.id : '',
+          hasSelectedAge: hasSelectedAge(),
+          age: ageLabel(state.age)
+        });
+      }
       if(!shift) return '';
       if(!hasSelectedAge()){
         return '';
@@ -1494,11 +1870,23 @@
     }
 
     function isOfferActive(){
+      const featureOfferUtils = window.AC_FEATURES && window.AC_FEATURES.offerUtils;
+      if(featureOfferUtils && typeof featureOfferUtils.isOfferActive === 'function'){
+        return featureOfferUtils.isOfferActive(state.expiresAt, Date.now());
+      }
       return !!(state.expiresAt && Date.now() < state.expiresAt);
     }
 
     function getVisiblePrice(){
+      const featureOfferUtils = window.AC_FEATURES && window.AC_FEATURES.offerUtils;
       const shift = getSelectedShift();
+      if(featureOfferUtils && typeof featureOfferUtils.getVisiblePrice === 'function'){
+        return featureOfferUtils.getVisiblePrice({
+          offerPrice: state.offerPrice,
+          basePrice: state.basePrice,
+          shiftPrice: shift ? shift.price : null
+        });
+      }
       if(state.offerPrice) return state.offerPrice;
       if(state.basePrice) return state.basePrice;
       return shift ? shift.price : null;
@@ -1507,9 +1895,25 @@
     function getPrimaryActionState(){
       syncGuidedState();
       const shift = getSelectedShift();
+      const featureBookingState = window.AC_FEATURES && window.AC_FEATURES.bookingState;
+      if(featureBookingState && typeof featureBookingState.getPrimaryActionState === 'function'){
+        return featureBookingState.getPrimaryActionState({
+          hasSelectedAge: hasSelectedAge(),
+          hasShift: !!shift,
+          offerStage: state.offerStage
+        });
+      }
       if(!hasSelectedAge()){
         return {
           text:'Выберите возраст',
+          disabled:true,
+          hint:''
+        };
+      }
+
+      if(state.bookingCompleted){
+        return {
+          text:'Заявка принята',
           disabled:true,
           hint:''
         };
@@ -1525,7 +1929,7 @@
 
       if(state.offerStage === 0){
         return {
-          text:'Проверить цену и условия',
+          text:'Уточнить цену',
           disabled:false,
           hint:''
         };
@@ -1538,8 +1942,32 @@
       };
     }
 
+    function getResolvedPrimaryActionText(actionState, shift){
+      if(!actionState) return '';
+      if(!shift || state.offerStage < 1){
+        return actionState.text || '';
+      }
+      const baseForGain = state.basePrice || shift.price || 0;
+      const gainValue = Math.max(0, baseForGain - (state.offerPrice || baseForGain));
+      return gainValue > 0
+        ? `Оформить заявку · выгода ${formatPrice(gainValue)}`
+        : 'Оформить заявку';
+    }
+
     function getStepState(){
       syncGuidedState();
+      const featureBookingState = window.AC_FEATURES && window.AC_FEATURES.bookingState;
+      if(state.bookingCompleted){
+        return 4;
+      }
+      if(featureBookingState && typeof featureBookingState.getStepState === 'function'){
+        return featureBookingState.getStepState({
+          hasSelectedAge: hasSelectedAge(),
+          shiftId: state.shiftId,
+          offerStage: state.offerStage,
+          code: state.code
+        });
+      }
       if(!hasSelectedAge()){
         return 1;
       }
@@ -1559,6 +1987,10 @@
     }
 
     function getBookingStage(){
+      const featureBookingState = window.AC_FEATURES && window.AC_FEATURES.bookingState;
+      if(featureBookingState && typeof featureBookingState.getBookingStage === 'function'){
+        return featureBookingState.getBookingStage(getStepState());
+      }
       return Math.min(Math.max(getStepState(), 1), 4);
     }
 
@@ -1566,8 +1998,17 @@
       const cardId = prefix === 'desktop' ? 'desktop-booking-card' : `${prefix}BookingCard`;
       const card = document.getElementById(cardId);
       if(!card) return;
+      const stage = getBookingStage();
       card.classList.remove('booking-stage-1', 'booking-stage-2', 'booking-stage-3', 'booking-stage-4');
-      card.classList.add(`booking-stage-${getBookingStage()}`);
+      card.classList.remove('booking-completed');
+      card.classList.add(`booking-stage-${stage}`);
+      if(state.bookingCompleted){
+        card.classList.add('booking-completed');
+      }
+      const stepThree = card.querySelector('.booking-step-3');
+      if(stepThree){
+        stepThree.classList.toggle('is-force-hidden', stage < 3);
+      }
     }
 
     function renderSteps(targetId){
@@ -1588,16 +2029,50 @@
       const shiftList = document.getElementById(`${prefix}ShiftList`);
       const ctaWrap = document.getElementById(`${prefix}CtaWrap`);
       const ageTabs = document.getElementById(`${prefix}AgeTabs`);
+      const chipHost = document.getElementById(`${prefix}BookingSummaryChips`);
       const ageChip = document.getElementById(`${prefix}AgeChip`);
       const ageChipText = document.getElementById(`${prefix}AgeChipText`);
       const shiftChip = document.getElementById(`${prefix}ShiftChip`);
       const shiftChipText = document.getElementById(`${prefix}ShiftChipText`);
+      const bookingCard = document.getElementById(prefix === 'desktop' ? 'desktop-booking-card' : `${prefix}BookingCard`);
+      const stepThree = bookingCard?.querySelector('.booking-step-3');
+      const allShiftsBtn = bookingCard?.querySelector('.booking-all-shifts-link');
 
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
       const isMobile = prefix === 'mobile';
-      const stepOne = isMobile ? document.querySelector('#mobileBookingCard .booking-step-1') : null;
-      if(isMobile && stepOne && shiftChip.parentElement !== stepOne){
-        stepOne.insertBefore(shiftChip, ageTabs);
+      if(state.bookingCompleted){
+        shiftList.classList.add('disabled');
+        ageTabs.classList.add('hidden');
+        ctaWrap.classList.add('hidden');
+        ageChip.classList.remove('visible');
+        shiftChip.classList.remove('visible');
+        if(chipHost){
+          chipHost.classList.remove('visible');
+        }
+        if(stepThree){
+          stepThree.classList.add('is-force-hidden');
+        }
+        if(allShiftsBtn){
+          allShiftsBtn.classList.add('hidden');
+        }
+        if(isMobile){
+          document.getElementById('mobileBookingCard')?.classList.remove('has-mobile-summary-chips');
+        }
+        return;
+      }
+      if(allShiftsBtn){
+        allShiftsBtn.textContent = hasSelectedAge()
+          ? `Все смены для ${ageLabel(state.age)}`
+          : 'Все смены по возрастам';
+        allShiftsBtn.classList.toggle('hidden', state.offerStage >= 1);
+      }
+      if(chipHost){
+        if(ageChip.parentElement !== chipHost){
+          chipHost.appendChild(ageChip);
+        }
+        if(shiftChip.parentElement !== chipHost){
+          chipHost.appendChild(shiftChip);
+        }
       }
 
       shiftList.classList.remove('disabled','highlight','collapsed');
@@ -1605,7 +2080,13 @@
       ageTabs.classList.remove('hidden');
       ageChip.classList.remove('visible');
       shiftChip.classList.remove('visible');
-      if(isMobile){
+      if(chipHost){
+        chipHost.classList.remove('visible');
+      }
+      if(stepThree){
+        stepThree.classList.add('is-force-hidden');
+      }
+      if(prefix === 'mobile'){
         document.getElementById('mobileBookingCard')?.classList.remove('has-mobile-summary-chips');
       }
 
@@ -1614,8 +2095,11 @@
         return;
       }
 
-      ageChipText.textContent = isMobile ? ageLabel(state.age) : `Возраст: ${ageLabel(state.age)}`;
+      ageChipText.textContent = ageLabel(state.age);
       ageChip.classList.add('visible');
+      if(chipHost){
+        chipHost.classList.add('visible');
+      }
       ageTabs.classList.add('hidden');
 
       if(hasSelectedAge() && !state.shiftId){
@@ -1626,12 +2110,15 @@
 
       const shift = getSelectedShift();
       if(shift){
-        shiftChipText.textContent = isMobile ? shift.dates : `Смена: ${shift.title} · ${shift.dates}`;
-        if(isMobile){
+        shiftChipText.textContent = shift.dates;
+        if(prefix === 'mobile'){
           document.getElementById('mobileBookingCard')?.classList.add('has-mobile-summary-chips');
         }
         shiftChip.classList.add('visible');
         shiftList.classList.add('collapsed');
+        if(stepThree){
+          stepThree.classList.remove('is-force-hidden');
+        }
       }
 
       if(state.shiftId && state.offerStage === 0){
@@ -1730,11 +2217,102 @@
       });
     }
 
-    function formatRemaining(diff){
+    function formatRemainingClock(diff){
       if(diff <= 0) return '';
-      const h = Math.floor(diff / (1000 * 60 * 60));
-      const m = Math.floor((diff / (1000 * 60)) % 60);
-      return `Действует ${h}ч ${m}м`;
+      const totalSeconds = Math.max(0, Math.floor(diff / 1000));
+      const totalHours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const hoursPart = String(totalHours).padStart(2, '0');
+      const minutesPart = String(minutes).padStart(2, '0');
+      const secondsPart = String(seconds).padStart(2, '0');
+      return `Осталось ${hoursPart}:${minutesPart}:${secondsPart}`;
+    }
+
+    function formatRemaining(diff){
+      return formatRemainingClock(diff);
+    }
+
+    function formatRemainingCompact(diff){
+      return formatRemainingClock(diff);
+    }
+
+    function normalizeCompactTimerText(text){
+      if(!text) return '';
+      const source = String(text).replace(/,/g, ' ');
+      const clockMatch = source.match(/(\d{1,4})\s*:\s*(\d{1,2})\s*:\s*(\d{1,2})/);
+      if(clockMatch){
+        const hh = String(Math.max(0, Number(clockMatch[1]) || 0)).padStart(2, '0');
+        const mm = String(Math.max(0, Math.min(59, Number(clockMatch[2]) || 0))).padStart(2, '0');
+        const ss = String(Math.max(0, Math.min(59, Number(clockMatch[3]) || 0))).padStart(2, '0');
+        return `Осталось ${hh}:${mm}:${ss}`;
+      }
+
+      const extract = (pattern) => {
+        const match = source.match(pattern);
+        return match ? Number(match[1]) || 0 : 0;
+      };
+
+      const days = extract(/(\d+)\s*(?:д(?:ень|ня|ней)?|[dDД])/);
+      const hours = extract(/(\d+)\s*(?:час(?:а|ов)?|[hHчЧ])/);
+      const minutes = extract(/(\d+)\s*(?:мин(?:ут(?:а|ы)?|ут)?|[mMмМ])/);
+      const seconds = extract(/(\d+)\s*(?:сек(?:унд(?:а|ы)?|унд)?|[sSсС])/);
+      const totalHours = (days * 24) + hours;
+
+      if(days || hours || minutes || seconds){
+        const hh = String(Math.max(0, totalHours)).padStart(2, '0');
+        const mm = String(Math.max(0, Math.min(59, minutes))).padStart(2, '0');
+        const ss = String(Math.max(0, Math.min(59, seconds))).padStart(2, '0');
+        return `Осталось ${hh}:${mm}:${ss}`;
+      }
+
+      return stripRemainingPrefix(source) ? `Осталось ${stripRemainingPrefix(source)}` : '';
+    }
+
+    function stripRemainingPrefix(text){
+      return String(text || '').replace(/^\s*Осталось[:\s]*/i, '').trim();
+    }
+
+    function formatOfferDeadline(ts){
+      if(!ts) return '';
+      const date = new Date(ts);
+      if(Number.isNaN(date.getTime())) return '';
+      const formatted = date.toLocaleString('ru-RU', {
+        day:'numeric',
+        month:'long',
+        hour:'numeric',
+        minute:'2-digit'
+      });
+      return formatted.replace(/\b0(\d):(\d{2})\b/, '$1:$2');
+    }
+
+    function updateBookingScarcityUi(){
+      const nodes = document.querySelectorAll('.booking-scarcity');
+      if(!nodes.length) return;
+
+      const stage = getBookingStage();
+      const enteredStageFour = stage === 4 && lastRenderedBookingStage !== 4;
+      if(enteredStageFour){
+        bookingScarcityState.visits = Math.max(0, Number(bookingScarcityState.visits || 0)) + 1;
+        persistBookingScarcity();
+      }
+      lastRenderedBookingStage = stage;
+
+      const percent = getBookingScarcityPercent();
+      nodes.forEach((node) => {
+        node.style.setProperty('--scarcity-fill', `${percent}%`);
+        node.innerHTML = `
+          <span class="booking-scarcity-progress" aria-hidden="true">
+            <span class="booking-scarcity-progress-fill"></span>
+          </span>
+          <span class="booking-scarcity-text"><strong>${percent}%</strong> мест уже занято</span>
+        `;
+        if(enteredStageFour){
+          node.classList.remove('is-animating');
+          void node.offsetWidth;
+          node.classList.add('is-animating');
+        }
+      });
     }
 
     function renderBookingInfo(targetInfoId, targetTitleId, targetLeadId, targetBtnId, targetHintId){
@@ -1745,41 +2323,126 @@
       const hint = document.getElementById(targetHintId);
       const shift = getSelectedShift();
       const action = getPrimaryActionState();
+      const isDesktopPanel = targetInfoId === 'desktop-booking-info';
+      const isPriceCheckStage = !!shift && state.offerStage === 0;
+      const actionText = getResolvedPrimaryActionText(action, shift);
+      const visiblePrice = formatPrice(getVisiblePrice());
 
       if(btn){
-        btn.textContent = action.text;
+        const shouldUseStackedCta = isDesktopPanel && state.offerStage >= 1 && /^Оформить заявку · выгода /i.test(actionText);
+        if(shouldUseStackedCta){
+          const gainText = actionText.replace(/^Оформить заявку · выгода /i, '').trim();
+          btn.innerHTML = `
+            <span class="cta-main-line cta-main-line--primary">Оформить заявку</span>
+            <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
+          `;
+          btn.dataset.ctaLayout = 'stacked';
+          btn.setAttribute('aria-label', actionText);
+        } else {
+          btn.textContent = actionText;
+          btn.removeAttribute('data-cta-layout');
+          btn.removeAttribute('aria-label');
+        }
         btn.classList.toggle('is-disabled', !!action.disabled);
+        btn.classList.toggle('cta-main-compact', isDesktopPanel && isPriceCheckStage);
         btn.setAttribute('aria-disabled', action.disabled ? 'true' : 'false');
         btn.disabled = false;
       }
       if(hint){
         hint.textContent = action.hint;
       }
+      if(state.bookingCompleted){
+        if(title) title.textContent = 'Заявка принята';
+        if(lead) lead.textContent = '';
+        if(btn){
+          btn.classList.add('is-disabled');
+          btn.setAttribute('aria-disabled', 'true');
+          btn.disabled = true;
+          btn.classList.add('hidden');
+          btn.removeAttribute('data-cta-layout');
+          btn.removeAttribute('aria-label');
+          btn.textContent = 'Заявка принята';
+          btn.classList.remove('cta-main-compact');
+        }
+        if(!shift){
+          if(info) info.innerHTML = '';
+          return;
+        }
+        if(info){
+          info.innerHTML = `
+            <div class="booking-price-box booking-summary-mini">
+              <div class="booking-price-head">
+                <div class="booking-price-col">
+                  <small>Ваша смена</small>
+                  <div class="booking-price-main">${shift.dates}</div>
+                </div>
+                <div class="booking-price-col booking-price-col--fixed" style="text-align:right;">
+                  <small>Возраст</small>
+                  <div class="booking-price-main">${ageLabel(state.age)}</div>
+                </div>
+              </div>
+              <div class="booking-price-head">
+                <div class="booking-price-col">
+                  <small>Зафиксированная цена</small>
+                  <div class="booking-price-main big">${visiblePrice}</div>
+                </div>
+                <div class="booking-price-col" style="text-align:right;">
+                  <small>Код бронирования</small>
+                  <div class="booking-price-main">${state.code || '—'}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        return;
+      }
 
       if(!hasSelectedAge()){
-        if(title) title.textContent = 'Выберите возраст ребёнка';
-        if(lead) lead.textContent = 'Мы покажем подходящие смены, программу и условия именно для этого возраста.';
+        if(title) title.textContent = 'Выберите возраст';
+        if(lead) lead.textContent = 'Покажем подходящие смены, программу и условия.';
         if(info) info.innerHTML = '';
         return;
       }
 
       if(!shift){
-        if(title) title.textContent = 'Выберите смену';
-        if(lead) lead.textContent = `Мы показали смены, которые подходят для возраста ${ageLabel(state.age)}.`;
+        if(title) title.textContent = `Смены для ${ageLabel(state.age)}`;
+        if(lead) lead.textContent = '';
         if(info) info.innerHTML = '';
+        if(btn) btn.classList.remove('cta-main-compact');
         return;
       }
 
       const currentPrice = formatPrice(shift.price);
-      const visiblePrice = formatPrice(getVisiblePrice());
-      const timerText = isOfferActive() ? formatRemaining(state.expiresAt - Date.now()) : '';
-
+      const visiblePriceValue = getVisiblePrice();
+      const visiblePriceCheck = formatPrice(visiblePriceValue);
+      const timerText = isOfferActive() ? formatRemainingCompact(state.expiresAt - Date.now()) : '';
+      const deadlineText = formatOfferDeadline(state.expiresAt);
+      const basePriceValue = Number(state.basePrice || shift.price || 0);
+      const safeVisiblePrice = Number(visiblePriceValue || 0);
+      const discountPercent = basePriceValue > 0
+        ? Math.max(0, Math.round(((basePriceValue - safeVisiblePrice) / basePriceValue) * 100))
+        : 0;
       if(state.offerStage >= 1){
-        if(title) title.textContent = 'Оформление заявки';
-        if(lead) lead.textContent = '';
+        if(title) title.textContent = 'Оформление брони';
+        if(lead){
+          lead.textContent = deadlineText ? `Условия до ${deadlineText}` : '';
+        }
       } else {
         if(title) title.textContent = 'Проверим цену и условия';
-        if(lead) lead.textContent = `${shift.title} · ${shift.dates}`;
+        if(lead) lead.textContent = '';
+      }
+
+      if(isDesktopPanel && state.offerStage === 0){
+        const shiftContext = getShiftContextLine(shift);
+        if(info) info.innerHTML = `
+          <div class="booking-shift-focus">
+            <div class="booking-shift-focus__dates">${shift.dates}</div>
+            <div class="booking-shift-focus__meta">${shiftDaysLabel(shift)} · ${formatPrice(shift.price)} · осталось ${shift.left} мест</div>
+            <p class="booking-shift-focus__desc">${shift.desc}</p>
+            ${shiftContext ? `<p class="booking-shift-focus__context">${shiftContext}</p>` : ''}
+          </div>
+        `;
+        return;
       }
 
       const isSummaryStage = state.offerStage >= 1;
@@ -1790,14 +2453,15 @@
               <small>Возраст</small>
               <div class="booking-price-main">${ageLabel(state.age)}</div>
             </div>
-            <div class="booking-price-col" style="text-align:right;">
-              <small>Цена</small>
-              <div class="booking-price-main big">${visiblePrice}</div>
+          <div class="booking-price-col booking-price-col--fixed" style="text-align:right;">
+              <small>Зафиксированная цена</small>
+              <div class="booking-price-main big">${visiblePriceCheck}</div>
+              ${discountPercent > 0 ? `<div class="booking-price-discount">Скидка ${discountPercent}%</div>` : ''}
             </div>
           </div>
-          <div class="booking-code-line">Смена: <strong style="color:#fff;">${shift.title}</strong></div>
+          <div class="booking-code-line">Даты: <strong style="color:#fff;">${shift.dates}</strong></div>
           ${state.code ? `<div class="booking-code-line">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
-          ${timerText ? `<div class="booking-timer-line">${timerText}</div>` : ''}
+          ${timerText ? `<div class="booking-timer-line" data-live-timer="true">${timerText}</div>` : ''}
         </div>
       ` : `
         <div class="booking-price-box">
@@ -1808,7 +2472,7 @@
             </div>
             <div class="booking-price-col" style="text-align:right;">
               <small>После проверки</small>
-              <div class="booking-price-main big">${visiblePrice}</div>
+              <div class="booking-price-main big">${visiblePriceCheck}</div>
             </div>
           </div>
         </div>
@@ -1841,6 +2505,11 @@
       applyBookingStageClass('mobile');
       syncBookingHints();
       updateMobileAgeGateUi();
+      updateBookingScarcityUi();
+      if(getBookingStage() < 4){
+        closeInlineLead('booking-desktop');
+        closeInlineLead('booking-mobile');
+      }
     }
 
     function focusMobileAgeGate(){
@@ -1870,10 +2539,22 @@
 
     function switchView(view){
       state.view = view;
-      document.getElementById('desktopBtn').classList.toggle('active', view === 'desktop');
-      document.getElementById('mobileBtn').classList.toggle('active', view === 'mobile');
-      document.getElementById('desktopView').classList.toggle('hidden', view !== 'desktop');
-      document.getElementById('mobileView').classList.toggle('hidden', view !== 'mobile');
+      const desktopBtn = document.getElementById('desktopBtn');
+      const mobileBtn = document.getElementById('mobileBtn');
+      const desktopView = document.getElementById('desktopView');
+      const mobileView = document.getElementById('mobileView');
+      if(desktopBtn){
+        desktopBtn.classList.toggle('active', view === 'desktop');
+      }
+      if(mobileBtn){
+        mobileBtn.classList.toggle('active', view === 'mobile');
+      }
+      if(desktopView){
+        desktopView.classList.toggle('hidden', view !== 'desktop');
+      }
+      if(mobileView){
+        mobileView.classList.toggle('hidden', view !== 'mobile');
+      }
       const desktopModeWrap = document.getElementById('desktopModeWrap');
       if(desktopModeWrap){
         desktopModeWrap.classList.toggle('hidden', view !== 'desktop');
@@ -1882,16 +2563,93 @@
         closeSectionModal();
       }
       updateMobileAgeGateUi();
+      updateSummaryBarVisibility();
       persist();
       requestAnimationFrame(() => {
         window.dispatchEvent(new Event('resize'));
       });
     }
 
+    function applyHeroContrastMode(){
+      const desktopView = document.getElementById('desktopView');
+      const beforeBtn = document.getElementById('heroContrastBeforeBtn');
+      const afterBtn = document.getElementById('heroContrastAfterBtn');
+      const afterSoftBtn = document.getElementById('heroContrastAfterSoftBtn');
+      if(!desktopView) return;
+      const mode = ['before', 'after', 'after-soft'].includes(state.heroContrastMode) ? state.heroContrastMode : 'after-soft';
+      desktopView.classList.toggle('hero-contrast-before', mode === 'before');
+      desktopView.classList.toggle('hero-contrast-after', mode === 'after');
+      desktopView.classList.toggle('hero-contrast-after-soft', mode === 'after-soft');
+      if(beforeBtn){
+        beforeBtn.classList.toggle('active', mode === 'before');
+      }
+      if(afterBtn){
+        afterBtn.classList.toggle('active', mode === 'after');
+      }
+      if(afterSoftBtn){
+        afterSoftBtn.classList.toggle('active', mode === 'after-soft');
+      }
+    }
+
+    function switchHeroContrastMode(mode){
+      state.heroContrastMode = ['before', 'after', 'after-soft'].includes(mode) ? mode : 'after-soft';
+      applyHeroContrastMode();
+      persist();
+    }
+
+    function applyOfferModalTheme(cardEl = null){
+      const mode = state.offerModalTheme === 'dark' ? 'dark' : 'light';
+      const lightBtn = document.getElementById('offerThemeLightBtn');
+      const darkBtn = document.getElementById('offerThemeDarkBtn');
+      if(lightBtn){
+        lightBtn.classList.toggle('active', mode === 'light');
+      }
+      if(darkBtn){
+        darkBtn.classList.toggle('active', mode === 'dark');
+      }
+      const card = cardEl || document.getElementById('offerCard');
+      if(card){
+        card.classList.toggle('dark', mode === 'dark');
+      }
+    }
+
+    function switchOfferModalTheme(mode){
+      state.offerModalTheme = mode === 'dark' ? 'dark' : 'light';
+      applyOfferModalTheme();
+      persist();
+    }
+
+    function applyOfferLayoutMode(){
+      const mode = state.offerLayout === 'legacy' ? 'legacy' : 'current';
+      const currentBtn = document.getElementById('offerLayoutCurrentBtn');
+      const legacyBtn = document.getElementById('offerLayoutLegacyBtn');
+      if(currentBtn){
+        currentBtn.classList.toggle('active', mode === 'current');
+      }
+      if(legacyBtn){
+        legacyBtn.classList.toggle('active', mode === 'legacy');
+      }
+      const card = document.getElementById('offerCard');
+      if(card){
+        card.dataset.offerLayout = mode;
+      }
+    }
+
+    function switchOfferLayout(mode){
+      state.offerLayout = mode === 'legacy' ? 'legacy' : 'current';
+      applyOfferLayoutMode();
+      persist();
+      const overlay = document.getElementById('offerOverlay');
+      if(overlay && !overlay.classList.contains('hidden') && !state.offerSearching && state.offerStage > 0){
+        showOffer();
+      }
+    }
+
     function applyDesktopMode(){
       const desktopView = document.getElementById('desktopView');
       const fullBtn = document.getElementById('fullModeBtn');
       const compactBtn = document.getElementById('compactModeBtn');
+      if(!desktopView || !fullBtn || !compactBtn) return;
 
       desktopView.classList.toggle('compact-mode', state.desktopMode === 'compact');
       fullBtn.classList.toggle('active', state.desktopMode === 'full');
@@ -1904,6 +2662,7 @@
       if(mode !== 'compact'){
         closeSectionModal();
       }
+      updateSummaryBarVisibility();
       persist();
     }
 
@@ -1930,15 +2689,23 @@
     function switchMobileMode(mode){
       state.mobileMode = mode;
       applyMobileMode();
+      updateSummaryBarVisibility();
       persist();
     }
 
-    document.getElementById('desktopBtn').addEventListener('click', () => switchView('desktop'));
-    document.getElementById('mobileBtn').addEventListener('click', () => switchView('mobile'));
-    document.getElementById('fullModeBtn').addEventListener('click', () => switchDesktopMode('full'));
-    document.getElementById('compactModeBtn').addEventListener('click', () => switchDesktopMode('compact'));
+    document.getElementById('desktopBtn')?.addEventListener('click', () => switchView('desktop'));
+    document.getElementById('mobileBtn')?.addEventListener('click', () => switchView('mobile'));
+    document.getElementById('fullModeBtn')?.addEventListener('click', () => switchDesktopMode('full'));
+    document.getElementById('compactModeBtn')?.addEventListener('click', () => switchDesktopMode('compact'));
     document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => switchMobileMode('full'));
     document.getElementById('mobileCompactModeBtn')?.addEventListener('click', () => switchMobileMode('compact'));
+    document.getElementById('heroContrastBeforeBtn')?.addEventListener('click', () => switchHeroContrastMode('before'));
+    document.getElementById('heroContrastAfterBtn')?.addEventListener('click', () => switchHeroContrastMode('after'));
+    document.getElementById('heroContrastAfterSoftBtn')?.addEventListener('click', () => switchHeroContrastMode('after-soft'));
+    document.getElementById('offerThemeLightBtn')?.addEventListener('click', () => switchOfferModalTheme('light'));
+    document.getElementById('offerThemeDarkBtn')?.addEventListener('click', () => switchOfferModalTheme('dark'));
+    document.getElementById('offerLayoutCurrentBtn')?.addEventListener('click', () => switchOfferLayout('current'));
+    document.getElementById('offerLayoutLegacyBtn')?.addEventListener('click', () => switchOfferLayout('legacy'));
     document.getElementById('mobileModeToggle')?.addEventListener('click', () => {
       switchMobileMode(state.mobileMode === 'full' ? 'compact' : 'full');
     });
@@ -2018,7 +2785,7 @@
       const ctaBtn = e.target.closest('#desktopStartBtn, #mobileStartBtn');
       if(ctaBtn && ctaBtn.classList.contains('is-disabled')){
         if(!hasSelectedAge()){
-          showHint('Выберите возраст ребёнка', 'age');
+          showHint('Выберите возраст', 'age');
         } else if(!state.shiftId){
           showHint('Выберите подходящую смену', 'shift');
         }
@@ -2123,14 +2890,28 @@
       const firstMonth = new Date(start.getFullYear(), start.getMonth(), 1);
       const lastMonth = new Date(end.getFullYear(), end.getMonth(), 1);
       const cursor = new Date(firstMonth);
+      const isMultiMonthRange = firstMonth.getTime() !== lastMonth.getTime();
       let html = '';
 
       while(cursor <= lastMonth){
         const year = cursor.getFullYear();
         const month = cursor.getMonth();
-        const firstDay = new Date(year, month, 1);
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const leading = firstDay.getDay();
+        let displayFrom = 1;
+        let displayTo = daysInMonth;
+
+        if(isMultiMonthRange){
+          const isFirst = year === firstMonth.getFullYear() && month === firstMonth.getMonth();
+          const isLast = year === lastMonth.getFullYear() && month === lastMonth.getMonth();
+
+          if(isFirst){
+            displayFrom = Math.max(1, daysInMonth - 13);
+          }else if(isLast){
+            displayTo = Math.min(daysInMonth, 14);
+          }
+        }
+
+        const leading = new Date(year, month, displayFrom).getDay();
 
         html += `
           <div class="calendar-month">
@@ -2142,7 +2923,7 @@
           html += '<div class="calendar-day empty"></div>';
         }
 
-        for(let day = 1; day <= daysInMonth; day += 1){
+        for(let day = displayFrom; day <= displayTo; day += 1){
           const d = new Date(year, month, day);
           const isInRange = d >= start && d <= end;
           html += `
@@ -2173,7 +2954,20 @@
     }
 
     function selectedShiftPayload(){
+      const featureBookingPayload = window.AC_FEATURES && window.AC_FEATURES.bookingPayload;
       const shift = getSelectedShift();
+      if(featureBookingPayload && typeof featureBookingPayload.selectedShiftPayload === 'function'){
+        return featureBookingPayload.selectedShiftPayload({
+          shiftId: state.shiftId || '',
+          shiftTitle: shift ? shift.title : '',
+          shiftDates: shift ? shift.dates : '',
+          shiftDays: shift ? shiftDaysLabel(shift) : '',
+          age: state.age || '',
+          offerPrice: state.offerPrice,
+          basePrice: state.basePrice,
+          shiftPrice: shift ? shift.price : ''
+        });
+      }
       return {
         shift_id: state.shiftId || '',
         shift_title: shift ? shift.title : '',
@@ -2185,14 +2979,29 @@
     }
 
     function clearOfferTimeout(){
-      if(!offerTimeoutIds.length) return;
-      offerTimeoutIds.forEach((id) => clearTimeout(id));
-      offerTimeoutIds = [];
+      const featureOfferFlow = window.AC_FEATURES && window.AC_FEATURES.offerFlow;
+      if(featureOfferFlow && typeof featureOfferFlow.clearOfferTimeout === 'function'){
+        offerTimeoutIds = featureOfferFlow.clearOfferTimeout(offerTimeoutIds);
+      } else if(offerTimeoutIds.length){
+        offerTimeoutIds.forEach((id) => clearTimeout(id));
+        offerTimeoutIds = [];
+      }
+      if(offerProgressRafId){
+        cancelAnimationFrame(offerProgressRafId);
+        offerProgressRafId = null;
+      }
     }
 
     function resetOfferState({preserveShift = true} = {}){
+      const featureOfferFlow = window.AC_FEATURES && window.AC_FEATURES.offerFlow;
+      if(featureOfferFlow && typeof featureOfferFlow.resetOfferState === 'function'){
+        clearOfferTimeout();
+        featureOfferFlow.resetOfferState(state, { preserveShift });
+        return;
+      }
       clearOfferTimeout();
       state.offerStage = 0;
+      state.bookingCompleted = false;
       state.offerPrice = null;
       state.code = null;
       state.expiresAt = null;
@@ -2203,24 +3012,43 @@
       }
     }
 
-    function buildBookingSummaryHtml(){
+    function buildBookingSummaryHtml({showTimer = false} = {}){
+      const featureBookingSummary = window.AC_FEATURES && window.AC_FEATURES.bookingSummary;
       const shift = getSelectedShift();
       if(!shift) return '';
+      const shouldShowTimer = !!showTimer && isOfferActive();
+      const timeLeft = shouldShowTimer
+        ? stripRemainingPrefix(formatRemainingCompact(state.expiresAt - Date.now()))
+        : '';
+      if(featureBookingSummary && typeof featureBookingSummary.buildBookingSummaryHtml === 'function'){
+        return featureBookingSummary.buildBookingSummaryHtml({
+          shiftTitle: '',
+          shiftDates: shift.dates,
+          shiftDays: shiftDaysLabel(shift),
+          ageLabel: ageLabel(state.age),
+          priceText: formatPrice(state.offerPrice || state.basePrice || shift.price),
+          code: state.code || '—',
+          timeLeft
+        });
+      }
       return `
-        <strong>Что мы сейчас фиксируем за вами</strong>
-        <div class="booking-summary-list">
-          <div>Смена: ${shift.title}</div>
-          <div>Даты: ${shift.dates}</div>
-          <div>Длительность: ${shiftDaysLabel(shift)}</div>
-          <div>Возраст: ${ageLabel(state.age)}</div>
-          <div>Цена: ${formatPrice(state.offerPrice || state.basePrice || shift.price)}</div>
-          <div>Код бронирования: ${state.code || '—'}</div>
+        <div class="booking-summary-selection">${ageLabel(state.age)} · ${shift.dates}</div>
+        <div class="booking-summary-price">${formatPrice(state.offerPrice || state.basePrice || shift.price)}</div>
+        ${timeLeft ? `
+        <div class="booking-summary-timer">
+          <div class="booking-summary-timer-title">Цена закреплена за вами</div>
+          <div class="booking-timer-line" data-live-timer="true">${timeLeft}</div>
         </div>
-        <div class="micro-note">Без предоплаты. Мы сначала подтверждаем бронь вручную.</div>
+        ` : ''}
+        <div class="booking-summary-guarantee">Мы держим для вас место.<br>Никакой оплаты сейчас не требуется.</div>
       `;
     }
 
     function generateCode(){
+      const featureOfferUtils = window.AC_FEATURES && window.AC_FEATURES.offerUtils;
+      if(featureOfferUtils && typeof featureOfferUtils.generateCode === 'function'){
+        return featureOfferUtils.generateCode();
+      }
       return 'AC-' + Math.random().toString(36).slice(2,6).toUpperCase();
     }
 
@@ -2238,6 +3066,7 @@
           state.offerPrice = null;
           state.code = null;
           state.expiresAt = null;
+          state.bookingCompleted = false;
           state.offerStage = 0;
           if(rootId === 'mobileAgeTabs'){
             track('mobile_age_selected', {
@@ -2251,6 +3080,144 @@
       });
     }
 
+    function waitDesktopAgeTapHint(ms){
+      return new Promise(resolve => {
+        setTimeout(resolve, ms);
+      });
+    }
+
+    function canRunDesktopAgeTapHint(){
+      const card = document.getElementById('desktop-booking-card');
+      if(!card || !card.classList.contains('booking-stage-1')) return false;
+      if(state.view !== 'desktop') return false;
+      if(hasSelectedAge() || state.ageSelected) return false;
+      const tabs = document.getElementById('desktopAgeTabs');
+      if(!tabs) return false;
+      return tabs.querySelectorAll('.age-tab[data-age]').length >= 3;
+    }
+
+    function ensureDesktopAgeTapHintNode(){
+      const tabs = document.getElementById('desktopAgeTabs');
+      if(!tabs) return null;
+      let hint = tabs.querySelector('.age-tap-hint');
+      if(hint) return hint;
+      hint = document.createElement('div');
+      hint.className = 'age-tap-hint';
+      hint.setAttribute('aria-hidden', 'true');
+      hint.innerHTML = '<span class="age-tap-finger"></span><span class="age-tap-ripple"></span><span class="age-tap-ripple delay"></span>';
+      tabs.appendChild(hint);
+      return hint;
+    }
+
+    function placeDesktopAgeTapHint(hintNode, ageRow){
+      if(!hintNode || !ageRow) return;
+      const host = hintNode.parentElement;
+      if(!host) return;
+      const hostRect = host.getBoundingClientRect();
+      const rowRect = ageRow.getBoundingClientRect();
+      const x = Math.max(8, rowRect.right - hostRect.left - 60);
+      const y = Math.max(6, rowRect.top - hostRect.top - 2);
+      hintNode.style.setProperty('--age-hint-x', `${Math.round(x)}px`);
+      hintNode.style.setProperty('--age-hint-y', `${Math.round(y)}px`);
+    }
+
+    function clearDesktopAgeTapHintRows(){
+      const tabs = document.getElementById('desktopAgeTabs');
+      if(!tabs) return;
+      tabs.querySelectorAll('.age-tab.is-hint-target, .age-tab.is-hint-tapping').forEach((row) => {
+        row.classList.remove('is-hint-target', 'is-hint-tapping');
+      });
+    }
+
+    function pulseDesktopAgeTapHint(hintNode, ageRow){
+      if(!hintNode) return;
+      hintNode.classList.remove('is-tapping');
+      void hintNode.offsetWidth;
+      hintNode.classList.add('is-tapping');
+      if(ageRow){
+        ageRow.classList.add('is-hint-target');
+        ageRow.classList.remove('is-hint-tapping');
+        void ageRow.offsetWidth;
+        ageRow.classList.add('is-hint-tapping');
+        setTimeout(() => {
+          ageRow.classList.remove('is-hint-tapping');
+        }, 680);
+      }
+    }
+
+    function hideDesktopAgeTapHint(){
+      const hintNode = document.querySelector('#desktopAgeTabs .age-tap-hint');
+      if(!hintNode) return;
+      hintNode.classList.remove('is-visible', 'is-tapping');
+      clearDesktopAgeTapHintRows();
+    }
+
+    async function runDesktopAgeTapHint(){
+      if(desktopAgeTapHintPlayed || desktopAgeTapHintRunning) return;
+      if(!canRunDesktopAgeTapHint()) return;
+      const hintNode = ensureDesktopAgeTapHintNode();
+      const tabs = document.getElementById('desktopAgeTabs');
+      if(!hintNode || !tabs) return;
+      const ageRows = [...tabs.querySelectorAll('.age-tab[data-age]')];
+      if(!ageRows.length) return;
+
+      desktopAgeTapHintRunning = true;
+      const runToken = ++desktopAgeTapHintToken;
+      hintNode.classList.add('is-visible');
+
+      for(let rowIndex = 0; rowIndex < ageRows.length; rowIndex += 1){
+        const ageRow = ageRows[rowIndex];
+        if(runToken !== desktopAgeTapHintToken || !canRunDesktopAgeTapHint()) break;
+        clearDesktopAgeTapHintRows();
+        ageRow.classList.add('is-hint-target');
+        placeDesktopAgeTapHint(hintNode, ageRow);
+        await waitDesktopAgeTapHint(rowIndex === 0 ? 320 : 1000);
+        for(let tapIndex = 0; tapIndex < 2; tapIndex += 1){
+          if(runToken !== desktopAgeTapHintToken || !canRunDesktopAgeTapHint()) break;
+          pulseDesktopAgeTapHint(hintNode, ageRow);
+          await waitDesktopAgeTapHint(680);
+          if(tapIndex === 0){
+            await waitDesktopAgeTapHint(120);
+          }
+        }
+        hintNode.classList.remove('is-tapping');
+        await waitDesktopAgeTapHint(120);
+      }
+
+      hintNode.classList.remove('is-visible', 'is-tapping');
+      clearDesktopAgeTapHintRows();
+      desktopAgeTapHintRunning = false;
+      desktopAgeTapHintPlayed = true;
+    }
+
+    function syncDesktopAgeTapHintVisibility(){
+      const hintNode = document.querySelector('#desktopAgeTabs .age-tap-hint');
+      if(!hintNode) return;
+      if(desktopAgeTapHintRunning && canRunDesktopAgeTapHint()){
+        hintNode.classList.add('is-visible');
+        return;
+      }
+      hintNode.classList.remove('is-visible', 'is-tapping');
+      clearDesktopAgeTapHintRows();
+    }
+
+    function scheduleDesktopAgeTapHint(){
+      if(desktopAgeTapHintPlayed || desktopAgeTapHintRunning) return;
+      if(!canRunDesktopAgeTapHint()) return;
+      if(desktopAgeTapHintTimer){
+        return;
+      }
+      const elapsedMs = Date.now() - desktopAgeTapHintStartedAt;
+      const delayMs = Math.max(0, 7000 - elapsedMs);
+      desktopAgeTapHintTimer = setTimeout(() => {
+        desktopAgeTapHintTimer = null;
+        runDesktopAgeTapHint().catch(() => {
+          desktopAgeTapHintRunning = false;
+          hideDesktopAgeTapHint();
+        });
+      }, delayMs);
+    }
+
     function resetAgeSelection(){
       clearShiftOptionPanels();
       state.age = null;
@@ -2260,6 +3227,7 @@
       state.offerPrice = null;
       state.code = null;
       state.expiresAt = null;
+      state.bookingCompleted = false;
       state.offerStage = 0;
 
       ['desktopAgeTabs','mobileAgeTabs'].forEach(id => {
@@ -2280,6 +3248,7 @@
       state.offerPrice = null;
       state.code = null;
       state.expiresAt = null;
+      state.bookingCompleted = false;
       state.offerStage = 0;
       state.offerSearching = false;
       showHint('Смена сброшена. Выберите подходящий вариант.', 'shift');
@@ -2303,11 +3272,7 @@
     bindAgeTabs('desktopAgeTabs');
     bindAgeTabs('mobileAgeTabs');
 
-    function renderShiftOptions(targetId){
-      const box = document.getElementById(targetId);
-      if(!box) return;
-      const viewKey = bookingViewKeyByTargetId(targetId);
-
+    function getShiftSummaryLines(ageKey){
       const summaryByAge = {
         '7-9': [
           'IT-проекты: Scratch / Python',
@@ -2328,13 +3293,76 @@
           'Подходит для 13–14 лет'
         ]
       };
+      return summaryByAge[ageKey] || summaryByAge['7-9'];
+    }
+
+    function getShiftCardTagline(shift){
+      if(!shift) return '';
+      const byId = {
+        'shift-1':'Игры и логика',
+        'shift-2':'Python и боты',
+        'shift-3':'AI и проекты',
+        'shift-4':'Глубокое погружение',
+        'shift-5':'Проекты + спорт',
+        'shift-6':'Финальная практика'
+      };
+      return byId[shift.id] || shift.desc;
+    }
+
+    function openShiftAboutModal(shiftId){
+      const modal = document.getElementById('sectionModal');
+      const titleEl = document.getElementById('sectionModalTitle');
+      const bodyEl = document.getElementById('sectionModalBody');
+      const shift = shifts.find((item) => item.id === shiftId);
+      if(!modal || !titleEl || !bodyEl || !shift) return false;
+
+      closeTransientModals('section');
+      const isCompactDesktop = state.view === 'desktop' && state.desktopMode === 'compact';
+      const isMobilePanel = state.view === 'mobile';
+      modal.classList.toggle('section-modal-compact', isCompactDesktop);
+      modal.classList.toggle('section-modal-mobile', isMobilePanel);
+
+      const start = parseShiftDate(shift.start);
+      const end = parseShiftDate(shift.end);
+      const startText = start ? start.toLocaleDateString('ru-RU') : shift.start;
+      const endText = end ? end.toLocaleDateString('ru-RU') : shift.end;
+      const summaryLines = getShiftSummaryLines(state.age || '7-9');
+
+      titleEl.textContent = `Смена ${shift.title}: программа`;
+      bodyEl.innerHTML = `
+        <article class="shift-modal-content">
+          <div class="shift-modal-content__meta">
+            <strong>${shift.dates}</strong>
+            <span>${formatPrice(shift.price)} · ${shiftDaysLabel(shift)} · осталось ${shift.left} мест</span>
+          </div>
+          <p class="shift-modal-content__desc">${shift.desc}</p>
+          <ul class="shift-modal-content__list">
+            ${summaryLines.map((line) => `<li>${line}</li>`).join('')}
+          </ul>
+          <div class="shift-modal-content__dates">
+            <div><strong>Заезд:</strong> ${startText}</div>
+            <div><strong>Выезд:</strong> ${endText}</div>
+          </div>
+        </article>
+      `;
+
+      modal.classList.remove('hidden');
+      applyCompactSectionModalLayout();
+      return true;
+    }
+
+    function renderShiftOptions(targetId){
+      const box = document.getElementById(targetId);
+      if(!box) return;
+      const viewKey = bookingViewKeyByTargetId(targetId);
 
       const selectedAge = state.age || '7-9';
-      const summaryLines = summaryByAge[selectedAge] || summaryByAge['7-9'];
+      const summaryLines = getShiftSummaryLines(selectedAge);
 
       box.innerHTML = shifts.slice(0,2).map(s => {
-        const showAbout = shiftOptionPanels[viewKey]?.aboutId === s.id;
-        const showCalendar = shiftOptionPanels[viewKey]?.calendarId === s.id;
+        const isInlineView = viewKey === 'mobile';
+        const showAbout = isInlineView && shiftOptionPanels[viewKey]?.aboutId === s.id;
+        const showCalendar = isInlineView && shiftOptionPanels[viewKey]?.calendarId === s.id;
         const start = parseShiftDate(s.start);
         const end = parseShiftDate(s.end);
         const startText = start ? start.toLocaleDateString('ru-RU') : s.start;
@@ -2344,14 +3372,21 @@
         <div class="shift-option ${state.shiftId === s.id ? 'active' : ''}" data-id="${s.id}">
           <div class="shift-option-head">
             <strong>${s.dates}</strong>
-            <small>${formatPrice(s.price)} · осталось ${s.left} мест</small>
+            <small>
+              <span class="shift-option-price">${formatPrice(s.price)}</span>
+              <span class="shift-option-seats">осталось ${s.left} мест</span>
+            </small>
           </div>
+          <div class="shift-option-tagline">${getShiftCardTagline(s)}</div>
           <div class="shift-option-actions">
             <button class="shift-option-action" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${viewKey}">
               О смене
             </button>
             <button class="shift-option-action" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${viewKey}">
               Календарь
+            </button>
+            <button class="shift-option-select-indicator" type="button" aria-label="Выбрать смену ${s.dates}">
+              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
             </button>
           </div>
           <div class="shift-inline-panel ${showAbout ? 'visible' : ''}">
@@ -2394,14 +3429,14 @@
 
       grid.innerHTML = mainShifts.map(s => `
         <div class="mini-card">
-          <h4>${s.title}</h4>
+          <h4><span class="program-shift-index program-shift-index-main">${s.title}</span></h4>
           <div class="price-row">
             <strong>${formatPrice(s.price)}</strong>
             <span>
               ${s.dates} · ${shiftDaysLabel(s)}
               <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
-                <span aria-hidden="true">📅</span>
-                <span>календарь</span>
+                <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                <span class="shift-calendar-btn-label">календарь</span>
               </button>
             </span>
           </div>
@@ -2411,15 +3446,21 @@
       `).join('');
 
       if(shortGrid){
-        shortGrid.innerHTML = shortShifts.map((s, idx) => `
+        shortGrid.innerHTML = shortShifts.map((s) => `
           <div class="mini-card short-shift-card">
             <div class="short-shift-head">
-              <h4>${s.title}</h4>
+              <h4><span class="program-shift-index">${s.title}</span></h4>
               <span class="short-shift-tag">короткий формат</span>
             </div>
             <div class="price-row">
               <strong>${formatPrice(s.price)}</strong>
-              <span>${s.dates}</span>
+              <span>
+                ${s.dates}
+                <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
+                  <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                  <span class="shift-calendar-btn-label">календарь</span>
+                </button>
+              </span>
             </div>
             <div class="short-shift-meta">
               <div><strong>Длительность:</strong> ${shiftDaysLabel(s)}</div>
@@ -2456,8 +3497,146 @@
       return groupName.slice(0,3).toUpperCase();
     }
 
-    function renderStars(){
-      return '<div class="stars">★★★★★</div>';
+    function renderReviewsGrid(reviewsGrid){
+      if(!reviewsGrid) return;
+      reviewsGrid.innerHTML = mediaContent.reviews.map(item => `
+        <div class="review-real">
+          <div class="review-head-real">
+            <div class="review-avatar">
+              <img src="${item.avatar}" alt="${item.name}">
+            </div>
+            <div class="review-person">
+              <strong>${item.name}</strong>
+              <div class="review-source">Яндекс Карты</div>
+              <div class="review-stars">★★★★★</div>
+              <div class="review-meta">${item.meta}</div>
+            </div>
+          </div>
+          <div class="review-quote">«${item.quote}»</div>
+        </div>
+      `).join('');
+    }
+
+    function renderContactsGrid(contactsGrid){
+      if(!contactsGrid) return;
+      contactsGrid.innerHTML = mediaContent.contacts.map(item => `
+        <a class="contact-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
+          <div class="contact-icon">${contactIconMarkup(item.label)}</div>
+          <strong>${item.text}</strong>
+        </a>
+      `).join('');
+    }
+
+    function renderSocialGrids(socialsGrid, footerSocialsList){
+      if(socialsGrid){
+        socialsGrid.innerHTML = mediaContent.socials.map(item => `
+          <a class="social-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
+            <span class="social-badge-mark">${socialBadgeMark(item)}</span>
+            <span class="social-label">${item.key}</span>
+          </a>
+        `).join('');
+      }
+
+      if(footerSocialsList){
+        footerSocialsList.innerHTML = mediaContent.socials.map(item => `
+          <a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.key}</a>
+        `).join('');
+      }
+    }
+
+    function renderFaqGroupsSection(faqGroups){
+      if(!faqGroups) return;
+      const filteredFaq = state.faqFilter === 'all'
+        ? mediaContent.faq
+        : mediaContent.faq.filter(group => group.group === state.faqFilter);
+
+      faqGroups.innerHTML = filteredFaq.map(group => `
+        <div class="faq-group">
+          <div class="faq-group-head">
+            <div class="faq-icon">${faqGlyph(group.icon, group.group)}</div>
+            <strong>${group.group}</strong>
+          </div>
+          <div class="faq-list">
+            ${group.items.map(item => `
+              <div class="faq-line">
+                <strong>${item.q}</strong>
+                <span>${item.a}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      const faqEmpty = document.getElementById('faqEmptyState');
+      if(faqEmpty){
+        faqEmpty.classList.toggle('visible', filteredFaq.length === 0);
+      }
+    }
+
+    function renderTeamGrid(teamGrid){
+      if(!teamGrid) return;
+      const renderTeamCard = (item) => `
+        <div class="team-card">
+          <div class="team-avatar">
+            <img src="${item.avatarUrl}" alt="${item.fio}">
+          </div>
+          <strong>${item.fio}</strong>
+          <span class="team-role">${item.role}</span>
+          <span>${item.bio}</span>
+        </div>
+      `;
+
+      const byName = new Map(mediaContent.team.map(item => [item.fio, item]));
+      const coreNames = ['Дарья Афанасьева', 'Никита Брагин'];
+      const coreCards = coreNames
+        .map((name) => byName.get(name))
+        .filter(Boolean)
+        .map(renderTeamCard)
+        .join('');
+
+      const carouselCards = mediaContent.team
+        .filter((item) => !coreNames.includes(item.fio))
+        .map(renderTeamCard)
+        .join('');
+
+      const bookCard = `
+      <div class="team-card book-team-card">
+        <div class="book-team-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
+          <img
+            class="book-team-cover"
+            src="/assets/images/cdn-cache/8fc8172e_8991804334.webp"
+            alt="Книга Python для детей"
+          >
+        </div>
+        <div class="book-team-title">Собственная книга по Python</div>
+        <div class="book-team-sub">Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики, по которым дети входят в программирование через практику.</div>
+        <div class="book-team-proof">Для родителя книга — это более сильное доказательство экспертизы и собственной методики, чем просто ещё одна карточка преподавателя.</div>
+        <a
+          class="book-team-cta"
+          href="https://www.codims.ru/python-book"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Смотреть книгу</a>
+      </div>
+      `;
+
+      teamGrid.innerHTML = `
+        <div class="team-layout">
+          ${bookCard}
+          <div class="team-right">
+            <div class="team-core-grid">${coreCards}</div>
+            <div class="team-carousel-shell">
+              <button class="team-carousel-nav prev" type="button" data-action="team-carousel-prev" aria-label="Предыдущие преподаватели">
+                <img class="ac-icon" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true">
+              </button>
+              <div class="team-carousel" id="teamCarousel">${carouselCards}</div>
+              <button class="team-carousel-nav next" type="button" data-action="team-carousel-next" aria-label="Следующие преподаватели">
+                <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function renderMediaSections(){
@@ -2475,30 +3654,33 @@
       const locationMapFrame = document.getElementById('locationMapFrame');
 
       if (photoGrid) {
-        let filteredPhotos = [];
-
-        if(state.photoFilter === 'all'){
-          filteredPhotos = mediaContent.photos;
-        } else if(state.photoFilter === 'camp'){
-          filteredPhotos = mediaContent.photos.filter(item => item.cat === 'camp' || item.cat === 'all');
-        } else {
-          filteredPhotos = mediaContent.photos.filter(item => item.cat === state.photoFilter);
-        }
-
+        const featureMediaRender = window.AC_FEATURES && window.AC_FEATURES.mediaRender;
+        let filteredPhotos = (featureMediaRender && typeof featureMediaRender.selectPhotos === 'function')
+          ? featureMediaRender.selectPhotos(mediaContent.photos, state.photoFilter)
+          : [];
         if(!filteredPhotos.length){
-          filteredPhotos = mediaContent.photos.filter(item => item.cat === 'all');
-        }
-        if(!filteredPhotos.length){
-          filteredPhotos = mediaContent.photos;
-        }
-
-        // Keep category view compact (hero + 3 small cards) and avoid growing the block.
-        if(state.photoFilter !== 'all' && state.photoFilter !== 'camp'){
-          if(state.photoFilter === 'study' && filteredPhotos.length > 4){
-            const featuredRightSlot = filteredPhotos[filteredPhotos.length - 1];
-            filteredPhotos = [filteredPhotos[0], filteredPhotos[1], filteredPhotos[2], featuredRightSlot];
+          if(state.photoFilter === 'all'){
+            filteredPhotos = mediaContent.photos;
+          } else if(state.photoFilter === 'camp'){
+            filteredPhotos = mediaContent.photos.filter(item => item.cat === 'camp' || item.cat === 'all');
           } else {
-            filteredPhotos = filteredPhotos.slice(0, 4);
+            filteredPhotos = mediaContent.photos.filter(item => item.cat === state.photoFilter);
+          }
+
+          if(!filteredPhotos.length){
+            filteredPhotos = mediaContent.photos.filter(item => item.cat === 'all');
+          }
+          if(!filteredPhotos.length){
+            filteredPhotos = mediaContent.photos;
+          }
+
+          if(state.photoFilter !== 'all' && state.photoFilter !== 'camp'){
+            if(state.photoFilter === 'study' && filteredPhotos.length > 4){
+              const featuredRightSlot = filteredPhotos[filteredPhotos.length - 1];
+              filteredPhotos = [filteredPhotos[0], filteredPhotos[1], filteredPhotos[2], featuredRightSlot];
+            } else {
+              filteredPhotos = filteredPhotos.slice(0, 4);
+            }
           }
         }
         activePhotoList = filteredPhotos;
@@ -2543,76 +3725,10 @@
         locationMapFrame.src = mediaContent.references.locationMapEmbedUrl || '';
       }
 
-      if(reviewsGrid){
-        reviewsGrid.innerHTML = mediaContent.reviews.map(item => `
-          <div class="review-real">
-            <div class="review-head-real">
-              <div class="review-avatar">
-                <img src="${item.avatar}" alt="${item.name}">
-              </div>
-              <div class="review-person">
-                <strong>${item.name}</strong>
-                <div class="review-source">Яндекс Карты</div>
-                <div class="review-stars">★★★★★</div>
-                <div class="review-meta">${item.meta}</div>
-              </div>
-            </div>
-            <div class="review-quote">«${item.quote}»</div>
-          </div>
-        `).join('');
-      }
-
-      if (contactsGrid) {
-        contactsGrid.innerHTML = mediaContent.contacts.map(item => `
-          <a class="contact-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
-            <div class="contact-icon">${contactIconMarkup(item.label)}</div>
-            <strong>${item.text}</strong>
-          </a>
-        `).join('');
-      }
-
-      if (socialsGrid) {
-        socialsGrid.innerHTML = mediaContent.socials.map(item => `
-          <a class="social-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
-            <span class="social-badge-mark">${socialBadgeMark(item)}</span>
-            <span class="social-label">${item.key}</span>
-          </a>
-        `).join('');
-      }
-
-      if (footerSocialsList) {
-        footerSocialsList.innerHTML = mediaContent.socials.map(item => `
-          <a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.key}</a>
-        `).join('');
-      }
-
-      if (faqGroups) {
-        const filteredFaq = state.faqFilter === 'all'
-          ? mediaContent.faq
-          : mediaContent.faq.filter(group => group.group === state.faqFilter);
-
-        faqGroups.innerHTML = filteredFaq.map(group => `
-          <div class="faq-group">
-            <div class="faq-group-head">
-              <div class="faq-icon">${faqGlyph(group.icon, group.group)}</div>
-              <strong>${group.group}</strong>
-            </div>
-            <div class="faq-list">
-              ${group.items.map(item => `
-                <div class="faq-line">
-                  <strong>${item.q}</strong>
-                  <span>${item.a}</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `).join('');
-
-        const faqEmpty = document.getElementById('faqEmptyState');
-        if (faqEmpty) {
-          faqEmpty.classList.toggle('visible', filteredFaq.length === 0);
-        }
-      }
+      renderReviewsGrid(reviewsGrid);
+      renderContactsGrid(contactsGrid);
+      renderSocialGrids(socialsGrid, footerSocialsList);
+      renderFaqGroupsSection(faqGroups);
 
       const faqFilters = document.getElementById('faqFilters');
       if (faqFilters) {
@@ -2621,70 +3737,7 @@
         });
       }
 
-      if (teamGrid) {
-        const renderTeamCard = (item) => `
-          <div class="team-card">
-            <div class="team-avatar">
-              <img src="${item.avatarUrl}" alt="${item.fio}">
-            </div>
-            <strong>${item.fio}</strong>
-            <span class="team-role">${item.role}</span>
-            <span>${item.bio}</span>
-          </div>
-        `;
-
-        const byName = new Map(mediaContent.team.map(item => [item.fio, item]));
-        const coreNames = ['Дарья Афанасьева', 'Никита Брагин'];
-        const coreCards = coreNames
-          .map((name) => byName.get(name))
-          .filter(Boolean)
-          .map(renderTeamCard)
-          .join('');
-
-        const carouselCards = mediaContent.team
-          .filter((item) => !coreNames.includes(item.fio))
-          .map(renderTeamCard)
-          .join('');
-
-        const bookCard = `
-        <div class="team-card book-team-card">
-          <div class="book-team-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
-            <img
-              class="book-team-cover"
-              src="/assets/images/cdn-cache/8fc8172e_8991804334.webp"
-              alt="Книга Python для детей"
-            >
-          </div>
-          <div class="book-team-title">Собственная книга по Python</div>
-          <div class="book-team-sub">Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики, по которым дети входят в программирование через практику.</div>
-          <div class="book-team-proof">Для родителя книга — это более сильное доказательство экспертизы и собственной методики, чем просто ещё одна карточка преподавателя.</div>
-          <a
-            class="book-team-cta"
-            href="https://www.codims.ru/python-book"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Смотреть книгу</a>
-        </div>
-        `;
-
-        teamGrid.innerHTML = `
-          <div class="team-layout">
-            ${bookCard}
-            <div class="team-right">
-              <div class="team-core-grid">${coreCards}</div>
-              <div class="team-carousel-shell">
-                <button class="team-carousel-nav prev" type="button" data-action="team-carousel-prev" aria-label="Предыдущие преподаватели">
-                  <img class="ac-icon" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true">
-                </button>
-                <div class="team-carousel" id="teamCarousel">${carouselCards}</div>
-                <button class="team-carousel-nav next" type="button" data-action="team-carousel-next" aria-label="Следующие преподаватели">
-                  <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
+      renderTeamGrid(teamGrid);
 
       const photoFilters = document.getElementById('photoFilters');
       if (photoFilters) {
@@ -2695,6 +3748,164 @@
 
       prepareStayGalleryTriggers();
       renderCompactTrustPanelContent();
+    }
+
+    function renderCompactInlineStayList(mobileInlineStayList){
+      if(!mobileInlineStayList) return;
+      const stayCards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
+        return {
+          img: card.querySelector('img')?.getAttribute('src') || '',
+          title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
+          text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
+        };
+      }).filter(item => item.title);
+
+      mobileInlineStayList.innerHTML = stayCards.slice(0, 3).map((item, idx) => `
+        <div class="mobile-stay-card is-clickable" data-action="open-stay-photo" data-stay-index="${idx}" role="button" tabindex="0">
+          <div class="mobile-stay-thumb">${item.img ? `<img src="${item.img}" alt="${item.title}">` : ''}</div>
+          <div>
+            <strong>${item.title}</strong>
+            <span>${item.text}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCompactInlineTeamList(mobileInlineTeamList, featureCompactRender){
+      if(!mobileInlineTeamList) return;
+      const founder = mediaContent.team.find((item) => item.fio === 'Дарья Афанасьева') || mediaContent.team[0];
+      const teachers = mediaContent.team.filter((item) => item.fio !== founder?.fio);
+      const safeIndex = teachers.length ? ((state.mobileTeamIndex % teachers.length) + teachers.length) % teachers.length : 0;
+      state.mobileTeamIndex = safeIndex;
+      const activeTeacher = teachers[safeIndex];
+      if(featureCompactRender && typeof featureCompactRender.buildMobileTeamVm === 'function'){
+        const vm = featureCompactRender.buildMobileTeamVm({
+          founder,
+          teachers,
+          currentIndex: safeIndex,
+          programmingBookUrl: mediaContent.references.programmingBookUrl
+        });
+        state.mobileTeamIndex = vm.safeIndex;
+        mobileInlineTeamList.innerHTML = vm.html;
+        return;
+      }
+
+      mobileInlineTeamList.innerHTML = `
+        <article class="mobile-team-feature-card">
+          <div class="mobile-team-feature-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
+            <img class="mobile-team-feature-cover" src="/assets/images/cdn-cache/8fc8172e_8991804334.webp" alt="Собственная книга по Python">
+          </div>
+          <strong>Собственная книга по Python</strong>
+          <span>Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики.</span>
+          <a class="mobile-team-feature-cta" href="${mediaContent.references.programmingBookUrl}" target="_blank" rel="noopener noreferrer">Смотреть книгу</a>
+        </article>
+        ${founder ? `
+          <article class="mobile-team-founder-card">
+            <div class="mobile-team-avatar">
+              <img src="${founder.avatarUrl}" alt="${founder.fio}">
+            </div>
+            <strong>${founder.fio}</strong>
+            <span class="mobile-team-role">${founder.role}</span>
+            <p>${founder.bio}</p>
+          </article>
+        ` : ''}
+        ${activeTeacher ? `
+          <div class="mobile-team-carousel-block">
+            <div class="mobile-team-carousel-head">
+              <strong>Преподаватели</strong>
+              <div class="mobile-team-carousel-controls">
+                <button type="button" data-action="mobile-team-prev" aria-label="Предыдущий преподаватель">
+                  <img class="ac-icon" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true">
+                </button>
+                <button type="button" data-action="mobile-team-next" aria-label="Следующий преподаватель">
+                  <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+                </button>
+              </div>
+            </div>
+            <article class="mobile-team-teacher-card">
+              <div class="mobile-team-avatar">
+                <img src="${activeTeacher.avatarUrl}" alt="${activeTeacher.fio}">
+              </div>
+              <strong>${activeTeacher.fio}</strong>
+              <span class="mobile-team-role">${activeTeacher.role}</span>
+              <p>${activeTeacher.bio}</p>
+            </article>
+            <div class="mobile-team-carousel-dots">
+              ${teachers.map((_, index) => `
+                <button
+                  type="button"
+                  class="mobile-team-dot ${index === safeIndex ? 'active' : ''}"
+                  data-action="mobile-team-select"
+                  data-team-index="${index}"
+                  aria-label="Переключить преподавателя"
+                ></button>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderCompactInlineContactsList(mobileInlineContactsList, featureCompactRender){
+      if(!mobileInlineContactsList) return;
+      const mapUrl = mediaContent.references.locationMapUrl;
+      const mapEmbedUrl = mediaContent.references.locationMapEmbedUrl;
+      const cityPhone = mediaContent.contacts.find((item) => item.label === 'city_phone');
+      const mobilePhone = mediaContent.contacts.find((item) => item.label === 'mobile_phone');
+      const whatsapp = mediaContent.contacts.find((item) => item.label === 'whatsapp');
+      const telegram = mediaContent.contacts.find((item) => item.label === 'telegram');
+      if(featureCompactRender && typeof featureCompactRender.renderMobileContactsHtml === 'function'){
+        mobileInlineContactsList.innerHTML = featureCompactRender.renderMobileContactsHtml({
+          mapUrl,
+          mapEmbedUrl,
+          cityPhone,
+          mobilePhone,
+          whatsapp,
+          telegram
+        });
+        return;
+      }
+
+      mobileInlineContactsList.innerHTML = `
+        <article class="mobile-map-preview-card">
+          <div class="mobile-map-preview">
+            <iframe
+              src="${mapEmbedUrl}"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Карта локации лагеря"
+            ></iframe>
+          </div>
+          <strong>66 км от Москвы · Киевское шоссе</strong>
+          <span>Удобный заезд на машине, маршрут открывается в Яндекс Картах.</span>
+          <a class="mobile-map-open-btn" href="${mapUrl}" target="_blank" rel="noopener noreferrer">Открыть карту</a>
+        </article>
+        <div class="mobile-contact-grid">
+          ${cityPhone ? `<a class="mobile-contact-card" href="${cityPhone.href}"><small>Телефон 1</small><strong>${cityPhone.text}</strong></a>` : ''}
+          ${mobilePhone ? `<a class="mobile-contact-card" href="${mobilePhone.href}"><small>Телефон 2</small><strong>${mobilePhone.text}</strong></a>` : ''}
+          ${whatsapp ? `<a class="mobile-contact-card" href="${whatsapp.href}" target="_blank" rel="noopener noreferrer"><small>WhatsApp</small><strong>WhatsApp</strong></a>` : ''}
+          ${telegram ? `<a class="mobile-contact-card" href="${telegram.href}" target="_blank" rel="noopener noreferrer"><small>Telegram</small><strong>@proga_school</strong></a>` : ''}
+        </div>
+      `;
+    }
+
+    function renderCompactInlineSocials(mobileInlineSocials, featureCompactRender){
+      if(!mobileInlineSocials) return;
+      if(featureCompactRender && typeof featureCompactRender.renderMobileSocialsHtml === 'function'){
+        const socialsVm = mediaContent.socials.map((item) => ({
+          href: item.href,
+          key: item.key,
+          mark: socialBadgeMark(item)
+        }));
+        mobileInlineSocials.innerHTML = featureCompactRender.renderMobileSocialsHtml(socialsVm);
+        return;
+      }
+      mobileInlineSocials.innerHTML = mediaContent.socials.map(item => `
+        <a class="mobile-social-link" href="${item.href}" target="_blank" rel="noopener noreferrer" aria-label="${item.key}">
+          <span class="mobile-social-icon"><span class="social-badge-mark">${socialBadgeMark(item)}</span></span>
+          <span class="mobile-social-label">${item.key}</span>
+        </a>
+      `).join('');
     }
 
     function renderCompactTrustPanelContent(){
@@ -2711,113 +3922,142 @@
       const mobileProgramsContent = document.getElementById('mobileProgramsContent');
       const mobileDocsRequisites = document.getElementById('mobileDocsRequisites');
       const mobileDocsAccordion = document.getElementById('mobileDocsAccordion');
+      const featureCompactRender = window.AC_FEATURES && window.AC_FEATURES.compactRender;
 
       if (mobileAboutFeatures) {
-        mobileAboutFeatures.innerHTML = `
-          <article class="mobile-about-feature-item">
-            <small>Проекты</small>
-            <strong>AI и программирование</strong>
-            <p>Scratch, Python, Minecraft и нейросети через реальные командные задачи.</p>
-          </article>
-          <article class="mobile-about-feature-item">
-            <small>Среда</small>
-            <strong>Бассейн и живая лагерная среда</strong>
-            <p>Каждый день спорт, коммуникация и режим без бессмысленного скроллинга.</p>
-          </article>
-          <article class="mobile-about-feature-item">
-            <small>Результат</small>
-            <strong>Итог за смену</strong>
-            <p>Ребёнок уезжает с проектом, опытом защиты и более уверенной самостоятельностью.</p>
-          </article>
-        `;
+        if(featureCompactRender && typeof featureCompactRender.renderAboutFeaturesHtml === 'function'){
+          mobileAboutFeatures.innerHTML = featureCompactRender.renderAboutFeaturesHtml();
+        } else {
+          mobileAboutFeatures.innerHTML = `
+            <article class="mobile-about-feature-item">
+              <small>Проекты</small>
+              <strong>AI и программирование</strong>
+              <p>Scratch, Python, Minecraft и нейросети через реальные командные задачи.</p>
+            </article>
+            <article class="mobile-about-feature-item">
+              <small>Среда</small>
+              <strong>Бассейн и живая лагерная среда</strong>
+              <p>Каждый день спорт, коммуникация и режим без бессмысленного скроллинга.</p>
+            </article>
+            <article class="mobile-about-feature-item">
+              <small>Результат</small>
+              <strong>Итог за смену</strong>
+              <p>Ребёнок уезжает с проектом, опытом защиты и более уверенной самостоятельностью.</p>
+            </article>
+          `;
+        }
       }
 
       if (mobileJourneyContent) {
-        const steps = [
-          {
-            title: 'Быстрое включение',
-            text: 'В первый день дети знакомятся, собираются в команды и быстро входят в игровой формат смены.'
-          },
-          {
-            title: 'Практика вместо теории',
-            text: 'Scratch, Python, Minecraft, AI и мини-проекты — без пересказа, с реальной работой руками.'
-          },
-          {
-            title: 'Живая среда',
-            text: 'Бассейн, спорт и внутренняя экономика лагеря формируют дисциплину, ритм и командность.'
-          },
-          {
-            title: 'Финальный результат',
-            text: 'К концу смены у ребёнка есть понятный проект, защита и видимый рост по навыкам.'
-          }
-        ];
-        const safeStep = Math.max(0, Math.min(state.mobileJourneyStep || 0, steps.length - 1));
-        state.mobileJourneyStep = safeStep;
-        const activeStep = steps[safeStep];
+        if(featureCompactRender && typeof featureCompactRender.renderJourneyHtml === 'function'){
+          const journeyVm = featureCompactRender.renderJourneyHtml(state.mobileJourneyStep || 0);
+          state.mobileJourneyStep = journeyVm.safeStep;
+          mobileJourneyContent.innerHTML = journeyVm.html;
+        } else {
+          const steps = [
+            {
+              title: 'Быстрое включение',
+              text: 'В первый день дети знакомятся, собираются в команды и быстро входят в игровой формат смены.'
+            },
+            {
+              title: 'Практика вместо теории',
+              text: 'Scratch, Python, Minecraft, AI и мини-проекты — без пересказа, с реальной работой руками.'
+            },
+            {
+              title: 'Живая среда',
+              text: 'Бассейн, спорт и внутренняя экономика лагеря формируют дисциплину, ритм и командность.'
+            },
+            {
+              title: 'Финальный результат',
+              text: 'К концу смены у ребёнка есть понятный проект, защита и видимый рост по навыкам.'
+            }
+          ];
+          const safeStep = Math.max(0, Math.min(state.mobileJourneyStep || 0, steps.length - 1));
+          state.mobileJourneyStep = safeStep;
+          const activeStep = steps[safeStep];
 
-        mobileJourneyContent.innerHTML = `
-          <article class="mobile-journey-active">
-            <div class="mobile-journey-active-heading">
-              <div class="mobile-journey-active-index">${safeStep + 1}</div>
-              <strong>${activeStep.title}</strong>
+          mobileJourneyContent.innerHTML = `
+            <article class="mobile-journey-active">
+              <div class="mobile-journey-active-heading">
+                <div class="mobile-journey-active-index">${safeStep + 1}</div>
+                <strong>${activeStep.title}</strong>
+              </div>
+              <p>${activeStep.text}</p>
+            </article>
+            <div class="mobile-journey-switcher">
+              ${steps.map((step, idx) => `
+                <button
+                  type="button"
+                  class="mobile-journey-switch ${idx === safeStep ? 'active' : ''}"
+                  data-action="mobile-journey-step"
+                  data-step-index="${idx}"
+                >
+                  <span>${idx + 1}</span>${step.title}
+                </button>
+              `).join('')}
             </div>
-            <p>${activeStep.text}</p>
-          </article>
-          <div class="mobile-journey-switcher">
-            ${steps.map((step, idx) => `
-              <button
-                type="button"
-                class="mobile-journey-switch ${idx === safeStep ? 'active' : ''}"
-                data-action="mobile-journey-step"
-                data-step-index="${idx}"
-              >
-                <span>${idx + 1}</span>${step.title}
-              </button>
-            `).join('')}
-          </div>
-        `;
+          `;
+        }
       }
 
       if (mobileProgramsContent) {
         const shortShiftIds = new Set(['shift-2','shift-3']);
         const mainShifts = shifts.filter((shift) => !shortShiftIds.has(shift.id));
         if(mainShifts.length){
-          const activeShiftId = mainShifts.some((shift) => shift.id === state.mobileProgramShiftId)
-            ? state.mobileProgramShiftId
-            : mainShifts[0].id;
-          state.mobileProgramShiftId = activeShiftId;
-          const activeShift = mainShifts.find((shift) => shift.id === activeShiftId) || mainShifts[0];
+          const items = mainShifts.map((shift) => ({
+            id: shift.id,
+            title: shift.title,
+            dates: shift.dates,
+            left: shift.left,
+            desc: shift.desc,
+            priceText: formatPrice(shift.price),
+            daysText: shiftDaysLabel(shift)
+          }));
+          if(featureCompactRender && typeof featureCompactRender.buildProgramsHtml === 'function'){
+            const vm = featureCompactRender.buildProgramsHtml({
+              items,
+              activeShiftId: state.mobileProgramShiftId
+            });
+            state.mobileProgramShiftId = vm.activeShiftId;
+            mobileProgramsContent.innerHTML = vm.html;
+          } else {
+            const activeShiftId = mainShifts.some((shift) => shift.id === state.mobileProgramShiftId)
+              ? state.mobileProgramShiftId
+              : mainShifts[0].id;
+            state.mobileProgramShiftId = activeShiftId;
+            const activeShift = mainShifts.find((shift) => shift.id === activeShiftId) || mainShifts[0];
 
-          mobileProgramsContent.innerHTML = `
-            <div class="mobile-program-selector">
-              ${mainShifts.map((shift) => `
-                <button
-                  type="button"
-                  class="mobile-program-chip ${shift.id === activeShift.id ? 'active' : ''}"
-                  data-action="mobile-program-select"
-                  data-shift-id="${shift.id}"
-                >${shift.title}</button>
-              `).join('')}
-            </div>
-            <article class="mobile-program-active-card">
-              <strong>${activeShift.title} · ${activeShift.dates}</strong>
-              <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
-              <div class="mobile-program-meta">
-                <span>${shiftDaysLabel(activeShift)}</span>
-                <span>Осталось ${activeShift.left} мест</span>
+            mobileProgramsContent.innerHTML = `
+              <div class="mobile-program-selector">
+                ${mainShifts.map((shift) => `
+                  <button
+                    type="button"
+                    class="mobile-program-chip ${shift.id === activeShift.id ? 'active' : ''}"
+                    data-action="mobile-program-select"
+                    data-shift-id="${shift.id}"
+                  >${shift.title}</button>
+                `).join('')}
               </div>
-              <p>${activeShift.desc}</p>
-              <button
-                class="shift-calendar-btn"
-                type="button"
-                data-action="open-calendar"
-                data-shift-id="${activeShift.id}"
-                aria-label="Календарь ${activeShift.title}"
-              >
-                <span aria-hidden="true">📅</span><span>Календарь</span>
-              </button>
-            </article>
-          `;
+              <article class="mobile-program-active-card">
+                <strong>${activeShift.title} · ${activeShift.dates}</strong>
+                <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
+                <div class="mobile-program-meta">
+                  <span>${shiftDaysLabel(activeShift)}</span>
+                  <span>Осталось ${activeShift.left} мест</span>
+                </div>
+                <p>${activeShift.desc}</p>
+                <button
+                  class="shift-calendar-btn"
+                  type="button"
+                  data-action="open-calendar"
+                  data-shift-id="${activeShift.id}"
+                  aria-label="Календарь ${activeShift.title}"
+                >
+                  <span aria-hidden="true">📅</span><span>Календарь</span>
+                </button>
+              </article>
+            `;
+          }
         } else {
           mobileProgramsContent.innerHTML = '';
         }
@@ -2845,24 +4085,33 @@
         }
 
         if(active){
-          mobilePhotoGallery.innerHTML = `
-            <div class="mobile-media-stage">
-              <button type="button" data-action="open-photo" data-photo-index="${activeIndex}">
-                <img src="${active.src}" alt="${active.alt || 'Фото лагеря'}">
-                <div class="mobile-media-overlay">
-                  <strong>${(active.alt || 'Атмосфера лагеря').replace(/^all$/i, 'Атмосфера')}</strong>
-                  <span>Тапните, чтобы открыть фото</span>
-                </div>
-              </button>
-            </div>
-            <div class="mobile-media-strip">
-              ${list.map((item, idx) => `
-                <button class="mobile-media-thumb ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-photo-select" data-photo-index="${idx}">
-                  <img src="${item.src}" alt="${item.alt || 'Фото'}">
+          if(featureCompactRender && typeof featureCompactRender.buildMobilePhotoGalleryHtml === 'function'){
+            const vm = featureCompactRender.buildMobilePhotoGalleryHtml({
+              list,
+              activeIndex
+            });
+            state.mobilePhotoIndex = vm.safeIndex;
+            mobilePhotoGallery.innerHTML = vm.html;
+          } else {
+            mobilePhotoGallery.innerHTML = `
+              <div class="mobile-media-stage">
+                <button type="button" data-action="open-photo" data-photo-index="${activeIndex}">
+                  <img src="${active.src}" alt="${active.alt || 'Фото лагеря'}">
+                  <div class="mobile-media-overlay">
+                    <strong>${(active.alt || 'Атмосфера лагеря').replace(/^all$/i, 'Атмосфера')}</strong>
+                    <span>Тапните, чтобы открыть фото</span>
+                  </div>
                 </button>
-              `).join('')}
-            </div>
-          `;
+              </div>
+              <div class="mobile-media-strip">
+                ${list.map((item, idx) => `
+                  <button class="mobile-media-thumb ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-photo-select" data-photo-index="${idx}">
+                    <img src="${item.src}" alt="${item.alt || 'Фото'}">
+                  </button>
+                `).join('')}
+              </div>
+            `;
+          }
         } else {
           mobilePhotoGallery.innerHTML = '';
         }
@@ -2875,25 +4124,34 @@
         const active = list[activeIndex];
 
         if(active){
-          mobileVideoGallery.innerHTML = `
-            <div class="mobile-media-stage">
-              <button type="button" data-action="open-video" data-video="${active.url}">
-                <img src="${active.cover}" alt="${active.title}">
-                <span class="mobile-media-play"><img class="ac-icon" src="/assets/icons/play.svg" alt="" aria-hidden="true"></span>
-                <div class="mobile-media-overlay">
-                  <strong>${active.title}</strong>
-                  <span>Смотреть видео</span>
-                </div>
-              </button>
-            </div>
-            <div class="mobile-media-strip">
-              ${list.map((item, idx) => `
-                <button class="mobile-media-thumb ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-video-select" data-video-index="${idx}">
-                  <img src="${item.cover}" alt="${item.title}">
+          if(featureCompactRender && typeof featureCompactRender.buildMobileVideoGalleryHtml === 'function'){
+            const vm = featureCompactRender.buildMobileVideoGalleryHtml({
+              list,
+              activeIndex
+            });
+            state.mobileVideoIndex = vm.safeIndex;
+            mobileVideoGallery.innerHTML = vm.html;
+          } else {
+            mobileVideoGallery.innerHTML = `
+              <div class="mobile-media-stage">
+                <button type="button" data-action="open-video" data-video="${active.url}">
+                  <img src="${active.cover}" alt="${active.title}">
+                  <span class="mobile-media-play"><img class="ac-icon" src="/assets/icons/play.svg" alt="" aria-hidden="true"></span>
+                  <div class="mobile-media-overlay">
+                    <strong>${active.title}</strong>
+                    <span>Смотреть видео</span>
+                  </div>
                 </button>
-              `).join('')}
-            </div>
-          `;
+              </div>
+              <div class="mobile-media-strip">
+                ${list.map((item, idx) => `
+                  <button class="mobile-media-thumb ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-video-select" data-video-index="${idx}">
+                    <img src="${item.cover}" alt="${item.title}">
+                  </button>
+                `).join('')}
+              </div>
+            `;
+          }
         } else {
           mobileVideoGallery.innerHTML = '';
         }
@@ -2905,234 +4163,153 @@
         state.mobileReviewIndex = activeIndex;
         const active = list[activeIndex];
         if(active){
-          mobileReviewsGallery.innerHTML = `
-            <div class="mobile-review-social-proof">
-              <div class="mobile-review-top">
-                <div>
-                  <strong>5.0</strong><span class="mobile-review-stars">★★★★★</span>
-                </div>
-                <a class="inline-link-btn primary" href="${mediaContent.references.yandexReviewsUrl}" target="_blank" rel="noopener noreferrer">Отзывы на Яндекс Картах</a>
-              </div>
-              <div class="mobile-review-proof">Более 40 реальных отзывов на Яндекс.Картах</div>
-            </div>
-            <div class="mobile-review-main">
-              <div class="mobile-review-card">
-                <div class="mobile-review-head">
-                  <img src="${active.avatar}" alt="${active.name}">
+          if(featureCompactRender && typeof featureCompactRender.buildMobileReviewsGalleryHtml === 'function'){
+            const vm = featureCompactRender.buildMobileReviewsGalleryHtml({
+              list,
+              activeIndex,
+              yandexReviewsUrl: mediaContent.references.yandexReviewsUrl
+            });
+            state.mobileReviewIndex = vm.safeIndex;
+            mobileReviewsGallery.innerHTML = vm.html;
+          } else {
+            mobileReviewsGallery.innerHTML = `
+              <div class="mobile-review-social-proof">
+                <div class="mobile-review-top">
                   <div>
-                    <strong>${active.name}</strong>
-                    <span>${active.meta}</span>
-                    <span class="mobile-review-stars">★★★★★</span>
+                    <strong>5.0</strong><span class="mobile-review-stars">★★★★★</span>
                   </div>
+                  <a class="inline-link-btn primary" href="${mediaContent.references.yandexReviewsUrl}" target="_blank" rel="noopener noreferrer">Отзывы на Яндекс Картах</a>
                 </div>
-                <div class="mobile-review-text">${active.quote}</div>
+                <div class="mobile-review-proof">Более 40 реальных отзывов на Яндекс.Картах</div>
               </div>
-              <div class="mobile-review-dots">
-                ${list.map((_, idx) => `
-                  <button class="mobile-review-dot ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-review-select" data-review-index="${idx}" aria-label="Показать отзыв ${idx + 1}"></button>
-                `).join('')}
+              <div class="mobile-review-main">
+                <div class="mobile-review-card">
+                  <div class="mobile-review-head">
+                    <img src="${active.avatar}" alt="${active.name}">
+                    <div>
+                      <strong>${active.name}</strong>
+                      <span>${active.meta}</span>
+                      <span class="mobile-review-stars">★★★★★</span>
+                    </div>
+                  </div>
+                  <div class="mobile-review-text">${active.quote}</div>
+                </div>
+                <div class="mobile-review-dots">
+                  ${list.map((_, idx) => `
+                    <button class="mobile-review-dot ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-review-select" data-review-index="${idx}" aria-label="Показать отзыв ${idx + 1}"></button>
+                  `).join('')}
+                </div>
               </div>
-            </div>
-          `;
+            `;
+          }
         } else {
           mobileReviewsGallery.innerHTML = '';
         }
       }
 
       if (mobileFaqList) {
-        const groups = mediaContent.faq.map((group) => group.group);
-        const safeGroup = groups.includes(state.mobileFaqGroup) ? state.mobileFaqGroup : (groups[0] || 'Медицина');
-        state.mobileFaqGroup = safeGroup;
-        const activeFaqGroup = mediaContent.faq.find((group) => group.group === safeGroup);
-        const faqItems = (activeFaqGroup?.items || []).map((item, index) => ({
-          key: `${safeGroup}:${index}`,
-          q: item.q,
-          a: item.a
-        }));
-        const fallbackKey = faqItems[0]?.key || '';
-        const activeKey = faqItems.some((item) => item.key === state.mobileFaqOpenKey) ? state.mobileFaqOpenKey : fallbackKey;
-        state.mobileFaqOpenKey = activeKey;
+        if(featureCompactRender && typeof featureCompactRender.buildMobileFaqVm === 'function'){
+          const vm = featureCompactRender.buildMobileFaqVm({
+            faq: mediaContent.faq,
+            currentGroup: state.mobileFaqGroup,
+            currentOpenKey: state.mobileFaqOpenKey
+          });
+          state.mobileFaqGroup = vm.safeGroup;
+          state.mobileFaqOpenKey = vm.activeKey;
 
-        const mobileFaqFilters = document.getElementById('mobileFaqFilters');
-        if(mobileFaqFilters){
-          mobileFaqFilters.innerHTML = groups.map((group) => `
-            <button
-              type="button"
-              class="mobile-faq-filter-chip ${group === safeGroup ? 'active' : ''}"
-              data-action="mobile-faq-filter"
-              data-faq-group="${group}"
-            >${group}</button>
+          const mobileFaqFilters = document.getElementById('mobileFaqFilters');
+          if(mobileFaqFilters){
+            mobileFaqFilters.innerHTML = vm.filtersHtml;
+          }
+          mobileFaqList.innerHTML = vm.listHtml;
+        } else {
+          const groups = mediaContent.faq.map((group) => group.group);
+          const safeGroup = groups.includes(state.mobileFaqGroup) ? state.mobileFaqGroup : (groups[0] || 'Медицина');
+          state.mobileFaqGroup = safeGroup;
+          const activeFaqGroup = mediaContent.faq.find((group) => group.group === safeGroup);
+          const faqItems = (activeFaqGroup?.items || []).map((item, index) => ({
+            key: `${safeGroup}:${index}`,
+            q: item.q,
+            a: item.a
+          }));
+          const fallbackKey = faqItems[0]?.key || '';
+          const activeKey = faqItems.some((item) => item.key === state.mobileFaqOpenKey) ? state.mobileFaqOpenKey : fallbackKey;
+          state.mobileFaqOpenKey = activeKey;
+
+          const mobileFaqFilters = document.getElementById('mobileFaqFilters');
+          if(mobileFaqFilters){
+            mobileFaqFilters.innerHTML = groups.map((group) => `
+              <button
+                type="button"
+                class="mobile-faq-filter-chip ${group === safeGroup ? 'active' : ''}"
+                data-action="mobile-faq-filter"
+                data-faq-group="${group}"
+              >${group}</button>
+            `).join('');
+          }
+
+          mobileFaqList.innerHTML = faqItems.map((item) => `
+            <article class="mobile-faq-item ${item.key === activeKey ? 'open' : ''}">
+              <button
+                type="button"
+                class="mobile-faq-question"
+                data-action="mobile-faq-toggle"
+                data-faq-key="${item.key}"
+              >
+                <span>${item.q}</span>
+                <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+              </button>
+              <div class="mobile-faq-answer">${item.a}</div>
+            </article>
           `).join('');
         }
-
-        mobileFaqList.innerHTML = faqItems.map((item) => `
-          <article class="mobile-faq-item ${item.key === activeKey ? 'open' : ''}">
-            <button
-              type="button"
-              class="mobile-faq-question"
-              data-action="mobile-faq-toggle"
-              data-faq-key="${item.key}"
-            >
-              <span>${item.q}</span>
-              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
-            </button>
-            <div class="mobile-faq-answer">${item.a}</div>
-          </article>
-        `).join('');
       }
 
-      if (mobileInlineTeamList) {
-        const founder = mediaContent.team.find((item) => item.fio === 'Дарья Афанасьева') || mediaContent.team[0];
-        const teachers = mediaContent.team.filter((item) => item.fio !== founder?.fio);
-        const safeIndex = teachers.length ? ((state.mobileTeamIndex % teachers.length) + teachers.length) % teachers.length : 0;
-        state.mobileTeamIndex = safeIndex;
-        const activeTeacher = teachers[safeIndex];
+      renderCompactInlineTeamList(mobileInlineTeamList, featureCompactRender);
 
-        mobileInlineTeamList.innerHTML = `
-          <article class="mobile-team-feature-card">
-            <div class="mobile-team-feature-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
-              <img class="mobile-team-feature-cover" src="/assets/images/cdn-cache/8fc8172e_8991804334.webp" alt="Собственная книга по Python">
-            </div>
-            <strong>Собственная книга по Python</strong>
-            <span>Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики.</span>
-            <a class="mobile-team-feature-cta" href="${mediaContent.references.programmingBookUrl}" target="_blank" rel="noopener noreferrer">Смотреть книгу</a>
-          </article>
-          ${founder ? `
-            <article class="mobile-team-founder-card">
-              <div class="mobile-team-avatar">
-                <img src="${founder.avatarUrl}" alt="${founder.fio}">
-              </div>
-              <strong>${founder.fio}</strong>
-              <span class="mobile-team-role">${founder.role}</span>
-              <p>${founder.bio}</p>
-            </article>
-          ` : ''}
-          ${activeTeacher ? `
-            <div class="mobile-team-carousel-block">
-              <div class="mobile-team-carousel-head">
-                <strong>Преподаватели</strong>
-                <div class="mobile-team-carousel-controls">
-                  <button type="button" data-action="mobile-team-prev" aria-label="Предыдущий преподаватель">
-                    <img class="ac-icon" src="/assets/icons/chevron-left.svg" alt="" aria-hidden="true">
-                  </button>
-                  <button type="button" data-action="mobile-team-next" aria-label="Следующий преподаватель">
-                    <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
-                  </button>
-                </div>
-              </div>
-              <article class="mobile-team-teacher-card">
-                <div class="mobile-team-avatar">
-                  <img src="${activeTeacher.avatarUrl}" alt="${activeTeacher.fio}">
-                </div>
-                <strong>${activeTeacher.fio}</strong>
-                <span class="mobile-team-role">${activeTeacher.role}</span>
-                <p>${activeTeacher.bio}</p>
-              </article>
-              <div class="mobile-team-carousel-dots">
-                ${teachers.map((_, index) => `
-                  <button
-                    type="button"
-                    class="mobile-team-dot ${index === safeIndex ? 'active' : ''}"
-                    data-action="mobile-team-select"
-                    data-team-index="${index}"
-                    aria-label="Переключить преподавателя"
-                  ></button>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-        `;
-      }
+      renderCompactInlineStayList(mobileInlineStayList);
 
-      if (mobileInlineStayList) {
-        const stayCards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
-          return {
-            img: card.querySelector('img')?.getAttribute('src') || '',
-            title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
-            text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
-          };
-        }).filter(item => item.title);
+      renderCompactInlineContactsList(mobileInlineContactsList, featureCompactRender);
 
-        mobileInlineStayList.innerHTML = stayCards.slice(0, 3).map((item, idx) => `
-          <div class="mobile-stay-card is-clickable" data-action="open-stay-photo" data-stay-index="${idx}" role="button" tabindex="0">
-            <div class="mobile-stay-thumb">${item.img ? `<img src="${item.img}" alt="${item.title}">` : ''}</div>
-            <div>
-              <strong>${item.title}</strong>
-              <span>${item.text}</span>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      if (mobileInlineContactsList) {
-        const mapUrl = mediaContent.references.locationMapUrl;
-        const mapEmbedUrl = mediaContent.references.locationMapEmbedUrl;
-        const cityPhone = mediaContent.contacts.find((item) => item.label === 'city_phone');
-        const mobilePhone = mediaContent.contacts.find((item) => item.label === 'mobile_phone');
-        const whatsapp = mediaContent.contacts.find((item) => item.label === 'whatsapp');
-        const telegram = mediaContent.contacts.find((item) => item.label === 'telegram');
-
-        mobileInlineContactsList.innerHTML = `
-          <article class="mobile-map-preview-card">
-            <div class="mobile-map-preview">
-              <iframe
-                src="${mapEmbedUrl}"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                title="Карта локации лагеря"
-              ></iframe>
-            </div>
-            <strong>66 км от Москвы · Киевское шоссе</strong>
-            <span>Удобный заезд на машине, маршрут открывается в Яндекс Картах.</span>
-            <a class="mobile-map-open-btn" href="${mapUrl}" target="_blank" rel="noopener noreferrer">Открыть карту</a>
-          </article>
-          <div class="mobile-contact-grid">
-            ${cityPhone ? `<a class="mobile-contact-card" href="${cityPhone.href}"><small>Телефон 1</small><strong>${cityPhone.text}</strong></a>` : ''}
-            ${mobilePhone ? `<a class="mobile-contact-card" href="${mobilePhone.href}"><small>Телефон 2</small><strong>${mobilePhone.text}</strong></a>` : ''}
-            ${whatsapp ? `<a class="mobile-contact-card" href="${whatsapp.href}" target="_blank" rel="noopener noreferrer"><small>WhatsApp</small><strong>WhatsApp</strong></a>` : ''}
-            ${telegram ? `<a class="mobile-contact-card" href="${telegram.href}" target="_blank" rel="noopener noreferrer"><small>Telegram</small><strong>@proga_school</strong></a>` : ''}
-          </div>
-        `;
-      }
-
-      if (mobileInlineSocials) {
-        mobileInlineSocials.innerHTML = mediaContent.socials.map(item => `
-          <a class="mobile-social-link" href="${item.href}" target="_blank" rel="noopener noreferrer" aria-label="${item.key}">
-            <span class="mobile-social-icon"><span class="social-badge-mark">${socialBadgeMark(item)}</span></span>
-            <span class="mobile-social-label">${item.key}</span>
-          </a>
-        `).join('');
-      }
+      renderCompactInlineSocials(mobileInlineSocials, featureCompactRender);
 
       if (mobileDocsRequisites) {
-        mobileDocsRequisites.innerHTML = `
-          <article class="mobile-docs-card">
-            <strong>ООО «ВОИП КОННЕКТ»</strong>
-            <div>ИНН 7729713637</div>
-            <div>РТО 025773</div>
-            <div><a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a></div>
-            <div><a href="mailto:hello@codims.ru">hello@codims.ru</a></div>
-          </article>
-        `;
+        if(featureCompactRender && typeof featureCompactRender.renderDocsRequisitesHtml === 'function'){
+          mobileDocsRequisites.innerHTML = featureCompactRender.renderDocsRequisitesHtml();
+        } else {
+          mobileDocsRequisites.innerHTML = `
+            <article class="mobile-docs-card">
+              <strong>ООО «ВОИП КОННЕКТ»</strong>
+              <div>ИНН 7729713637</div>
+              <div>РТО 025773</div>
+              <div><a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a></div>
+              <div><a href="mailto:hello@codims.ru">hello@codims.ru</a></div>
+            </article>
+          `;
+        }
       }
 
       if (mobileDocsAccordion) {
-        mobileDocsAccordion.innerHTML = `
-          <article class="mobile-docs-accordion-item ${state.mobileDocsExpanded ? 'open' : ''}">
-            <button type="button" class="mobile-docs-toggle" data-action="mobile-docs-toggle">
-              <span>Все документы и юридическая информация</span>
-              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
-            </button>
-            <div class="mobile-docs-links">
-              <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
-              <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
-              <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
-              <a href="legal.html#children-rest" target="_blank" rel="noopener noreferrer">Отдых и оздоровление детей</a>
-              <a href="legal.html#partners-info" target="_blank" rel="noopener noreferrer">Условия для партнёров</a>
-              <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
-            </div>
-          </article>
-        `;
+        if(featureCompactRender && typeof featureCompactRender.renderDocsAccordionHtml === 'function'){
+          mobileDocsAccordion.innerHTML = featureCompactRender.renderDocsAccordionHtml(state.mobileDocsExpanded);
+        } else {
+          mobileDocsAccordion.innerHTML = `
+            <article class="mobile-docs-accordion-item ${state.mobileDocsExpanded ? 'open' : ''}">
+              <button type="button" class="mobile-docs-toggle" data-action="mobile-docs-toggle">
+                <span>Все документы и юридическая информация</span>
+                <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+              </button>
+              <div class="mobile-docs-links">
+                <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+                <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
+                <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
+                <a href="legal.html#children-rest" target="_blank" rel="noopener noreferrer">Отдых и оздоровление детей</a>
+                <a href="legal.html#partners-info" target="_blank" rel="noopener noreferrer">Условия для партнёров</a>
+                <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
+              </div>
+            </article>
+          `;
+        }
       }
     }
 
@@ -3143,6 +4320,8 @@
       renderBookingPanels();
       renderGuidedState('desktop');
       renderGuidedState('mobile');
+      syncDesktopAgeTapHintVisibility();
+      scheduleDesktopAgeTapHint();
       renderMediaSections();
       renderSummary();
     }
@@ -3155,6 +4334,7 @@
       state.offerPrice = null;
       state.code = null;
       state.expiresAt = null;
+      state.bookingCompleted = false;
       state.offerStage = 0;
       renderAll();
       persist();
@@ -3162,7 +4342,7 @@
 
     function handlePrimaryCTA(){
       if(!hasSelectedAge()){
-        showHint('Выберите возраст ребёнка', 'age');
+        showHint('Выберите возраст', 'age');
         nudgeUserToNextStep('Сначала выберите возраст ребёнка');
         return;
       }
@@ -3198,8 +4378,10 @@
         return;
       }
 
+      const featureOfferProgress = window.AC_FEATURES && window.AC_FEATURES.offerProgress;
       const wrap = document.getElementById('offerOverlay');
       const card = document.getElementById('offerCard');
+      card?.classList.add('offer-card-stable');
       offerRunId += 1;
       const currentRunId = offerRunId;
       state.offerSearching = true;
@@ -3207,22 +4389,46 @@
       track('offer_open', selectedShiftPayload());
       track('offer_start', selectedShiftPayload());
       wrap.classList.remove('hidden');
+      applyOfferModalTheme(card);
 
-      card.innerHTML = `
-        <div class="offer-headline">
-          <h3>Ищем лучшую цену</h3>
-          <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
-        </div>
-        <p id="offerProgressLead">Проверяем остаток мест и доступные условия для выбранной смены.</p>
-        <div class="offer-progress-track">
-          <div class="offer-progress-fill" id="offerProgressFillLine"></div>
-        </div>
-        <div class="offer-progress-steps">
-          <div class="offer-progress-step active" id="offerStepA">Проверяем смену</div>
-          <div class="offer-progress-step" id="offerStepB">Сверяем цену</div>
-          <div class="offer-progress-step" id="offerStepC">Генерируем код</div>
-        </div>
-      `;
+      const useLegacyLayout = state.offerLayout === 'legacy';
+      if(useLegacyLayout){
+        card.innerHTML = `
+          <div class="offer-state-shell offer-state-shell--search offer-state-shell--search-legacy">
+            <div class="offer-headline">
+              <h3>Ищем лучшую цену</h3>
+            </div>
+            <div class="offer-legacy-search-icon" aria-hidden="true">
+              <img class="offer-legacy-search-icon__asset" src="/assets/icons/offer-search.svg" alt="">
+            </div>
+            <div class="offer-legacy-status" id="offerProgressLead">Смотрим текущие бронирования...</div>
+            <div class="offer-progress-track offer-progress-track--legacy">
+              <div class="offer-progress-fill" id="offerProgressFillLine"></div>
+            </div>
+            <p class="offer-legacy-note">Проверяем доступные условия по выбранной смене.</p>
+          </div>
+        `;
+      } else if(featureOfferProgress && typeof featureOfferProgress.createMarkup === 'function'){
+        card.innerHTML = `<div class="offer-state-shell offer-state-shell--search">${featureOfferProgress.createMarkup()}</div>`;
+      } else {
+        card.innerHTML = `
+          <div class="offer-state-shell offer-state-shell--search">
+            <div class="offer-headline">
+              <h3>Ищем лучшую цену</h3>
+            </div>
+            <p id="offerProgressLead">Проверяем остаток мест и доступные условия для выбранной смены.</p>
+            <div class="offer-progress-track">
+              <div class="offer-progress-fill" id="offerProgressFillLine"></div>
+            </div>
+            <div class="offer-progress-steps">
+              <div class="offer-progress-step active" id="offerStepA">Проверяем смену</div>
+              <div class="offer-progress-step" id="offerStepB">Сверяем цену</div>
+              <div class="offer-progress-step" id="offerStepC">Генерируем код</div>
+            </div>
+          </div>
+        `;
+      }
+      card.querySelectorAll('[data-action="close-offer"]').forEach((btn) => btn.remove());
       const fillEl = document.getElementById('offerProgressFillLine');
       const leadEl = document.getElementById('offerProgressLead');
       const stepA = document.getElementById('offerStepA');
@@ -3230,69 +4436,235 @@
       const stepC = document.getElementById('offerStepC');
 
       if(fillEl) fillEl.style.width = '18%';
-      offerTimeoutIds.push(setTimeout(() => {
-        if(currentRunId !== offerRunId) return;
-        if(fillEl) fillEl.style.width = '44%';
-        if(leadEl) leadEl.textContent = 'Сверяем цену и проверяем, можно ли зафиксировать условия.';
-        stepA?.classList.remove('active');
-        stepB?.classList.add('active');
-      }, 1200));
+      const progressDelayMultiplier = 2;
+      const progressSteps = (useLegacyLayout
+        ? [
+          { delay: 900, width: '28%', lead: 'Смотрим текущие бронирования...' },
+          { delay: 1700, width: '56%', lead: 'Ищем свободные места...' },
+          { delay: 2500, width: '82%', lead: 'Проверяем отказы и неоплаты...' },
+          { delay: 3300, width: '100%', lead: 'Считаем максимально доступную цену...' }
+        ]
+        : ((featureOfferProgress && typeof featureOfferProgress.getProgressSteps === 'function')
+        ? featureOfferProgress.getProgressSteps()
+        : [
+          {
+            delay: 1200,
+            width: '44%',
+            lead: 'Сверяем цену и проверяем, можно ли зафиксировать условия.',
+            from: stepA,
+            to: stepB
+          },
+          {
+            delay: 2500,
+            width: '76%',
+            lead: 'Готовим персональный код бронирования и закрепляем цену.',
+            from: stepB,
+            to: stepC
+          },
+          {
+            delay: 3300,
+            width: '100%'
+          }
+        ])).map((step) => ({
+          ...step,
+          delay: Math.round((step.delay || 0) * progressDelayMultiplier)
+        }));
+      if(progressSteps[0]){
+        progressSteps[0].from = progressSteps[0].from || stepA;
+        progressSteps[0].to = progressSteps[0].to || stepB;
+      }
+      if(progressSteps[1]){
+        progressSteps[1].from = progressSteps[1].from || stepB;
+        progressSteps[1].to = progressSteps[1].to || stepC;
+      }
 
-      offerTimeoutIds.push(setTimeout(() => {
-        if(currentRunId !== offerRunId) return;
-        if(fillEl) fillEl.style.width = '76%';
-        if(leadEl) leadEl.textContent = 'Готовим персональный код бронирования и закрепляем цену.';
-        stepB?.classList.remove('active');
-        stepC?.classList.add('active');
-      }, 2500));
+      const stepWidthValues = progressSteps.map((step) => ({
+        ...step,
+        widthValue: Number.parseFloat(String(step.width).replace('%',''))
+      }));
+      const progressAnimationOffsetMs = 400;
+      const fillSegments = [];
+      let prevTime = 0;
+      let prevWidth = 18;
+      const finalProgressDelay = stepWidthValues.length
+        ? Math.max(...stepWidthValues.map((step) => step.delay || 0)) + 600
+        : 7200;
 
-      offerTimeoutIds.push(setTimeout(() => {
+      stepWidthValues.forEach((step) => {
+        const targetWidth = Number.isFinite(step.widthValue) ? step.widthValue : prevWidth;
+        const stopTime = Math.max(prevTime + 180, (step.delay || prevTime) - progressAnimationOffsetMs);
+        fillSegments.push({
+          startMs: prevTime,
+          endMs: stopTime,
+          from: prevWidth,
+          to: targetWidth
+        });
+        prevTime = stopTime;
+        prevWidth = targetWidth;
+      });
+
+      if(prevTime < finalProgressDelay - 100){
+        fillSegments.push({
+          startMs: prevTime,
+          endMs: finalProgressDelay,
+          from: prevWidth,
+          to: prevWidth
+        });
+      }
+
+      const startFill = performance.now();
+      const easeOut = (t) => 1 - Math.pow(1 - t, 2);
+      const drawProgress = () => {
         if(currentRunId !== offerRunId) return;
-        if(fillEl) fillEl.style.width = '100%';
-      }, 3300));
+        const elapsed = performance.now() - startFill;
+        let percent = fillSegments.length ? fillSegments[fillSegments.length - 1].to : 100;
+        for(let i = 0; i < fillSegments.length; i += 1){
+          const seg = fillSegments[i];
+          if(elapsed <= seg.startMs){
+            percent = seg.from;
+            break;
+          }
+          if(elapsed >= seg.endMs){
+            percent = seg.to;
+            continue;
+          }
+          const normalized = (elapsed - seg.startMs) / Math.max(1, seg.endMs - seg.startMs);
+          const eased = easeOut(Math.min(1, Math.max(0, normalized)));
+          percent = seg.from + (seg.to - seg.from) * eased;
+          break;
+        }
+        if(fillEl){
+          fillEl.style.width = `${Math.min(100, Math.max(0, percent)).toFixed(2)}%`;
+        }
+        if(elapsed < finalProgressDelay){
+          offerProgressRafId = requestAnimationFrame(drawProgress);
+        }
+      };
+      offerProgressRafId = requestAnimationFrame(drawProgress);
+
+      progressSteps.forEach((step) => {
+        offerTimeoutIds.push(setTimeout(() => {
+          if(currentRunId !== offerRunId) return;
+          if(leadEl && step.lead) leadEl.textContent = step.lead;
+          if(step.from && step.from.classList) step.from.classList.remove('active');
+          if(step.to && step.to.classList) step.to.classList.add('active');
+        }, step.delay));
+      });
+
 
       offerTimeoutIds.push(setTimeout(() => {
         if(currentRunId !== offerRunId) return;
         clearOfferTimeout();
         showOffer();
-      }, 3600));
-    }
-
-    function openOfferCheck(){
-      runOfferSearch();
+      }, finalProgressDelay));
     }
 
     function showOffer(){
       const card = document.getElementById('offerCard');
+      const featureOfferUtils = window.AC_FEATURES && window.AC_FEATURES.offerUtils;
 
       const selectedShift = getSelectedShift();
       const basePrice = state.basePrice || (selectedShift ? selectedShift.price : null);
       if(basePrice){
-        state.offerPrice = Math.round(basePrice * OFFER_DISCOUNT_FACTOR);
-        state.expiresAt = Date.now() + 72 * 60 * 60 * 1000;
-        state.offerStage = 1;
+        if(featureOfferUtils && typeof featureOfferUtils.buildOfferState === 'function'){
+          const nextOfferState = featureOfferUtils.buildOfferState({
+            basePrice,
+            discountFactor: OFFER_DISCOUNT_FACTOR,
+            now: Date.now(),
+            ttlHours: 72
+          });
+          state.offerPrice = nextOfferState.offerPrice;
+          state.expiresAt = nextOfferState.expiresAt;
+          state.offerStage = nextOfferState.offerStage;
+        } else {
+          state.offerPrice = Math.round(basePrice * OFFER_DISCOUNT_FACTOR);
+          state.expiresAt = Date.now() + 72 * 60 * 60 * 1000;
+          state.offerStage = 1;
+        }
       }
 
       state.code = generateCode();
       state.offerSearching = false;
       persist();
       track('offer_complete', selectedShiftPayload());
+      card?.classList.add('offer-card-stable');
+      applyOfferModalTheme(card);
+      const oldPriceText = basePrice ? formatPrice(basePrice) : '—';
+      const newPriceText = formatPrice(state.offerPrice);
+      const appliedPrice = state.offerPrice || basePrice || 0;
+      const savingsValue = Math.max(0, (basePrice || 0) - appliedPrice);
+      const savingsText = formatPrice(savingsValue);
+      const savingsPercent = basePrice
+        ? `${Math.max(0, Math.round((savingsValue / basePrice) * 100))}%`
+        : '0%';
 
-      card.innerHTML = `
-        <div class="offer-headline">
-          <h3>Удалось закрепить цену</h3>
-          <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
-        </div>
-        <p>Ваша цена сохранится на ограниченное время, чтобы вы могли спокойно принять решение.</p>
-        <div class="big-price">${formatPrice(state.offerPrice)}</div>
-        <div class="summary-timer" id="offerTimer"></div>
-        <div class="offer-code">Код бронирования: ${state.code}</div>
+      const useLegacyLayout = state.offerLayout === 'legacy';
+      card.innerHTML = useLegacyLayout
+        ? `
+          <div class="offer-state-shell offer-state-shell--result offer-state-shell--result-legacy">
+            <div class="offer-headline">
+              <h3>Нашли лучшие условия</h3>
+              <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
+            </div>
+            <div class="offer-legacy-result-banner">
+              <div class="offer-legacy-result-banner__icon" aria-hidden="true">
+                <img class="offer-legacy-result-banner__asset" src="/assets/icons/hourglass-svgrepo-com.svg" alt="">
+              </div>
+              <div class="offer-legacy-result-banner__text">
+                <strong>Цена закреплена за вами</strong>
+                <span>На ограниченное время</span>
+              </div>
+            </div>
+            <div class="offer-legacy-price-box">
+              <small>Ваша цена</small>
+              <strong>${newPriceText}</strong>
+              <span>Вместо ${oldPriceText}</span>
+            </div>
+            <div class="offer-price-compare__benefits">
+              <span class="offer-benefit-chip"><strong>Выгода:</strong> ${savingsText}</span>
+              <span class="offer-benefit-chip"><strong>Разница:</strong> ${savingsPercent}</span>
+              ${state.code ? `<span class="offer-benefit-chip"><strong>Код бронирования:</strong> ${state.code}</span>` : ''}
+            </div>
+            <div class="offer-booking-block">
+              <p class="offer-booking-note">Действует 72 часа. Вы можете спокойно подумать и вернуться.</p>
+            </div>
+            <div class="overlay-actions">
+              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Оформить заявку</button>
+            </div>
+            <div class="inline-lead-host hidden" id="offerInlineLeadHost"></div>
+          </div>
+        `
+        : `
+          <div class="offer-state-shell offer-state-shell--result">
+            <div class="offer-headline">
+              <h3>Нашли лучшие условия</h3>
+              <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
+            </div>
+            <div class="offer-price-compare">
+              <div class="offer-price-compare__new">
+                <small>Новая цена после проверки</small>
+                <strong>${newPriceText}</strong>
+              </div>
+              <div class="offer-price-compare__old">
+                <small>Старая цена</small>
+                <span>${oldPriceText}</span>
+              </div>
+              <div class="offer-price-compare__benefits">
+                <span class="offer-benefit-chip"><strong>Выгода:</strong> ${savingsText}</span>
+                <span class="offer-benefit-chip"><strong>Разница:</strong> ${savingsPercent}</span>
+                ${state.code ? `<span class="offer-benefit-chip"><strong>Код бронирования:</strong> ${state.code}</span>` : ''}
+              </div>
+            </div>
+            <div class="offer-booking-block">
+              <p class="offer-booking-note">Действует 72 часа. Вы можете спокойно подумать и вернуться.</p>
+            </div>
 
-        <div class="overlay-actions">
-          <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Закрепить по телефону</button>
-          <button class="secondary-outline" id="offerCloseBtn" data-action="close-offer" type="button">Закрыть</button>
-        </div>
-      `;
+            <div class="overlay-actions">
+              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Оформить заявку</button>
+            </div>
+            <div class="inline-lead-host hidden" id="offerInlineLeadHost"></div>
+          </div>
+        `;
 
       startTimer();
       renderSummary();
@@ -3315,12 +4687,18 @@
     function startTimer(){
       if(timerId) clearInterval(timerId);
 
-      timerId = setInterval(() => {
+      const updateTimers = () => {
+        if(state.bookingCompleted){
+          clearInterval(timerId);
+          timerId = null;
+          return;
+        }
         if(!state.expiresAt) return;
 
         const diff = state.expiresAt - Date.now();
         const offerTimer = document.getElementById('offerTimer');
         const summaryTimer = document.getElementById('summaryTimer');
+        const bookingTimers = document.querySelectorAll('.booking-timer-line[data-live-timer="true"]');
 
         if(diff <= 0){
           clearInterval(timerId);
@@ -3328,19 +4706,39 @@
           persist();
           if(offerTimer) offerTimer.textContent = '';
           if(summaryTimer) summaryTimer.textContent = '';
+          bookingTimers.forEach((node) => {
+            node.textContent = '';
+          });
           renderBookingPanels();
           return;
         }
 
-        const text = formatRemaining(diff);
+        const fullText = formatRemaining(diff);
+        const compactText = normalizeCompactTimerText(formatRemainingCompact(diff));
 
-        if(offerTimer) offerTimer.textContent = text;
-        if(summaryTimer) summaryTimer.textContent = text;
-      }, 1000);
+        if(offerTimer) offerTimer.textContent = fullText;
+        if(summaryTimer) summaryTimer.textContent = compactText;
+        bookingTimers.forEach((node) => {
+          node.textContent = compactText;
+        });
+      };
+
+      updateTimers();
+      timerId = setInterval(updateTimers, 1000);
     }
 
     function renderSummary(){
       syncGuidedState();
+      if(state.bookingCompleted){
+        const bar = document.getElementById('summaryBar');
+        if(bar){
+          bar.classList.remove('is-visible');
+          bar.classList.add('hidden');
+        }
+        document.body.classList.remove('summary-visible');
+        return;
+      }
+      const featureSummaryUtils = window.AC_FEATURES && window.AC_FEATURES.summaryUtils;
       if(state.expiresAt && Date.now() >= state.expiresAt){
         resetOfferState({preserveShift:true});
         persist();
@@ -3348,29 +4746,137 @@
       const bar = document.getElementById('summaryBar');
 
       if(!state.shiftId){
-        bar.classList.add('hidden');
-        document.body.classList.remove('summary-visible');
+        updateSummaryBarVisibility();
         renderBookingPanels();
         return;
       }
 
       const shift = shifts.find(s => s.id === state.shiftId);
-      const price = state.offerPrice || state.basePrice || shift.price;
+      if(!shift){
+        updateSummaryBarVisibility();
+        renderBookingPanels();
+        return;
+      }
+      const price = (featureSummaryUtils && typeof featureSummaryUtils.resolveSummaryPrice === 'function')
+        ? featureSummaryUtils.resolveSummaryPrice({
+          offerPrice: state.offerPrice,
+          basePrice: state.basePrice,
+          shiftPrice: shift.price
+        })
+        : (state.offerPrice || state.basePrice || shift.price);
+      const summaryVm = (featureSummaryUtils && typeof featureSummaryUtils.buildSummaryViewModel === 'function')
+        ? featureSummaryUtils.buildSummaryViewModel({
+          ageLabel: labelAge(state.age),
+          shiftTitle: '',
+          shiftDates: shift.dates,
+          code: state.code,
+          priceText: formatPrice(price)
+        })
+        : {
+          main: `${labelAge(state.age)}`,
+          meta: `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`,
+          price: formatPrice(price)
+        };
 
-      document.getElementById('summaryMain').textContent = `${labelAge(state.age)} · ${shift.title}`;
-      document.getElementById('summaryMeta').textContent = `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
-      document.getElementById('summaryPrice').textContent = formatPrice(price);
+      document.getElementById('summaryMain').textContent = summaryVm.main;
+      document.getElementById('summaryMeta').textContent = summaryVm.meta;
+      document.getElementById('summaryPrice').textContent = summaryVm.price;
+      const summaryCtaBtn = bar.querySelector('[data-action="primary-cta"]');
+      if(summaryCtaBtn){
+        const action = getPrimaryActionState();
+        summaryCtaBtn.textContent = getResolvedPrimaryActionText(action, shift);
+        summaryCtaBtn.classList.toggle('is-disabled', !!action.disabled);
+        summaryCtaBtn.setAttribute('aria-disabled', action.disabled ? 'true' : 'false');
+        summaryCtaBtn.disabled = false;
+      }
 
-      bar.classList.remove('hidden');
-      document.body.classList.add('summary-visible');
+      updateSummaryBarVisibility();
       renderBookingPanels();
     }
 
+    function isSummaryCompactMode(){
+      if(state.view === 'mobile'){
+        return state.mobileMode === 'compact';
+      }
+      return state.desktopMode === 'compact';
+    }
+
+    function isSummaryBelowHero(){
+      const heroSelector = state.view === 'mobile'
+        ? '#mobileView .mobile-hero'
+        : '#desktopView .hero-shell';
+      const hero = document.querySelector(heroSelector);
+      if(!hero) return true;
+      const rect = hero.getBoundingClientRect();
+      return rect.bottom <= 8;
+    }
+
+    function isBookingPrimaryCtaVisibleInViewport(){
+      const cardSelector = state.view === 'mobile'
+        ? '#mobileBookingCard'
+        : '#desktop-booking-card';
+      const card = document.querySelector(cardSelector);
+      if(!card || card.classList.contains('hidden')) return false;
+      const ctaButtons = Array.from(card.querySelectorAll('[data-action="primary-cta"]'));
+      if(!ctaButtons.length) return false;
+
+      return ctaButtons.some((button) => {
+        if(!button || button.disabled) return false;
+        const style = window.getComputedStyle(button);
+        if(style.display === 'none' || style.visibility === 'hidden') return false;
+        if(Number(style.opacity || 1) === 0) return false;
+        if(Number(style.height || 0) === 0 || Number(style.width || 0) === 0) return false;
+        const rect = button.getBoundingClientRect();
+        if(rect.width < 2 || rect.height < 2) return false;
+        return !(rect.bottom <= -16 || rect.top >= window.innerHeight + 16);
+      });
+    }
+
+    function updateSummaryBarVisibility(){
+      const bar = document.getElementById('summaryBar');
+      if(!bar) return;
+
+      if(state.bookingCompleted){
+        bar.classList.remove('is-visible');
+        bar.classList.add('hidden');
+        document.body.classList.remove('summary-visible');
+        return;
+      }
+
+      if(!state.shiftId || isSummaryCompactMode()){
+        bar.classList.remove('is-visible');
+        bar.classList.add('hidden');
+        document.body.classList.remove('summary-visible');
+        return;
+      }
+
+      const action = getPrimaryActionState();
+      if(!action || action.disabled){
+        bar.classList.remove('is-visible');
+        bar.classList.add('hidden');
+        document.body.classList.remove('summary-visible');
+        return;
+      }
+
+      const shouldShow = isSummaryBelowHero() && !isBookingPrimaryCtaVisibleInViewport();
+      bar.classList.remove('hidden');
+      bar.classList.toggle('is-visible', shouldShow);
+      document.body.classList.toggle('summary-visible', shouldShow);
+    }
+
     function onlyDigits(value){
+      const featurePhone = window.AC_FEATURES && window.AC_FEATURES.phone;
+      if(featurePhone && typeof featurePhone.onlyDigits === 'function'){
+        return featurePhone.onlyDigits(value);
+      }
       return (value || '').replace(/\D/g, '');
     }
 
     function formatPhoneInput(value){
+      const featurePhone = window.AC_FEATURES && window.AC_FEATURES.phone;
+      if(featurePhone && typeof featurePhone.formatPhoneInput === 'function'){
+        return featurePhone.formatPhoneInput(value);
+      }
       let digits = onlyDigits(value);
 
       if(!digits) return '';
@@ -3392,6 +4898,10 @@
     }
 
     function normalizePhone(value){
+      const featurePhone = window.AC_FEATURES && window.AC_FEATURES.phone;
+      if(featurePhone && typeof featurePhone.normalizePhone === 'function'){
+        return featurePhone.normalizePhone(value);
+      }
       let digits = onlyDigits(value);
       if(!digits) return '';
 
@@ -3404,22 +4914,158 @@
     }
 
     function isValidPhone(value){
+      const featurePhone = window.AC_FEATURES && window.AC_FEATURES.phone;
+      if(featurePhone && typeof featurePhone.isValidPhone === 'function'){
+        return featurePhone.isValidPhone(value);
+      }
       return !!normalizePhone(value);
     }
 
-    function setPhoneError(show){
-      const input = document.getElementById('parentPhone');
-      const error = document.getElementById('phoneError');
+    function getLeadScopeConfig(scope = 'drawer'){
+      const map = {
+        drawer: {
+          hostId:'formDrawer',
+          phoneInputId:'parentPhone',
+          consentId:'consentCheck',
+          errorId:'phoneError',
+          submitId:'submitLeadBtn'
+        },
+        'booking-desktop': {
+          hostId:'desktopInlineLeadHost',
+          phoneInputId:'inlineLeadPhoneDesktop',
+          consentId:'inlineLeadConsentDesktop',
+          errorId:'inlineLeadErrorDesktop',
+          submitId:'inlineLeadSubmitDesktop'
+        },
+        'booking-mobile': {
+          hostId:'mobileInlineLeadHost',
+          phoneInputId:'inlineLeadPhoneMobile',
+          consentId:'inlineLeadConsentMobile',
+          errorId:'inlineLeadErrorMobile',
+          submitId:'inlineLeadSubmitMobile'
+        },
+        offer: {
+          hostId:'offerInlineLeadHost',
+          phoneInputId:'inlineLeadPhoneOffer',
+          consentId:'inlineLeadConsentOffer',
+          errorId:'inlineLeadErrorOffer',
+          submitId:'inlineLeadSubmitOffer'
+        }
+      };
+      return map[scope] || null;
+    }
+
+    function getLeadSubmitDefaultText(scope = 'drawer'){
+      return 'Забронировать место';
+    }
+
+    function setLeadPhoneError(scope = 'drawer', show = false, message = ''){
+      const cfg = getLeadScopeConfig(scope);
+      if(!cfg) return;
+      const input = document.getElementById(cfg.phoneInputId);
+      const error = document.getElementById(cfg.errorId);
       if(!input || !error) return;
+      if(message) error.textContent = message;
       input.classList.toggle('input-error', !!show);
       error.classList.toggle('visible', !!show);
     }
 
-    function setLeadSubmitState(loading){
-      const btn = document.getElementById('submitLeadBtn');
+    function setPhoneError(show){
+      setLeadPhoneError('drawer', show);
+    }
+
+    function setLeadSubmitState(loading, scope = 'drawer'){
+      const cfg = getLeadScopeConfig(scope);
+      if(!cfg) return;
+      const btn = document.getElementById(cfg.submitId);
       if(!btn) return;
       btn.disabled = !!loading;
-      btn.textContent = loading ? 'Отправляем...' : 'Оформить и отправить заявку';
+      btn.textContent = loading ? 'Бронируем...' : getLeadSubmitDefaultText(scope);
+    }
+
+    function bindPhoneMaskForScope(scope = 'drawer'){
+      const cfg = getLeadScopeConfig(scope);
+      if(!cfg) return;
+      const phoneInput = document.getElementById(cfg.phoneInputId);
+      if(!phoneInput || phoneInput.dataset.maskBound === '1') return;
+
+      phoneInput.addEventListener('input', (e) => {
+        e.target.value = formatPhoneInput(e.target.value);
+        setLeadPhoneError(scope, false);
+      });
+      phoneInput.addEventListener('blur', () => {
+        const val = phoneInput.value.trim();
+        if(!val){
+          setLeadPhoneError(scope, false);
+          return;
+        }
+        setLeadPhoneError(scope, !isValidPhone(val));
+      });
+      phoneInput.addEventListener('paste', () => {
+        requestAnimationFrame(() => {
+          phoneInput.value = formatPhoneInput(phoneInput.value);
+          setLeadPhoneError(scope, false);
+        });
+      });
+      phoneInput.dataset.maskBound = '1';
+    }
+
+    function buildInlineLeadFormHtml(scope){
+      const cfg = getLeadScopeConfig(scope);
+      if(!cfg) return '';
+      return `
+        <div class="inline-lead-card ${scope === 'offer' ? 'inline-lead-card--offer' : ''}" data-inline-scope="${scope}">
+          <div class="form-field">
+            <label for="${cfg.phoneInputId}">Телефон</label>
+            <input class="input-box" id="${cfg.phoneInputId}" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" maxlength="18" />
+            <div class="field-error" id="${cfg.errorId}">Введите телефон полностью в формате +7 (___) ___-__-__</div>
+          </div>
+          <label class="check-row inline-lead-check">
+            <input type="checkbox" id="${cfg.consentId}" />
+            <span>Я согласен(на) на обработку персональных данных.</span>
+          </label>
+          <button class="cta-main inline-lead-submit" id="${cfg.submitId}" type="button" data-action="submit-inline-lead" data-inline-scope="${scope}">
+            ${getLeadSubmitDefaultText(scope)}
+          </button>
+        </div>
+      `;
+    }
+
+    function openInlineLead(scope){
+      const cfg = getLeadScopeConfig(scope);
+      if(!cfg) return;
+      const host = document.getElementById(cfg.hostId);
+      if(!host) return;
+
+      if(!host.innerHTML.trim()){
+        host.innerHTML = buildInlineLeadFormHtml(scope);
+      }
+      host.classList.remove('hidden');
+
+      const phoneInput = document.getElementById(cfg.phoneInputId);
+      if(phoneInput){
+        phoneInput.value = formatPhoneInput(state.phone || '');
+      }
+      const consentCheck = document.getElementById(cfg.consentId);
+      if(consentCheck){
+        consentCheck.checked = false;
+      }
+      setLeadPhoneError(scope, false);
+      setLeadSubmitState(false, scope);
+      bindPhoneMaskForScope(scope);
+      phoneInput?.focus();
+      track('form_open', {
+        ...selectedShiftPayload(),
+        lead_scope: scope
+      });
+    }
+
+    function closeInlineLead(scope){
+      const cfg = getLeadScopeConfig(scope);
+      if(!cfg) return;
+      const host = document.getElementById(cfg.hostId);
+      if(!host) return;
+      host.classList.add('hidden');
     }
 
     function openForm(){
@@ -3427,20 +5073,22 @@
       if(!state.shiftId) return;
 
       const shift = shifts.find(s => s.id === state.shiftId);
-      const price = state.offerPrice || state.basePrice || shift.price;
-
       const formLead = document.getElementById('formLead');
       if(formLead){
-        formLead.textContent = `${shift.title} · ${shift.dates} · ${labelAge(state.age)} · ${formatPrice(price)}${state.code ? ` · Код ${state.code}` : ''}`;
+        formLead.textContent = `${labelAge(state.age)} · ${shift.dates}`;
       }
 
       const phoneInput = document.getElementById('parentPhone');
       document.getElementById('parentPhone').value = state.phone || '';
       if(phoneInput) phoneInput.value = formatPhoneInput(state.phone || '');
       const bookingSummaryBox = document.getElementById('bookingSummaryBox');
-      if(bookingSummaryBox) bookingSummaryBox.innerHTML = buildBookingSummaryHtml();
-      setPhoneError(false);
-      setLeadSubmitState(false);
+      if(bookingSummaryBox) bookingSummaryBox.innerHTML = buildBookingSummaryHtml({showTimer: true});
+      setLeadPhoneError('drawer', false);
+      setLeadSubmitState(false, 'drawer');
+      bindPhoneMaskForScope('drawer');
+      if(isOfferActive()){
+        startTimer();
+      }
       track('form_open', selectedShiftPayload());
       document.getElementById('formDrawer').classList.remove('hidden');
     }
@@ -3454,8 +5102,10 @@
       if(box) box.innerHTML = buildBookingSummaryHtml();
       const deliveryState = document.getElementById('successDeliveryState');
       if(deliveryState){
-        if(deliveryResult && deliveryResult.ok === false){
-          deliveryState.textContent = 'Заявка сохранена локально, но сейчас нет связи с сервером отправки. Если мы не ответим в течение 15 минут, напишите нам в Telegram.';
+        const isAdmin = isAdminDebugSession();
+        if(isAdmin && deliveryResult && deliveryResult.ok === false){
+          const adminMessage = formatLeadDeliveryStateText(deliveryResult);
+          deliveryState.textContent = adminMessage || 'Заявка сохранена локально, но сейчас нет связи с сервером отправки. Если мы не ответим в течение 15 минут, напишите нам в Telegram.';
           deliveryState.classList.remove('hidden');
           deliveryState.classList.add('error');
         } else {
@@ -3471,29 +5121,56 @@
       document.getElementById('successOverlay').classList.add('hidden');
     }
 
-    async function submitLead(){
+    function openNoticeModal(message, title = 'Проверьте данные'){
+      const overlay = document.getElementById('noticeOverlay');
+      if(!overlay) return;
+      const titleEl = document.getElementById('noticeTitle');
+      const messageEl = document.getElementById('noticeMessage');
+      if(titleEl) titleEl.textContent = title;
+      if(messageEl) messageEl.textContent = message || '';
+      overlay.classList.remove('hidden');
+    }
+
+    function closeNoticeModal(){
+      document.getElementById('noticeOverlay')?.classList.add('hidden');
+    }
+
+    async function submitLeadFromScope(scope = 'drawer'){
       if(leadSubmitInProgress) return;
       syncGuidedState();
-      const name = document.getElementById('parentName').value.trim();
-      const phoneRaw = document.getElementById('parentPhone').value.trim();
+      const cfg = getLeadScopeConfig(scope);
+      if(!cfg) return;
+      const phoneInput = document.getElementById(cfg.phoneInputId);
+      const consentInput = document.getElementById(cfg.consentId);
+      const nameInput = document.getElementById('parentName');
+      const name = (nameInput && nameInput.value.trim()) || 'Родитель';
+      const phoneRaw = phoneInput ? phoneInput.value.trim() : '';
       const phone = normalizePhone(phoneRaw);
-      const consent = document.getElementById('consentCheck').checked;
+      const consent = !!(consentInput && consentInput.checked);
 
-      if(!name || !phoneRaw || !consent){
-        if(!phoneRaw) setPhoneError(true);
-        alert('Заполните имя, телефон и подтвердите согласие.');
+      if(!phoneRaw){
+        setLeadPhoneError(scope, true);
+        openNoticeModal('Введите номер телефона.');
+        phoneInput?.focus();
+        return;
+      }
+
+      if(!consent){
+        openNoticeModal('Подтвердите согласие на обработку персональных данных.');
+        consentInput?.focus();
         return;
       }
 
       if(!isValidPhone(phoneRaw)){
-        setPhoneError(true);
-        alert('Проверьте номер телефона.');
+        setLeadPhoneError(scope, true);
+        openNoticeModal('Проверьте номер телефона.');
+        phoneInput?.focus();
         return;
       }
 
-      setPhoneError(false);
+      setLeadPhoneError(scope, false);
       leadSubmitInProgress = true;
-      setLeadSubmitState(true);
+      setLeadSubmitState(true, scope);
 
       state.phone = phone;
       persist();
@@ -3505,7 +5182,7 @@
         phone,
         age: labelAge(state.age),
         shift_id: shift ? shift.id : '',
-        shift_name: shift ? shift.title : '',
+        shift_name: shift ? shift.dates : '',
         shift_date: shift ? shift.dates : '',
         price_final: price || null,
         price_text: price ? formatPrice(price) : '—',
@@ -3519,20 +5196,51 @@
       track('form_submit', {
         ...selectedShiftPayload(),
         booking_code: state.code || '',
+        lead_scope: scope,
         parent_name_present: !!name,
         phone_present: !!phone
       });
       try {
         const deliveryResult = await notifyLead('booking_submitted', payload);
-        closeForm();
-        openSuccessModal(deliveryResult);
+        state.bookingCompleted = true;
+        clearOfferTimeout();
+        if(timerId){
+          clearInterval(timerId);
+          timerId = null;
+        }
+        persist();
+        renderSummary();
+        renderBookingPanels();
+        if(scope === 'drawer'){
+          closeForm();
+        } else {
+          closeInlineLead(scope);
+        }
+        if(scope === 'offer'){
+          document.getElementById('offerOverlay')?.classList.add('hidden');
+        }
+        scrollToSection('hero');
+        if(!isAdminDebugSession() || !deliveryResult || deliveryResult.ok !== false){
+          // Skip dedicated success popup; show the final booked state directly in booking card.
+        }
       } finally {
         leadSubmitInProgress = false;
-        setLeadSubmitState(false);
+        setLeadSubmitState(false, scope);
       }
     }
 
+    async function submitLead(){
+      return submitLeadFromScope('drawer');
+    }
+
     function scrollToSection(id){
+      const featureNavigation = window.AC_FEATURES && window.AC_FEATURES.navigation;
+      if(featureNavigation && typeof featureNavigation.scrollToSection === 'function'){
+        return featureNavigation.scrollToSection({
+          id,
+          view: state.view
+        });
+      }
       const cleanId = String(id || '').replace(/^#/, '');
       if(!cleanId) return false;
 
@@ -3561,10 +5269,28 @@
     }
 
     function navigateToSection(id){
-      const cleanId = String(id || '').replace(/^#/, '');
+      const featureNavigation = window.AC_FEATURES && window.AC_FEATURES.navigation;
+      const navPlan = (featureNavigation && typeof featureNavigation.buildNavigationPlan === 'function')
+        ? featureNavigation.buildNavigationPlan({
+          id,
+          view: state.view,
+          desktopMode: state.desktopMode,
+          mobileMode: state.mobileMode,
+          hasSelectedAge: hasSelectedAge(),
+          hasCompactModalSection: COMPACT_MODAL_SECTIONS.has(String(id || '').replace(/^#/, ''))
+        })
+        : null;
+      const cleanId = navPlan
+        ? navPlan.cleanId
+        : ((featureNavigation && typeof featureNavigation.cleanSectionId === 'function')
+          ? featureNavigation.cleanSectionId(id)
+          : String(id || '').replace(/^#/, ''));
       if(!cleanId) return;
 
-      if(state.view === 'mobile' && cleanId === 'section-programs' && !hasSelectedAge()){
+      const blockMobileProgramsByAge = navPlan
+        ? navPlan.blockMobileProgramsByAge
+        : (state.view === 'mobile' && cleanId === 'section-programs' && !hasSelectedAge());
+      if(blockMobileProgramsByAge){
         track('mobile_shifts_click_without_age', {
           mode: state.mobileMode || 'full'
         });
@@ -3573,29 +5299,50 @@
         return;
       }
 
-      if(state.view === 'mobile' && cleanId === 'section-programs' && hasSelectedAge()){
+      const trackMobileProgramsAfterAge = navPlan
+        ? navPlan.trackMobileProgramsAfterAge
+        : (state.view === 'mobile' && cleanId === 'section-programs' && hasSelectedAge());
+      if(trackMobileProgramsAfterAge){
         track('mobile_shifts_opened_after_age', {
           mode: state.mobileMode || 'full',
           age: state.age || ''
         });
       }
 
-      const isDesktopCompact = state.view === 'desktop' && state.desktopMode === 'compact';
-      const isMobileCompact = state.view === 'mobile' && state.mobileMode === 'compact';
+      const compactMode = navPlan
+        ? navPlan.compactMode
+        : (
+          (state.view === 'desktop' && state.desktopMode === 'compact') ||
+          (state.view === 'mobile' && state.mobileMode === 'compact')
+        );
 
-      if(isDesktopCompact || isMobileCompact){
-        if(COMPACT_MODAL_SECTIONS.has(cleanId) && openSectionModal(cleanId)){
+      if(compactMode){
+        const shouldTryCompactModal = navPlan
+          ? navPlan.shouldTryCompactModal
+          : COMPACT_MODAL_SECTIONS.has(cleanId);
+        if(shouldTryCompactModal && openSectionModal(cleanId)){
           return;
         }
-        if(!scrollToSection(cleanId) && cleanId === 'section-legal'){
+        const scrolled = scrollToSection(cleanId);
+        if(featureNavigation && typeof featureNavigation.maybeOpenLegalFallback === 'function'){
+          featureNavigation.maybeOpenLegalFallback(cleanId, scrolled);
+        } else if(!scrolled && cleanId === 'section-legal'){
           window.open('legal.html#legal-info', '_blank', 'noopener');
         }
         return;
       }
 
-      if(!scrollToSection(cleanId) && cleanId === 'section-legal'){
+      const scrolled = scrollToSection(cleanId);
+      if(featureNavigation && typeof featureNavigation.maybeOpenLegalFallback === 'function'){
+        featureNavigation.maybeOpenLegalFallback(cleanId, scrolled);
+      } else if(!scrolled && cleanId === 'section-legal'){
         window.open('legal.html#legal-info', '_blank', 'noopener');
       }
+    }
+
+    function openAllShiftsFromBooking(){
+      navigateToSection('section-programs');
+      return true;
     }
 
     document.addEventListener('click', (e) => {
@@ -3623,24 +5370,7 @@
       navigateToSection(href);
     });
 
-    const parentPhoneInput = document.getElementById('parentPhone');
-    if(parentPhoneInput){
-      parentPhoneInput.addEventListener('input', (e) => {
-        e.target.value = formatPhoneInput(e.target.value);
-        setPhoneError(false);
-      });
-      parentPhoneInput.addEventListener('blur', () => {
-        const val = parentPhoneInput.value.trim();
-        if(!val) return setPhoneError(false);
-        setPhoneError(!isValidPhone(val));
-      });
-      parentPhoneInput.addEventListener('paste', () => {
-        requestAnimationFrame(() => {
-          parentPhoneInput.value = formatPhoneInput(parentPhoneInput.value);
-          setPhoneError(false);
-        });
-      });
-    }
+    bindPhoneMaskForScope('drawer');
 
     document.getElementById('formDrawer').addEventListener('click', (e) => {
       if(e.target.id === 'formDrawer') closeForm();
@@ -3650,6 +5380,13 @@
     if(successOverlay){
       successOverlay.addEventListener('click', (e) => {
         if(e.target.id === 'successOverlay') closeSuccessModal();
+      });
+    }
+
+    const noticeOverlay = document.getElementById('noticeOverlay');
+    if(noticeOverlay){
+      noticeOverlay.addEventListener('click', (e) => {
+        if(e.target.id === 'noticeOverlay') closeNoticeModal();
       });
     }
 
@@ -3692,6 +5429,15 @@
       sectionModal.addEventListener('click', (e) => {
         if(e.target.id === 'sectionModal') closeSectionModal();
       });
+      const sectionModalBody = document.getElementById('sectionModalBody');
+      sectionModal.addEventListener('wheel', (e) => {
+        if(sectionModal.classList.contains('hidden')) return;
+        const scroller = e.target.closest('.section-modal-body') || sectionModalBody;
+        if(!scroller || !sectionModal.contains(scroller)) return;
+        if(scroller.scrollHeight <= scroller.clientHeight + 1) return;
+        e.preventDefault();
+        scroller.scrollTop += e.deltaY;
+      }, {passive:false});
     }
 
     document.addEventListener('keydown', (e) => {
@@ -3725,6 +5471,8 @@
       }
       heroResizeTimer = setTimeout(() => {
         initHero();
+        applyCompactSectionModalLayout();
+        updateSummaryBarVisibility();
       }, 160);
     }, {passive:true});
 
@@ -3745,12 +5493,17 @@
       mobile_mode: state.mobileMode || ''
     });
     initScrollTracking();
+    initSummaryBarViewportSync();
     initSectionViewTracking();
     switchView(state.view || 'desktop');
+    applyHeroContrastMode();
+    applyOfferModalTheme();
+    applyOfferLayoutMode();
     applyDesktopMode();
     applyMobileMode();
-    refreshVideoMeta();
+    refreshVideoMeta({force:true});
     scheduleVideoMetaRefresh();
+    scheduleDesktopAgeTapHint();
 
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();

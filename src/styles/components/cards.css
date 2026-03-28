@@ -103,6 +103,14 @@
   display: none !important;
 }
 
+.footer-legal-links{
+  margin-top:6px;
+  padding-top:8px;
+  border-top:1px dashed #d9e1ed;
+  display:grid;
+  gap:2px;
+}
+
 .ac-primary-btn {
   border: 0;
   border-radius: var(--radius-pill);
@@ -396,4 +404,10 @@ body[data-mode="compact"] .ac-hero-right.is-intro .ac-hero-right__bg {
   background: #000;
   border-radius: var(--radius-lg);
   border: var(--border-1) solid var(--ac-border);
+}
+
+.contact-link:hover,
+.social-link:hover{
+  border-color:#cfd7e5;
+  box-shadow:0 18px 32px rgb(20 29 45 / 12%);
 }

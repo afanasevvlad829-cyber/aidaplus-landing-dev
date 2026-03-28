@@ -1,0 +1,11 @@
+@media (width <= 1180px){
+  .video-card{
+    flex-basis:calc((100% - 24px) / 3);
+  }
+}
+
+@media (width <= 820px){
+  .video-card{
+    flex:0 0 min(82vw, 280px);
+  }
+}

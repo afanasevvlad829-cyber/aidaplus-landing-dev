@@ -1,0 +1,456 @@
+.selected-shift-chip{
+  display:none;
+  align-items:center;
+  gap:8px;
+  margin:0 0 8px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgb(255 255 255 / 10%);
+  border:1px solid rgb(255 255 255 / 12%);
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+  width:max-content;
+  max-width:100%;
+}
+
+.selected-shift-chip.visible{
+  display:inline-flex;
+}
+
+.selected-shift-chip button{
+  border:none;
+  width:22px;
+  height:22px;
+  border-radius:8px;
+  background:rgb(255 255 255 / 12%);
+  color:#fff;
+  font-size:13px;
+  font-weight:900;
+  cursor:pointer;
+  flex:0 0 auto;
+}
+
+.shift-list.collapsed{
+  display:none;
+}
+
+.shift-option{
+  border-radius:16px;
+  background:#fff;
+  color:#111827;
+  padding:13px 14px;
+  margin-bottom:10px;
+  display:grid;
+  gap:10px;
+  font-size:13px;
+  cursor:pointer;
+  border:1px solid transparent;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.shift-option-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.shift-option-head small{
+  margin:0;
+  text-align:right;
+  color:#6f7788;
+  font-weight:600;
+  display:grid;
+  justify-items:end;
+  gap:2px;
+  min-width:128px;
+  flex:0 0 128px;
+  line-height:1.25;
+}
+
+.shift-option-head .shift-option-price,
+.shift-option-head .shift-option-seats{
+  display:block;
+  white-space:nowrap;
+}
+
+.shift-option-head .shift-option-price{
+  color:#5f6779;
+  font-weight:800;
+}
+
+.shift-option-head .shift-option-seats{
+  color:#6f7788;
+  font-weight:700;
+}
+
+.shift-option-tagline{
+  margin:0;
+  font-size:13px;
+  line-height:1.4;
+  color:#4b5563;
+  font-weight:700;
+}
+
+.shift-option-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.shift-option-select-indicator{
+  margin-left:auto;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid #d8deea;
+  background:linear-gradient(135deg,#fff,#f4f7fc);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:0 0 0 0 rgb(255 138 0 / 0%);
+  transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  animation:shift-indicator-glow 1.9s ease-in-out infinite;
+  flex:0 0 auto;
+}
+
+.shift-option-select-indicator:hover{
+  transform:translateX(1px);
+  border-color:#ffb76b;
+}
+
+.shift-option-select-indicator .ac-icon{
+  width:14px;
+  height:14px;
+  opacity:.85;
+}
+
+@keyframes shift-indicator-glow{
+  0%, 100%{
+    box-shadow:0 0 0 0 rgb(255 138 0 / 0%);
+  }
+  50%{
+    box-shadow:0 0 0 6px rgb(255 138 0 / 12%);
+  }
+}
+
+.shift-option-action{
+  min-height:32px;
+  border-radius:10px;
+  border:1px solid #d8deea;
+  background:#f7f9fc;
+  color:#1f2937;
+  font-size:12px;
+  font-weight:800;
+  padding:0 10px;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.shift-option-action:hover{
+  transform:translateY(-1px);
+  border-color:#c4cede;
+  box-shadow:0 8px 14px rgb(17 24 39 / 10%);
+}
+
+#desktop-shift-options .shift-option{
+  padding:16px 16px 14px;
+  gap:12px;
+  border-radius:18px;
+  margin-bottom:12px;
+}
+
+#desktop-shift-options .shift-option strong{
+  font-size:19px;
+  line-height:1.2;
+  letter-spacing:-.01em;
+}
+
+#desktop-shift-options .shift-option-head small{
+  font-size:13px;
+  line-height:1.2;
+  color:#5f6779;
+  min-width:138px;
+  flex:0 0 138px;
+}
+
+#desktop-shift-options .shift-option-head .shift-option-price,
+#desktop-shift-options .shift-option-head .shift-option-seats{
+  font-size:13px;
+}
+
+#desktop-booking-card.booking-stage-2 .shift-list{
+  display:flex;
+  max-height:none;
+  overflow:visible;
+}
+
+#desktop-booking-card.booking-stage-2 #desktop-shift-options{
+  display:grid;
+  grid-template-rows:1fr 1fr;
+  gap:12px;
+  width:100%;
+}
+
+#desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option{
+  margin-bottom:0;
+  min-height:150px;
+  padding:18px 16px 16px;
+  align-content:start;
+}
+
+#desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small{
+  min-width:160px;
+  flex:0 0 160px;
+  gap:4px;
+}
+
+#desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price{
+  font-size:24px;
+  font-weight:900;
+  line-height:1.05;
+  color:#111827;
+  letter-spacing:-.02em;
+}
+
+#desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-seats{
+  font-size:16px;
+  line-height:1.15;
+  color:#4b5563;
+}
+
+#desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-tagline{
+  font-size:14px;
+  line-height:1.35;
+}
+
+#desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-actions{
+  margin-top:auto;
+  align-items:center;
+  flex-wrap:nowrap;
+}
+
+#desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-action{
+  min-height:38px;
+  padding:0 14px;
+  font-size:14px;
+}
+
+#desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-select-indicator{
+  width:38px;
+  height:38px;
+}
+
+#desktop-shift-options .shift-option-action{
+  min-height:36px;
+  font-size:13px;
+  padding:0 12px;
+}
+
+.booking-all-shifts-link{
+  display:block;
+  width:max-content;
+  max-width:100%;
+  margin:6px auto 0;
+  padding:0;
+  border:0;
+  background:none;
+  color:rgb(255 255 255 / 74%);
+  font-size:12px;
+  font-weight:600;
+  line-height:1.4;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  cursor:pointer;
+  transition:color .15s ease;
+}
+
+.booking-all-shifts-link:hover{
+  color:rgb(255 255 255 / 92%);
+}
+
+.shift-inline-panel{
+  display:none;
+  border-radius:12px;
+  border:1px solid #e6ebf4;
+  background:#f8fafe;
+  padding:10px 11px;
+  color:#3e4a5f;
+  font-size:12px;
+  line-height:1.45;
+}
+
+.shift-inline-panel.visible{
+  display:block;
+}
+
+.shift-inline-panel ul{
+  margin:0;
+  padding-left:16px;
+  display:grid;
+  gap:4px;
+}
+
+.shift-inline-calendar{
+  display:none;
+  gap:4px;
+}
+
+.shift-inline-calendar.visible{
+  display:grid;
+}
+
+.shift-modal-content{
+  display:grid;
+  gap:14px;
+}
+
+.shift-modal-content__meta{
+  display:grid;
+  gap:4px;
+}
+
+.shift-modal-content__meta strong{
+  font-size:20px;
+  line-height:1.2;
+  letter-spacing:-.02em;
+  color:#111827;
+}
+
+.shift-modal-content__meta span{
+  font-size:14px;
+  line-height:1.45;
+  color:#5f6779;
+}
+
+.shift-modal-content__desc{
+  margin:0;
+  font-size:15px;
+  line-height:1.55;
+  color:#2a3242;
+}
+
+.shift-modal-content__list{
+  margin:0;
+  padding-left:18px;
+  display:grid;
+  gap:6px;
+  color:#334155;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.shift-modal-content__dates{
+  display:grid;
+  gap:4px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #e6ebf4;
+  background:#f8fafe;
+  color:#334155;
+  font-size:13px;
+  line-height:1.45;
+}
+
+.shift-list.disabled{
+  position:relative;
+  opacity:52%;
+  pointer-events:none;
+  filter:saturate(.85);
+}
+
+.shift-list.highlight{
+  border-radius:18px;
+  box-shadow:0 0 0 4px rgb(255 138 0 / 10%);
+  padding:4px;
+  margin:-4px 0 0;
+}
+
+.shift-list-veil{
+  display:none;
+  margin:0 0 10px;
+  padding:11px 12px;
+  border-radius:14px;
+  background:rgb(255 255 255 / 8%);
+  border:1px dashed rgb(255 255 255 / 14%);
+  color:rgb(255 255 255 / 72%);
+  font-size:12px;
+  line-height:1.5;
+  cursor:pointer;
+}
+
+.shift-calendar-discovery{
+  margin:6px 0 14px;
+  color:rgb(255 255 255 / 68%);
+  font-size:12px;
+  line-height:1.5;
+}
+
+.shift-calendar-discovery strong{
+  color:#fff;
+  font-weight:800;
+}
+
+.shift-list.disabled + .shift-list-veil{
+  display:block;
+}
+
+.mobile-booking-card .shift-option{
+  padding:11px 12px;
+  border-radius:16px;
+  margin-bottom:8px;
+}
+
+.mobile-booking-card .shift-option:last-child{
+  margin-bottom:0;
+}
+
+.mobile-booking-card .shift-option strong{
+  font-size:13px;
+  line-height:1.35;
+}
+
+.mobile-booking-card .shift-option small{
+  font-size:11px;
+  line-height:1.25;
+  min-width:108px;
+  flex:0 0 108px;
+  gap:1px;
+}
+
+.shift-option:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 24px rgb(20 29 45 / 8%);
+}
+
+.shift-option.active{
+  border-color:#ffb15e;
+  box-shadow:0 0 0 3px rgb(255 138 0 / 12%);
+}
+
+.shift-option small{
+  color:var(--muted);
+  display:block;
+  margin-top:0;
+}
+
+.shift-price-chip{
+  padding:6px 8px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:#a44f00;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.mobile-booking-card .selected-shift-chip{
+  margin-bottom:4px;
+}
+
+.mobile-booking-card .shift-list{
+  margin:0;
+  padding:0;
+}

@@ -366,3 +366,215 @@ body[data-mode="full"] .ac-mode-toggle__thumb {
   color: #ef8300;
   border-color: #ef8300;
 }
+
+.hidden {
+  display: none !important;
+}
+
+.page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 28px 24px 120px;
+}
+
+.debug-controls {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding-right: 40px;
+}
+
+.debug-controls-close {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  border: 1px solid rgb(17 24 39 / 16%);
+  background: linear-gradient(180deg, #fff, #f4f7fb);
+  color: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform .15s ease, box-shadow .15s ease;
+  z-index: 4;
+}
+
+.debug-controls-close:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 20px rgb(20 29 45 / 12%);
+}
+
+.debug-controls-close .ac-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+}
+
+.top-switcher {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.switch-wrap {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+.mode-switch {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+.mode-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+}
+
+.mobile-mode-switch {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.mobile-mode-toggle {
+  border: none;
+  border-radius: 999px;
+  min-height: 34px;
+  padding: 3px 6px 3px 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgb(255 255 255 / 10%);
+  border: 1px solid rgb(255 255 255 / 16%);
+  color: rgb(255 255 255 / 86%);
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.mobile-mode-toggle-track {
+  width: 30px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 24%);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: background .2s ease;
+  flex: 0 0 auto;
+}
+
+.mobile-mode-toggle-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateX(0);
+  transition: transform .2s ease;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 25%);
+}
+
+.mobile-mode-toggle-label {
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  letter-spacing: .01em;
+  padding-right: 1px;
+}
+
+.mobile-mode-toggle.is-full {
+  background: rgb(255 138 0 / 20%);
+  border-color: rgb(255 159 47 / 40%);
+}
+
+.mobile-mode-toggle.is-full .mobile-mode-toggle-track {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+.mobile-mode-toggle.is-full .mobile-mode-toggle-thumb {
+  transform: translateX(12px);
+}
+
+.mobile-mode-btn {
+  border: none;
+  border-radius: 10px;
+  min-height: 30px;
+  padding: 0 10px;
+  background: transparent;
+  color: rgb(255 255 255 / 82%);
+  font-weight: 700;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.mobile-mode-btn.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+}
+
+.debug-tools {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+}
+
+.debug-reset-btn {
+  border: 1px dashed #f2b275;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #fff8ef;
+  color: #a24d00;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.debug-reset-btn:hover {
+  transform: translateY(-1px);
+  border-color: #e89c53;
+  box-shadow: 0 10px 18px rgb(162 77 0 / 10%);
+}
+
+.switch-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.switch-btn.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+}

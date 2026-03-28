@@ -1,0 +1,103 @@
+/* compact mobile hero badges and booking panels */
+
+.mobile-brand{
+  padding:8px;
+  width:40px;
+  height:40px;
+  justify-content:center;
+  border-radius:12px;
+}
+
+.mobile-brand-wrap{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+.mobile-brand-meta{
+  min-width:0;
+}
+
+.mobile-brand-label{
+  display:inline-flex;
+  align-items:center;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgb(255 255 255 / 18%);
+  background:rgb(255 255 255 / 10%);
+  color:#f8fafc;
+  font-size:13px;
+  font-weight:700;
+  line-height:1;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+  max-width:190px;
+}
+
+.mobile-hero-tools{
+  width:100%;
+  justify-content:space-between;
+  gap:8px;
+  min-width:0;
+}
+
+.mobile-hero .hero-tag{
+  display:none;
+}
+
+.mobile-hero .feature-row{
+  display:none;
+}
+
+.trust-callout{
+  margin-bottom:14px;
+  border-radius:22px;
+  padding:18px;
+  border:1px solid var(--line);
+  background:
+    radial-gradient(circle at 15% 20%, rgb(255 138 0 / 12%), transparent 24%),
+    linear-gradient(135deg,#fff8f0,#fff);
+  box-shadow:var(--shadow);
+}
+
+.trust-callout h4{
+  margin:0 0 8px;
+  font-size:22px;
+  letter-spacing:-.03em;
+  line-height:1.15;
+}
+
+.trust-callout p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+}
+
+.book-card{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:14px;
+  align-items:center;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:22px;
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+
+.book-card h4{
+  margin:0 0 6px;
+  font-size:18px;
+  letter-spacing:-.02em;
+}
+
+.book-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.55;
+}

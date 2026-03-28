@@ -1,0 +1,230 @@
+@media (width <= 1180px){
+  .hero-content,.hero-content.full{
+    max-width:100%;
+    padding-right:0;
+  }
+
+  .hero-shell{
+    display:block;
+    min-height:auto;
+    overflow:visible;
+  }
+
+  .hero-left-tools{
+    width:100%;
+    justify-content:flex-start;
+  }
+
+  .grid-3,.slot-grid,.team-grid,.contacts-row,footer,.video-list,.contacts-grid,.socials-grid,.review-grid,.journey-grid,.results-band,.trust-band,.reviews-summary,.reviews-hero,.stay-grid{
+    grid-template-columns:1fr;
+  }
+
+  .book-card{
+    grid-template-columns:1fr;
+  }
+
+  .book-team-cover-wrap{
+    min-height:180px;
+  }
+
+  .book-team-card{
+    grid-row:auto;
+  }
+
+  .team-layout{
+    grid-template-columns:1fr;
+  }
+
+  .team-right{
+    grid-template-rows:auto auto;
+  }
+
+  .team-core-grid{
+    grid-template-columns:1fr;
+  }
+
+  .team-carousel-shell{
+    grid-template-columns:1fr;
+  }
+
+  .team-carousel-nav{
+    display:none;
+  }
+
+  .team-carousel .team-card{
+    min-width:240px;
+    max-width:300px;
+    flex:0 0 auto;
+  }
+}
+
+@media (width <= 820px){
+  html,
+  body{
+    max-width:100%;
+    overflow-x:hidden;
+  }
+
+  .page,
+  .screen,
+  .hero-shell,
+  .mobile-hero,
+  .mobile-body-sections,
+  .section-card{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    overflow-x:clip;
+  }
+
+  .page{
+    padding:20px 14px 120px;
+  }
+
+  .summary-visible .page{
+    padding-bottom:200px;
+  }
+
+  .title h1{
+    font-size:28px;
+  }
+
+  .summary-inner{
+    flex-direction:column;
+    align-items:stretch;
+    padding:12px 14px;
+  }
+
+  .summary-right{
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+
+  .summary-price{
+    text-align:left;
+  }
+
+  .hero-topbar{
+    margin-bottom:18px;
+    gap:10px;
+  }
+
+  .hero-tag{
+    margin-bottom:14px;
+  }
+
+  .feature-row{
+    gap:8px;
+  }
+
+  .hero-benefits-grid{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .hero-benefit-card{
+    min-height:auto;
+    padding:11px 12px;
+  }
+
+  .hero-benefit-card strong{
+    font-size:14px;
+  }
+
+  .hero-benefit-card span{
+    font-size:12px;
+  }
+
+  .feature-pill{
+    min-width:0;
+    width:100%;
+    padding:10px 11px;
+  }
+
+  .occupancy-badge{
+    margin-top:14px;
+  }
+
+  .age-tabs{
+    gap:8px;
+  }
+
+  .age-tab{
+    min-height:96px;
+    padding:10px 8px;
+  }
+
+  .age-tab-range{
+    font-size:17px;
+  }
+
+  .age-tab-track{
+    font-size:11px;
+  }
+
+  .age-tab-note{
+    display:none;
+  }
+
+  .reviews-score-row{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .compact-mobile-hidden{
+    display:block;
+  }
+
+  .mobile-mode-inline{
+    flex:1;
+    justify-content:flex-end;
+  }
+
+  .mobile-mode-inline .mobile-mode-btn{
+    flex:1;
+  }
+
+  .mobile-mode-inline .mobile-mode-toggle{
+    margin-left:auto;
+  }
+
+  .hero-mode-inline{
+    width:100%;
+  }
+
+  .hero-mode-inline .mode-btn{
+    flex:1;
+  }
+
+  .team-carousel .team-card{
+    min-width:86%;
+    max-width:86%;
+  }
+
+  .book-team-title{
+    font-size:22px;
+  }
+
+  .book-team-cover{
+    max-width:160px;
+  }
+
+  .form-drawer{
+    align-items:flex-end;
+    padding:0;
+  }
+
+  .hero-shell{
+    display:block;
+    min-height:auto;
+  }
+
+  .video-carousel-shell{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .video-carousel-nav{
+    display:none;
+  }
+}

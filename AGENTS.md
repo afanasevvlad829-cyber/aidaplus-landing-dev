@@ -41,3 +41,16 @@ Do not modify business logic.
 Do not change deploy scripts.
 Only replace icon symbols.
 -->
+
+## Git Safety Rules (Local)
+
+1. Never run `git add` for:
+   - `assets/**`
+   - `reports/**`
+   - `*.tgz`
+   - `*.zip`
+   - `*.mp4`
+   - `*.webp`
+   - `*.jpeg`
+2. Never run `git diff --no-index` for large binary files.
+3. Before any `git add`, first print exact file list and wait for explicit user confirmation.

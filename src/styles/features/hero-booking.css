@@ -1,0 +1,117 @@
+.hero-booking-card,
+.mobile-booking-card,
+.booking-price-box,
+.shift-option,
+.feature-pill,
+.section-card{
+  box-sizing:border-box;
+  max-width:100%;
+}
+
+.hero-shell,
+.page,
+.body-sections,
+.mobile-body-sections{
+  overflow-x:clip;
+}
+
+.mobile-booking-card{
+  position:static !important;
+  width:100% !important;
+  max-width:100% !important;
+  margin-top:18px;
+  padding:18px;
+  border-radius:24px;
+  background:rgb(12 17 24 / 78%);
+  border:1px solid rgb(255 255 255 / 10%);
+  backdrop-filter:blur(18px);
+  box-shadow:0 22px 60px rgb(0 0 0 / 30%);
+}
+
+.mobile-booking-card h3{
+  font-size:20px;
+  margin:0 0 6px;
+}
+
+.mobile-booking-card p{
+  font-size:13px;
+  line-height:1.5;
+  margin:0 0 10px;
+}
+
+.hero-booking-card h3{
+  margin:0 0 8px;
+  font-size:21px;
+  letter-spacing:-.02em;
+}
+
+.hero-booking-card p{
+  margin:0 0 14px;
+  color:rgb(255 255 255 / 72%);
+  font-size:13px;
+  line-height:1.5;
+}
+
+@media (width <= 1180px){
+  :root{
+    --desktop-booking-height:560px;
+  }
+
+  .hero-booking-card{
+    position:relative;
+    width:100%;
+    max-width:none;
+    margin-top:0;
+    margin-bottom:var(--hero-overlap-bottom);
+    transform:translateY(var(--hero-overlap-y));
+    z-index:6;
+  }
+
+  .hero-booking-card:hover{
+    transform:translateY(var(--hero-overlap-y-hover));
+  }
+
+  #desktop-booking-card{
+    height:var(--desktop-booking-height);
+    min-height:var(--desktop-booking-height);
+    max-height:var(--desktop-booking-height);
+  }
+
+  #desktop-booking-card .booking-step-2{
+    flex:none;
+  }
+
+  #desktop-booking-card .shift-list{
+    max-height:none;
+    overflow:visible;
+  }
+}
+
+@media (width <= 820px){
+  .hero-booking-card,
+  .mobile-booking-card,
+  .mobile-booking-card .booking-step-block,
+  .mobile-booking-card .booking-step-1,
+  .mobile-booking-card .booking-step-2,
+  .mobile-booking-card .booking-step-3{
+    max-width:100%;
+    min-width:0;
+  }
+
+  .mobile-booking-card .selected-age-chip,
+  .mobile-booking-card .selected-shift-chip{
+    min-width:0;
+  }
+
+  .mobile-booking-card .selected-age-chip span,
+  .mobile-booking-card .selected-shift-chip span{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .hero-booking-card,
+  .mobile-booking-card{
+    margin-left:0;
+  }
+}

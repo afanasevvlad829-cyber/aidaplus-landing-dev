@@ -12,12 +12,22 @@ jobs:
     steps:
       - name: Deploy on server via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          AIDAPLUS_TELEGRAM_BOT_TOKEN: ${{ secrets.AIDAPLUS_TELEGRAM_BOT_TOKEN }}
+          AIDAPLUS_TELEGRAM_CHAT_ID: ${{ secrets.AIDAPLUS_TELEGRAM_CHAT_ID }}
         with:
           host: ${{ secrets.AIDAPLUS_HOST }}
           username: ${{ secrets.AIDAPLUS_USER }}
           key: ${{ secrets.AIDAPLUS_SSH_KEY }}
+          envs: AIDAPLUS_TELEGRAM_BOT_TOKEN,AIDAPLUS_TELEGRAM_CHAT_ID
           script: |
             cd /var/www/aidaplus-dev
+            mkdir -p .runtime
+            cat > .runtime/server.env <<'EOF'
+            AIDAPLUS_TELEGRAM_BOT_TOKEN=${AIDAPLUS_TELEGRAM_BOT_TOKEN}
+            AIDAPLUS_TELEGRAM_CHAT_ID=${AIDAPLUS_TELEGRAM_CHAT_ID}
+            EOF
+            chmod 600 .runtime/server.env
             git pull origin main
             chmod +x deploy.sh
             ./deploy.sh

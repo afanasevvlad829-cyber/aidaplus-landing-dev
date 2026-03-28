@@ -1,0 +1,128 @@
+.photo-grid{
+  display:grid;
+  grid-template-columns:1.35fr 1fr 1fr;
+  gap:12px;
+  grid-auto-rows:180px;
+}
+
+.photo-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:20px;
+  border:1px solid var(--line);
+  background:#fff;
+  min-height:180px;
+  box-shadow:var(--shadow);
+  transition:transform .22s ease, box-shadow .22s ease;
+}
+
+.photo-card.hero {
+  grid-row: span 2;
+  min-height: 372px;
+}
+
+.photo-badge{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  padding:6px 9px;
+  border-radius:999px;
+  background:rgb(17 24 39 / 76%);
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  backdrop-filter:blur(8px);
+}
+
+.photo-title{
+  position:absolute;
+  left:10px;
+  top:10px;
+  padding:6px 9px;
+  border-radius:999px;
+  background:rgb(255 255 255 / 86%);
+  color:#111827;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+.photo-card.wide{
+  grid-column:span 2;
+}
+
+.photo-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  aspect-ratio: 4 / 3;
+}
+
+.filter-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:0 0 14px;
+}
+
+.filter-chip{
+  border:none;
+  border-radius:999px;
+  padding:10px 12px;
+  background:#f5f7fb;
+  color:#111827;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  transition:transform .16s ease, background .16s ease, color .16s ease, box-shadow .16s ease;
+}
+
+.filter-chip:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 26px rgb(20 29 45 / 10%);
+}
+
+.filter-chip.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;
+}
+
+.photo-card:hover{
+  transform:translateY(-2px);
+}
+
+.version-badge {
+  z-index: var(--z-debug);
+}
+
+.version-badge.hidden {
+  display: none;
+}
+
+@media (width <= 1180px) {
+  .photo-card.hero,
+  .photo-card.wide {
+    grid-row: auto;
+    grid-column: auto;
+    min-height: 220px;
+  }
+
+  .photo-grid{
+    grid-template-columns:1fr;
+    grid-auto-rows:auto;
+  }
+}
+
+@media (width <= 820px) {
+  #version-badge {
+    top: auto !important;
+    right: 12px !important;
+    bottom: 12px !important;
+    opacity: 50% !important;
+  }
+}

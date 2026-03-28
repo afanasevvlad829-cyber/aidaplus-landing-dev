@@ -1,0 +1,195 @@
+.booking-step-block{
+  display:grid;
+  gap:8px;
+}
+
+.booking-step-block + .booking-step-block{
+  margin-top:12px;
+}
+
+.booking-step-3.is-force-hidden{
+  display:none !important;
+}
+
+#desktop-booking-card.booking-completed .booking-steps,
+#desktop-booking-card.booking-completed .booking-step-block,
+#mobile-booking-card.booking-completed .booking-step-block,
+#mobileBookingCard.booking-completed .booking-steps{
+  display:none !important;
+}
+
+#desktop-booking-card.booking-completed .booking-summary-mini,
+#mobileBookingCard.booking-completed .booking-summary-mini{
+  margin-top:0;
+}
+
+.booking-stage-1 #desktop-booking-info,
+.booking-stage-1 #mobile-booking-info{
+  display:none;
+}
+
+.booking-stage-1 .booking-step-2 .guided-callout,
+.booking-stage-1 .booking-step-2 .guided-inline-hint,
+.booking-stage-1 .booking-step-2 .shift-calendar-discovery,
+.booking-stage-1 .booking-step-2 .selected-shift-chip,
+.booking-stage-1 .booking-step-2 .shift-list,
+.booking-stage-1 .booking-step-2 .booking-all-shifts-link,
+.booking-stage-2 .booking-step-3{
+  display:none;
+}
+
+.booking-stage-3 .shift-list-veil{
+  display:none;
+}
+
+.booking-stage-3 .booking-step-2 .guided-callout,
+.booking-stage-3 .booking-step-2 .guided-inline-hint,
+.booking-stage-3 .booking-step-2 .shift-calendar-discovery,
+.booking-stage-3 .booking-step-2 .selected-shift-chip{
+  display:none;
+}
+
+.booking-stage-3 .booking-step-2,
+.booking-stage-4 .booking-step-2{
+  display:none;
+}
+
+#desktop-booking-card.booking-stage-3 .booking-step-2{
+  display:none;
+}
+
+#desktop-booking-card.booking-stage-3 .booking-step-2 .guided-callout,
+#desktop-booking-card.booking-stage-3 .booking-step-2 .guided-inline-hint,
+#desktop-booking-card.booking-stage-3 .booking-step-2 .shift-list,
+#desktop-booking-card.booking-stage-3 .booking-step-2 .shift-list-veil,
+#desktop-booking-card.booking-stage-3 .booking-step-2 .shift-calendar-discovery,
+#desktop-booking-card.booking-stage-3 .booking-step-2 .booking-all-shifts-link{
+  display:none;
+}
+
+.booking-stage-4 .guided-callout,
+.booking-stage-4 .guided-inline-hint,
+.booking-stage-4 .shift-list-veil,
+.booking-stage-4 .shift-calendar-discovery,
+.booking-stage-4 .trust-mini{
+  display:none;
+}
+
+.booking-stage-3 .booking-hint,
+.booking-stage-4 .booking-hint{
+  display:none !important;
+}
+
+.booking-stage-4 .booking-save-btn{
+  display:block;
+}
+
+.booking-steps{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:0;
+  margin-bottom:20px;
+  padding:2px 2px 0;
+  pointer-events:none;
+}
+
+.booking-step{
+  position:relative;
+  flex:1 1 0;
+  min-width:0;
+  display:grid;
+  justify-items:center;
+  gap:6px;
+  padding:0 6px;
+  text-align:center;
+  font-size:12px;
+  font-weight:800;
+  color:rgb(255 255 255 / 60%);
+  transition:color .18s ease;
+  cursor:default;
+  user-select:none;
+}
+
+.booking-step::before{
+  content:attr(data-step);
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:1px solid rgb(255 255 255 / 24%);
+  background:rgb(255 255 255 / 8%);
+  color:rgb(255 255 255 / 74%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:900;
+  box-sizing:border-box;
+}
+
+.booking-step::after{
+  content:"";
+  position:absolute;
+  top:14px;
+  left:calc(50% + 20px);
+  width:calc(100% - 40px);
+  height:2px;
+  border-radius:999px;
+  background:rgb(255 255 255 / 18%);
+  pointer-events:none;
+}
+
+.booking-step:last-child::after{
+  display:none;
+}
+
+.mobile-booking-card .booking-step{
+  font-size:10px;
+  padding:0 4px;
+}
+
+.booking-step.active{
+  color:#fff;
+}
+
+.booking-step.active::before{
+  border-color:transparent;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;
+  box-shadow:0 10px 22px rgb(255 138 0 / 34%);
+}
+
+.booking-step.done{
+  color:#fff;
+}
+
+.booking-step.done::before{
+  content:"✓";
+  border-color:rgb(255 255 255 / 26%);
+  background:rgb(255 255 255 / 16%);
+  color:#fff;
+}
+
+.booking-step.done::after{
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+}
+
+.booking-step.pulse{
+  animation:none;
+}
+
+.booking-stage-1 .booking-step-3 .booking-step1-hooks{
+  display:grid;
+}
+
+.booking-stage-1 .booking-step-3 .trust-mini{
+  display:none;
+}
+
+.mobile-booking-card.booking-stage-2{
+  padding-bottom:14px;
+}
+
+.mobile-booking-card.booking-stage-2 .booking-step-block + .booking-step-block{
+  margin-top:8px;
+}
