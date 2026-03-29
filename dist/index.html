@@ -168,6 +168,72 @@
       color:#fff;
     }
 
+    .mobile-mode-toggle{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:999px;
+      min-height:34px;
+      padding:3px 10px 3px 6px;
+      background:rgba(255,255,255,.08);
+      color:rgba(255,255,255,.92);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition:background .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .mobile-mode-toggle:hover{
+      background:rgba(255,255,255,.12);
+      border-color:rgba(255,255,255,.24);
+    }
+
+    .mobile-mode-toggle-track{
+      width:38px;
+      height:22px;
+      border-radius:999px;
+      background:rgba(15,23,42,.7);
+      border:1px solid rgba(255,255,255,.18);
+      position:relative;
+      flex:0 0 auto;
+    }
+
+    .mobile-mode-toggle-thumb{
+      position:absolute;
+      top:2px;
+      left:2px;
+      width:16px;
+      height:16px;
+      border-radius:50%;
+      background:#fff;
+      box-shadow:0 2px 6px rgba(15,23,42,.3);
+      transition:transform .18s ease, background .18s ease;
+    }
+
+    .mobile-mode-toggle[aria-checked="true"]{
+      background:rgba(255,138,0,.16);
+      border-color:rgba(255,166,74,.54);
+      box-shadow:0 10px 24px rgba(255,138,0,.2);
+    }
+
+    .mobile-mode-toggle[aria-checked="true"] .mobile-mode-toggle-track{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      border-color:transparent;
+    }
+
+    .mobile-mode-toggle[aria-checked="true"] .mobile-mode-toggle-thumb{
+      transform:translateX(16px);
+      background:#fff8ef;
+    }
+
+    .mobile-mode-toggle-label{
+      font-size:11px;
+      font-weight:800;
+      line-height:1;
+      white-space:nowrap;
+      letter-spacing:.01em;
+    }
+
     .debug-tools{
       display:flex;
       justify-content:center;
@@ -729,6 +795,40 @@
       transform:translateY(-1px);
     }
 
+    .hero-mode-inline .mode-toggle{
+      min-width:46px;
+      width:46px;
+      padding:0;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(15,23,42,.72);
+      position:relative;
+      transition:background .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .hero-mode-inline .mode-toggle .mode-toggle-thumb{
+      position:absolute;
+      top:4px;
+      left:4px;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background:#fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.28);
+      transition:transform .18s ease, background .18s ease;
+    }
+
+    .hero-mode-inline .mode-toggle.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      border-color:transparent;
+      box-shadow:var(--ac-shadow-chip-active);
+    }
+
+    .hero-mode-inline .mode-toggle.active .mode-toggle-thumb{
+      transform:translateX(18px);
+      background:#fff8ef;
+    }
+
     .hero-mode-hashtag{
       display:block;
       margin-top:2px;
@@ -801,23 +901,91 @@
       flex:0 0 auto;
     }
 
-    .hero-menu{
-      display:flex;
-      gap:4px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
+    .hero-menu-wrap{
       position:relative;
-      z-index:7;
+      z-index:8;
+      margin-left:auto;
+    }
+
+    .hero-menu-toggle{
+      min-height:38px;
+      min-width:108px;
+      padding:0 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(8,12,18,.62);
+      color:#fff;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      font-size:12px;
+      font-weight:700;
+      box-shadow:0 8px 24px rgba(0,0,0,.18);
+      backdrop-filter:blur(12px);
+      transition:background .18s ease, border-color .18s ease, transform .18s ease;
+    }
+
+    .hero-menu-toggle:hover{
+      background:rgba(8,12,18,.74);
+      border-color:rgba(255,255,255,.3);
+      transform:translateY(-1px);
+    }
+
+    .hero-menu-toggle-icon{
+      position:relative;
+      width:14px;
+      height:10px;
+      flex:0 0 auto;
+      border-top:2px solid currentColor;
+      border-bottom:2px solid currentColor;
+    }
+
+    .hero-menu-toggle-icon::before{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      top:3px;
+      border-top:2px solid currentColor;
+    }
+
+    .hero-menu-toggle-text{
+      display:inline;
+    }
+
+    .hero-menu{
+      position:absolute;
+      right:0;
+      top:calc(100% + 8px);
+      display:none;
+      gap:6px;
+      width:min(320px, calc(100vw - 28px));
+      padding:10px;
+      border-radius:14px;
+      background:rgba(10,15,24,.92);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 20px 42px rgba(2,8,20,.45);
+      backdrop-filter:blur(12px);
+      z-index:9;
+    }
+
+    .hero-menu.is-open{
+      display:grid;
+      grid-template-columns:1fr;
     }
 
     .menu-pill{
-      padding:10px 14px;
-      border-radius:999px;
-      background:rgba(255,255,255,.9);
-      color:#1f2937;
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border-radius:10px;
+      background:rgba(255,255,255,.92);
+      color:#111827;
       font-size:12px;
       font-weight:600;
-      box-shadow:0 8px 20px rgba(0,0,0,.06);
+      box-shadow:none;
       cursor:pointer;
       border:none;
       transition:transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
@@ -912,6 +1080,31 @@
       font-size:17px;
       line-height:1.5;
       margin-bottom:20px;
+    }
+
+    .hero-mobile-age-cta{
+      display:none;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      min-height:42px;
+      border-radius:12px;
+      border:1px solid rgba(255,138,0,.44);
+      background:linear-gradient(135deg, rgba(255,138,0,.94), rgba(255,177,70,.92));
+      color:#fff;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:-.01em;
+      padding:0 14px;
+      cursor:pointer;
+      box-shadow:0 10px 22px rgba(255,138,0,.26);
+      transition:transform .16s ease, box-shadow .16s ease, filter .16s ease;
+    }
+
+    .hero-mobile-age-cta:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 24px rgba(255,138,0,.30);
+      filter:saturate(1.04);
     }
 
     .mobile-hero .hero-sub{
@@ -1270,6 +1463,1091 @@
     .mobile-booking-card .guided-inline-hint{
       background:rgba(255,255,255,.06);
       border-color:rgba(255,255,255,.08);
+    }
+
+    #desktopView.mobile-preview-active .body-sections{
+      gap:12px !important;
+      padding:14px !important;
+      width:100%;
+      max-width:100%;
+      box-sizing:border-box;
+      overflow-x:hidden;
+    }
+
+    #desktopView.mobile-preview-active .body-sections > .section-card{
+      padding:12px;
+      border-radius:16px;
+      width:100%;
+      max-width:100%;
+      margin:0;
+      box-sizing:border-box;
+      overflow:hidden;
+    }
+
+    #desktopView.mobile-preview-active .body-sections > .section-card > h3{
+      margin:0 0 6px;
+      font-size:18px;
+      letter-spacing:-.02em;
+      line-height:1.1;
+    }
+
+    #desktopView.mobile-preview-active .body-sections > .section-card > .section-lead{
+      margin:0 0 8px;
+      color:#5b6474;
+      font-size:12px;
+      line-height:1.42;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .section-card.mobile-template#section-about .section-lead{
+      margin-bottom:8px;
+      font-size:13px;
+      line-height:1.46;
+      color:#5b6474;
+    }
+
+    .mobile-about-features{
+      display:grid;
+      gap:2px;
+      margin-top:8px;
+    }
+
+    .mobile-about-feature-item{
+      position:relative;
+      border:none;
+      border-bottom:1px solid rgba(208,217,230,.7);
+      border-radius:0;
+      background:transparent;
+      box-shadow:none;
+      padding:9px 2px 10px 13px;
+      display:grid;
+      gap:3px;
+      overflow:hidden;
+    }
+
+    .mobile-about-feature-item:last-child{
+      border-bottom:none;
+      padding-bottom:6px;
+    }
+
+    .mobile-about-feature-item::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:9px;
+      bottom:10px;
+      width:2px;
+      border-radius:99px;
+      background:linear-gradient(180deg,var(--accent),var(--accent-2));
+      opacity:.78;
+    }
+
+    .mobile-about-feature-item small{
+      color:#8a97ab;
+      font-size:10px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      line-height:1.2;
+      margin-left:5px;
+    }
+
+    .mobile-about-feature-item strong{
+      color:#111827;
+      font-size:15px;
+      line-height:1.26;
+      letter-spacing:-.01em;
+      margin-left:5px;
+    }
+
+    .mobile-about-feature-item p{
+      margin:0 0 0 5px;
+      color:#556274;
+      font-size:12px;
+      line-height:1.42;
+    }
+
+    .mobile-journey-flow{
+      margin-top:8px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-journey-active{
+      border:1px solid var(--line);
+      border-radius:13px;
+      background:linear-gradient(150deg, #fff, #f8fbff);
+      box-shadow:0 8px 18px rgba(15,23,42,.08);
+      padding:11px 12px;
+      display:grid;
+      gap:5px;
+      min-height:132px;
+      contain:layout paint;
+    }
+
+    .mobile-journey-active-heading{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+
+    .mobile-journey-active-index{
+      width:26px;
+      height:26px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .mobile-journey-active strong{
+      font-size:15px;
+      line-height:1.28;
+      color:#111827;
+    }
+
+    .mobile-journey-active p{
+      margin:0;
+      color:#5b6474;
+      font-size:12px;
+      line-height:1.42;
+    }
+
+    .mobile-journey-switcher{
+      display:flex;
+      gap:6px;
+      overflow-x:auto;
+      padding-bottom:2px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-journey-switcher::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-journey-switch{
+      border:1px solid var(--line);
+      border-radius:999px;
+      min-height:46px;
+      padding:7px 10px 7px 8px;
+      background:#fff;
+      color:#253247;
+      text-align:left;
+      font-size:11px;
+      font-weight:700;
+      line-height:1.2;
+      cursor:pointer;
+      display:inline-grid;
+      grid-template-columns:16px minmax(0,1fr);
+      column-gap:6px;
+      align-items:center;
+      box-shadow:0 4px 10px rgba(15,23,42,.06);
+      white-space:normal;
+      width:138px;
+      flex:0 0 auto;
+    }
+
+    .mobile-journey-switch span{
+      width:16px;
+      height:16px;
+      border-radius:999px;
+      background:#edf2f8;
+      color:#374151;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:9px;
+      font-weight:900;
+    }
+
+    .mobile-journey-switch.active{
+      border-color:transparent;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+    }
+
+    .mobile-journey-switch.active span{
+      background:rgba(255,255,255,.22);
+      color:#fff;
+    }
+
+    .mobile-programs-flow{
+      margin-top:10px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-program-selector{
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-program-selector::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-program-chip{
+      border:none;
+      border-radius:999px;
+      min-height:32px;
+      padding:0 12px;
+      white-space:nowrap;
+      background:#eef3f9;
+      color:#162235;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .mobile-program-chip.active{
+      color:#fff;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 8px 16px rgba(255,138,0,.24);
+    }
+
+    .mobile-program-active-card{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-program-active-card strong{
+      color:#111827;
+      font-size:15px;
+      line-height:1.35;
+    }
+
+    .mobile-program-dates{
+      color:#475569;
+      font-size:12px;
+      line-height:1.35;
+      margin-top:-2px;
+    }
+
+    .mobile-program-price{
+      color:#111827;
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:-.02em;
+    }
+
+    .mobile-program-meta{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .mobile-program-meta span{
+      min-height:24px;
+      padding:0 10px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      background:#eff3f9;
+      color:#334155;
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .mobile-program-active-card p{
+      margin:0;
+      color:#5b6474;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .mobile-program-hint{
+      color:#74839a;
+      font-size:11px;
+      line-height:1.35;
+      margin-top:-1px;
+    }
+
+    .mobile-body-sections > .section-card{
+      padding:12px;
+    }
+
+    .mobile-media-stage{
+      margin-top:10px;
+      border-radius:16px;
+      overflow:hidden;
+      background:#0f172a;
+      position:relative;
+      height:180px;
+      min-height:180px;
+      max-height:180px;
+    }
+
+    .mobile-media-stage img{
+      width:100%;
+      height:100%;
+      min-height:0;
+      max-height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .mobile-video-stage{
+      aspect-ratio:9 / 16;
+      height:auto;
+      min-height:0;
+      max-height:none;
+      width:min(72vw, 236px);
+      max-width:100%;
+      margin:10px auto 0;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 10px 20px rgba(15,23,42,.18);
+      position:relative;
+      overflow:hidden;
+      background:#0b1220;
+    }
+
+    .mobile-video-stage .mobile-media-overlay{
+      padding:10px 11px;
+    }
+
+    .mobile-video-stage .mobile-media-overlay strong{
+      font-size:13px;
+      line-height:1.3;
+    }
+
+    .mobile-video-stage .mobile-media-overlay span{
+      font-size:11px;
+      line-height:1.3;
+    }
+
+    .mobile-video-preview-strip{
+      margin-top:8px;
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-video-preview-strip::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-video-preview-thumb{
+      border:none;
+      background:transparent;
+      padding:0;
+      min-width:68px;
+      width:68px;
+      height:112px;
+      border-radius:10px;
+      overflow:hidden;
+      position:relative;
+      cursor:pointer;
+      opacity:.78;
+      box-shadow:0 4px 10px rgba(15,23,42,.10);
+      flex:0 0 auto;
+      transition:opacity .16s ease, transform .16s ease, box-shadow .16s ease;
+    }
+
+    .mobile-video-preview-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .mobile-video-preview-thumb.active{
+      opacity:1;
+      transform:translateY(-1px);
+      box-shadow:0 8px 16px rgba(15,23,42,.20);
+    }
+
+    .mobile-media-filter-row{
+      margin-top:8px;
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-media-filter-row::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-media-filter{
+      border:none;
+      border-radius:999px;
+      min-height:30px;
+      padding:0 12px;
+      white-space:nowrap;
+      background:#eef3f9;
+      color:#162235;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
+    .mobile-media-filter.active{
+      color:#fff;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 8px 16px rgba(255,138,0,.22);
+    }
+
+    .mobile-photo-stage{
+      height:196px;
+      min-height:196px;
+      max-height:196px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 10px 20px rgba(15,23,42,.18);
+      overflow:hidden;
+    }
+
+    .mobile-photo-preview-strip{
+      margin-top:8px;
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-photo-preview-strip::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-photo-preview-thumb{
+      border:none;
+      background:transparent;
+      padding:0;
+      min-width:84px;
+      width:84px;
+      height:56px;
+      border-radius:10px;
+      overflow:hidden;
+      position:relative;
+      cursor:pointer;
+      opacity:.78;
+      box-shadow:0 4px 10px rgba(15,23,42,.10);
+      flex:0 0 auto;
+      transition:opacity .16s ease, transform .16s ease, box-shadow .16s ease;
+    }
+
+    .mobile-photo-preview-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .mobile-photo-preview-thumb.active{
+      opacity:1;
+      transform:translateY(-1px);
+      box-shadow:0 8px 16px rgba(15,23,42,.20);
+    }
+
+    .mobile-photo-more{
+      margin-top:10px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .mobile-photo-more-btn{
+      min-height:32px;
+      padding:0 12px;
+      border-radius:999px;
+      border:1px solid #d8e2ef;
+      background:#f8fbff;
+      color:#253247;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+    }
+
+    .mobile-media-stage button{
+      appearance:none;
+      border:none;
+      width:100%;
+      padding:0;
+      background:transparent;
+      cursor:pointer;
+      text-align:left;
+    }
+
+    .mobile-media-strip{
+      margin-top:8px;
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-media-strip::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-media-thumb{
+      border:none;
+      background:transparent;
+      padding:0;
+      min-width:72px;
+      width:72px;
+      height:56px;
+      border-radius:10px;
+      overflow:hidden;
+      position:relative;
+      cursor:pointer;
+      opacity:.8;
+      transition:opacity .18s ease, transform .18s ease;
+    }
+
+    .mobile-media-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .mobile-media-thumb.active{
+      opacity:1;
+      transform:translateY(-1px);
+      box-shadow:0 8px 14px rgba(15,23,42,.2);
+    }
+
+    .mobile-review-social-proof{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-review-main{
+      margin-top:10px;
+    }
+
+    .mobile-review-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:nowrap;
+      min-width:0;
+    }
+
+    .mobile-review-scoreline{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      flex:0 0 auto;
+      min-width:0;
+      white-space:nowrap;
+    }
+
+    .mobile-review-top strong{
+      font-size:30px;
+      line-height:1;
+      color:#d97706;
+      letter-spacing:-.02em;
+    }
+
+    .mobile-review-stars{
+      color:#f59e0b;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.4px;
+      margin-left:0;
+      white-space:nowrap;
+    }
+
+    .mobile-review-top .inline-link-btn.primary{
+      min-height:30px;
+      padding:0 10px;
+      font-size:11px;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+
+    .mobile-review-main-nav{
+      margin-top:8px;
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+    }
+
+    .mobile-review-nav-btn{
+      min-height:30px;
+      border:none;
+      border-radius:999px;
+      padding:0 12px;
+      background:#eef3f9;
+      color:#1f2937;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .mobile-review-proof{
+      font-size:13px;
+      line-height:1.44;
+      color:#111827;
+      font-weight:700;
+    }
+
+    .mobile-review-trust-note{
+      margin:0;
+      color:#5b6474;
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .mobile-review-card{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-review-head{
+      display:grid;
+      grid-template-columns:44px 1fr;
+      gap:10px;
+      align-items:center;
+    }
+
+    .mobile-review-head img{
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      object-fit:cover;
+      border:1px solid var(--line);
+    }
+
+    .mobile-review-head strong{
+      font-size:14px;
+      line-height:1.2;
+      color:#111827;
+      display:block;
+    }
+
+    .mobile-review-head span{
+      font-size:12px;
+      line-height:1.3;
+      color:var(--muted);
+      display:block;
+      margin-top:2px;
+    }
+
+    .mobile-review-text{
+      color:#1f2937;
+      font-size:13px;
+      line-height:1.5;
+      display:-webkit-box;
+      -webkit-line-clamp:5;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+
+    .mobile-review-dots{
+      margin-top:10px;
+      display:flex;
+      gap:6px;
+      justify-content:center;
+    }
+
+    .mobile-review-dot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      border:none;
+      background:#cbd5e1;
+      cursor:pointer;
+      padding:0;
+      flex:0 0 auto;
+    }
+
+    .mobile-review-dot.active{
+      background:var(--accent);
+      transform:scale(1.2);
+    }
+
+    .mobile-review-more{
+      margin-top:10px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .mobile-review-more-btn{
+      min-height:32px;
+      padding:0 12px;
+      border-radius:999px;
+      border:1px solid #d8e2ef;
+      background:#f8fbff;
+      color:#253247;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+    }
+
+    .mobile-faq-accordion{
+      display:grid;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .mobile-faq-filter-row{
+      margin-top:8px;
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-faq-filter-row::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-faq-filter-chip{
+      border:none;
+      border-radius:999px;
+      min-height:30px;
+      padding:0 12px;
+      white-space:nowrap;
+      background:#eef3f9;
+      color:#162235;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
+    .mobile-faq-filter-chip.active{
+      color:#fff;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 8px 16px rgba(255,138,0,.22);
+    }
+
+    .mobile-faq-item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .mobile-faq-question{
+      width:100%;
+      border:none;
+      background:transparent;
+      min-height:48px;
+      padding:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      cursor:pointer;
+      text-align:left;
+    }
+
+    .mobile-faq-question span{
+      color:#111827;
+      font-size:14px;
+      font-weight:700;
+      line-height:1.34;
+    }
+
+    .mobile-faq-question .ac-icon{
+      width:14px;
+      height:14px;
+      opacity:.68;
+      transform:rotate(90deg);
+      transition:transform .18s ease;
+    }
+
+    .mobile-faq-item.open .mobile-faq-question .ac-icon{
+      transform:rotate(-90deg);
+    }
+
+    .mobile-faq-answer{
+      display:none;
+      padding:0 12px 12px;
+      color:#374151;
+      font-size:13px;
+      line-height:1.52;
+    }
+
+    .mobile-faq-item.open .mobile-faq-answer{
+      display:block;
+    }
+
+    .mobile-contact-grid{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .mobile-contact-card{
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:9px 10px;
+      text-decoration:none;
+      display:grid;
+      gap:3px;
+      min-height:60px;
+      align-content:center;
+    }
+
+    .mobile-contact-card small,
+    .mobile-contact-card strong{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .mobile-map-open-btn{
+      min-height:36px;
+      padding:0 12px;
+      border-radius:10px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:800;
+      color:#fff;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      width:max-content;
+    }
+
+    .mobile-map-preview-card{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:10px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-map-preview{
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid rgba(203,213,225,.9);
+      height:132px;
+      background:#dbe4f4;
+    }
+
+    .mobile-map-preview iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+    }
+
+    .mobile-map-preview-card strong{
+      margin:0;
+      font-size:13px;
+      line-height:1.35;
+      color:#111827;
+    }
+
+    .mobile-map-preview-card span{
+      margin:0;
+      font-size:12px;
+      line-height:1.4;
+      color:#5b6474;
+    }
+
+    .section-card.mobile-template#section-contacts .mobile-socials-row{
+      margin-top:8px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+
+    .section-card.mobile-template#section-contacts .mobile-social-link{
+      min-height:30px;
+      min-width:30px;
+      width:30px;
+      padding:0;
+      border-radius:999px;
+      justify-content:center;
+      box-shadow:none;
+      background:#f8fafc;
+      border:1px solid #d7e0ec;
+    }
+
+    .section-card.mobile-template#section-contacts .mobile-social-label{
+      display:none;
+    }
+
+    .mobile-docs-accordion{
+      margin-top:8px;
+    }
+
+    #mobileDocsRequisites:empty{
+      display:none;
+    }
+
+    .mobile-docs-accordion-item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .mobile-docs-toggle{
+      width:100%;
+      border:none;
+      background:transparent;
+      min-height:46px;
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      text-align:left;
+      cursor:pointer;
+    }
+
+    .mobile-docs-toggle-copy{
+      display:grid;
+      gap:2px;
+      min-width:0;
+    }
+
+    .mobile-docs-toggle-main{
+      font-size:14px;
+      font-weight:700;
+      line-height:1.2;
+      color:#0f172a;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .mobile-docs-toggle-meta{
+      font-size:12px;
+      line-height:1.25;
+      color:#64748b;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .mobile-docs-toggle .ac-icon{
+      width:16px;
+      height:16px;
+      transition:transform .2s ease;
+      flex:0 0 auto;
+    }
+
+    .mobile-docs-links{
+      display:none;
+      padding:0 12px 12px;
+      gap:8px;
+      grid-template-columns:1fr;
+    }
+
+    .mobile-docs-accordion-item.open .mobile-docs-links{
+      display:grid;
+    }
+
+    .mobile-docs-accordion-item.open .mobile-docs-toggle .ac-icon{
+      transform:rotate(90deg);
+    }
+
+    #desktopView.mobile-preview-active #section-legal.mobile-docs-inline{
+      display:block;
+      padding:16px;
+      border:1px solid #d3d9e6;
+      border-radius:18px;
+      background:#fff;
+      box-shadow:0 10px 26px rgba(15,23,42,.08);
+    }
+
+    #desktopView.mobile-preview-active #section-legal.mobile-docs-inline .mobile-docs-shell{
+      display:grid;
+      gap:10px;
+    }
+
+    #desktopView.mobile-preview-active #section-legal.mobile-docs-inline h4{
+      display:none !important;
+    }
+
+    #desktopView.mobile-preview-active #section-legal.mobile-docs-inline > div{
+      all:unset;
+      display:block;
+    }
+
+    #desktopView.mobile-preview-active #section-legal.mobile-docs-inline a,
+    #desktopView.mobile-preview-active #section-legal.mobile-docs-inline div,
+    #desktopView.mobile-preview-active #section-legal.mobile-docs-inline span,
+    #desktopView.mobile-preview-active #section-legal.mobile-docs-inline strong{
+      line-height:1.4;
+      font-size:13px;
+      color:#111827;
+      text-decoration:none;
+    }
+
+    #desktopView.mobile-preview-active #section-legal.mobile-docs-inline .mobile-docs-links a{
+      color:#475569;
+    }
+
+    /* Mobile preview mode uses desktop section IDs with mobile templates/classes. */
+    #desktopView.mobile-preview-active .section-card.mobile-template{
+      padding:14px;
+      border-radius:20px;
+      max-width:100%;
+      box-sizing:border-box;
+      overflow:hidden;
+    }
+
+    #desktopView.mobile-preview-active .section-card.mobile-template *{
+      max-width:100%;
+      box-sizing:border-box;
+      min-width:0;
+      overflow-wrap:anywhere;
     }
 
     .booking-step-block{
@@ -1857,7 +3135,7 @@
       }
     }
 
-    @media (width <= 1240px){
+    @media (max-width: 1240px){
       #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab{
         min-height:118px;
         height:118px;
@@ -2181,6 +3459,9 @@
 
     #desktop-booking-card.booking-stage-2 .shift-list{
       display:flex;
+      width:100%;
+      justify-content:flex-start;
+      align-items:stretch;
       max-height:none;
       overflow:visible;
     }
@@ -2188,8 +3469,9 @@
     #desktop-booking-card.booking-stage-2 #desktop-shift-options{
       display:grid;
       grid-template-rows:1fr 1fr;
-      gap:12px;
+      gap:10px;
       width:100%;
+      min-width:0;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-booking-info:empty{
@@ -2206,25 +3488,51 @@
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option{
       margin-bottom:0;
-      min-height:150px;
-      padding:18px 16px 16px;
+      width:100%;
+      max-width:100%;
+      min-height:162px;
+      padding:14px 14px 14px;
       align-content:start;
+      justify-self:stretch;
+      box-sizing:border-box;
+      overflow:hidden;
     }
 
-    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head > strong{
-      white-space:nowrap;
-      line-height:1.12;
-      letter-spacing:-.01em;
-    }
-
-    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small{
-      min-width:148px;
-      flex:0 0 148px;
+    #desktop-booking-card.booking-stage-2 .booking-step-2{
       gap:4px;
     }
 
+    #desktop-booking-card.booking-stage-2 #desktopBookingTitle{
+      margin-bottom:4px;
+    }
+
+    #desktop-booking-card.booking-stage-2 .selected-shift-chip{
+      margin-bottom:4px;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head > strong{
+      flex:1 1 auto;
+      min-width:0;
+      white-space:normal;
+      line-height:1.12;
+      letter-spacing:-.01em;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small{
+      margin-left:auto;
+      min-width:132px;
+      flex:0 0 132px;
+      gap:4px;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head{
+      justify-content:flex-start;
+    }
+
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price{
-      font-size:24px;
+      font-size:19px;
       font-weight:900;
       line-height:1.05;
       color:#111827;
@@ -2232,14 +3540,15 @@
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-seats{
-      font-size:16px;
+      font-size:13px;
       line-height:1.15;
       color:#4b5563;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-tagline{
-      font-size:14px;
+      font-size:9px;
       line-height:1.35;
+      letter-spacing:.005em;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-actions{
@@ -2592,44 +3901,133 @@
     }
 
     .booking-summary-mini--completed .booking-price-head:first-child .booking-price-main{
-      font-size:50%;
-      line-height:1.2;
+      font-size:42%;
+      line-height:1.04;
       letter-spacing:-.01em;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .booking-summary-mini--completed .booking-price-head:first-child{
+      margin-bottom:0;
+    }
+
+    .booking-summary-mini--completed .booking-price-head:first-child .booking-price-col small{
+      margin-bottom:2px;
+      font-size:10px;
+      line-height:1.1;
     }
 
     .completed-followup-text{
-      margin:6px 0 0;
-      font-size:13px;
-      line-height:1.35;
+      margin:0;
+      font-size:10px;
+      line-height:1.15;
       color:rgba(255,255,255,.88);
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      overflow-wrap:anywhere;
+      word-break:break-word;
     }
 
     .completed-followup-image{
       width:100%;
-      max-height:118px;
+      max-height:min(36vh, 240px);
       object-fit:cover;
+      object-position:center 12%;
       border-radius:10px;
       border:1px solid rgba(255,255,255,.12);
-      margin-top:6px;
+      margin-top:1px;
+      display:block;
+    }
+
+    .completed-followup-image-trigger{
+      border:none;
+      padding:0;
+      margin:0;
+      width:100%;
+      background:transparent;
+      cursor:zoom-in;
       display:block;
     }
 
     .completed-followup-note{
-      margin:6px 0 0;
-      font-size:12px;
-      line-height:1.35;
+      margin:1px 0 0;
+      font-size:9px;
+      line-height:1.14;
       color:rgba(255,255,255,.82);
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      overflow-wrap:anywhere;
+      word-break:break-word;
     }
 
     .completed-followup-link{
-      margin-top:4px;
+      margin-top:0;
       display:inline-block;
       color:#ffd5a5;
-      font-size:12px;
+      font-size:9px;
       font-weight:700;
       text-decoration:underline;
       text-underline-offset:2px;
       cursor:pointer;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .booking-summary-mini--completed{
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      overflow:hidden;
+      overflow-x:clip;
+      box-sizing:border-box;
+    }
+
+    .booking-summary-mini--completed .booking-price-head{
+      width:100%;
+      max-width:100%;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      align-items:start;
+      gap:10px;
+    }
+
+    .booking-summary-mini--completed .booking-price-col{
+      min-width:0;
+      max-width:100%;
+    }
+
+    .booking-summary-mini--completed .booking-price-main{
+      min-width:0;
+      max-width:100%;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .booking-summary-mini--completed .booking-price-head:last-child .booking-price-col:last-child .booking-price-main{
+      word-break:break-all;
+      overflow-wrap:anywhere;
+    }
+
+    .booking-summary-mini--completed .booking-price-head:last-child .booking-price-main{
+      font-size:50%;
+      line-height:1.08;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .booking-summary-mini--completed .booking-price-head:last-child .booking-price-main.big{
+      font-size:50%;
+    }
+
+    .booking-summary-mini--completed .booking-price-head:last-child small{
+      font-size:9px;
     }
 
     @keyframes step-pulse{
@@ -2891,8 +4289,9 @@
     #desktop-booking-card.booking-stage-4 #desktop-booking-info{
       display:flex;
       flex:1 1 auto;
+      align-items:center;
       min-height:0;
-      margin:0 0 12px !important;
+      margin:0 0 8px !important;
     }
 
     /* Stage 4 compositing fix: prevent bottom-right backdrop-filter artifact */
@@ -2905,11 +4304,12 @@
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-summary-mini{
       flex:1 1 auto;
       min-height:100%;
+      height:100%;
       display:flex;
       flex-direction:column;
-      justify-content:space-between;
-      gap:12px;
-      padding:18px 16px 16px;
+      justify-content:flex-start;
+      gap:4px;
+      padding:12px 12px 10px;
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-main{
@@ -2931,14 +4331,14 @@
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-code-line{
-      font-size:15px;
-      line-height:1.35;
+      font-size:13px;
+      line-height:1.22;
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-timer-line{
       margin-top:auto;
-      font-size:16px;
-      line-height:1.25;
+      font-size:15px;
+      line-height:1.15;
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-discount{
@@ -2947,8 +4347,22 @@
       opacity:.95;
     }
 
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-shift-description{
+      flex:1 1 auto;
+      min-height:0;
+      margin-top:4px;
+      padding:0;
+      border:none;
+      background:transparent;
+      color:rgba(255,255,255,.88);
+      font-size:12px;
+      line-height:1.24;
+      max-height:5.2em;
+      overflow:hidden;
+    }
+
     #desktop-booking-card.booking-stage-4 .booking-step-3{
-      margin-top:auto;
+      margin-top:0;
     }
 
     #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-wrap{
@@ -3744,6 +5158,30 @@
       color:#fff;
       font-size:13px;
       opacity:.8;
+    }
+
+    @media (max-width: 900px){
+      .media-nav{
+        width:40px;
+        height:40px;
+        border-radius:12px;
+        font-size:18px;
+      }
+
+      .media-prev{ left:8px; }
+      .media-next{ right:8px; }
+
+      .media-close{
+        top:8px;
+        right:8px;
+      }
+
+      .media-caption{
+        left:12px;
+        right:12px;
+        bottom:8px;
+        font-size:12px;
+      }
     }
 
     .video-modal{
@@ -5256,7 +6694,7 @@
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts{
       display:grid;
-      grid-template-columns:minmax(0,3fr) minmax(180px,1fr);
+      grid-template-columns:minmax(0,4.25fr) minmax(170px,0.95fr);
       align-items:stretch;
       grid-template-rows:auto minmax(0,1fr) auto;
       gap:10px;
@@ -5277,7 +6715,7 @@
       height:100%;
       margin-top:0;
       display:grid;
-      grid-template-rows:minmax(0,1fr) auto;
+      grid-template-rows:minmax(300px,1fr) auto;
     }
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .contacts-grid{
@@ -5285,8 +6723,8 @@
       grid-row:2;
       display:flex;
       flex-direction:column;
-      justify-content:space-between;
-      gap:10px;
+      justify-content:flex-start;
+      gap:8px;
       margin:0;
       align-self:stretch;
       min-height:0;
@@ -5298,13 +6736,17 @@
       grid-row:3;
       display:flex;
       flex-wrap:wrap;
-      gap:8px;
+      gap:6px;
       margin:0;
       align-self:start;
     }
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .contact-link{
-      min-height:44px;
+      min-height:40px;
+      grid-template-columns:36px 1fr;
+      gap:10px;
+      padding:10px 10px;
+      border-radius:14px;
     }
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .contact-link strong,
@@ -5316,13 +6758,70 @@
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .map-preview,
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .map-frame{
-      min-height:0;
-      height:100%;
+      min-height:300px;
+      height:min(50vh, 420px);
     }
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .map-footer{
       padding:10px 12px;
       min-height:0;
+      gap:10px;
+      align-items:flex-start;
+    }
+
+    .overlay.section-modal-compact .section-modal-body .section-modal-contacts .map-address{
+      font-size:13px;
+      gap:4px;
+    }
+
+    .overlay.section-modal-compact .section-modal-body .section-modal-contacts .map-address > div{
+      display:block;
+    }
+
+    .overlay.section-modal-compact .section-modal-body .section-modal-contacts .map-address > span{
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:3;
+      overflow:hidden;
+      font-size:12px;
+      line-height:1.38;
+    }
+
+    .overlay.section-modal-compact .section-modal-body .section-modal-contacts .map-open-btn{
+      min-height:34px;
+      border-radius:10px;
+      padding:0 12px;
+      font-size:12px;
+      font-weight:800;
+      box-shadow:0 10px 18px rgba(255,138,0,.20);
+      white-space:nowrap;
+    }
+
+    .overlay.section-modal-compact .section-modal-body .section-modal-contacts .social-link{
+      width:34px;
+      min-width:34px;
+      height:34px;
+      min-height:34px;
+      padding:0;
+      border-radius:999px;
+      justify-content:center;
+      box-shadow:none;
+      background:#fff;
+    }
+
+    .overlay.section-modal-compact .section-modal-body .section-modal-contacts .social-label{
+      display:none;
+    }
+
+    .overlay.section-modal-compact .section-modal-body .section-modal-contacts .social-badge-mark{
+      min-width:0;
+      height:auto;
+      padding:0;
+      border:none;
+      background:transparent;
+      border-radius:0;
+      font-size:10px;
+      line-height:1;
     }
 
     .section-modal-close-floating{
@@ -5550,11 +7049,257 @@
       object-fit:cover;
     }
 
+    .mobile-team-feature-card,
+    .mobile-team-founder-card,
+    .mobile-team-carousel-block{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:11px;
+    }
+
+    .mobile-team-feature-card{
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-team-feature-cover-wrap{
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid #d9e2ee;
+      height:108px;
+      padding:6px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#f7fafc;
+    }
+
+    .mobile-team-feature-cover{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      object-position:center top;
+      display:block;
+    }
+
+    .mobile-team-feature-card strong{
+      margin:0;
+      font-size:15px;
+      line-height:1.28;
+      color:#111827;
+    }
+
+    .mobile-team-feature-card span{
+      margin:0;
+      color:#5b6474;
+      font-size:12px;
+      line-height:1.45;
+      display:block;
+    }
+
+    .mobile-team-feature-cta{
+      width:max-content;
+      min-height:32px;
+      padding:0 12px;
+      border-radius:999px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    }
+
+    .mobile-team-founder-card{
+      display:grid;
+      grid-template-columns:48px 1fr;
+      column-gap:10px;
+      row-gap:4px;
+      align-items:start;
+    }
+
+    .mobile-team-founder-card .mobile-team-avatar{
+      width:48px;
+      height:48px;
+      grid-row:1 / span 3;
+    }
+
+    .mobile-team-founder-card strong{
+      margin:0;
+      font-size:15px;
+      line-height:1.25;
+      color:#111827;
+    }
+
+    .mobile-team-role{
+      color:#6b7280;
+      font-size:11px;
+      line-height:1.3;
+      font-weight:700;
+    }
+
+    .mobile-team-founder-card p{
+      margin:2px 0 0;
+      color:#4b5563;
+      font-size:12px;
+      line-height:1.4;
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:3;
+      overflow:hidden;
+    }
+
+    .mobile-team-carousel-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:8px;
+    }
+
+    .mobile-team-carousel-head strong{
+      margin:0;
+      font-size:14px;
+      line-height:1.25;
+      color:#111827;
+    }
+
+    .mobile-team-carousel-track{
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-team-carousel-track::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-team-teacher-card{
+      min-width:178px;
+      width:178px;
+      border:1px solid #dbe3ef;
+      border-radius:12px;
+      background:#f8fbff;
+      padding:10px;
+      display:grid;
+      grid-template-columns:40px 1fr;
+      column-gap:8px;
+      row-gap:3px;
+      align-items:start;
+      flex:0 0 auto;
+    }
+
+    .mobile-team-teacher-card .mobile-team-avatar{
+      width:40px;
+      height:40px;
+      grid-row:1 / span 2;
+    }
+
+    .mobile-team-teacher-card strong{
+      margin:0;
+      font-size:13px;
+      line-height:1.2;
+      color:#111827;
+    }
+
     .mobile-stay-card{
       display:grid;
       grid-template-columns:84px 1fr;
       gap:10px;
       align-items:start;
+    }
+
+    .mobile-stay-feature{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:10px;
+      display:grid;
+      gap:8px;
+    }
+
+    .mobile-stay-feature-photo{
+      border:none;
+      padding:0;
+      width:100%;
+      height:148px;
+      border-radius:10px;
+      overflow:hidden;
+      background:#0f172a;
+      cursor:pointer;
+    }
+
+    .mobile-stay-feature-photo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .mobile-stay-feature strong{
+      margin:0;
+      font-size:15px;
+      line-height:1.3;
+      color:#111827;
+    }
+
+    .mobile-stay-feature p{
+      margin:0;
+      color:#5b6474;
+      font-size:12px;
+      line-height:1.42;
+    }
+
+    .mobile-stay-preview-strip{
+      display:flex;
+      gap:8px;
+      margin-top:8px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+
+    .mobile-stay-preview-strip::-webkit-scrollbar{
+      display:none;
+    }
+
+    .mobile-stay-preview-thumb{
+      border:none;
+      padding:0;
+      min-width:72px;
+      width:72px;
+      height:54px;
+      border-radius:10px;
+      overflow:hidden;
+      opacity:.78;
+      cursor:pointer;
+      box-shadow:0 4px 10px rgba(15,23,42,.08);
+      flex:0 0 auto;
+      background:#e5eaf3;
+      transition:opacity .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+
+    .mobile-stay-preview-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .mobile-stay-preview-thumb.active{
+      opacity:1;
+      transform:translateY(-1px);
+      box-shadow:0 8px 14px rgba(15,23,42,.18);
     }
 
     .mobile-stay-thumb{
@@ -5649,8 +7394,8 @@
     .offer-card-stable{
       min-height:520px;
       height:520px;
-      overflow-x:hidden;
-      overflow-y:auto;
+      max-height:520px;
+      overflow:hidden;
     }
 
     .offer-state-shell{
@@ -5660,8 +7405,25 @@
       height:100%;
     }
 
+    .offer-state-shell--search,
+    .offer-state-shell--result{
+      gap:8px;
+    }
+
     .offer-state-shell--result .overlay-actions{
       margin-top:auto;
+    }
+
+    .offer-state-shell--result .offer-booking-block{
+      margin-top:4px;
+      padding:10px;
+      gap:6px;
+    }
+
+    .offer-state-shell--result .offer-booking-note{
+      margin:0;
+      font-size:13px;
+      line-height:1.35;
     }
 
     .offer-headline h3{
@@ -6070,7 +7832,7 @@
       margin-top:16px;
     }
 
-    @media (width <= 720px){
+    @media (max-width: 720px){
       .offer-card-stable{
         min-height:420px;
         height:420px;
@@ -6198,6 +7960,57 @@
       white-space:nowrap;
     }
 
+    .summary-bar.summary-bar--stage4 .summary-item,
+    .summary-bar.summary-bar--stage4 .summary-price strong{
+      display:none;
+    }
+
+    .summary-bar.summary-bar--stage4 .summary-sub{
+      margin-top:0;
+      font-size:13px;
+      font-weight:700;
+      color:#334155;
+    }
+
+    .summary-bar.summary-bar--stage4 .summary-right{
+      margin-left:auto;
+      gap:10px;
+      align-items:center;
+    }
+
+    .summary-bar.summary-bar--stage4 .summary-price{
+      text-align:right;
+      min-width:0;
+    }
+
+    .summary-bar.summary-bar--stage4 .summary-timer{
+      font-size:13px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .summary-bar.summary-bar--stage4 [data-action="primary-cta"]{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:2px;
+      min-height:48px;
+      padding:10px 16px;
+      line-height:1.05;
+      white-space:nowrap;
+    }
+
+    .summary-bar.summary-bar--stage4 [data-action="primary-cta"] .cta-main-line--primary{
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .summary-bar.summary-bar--stage4 [data-action="primary-cta"] .cta-main-line--accent{
+      font-size:18px;
+      font-weight:900;
+    }
+
     .form-drawer{
       position:fixed;
       inset:0;
@@ -6212,10 +8025,40 @@
 
     .version-badge{
       z-index:var(--z-debug);
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
 
     .version-badge.hidden{
       display:none;
+    }
+
+    .version-badge-label{
+      display:inline-flex;
+      align-items:center;
+      min-width:0;
+    }
+
+    .version-badge-close{
+      border:none;
+      background:transparent;
+      color:rgba(255,255,255,.86);
+      cursor:pointer;
+      width:16px;
+      height:16px;
+      line-height:1;
+      font-size:14px;
+      padding:0;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 auto;
+    }
+
+    .version-badge-close:hover{
+      color:#fff;
+      transform:scale(1.06);
     }
 
     .form-panel{
@@ -6594,7 +8437,7 @@
       line-height:1.55;
     }
 
-    @media (width <= 1180px){
+    @media (max-width: 1180px){
       :root{
         --desktop-booking-height:600px;
       }
@@ -6728,7 +8571,7 @@
       }
     }
 
-    @media (width <= 820px){
+    @media (max-width: 820px){
       .page{
         padding:20px 14px 120px;
       }
@@ -6756,9 +8599,327 @@
         text-align:left;
       }
 
+      .booking-summary-mini--completed{
+        padding:10px 10px 8px;
+        gap:6px;
+      }
+
+      .booking-summary-mini--completed .booking-price-head{
+        gap:8px;
+      }
+
+      .booking-summary-mini--completed .booking-price-head:first-child .booking-price-main{
+        font-size:36%;
+        line-height:1.03;
+      }
+
+      .booking-summary-mini--completed .booking-price-head:last-child .booking-price-main,
+      .booking-summary-mini--completed .booking-price-head:last-child .booking-price-main.big{
+        font-size:44%;
+        line-height:1.04;
+      }
+
+      .completed-followup-image{
+        max-height:min(31vh, 208px);
+      }
+
+      .completed-followup-text{
+        font-size:9px;
+        line-height:1.2;
+      }
+
+      .completed-followup-note{
+        font-size:8.5px;
+        line-height:1.2;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info{
+        min-width:0;
+        width:100%;
+        max-width:100%;
+        overflow-x:clip;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info .booking-summary-mini--completed{
+        min-width:0;
+        width:100%;
+        max-width:100%;
+        overflow-x:clip;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info .booking-price-head{
+        grid-template-columns:minmax(0,1fr);
+        gap:6px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info .booking-price-col{
+        min-width:0;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info .booking-price-col--fixed{
+        align-items:flex-start !important;
+        text-align:left !important;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info .booking-price-main{
+        font-size:16px;
+        line-height:1.12;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info .booking-price-main.big{
+        font-size:24px;
+        line-height:1.06;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info .completed-followup-text,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info .completed-followup-note{
+        max-width:100%;
+        min-width:0;
+        overflow-wrap:anywhere;
+        word-break:break-word;
+      }
+
+      #mobileBookingCard.booking-completed #mobile-booking-info{
+        min-width:0;
+        width:100%;
+        max-width:100%;
+        overflow-x:clip;
+      }
+
+      #mobileBookingCard.booking-completed #mobile-booking-info .booking-summary-mini--completed{
+        min-width:0;
+        width:100%;
+        max-width:100%;
+        overflow-x:clip;
+      }
+
+      #mobileBookingCard.booking-completed #mobile-booking-info .booking-price-head{
+        grid-template-columns:minmax(0,1fr);
+        gap:6px;
+      }
+
+      #mobileBookingCard.booking-completed #mobile-booking-info .booking-price-col{
+        min-width:0;
+      }
+
+      #mobileBookingCard.booking-completed #mobile-booking-info .booking-price-col--fixed{
+        align-items:flex-start !important;
+        text-align:left !important;
+      }
+
+      #mobileBookingCard.booking-completed #mobile-booking-info .booking-price-main{
+        font-size:16px;
+        line-height:1.12;
+      }
+
+      #mobileBookingCard.booking-completed #mobile-booking-info .booking-price-main.big{
+        font-size:24px;
+        line-height:1.06;
+      }
+
       .hero-topbar{
         margin-bottom:18px;
         gap:10px;
+      }
+
+      #desktopView.mobile-preview-active .hero-menu-toggle{
+        min-width:auto;
+        width:44px;
+        height:44px;
+        padding:0;
+        border:none;
+        background:transparent;
+        box-shadow:none;
+        backdrop-filter:none;
+      }
+
+      #desktopView.mobile-preview-active .hero-menu-toggle:hover{
+        background:transparent;
+        border:none;
+        transform:none;
+      }
+
+      #desktopView.mobile-preview-active .hero-menu-toggle-icon{
+        width:22px;
+        height:14px;
+        border-top-width:3px;
+        border-bottom-width:3px;
+      }
+
+      #desktopView.mobile-preview-active .hero-menu-toggle-icon::before{
+        top:4px;
+        border-top-width:3px;
+      }
+
+      #desktopView.mobile-preview-active .hero-menu-toggle-text{
+        display:none;
+      }
+
+      #desktopView.mobile-preview-active .hero-mode-inline{
+        gap:8px;
+      }
+
+      #desktopView.mobile-preview-active .hero-mode-inline #fullModeBtn{
+        min-width:98px;
+      }
+
+      #desktopView.mobile-preview-active .hero-mode-inline #compactModeBtn{
+        min-width:46px;
+      }
+
+      #desktopView.mobile-preview-active .hero-shell{
+        min-height:auto;
+        padding:12px 12px 14px;
+        border-radius:22px;
+      }
+
+      #desktopView.mobile-preview-active .hero-topbar{
+        margin-bottom:8px;
+        gap:8px;
+      }
+
+      #desktopView.mobile-preview-active .hero-brand-label{
+        font-size:11px;
+        line-height:1.2;
+      }
+
+      #desktopView.mobile-preview-active .hero-content.full{
+        padding-bottom:4px;
+      }
+
+      #desktopView.mobile-preview-active .hero-content.full::before,
+      #desktopView.mobile-preview-active .hero-content.full::after{
+        display:none;
+      }
+
+      #desktopView.mobile-preview-active .hero-title{
+        margin:0 0 8px;
+        font-size:29px;
+        line-height:1.06;
+        max-width:100%;
+      }
+
+      #desktopView.mobile-preview-active .hero-sub{
+        margin:0 0 8px;
+        font-size:13px;
+        line-height:1.34;
+        max-width:100%;
+      }
+
+      #desktopView.mobile-preview-active .hero-mobile-age-cta{
+        display:inline-flex;
+        margin:0 0 8px;
+      }
+
+      #desktopView.mobile-preview-active .hero-slogan{
+        display:none;
+      }
+
+      #desktopView.mobile-preview-active .hero-benefits-grid{
+        margin-top:0;
+        grid-template-columns:1fr;
+        gap:0;
+      }
+
+      #desktopView.mobile-preview-active .hero-benefits-grid .hero-benefit-card{
+        display:none;
+      }
+
+      #desktopView.mobile-preview-active .hero-benefits-grid .hero-benefit-card:first-child{
+        display:grid;
+        min-height:auto;
+        padding:10px 11px;
+        border-radius:12px;
+      }
+
+      #desktopView.mobile-preview-active .hero-benefits-grid .hero-benefit-card:first-child strong{
+        font-size:13px;
+        line-height:1.22;
+      }
+
+      #desktopView.mobile-preview-active .hero-benefits-grid .hero-benefit-card:first-child span{
+        font-size:11px;
+        line-height:1.3;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card{
+        margin-top:10px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card h3{
+        font-size:21px;
+        line-height:1.1;
+        margin-bottom:5px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card p#desktopBookingLead{
+        font-size:12px;
+        line-height:1.3;
+        margin-bottom:8px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card .booking-steps{
+        margin-bottom:8px;
+        gap:2px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card .booking-step{
+        font-size:10px;
+        gap:2px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card .booking-step::before{
+        width:30px;
+        height:30px;
+        font-size:12px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:7px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab{
+        min-height:86px;
+        padding:8px 8px 9px;
+        border-radius:12px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-head{
+        gap:4px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-range{
+        font-size:13px;
+        line-height:1.05;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-track{
+        font-size:11px;
+        line-height:1.12;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-anchor,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-bullets{
+        display:none;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option{
+        padding:12px;
+        min-height:148px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small{
+        min-width:118px;
+        flex:0 0 118px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price{
+        font-size:17px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-seats{
+        font-size:12px;
       }
 
       .hero-tag{
@@ -6953,7 +9114,8 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    v0.0.112 (debug-offer-layout-switch)
+    <span class="version-badge-label" id="version-badge-label">v0.0.112 (debug-offer-layout-switch)</span>
+    <button class="version-badge-close" type="button" data-action="close-version-badge" aria-label="Скрыть версию">×</button>
   </div>
   <!-- /@block:version -->
   <div class="page">
@@ -6961,12 +9123,6 @@
       <button class="debug-controls-close" type="button" data-action="close-debug-controls" aria-label="Скрыть debug controls">
         <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
       </button>
-      <div class="top-switcher">
-        <div class="switch-wrap">
-          <button class="switch-btn active" id="desktopBtn">Десктоп</button>
-          <button class="switch-btn" id="mobileBtn">Мобильный</button>
-        </div>
-      </div>
 
       <div class="debug-tools">
         <button class="debug-reset-btn" type="button" data-action="debug-reset-booking">Сбросить сценарий бронирования (debug)</button>
@@ -6990,22 +9146,37 @@
                 <div class="hero-brand-label">IT-лагерь для детей 7–14 лет</div>
                 <div class="mode-switch hero-mode-inline" id="desktopModeWrap">
                   <button class="mode-btn active" id="fullModeBtn">Подробно</button>
-                  <button class="mode-btn" id="compactModeBtn">Кратко</button>
+                  <button class="mode-btn mode-toggle" id="compactModeBtn" aria-label="Краткий режим">
+                    <span class="mode-toggle-thumb" aria-hidden="true"></span>
+                  </button>
                 </div>
                 <div class="hero-mode-hashtag">#АйДаКемп</div>
               </div>
             </div>
-            <div class="hero-menu" id="serviceMenu">
-              <button class="menu-pill active" type="button" data-nav="section-about">О лагере</button>
-              <button class="menu-pill" type="button" data-nav="section-journey">Как проходит</button>
-              <button class="menu-pill" type="button" data-nav="section-programs">Смены</button>
-              <button class="menu-pill" type="button" data-nav="section-photos">Фото</button>
-              <button class="menu-pill" type="button" data-nav="section-videos">Видео</button>
-              <button class="menu-pill" type="button" data-nav="section-reviews">Отзывы</button>
-              <button class="menu-pill" type="button" data-nav="section-faq">FAQ</button>
-              <button class="menu-pill" type="button" data-nav="section-team">Команда</button>
-              <button class="menu-pill" type="button" data-nav="section-stay">Размещение</button>
-              <button class="menu-pill" type="button" data-nav="section-contacts">Контакты</button>
+            <div class="hero-menu-wrap" id="heroMenuWrap">
+              <button
+                class="hero-menu-toggle"
+                id="heroMenuToggle"
+                type="button"
+                data-action="toggle-hero-menu"
+                aria-expanded="false"
+                aria-controls="serviceMenu"
+              >
+                <span class="hero-menu-toggle-icon" aria-hidden="true"></span>
+                <span class="hero-menu-toggle-text">Меню</span>
+              </button>
+              <div class="hero-menu" id="serviceMenu" hidden>
+                <button class="menu-pill active" type="button" data-nav="section-about">О лагере</button>
+                <button class="menu-pill" type="button" data-nav="section-journey">Как проходит</button>
+                <button class="menu-pill" type="button" data-nav="section-programs">Смены</button>
+                <button class="menu-pill" type="button" data-nav="section-photos">Фото</button>
+                <button class="menu-pill" type="button" data-nav="section-videos">Видео</button>
+                <button class="menu-pill" type="button" data-nav="section-reviews">Отзывы</button>
+                <button class="menu-pill" type="button" data-nav="section-faq">FAQ</button>
+                <button class="menu-pill" type="button" data-nav="section-team">Команда</button>
+                <button class="menu-pill" type="button" data-nav="section-stay">Размещение</button>
+                <button class="menu-pill" type="button" data-nav="section-contacts">Контакты</button>
+              </div>
             </div>
           </div>
 
@@ -7013,6 +9184,7 @@
             <div class="hero-tag">IT-лагерь для детей 7–14 лет</div>
             <h2 class="hero-title">Лагерь, где ребёнок<br>создаёт, а не потребляет</h2>
             <div class="hero-sub">Программирование, спорт, бассейн и живая лагерная среда без бессмысленного залипания в телефоне.</div>
+            <button class="hero-mobile-age-cta" type="button" data-action="mobile-focus-age">Выбрать возраст →</button>
             <div class="hero-slogan">Мы не играем в игры — мы их создаём</div>
             <div class="hero-benefits-grid">
               <article class="hero-benefit-card">
@@ -7534,19 +9706,19 @@
         <div class="mobile-body-sections" style="padding:18px;display:grid;gap:14px;">
           <section class="section-card" id="mobile-section-about">
             <h3>О лагере</h3>
-            <p class="section-lead">AiDaCamp — это лагерь, где ребёнок не просто занят, а растёт через проекты, спорт и живую командную среду.</p>
+            <p class="section-lead">AiDaCamp — место, где ребёнок создаёт, двигается, работает в команде и уезжает со смены с понятным результатом.</p>
             <div class="mobile-about-features" id="mobileAboutFeatures"></div>
           </section>
 
           <section class="section-card" id="mobile-section-journey">
             <h3>Как проходит смена</h3>
-            <p class="section-lead">Маршрут смены: от быстрого включения к понятному результату за 7–14 дней.</p>
+            <p class="section-lead">4 шага: от быстрого включения к понятному результату за смену.</p>
             <div class="mobile-journey-flow" id="mobileJourneyContent"></div>
           </section>
 
           <section class="section-card" id="mobile-section-programs">
             <h3>Описание смен</h3>
-            <p class="section-lead">Выберите смену и сразу сравните даты, цену, длительность и формат.</p>
+            <p class="section-lead">Выберите смену в селекторе — ниже покажем одну карточку с ключевыми деталями.</p>
             <div class="mobile-programs-flow" id="mobileProgramsContent"></div>
           </section>
 
@@ -7835,7 +10007,7 @@
         yandexReviewsLabel: 'Отзывы на Яндекс Картах',
         yandexReviewsUrl: 'https://yandex.ru/maps/org/aydakemp/35558479035/reviews/',
         locationMapUrl: 'https://yandex.ru/maps/-/CPR0vYMT',
-        locationMapEmbedUrl: 'https://yandex.ru/map-widget/v1/?ll=36.719422%2C55.261573&z=15&pt=36.719422,55.261573,pm2rdm',
+        locationMapEmbedUrl: 'https://yandex.ru/map-widget/v1/?ll=36.719422%2C55.261573&z=9&pt=36.719422,55.261573,pm2rdm',
         programmingBookUrl: 'https://www.codims.ru/python-book'
       },
       faq: [
@@ -8052,7 +10224,9 @@
 
     const METRIKA_ID = 96499295;
     const DEBUG_UI = false;
+    const USE_DESKTOP_BASE_FOR_MOBILE = true;
     const BUILD_VERSION_LABEL = 'v0.0.112 (debug-offer-layout-switch)';
+    const VERSION_BADGE_HIDDEN_KEY = 'aidacamp_version_badge_hidden_v1';
     const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v2';
     const VIDEO_META_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
     const VIDEO_META_REFRESH_INTERVAL_MS = 1000 * 60 * 60 * 4;
@@ -8072,8 +10246,12 @@
     let mediaIndex = 0;
     let mediaType = 'photo';
     let activePhotoList = [];
-    state.desktopMode = state.desktopMode || 'full';
-    state.mobileMode = state.mobileMode || 'full';
+    state.previewView = state.previewView || state.view || 'desktop';
+    if(USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile'){
+      state.view = 'desktop';
+    }
+    state.desktopMode = state.desktopMode || 'compact';
+    state.mobileMode = state.mobileMode || 'compact';
     state.heroContrastMode = 'after-soft';
     state.heroMicroMode = 'off';
     state.offerModalTheme = 'light';
@@ -8082,6 +10260,17 @@
     state.bookingCompleted = !!state.bookingCompleted;
     state.photoFilter = state.photoFilter || 'camp';
     state.faqFilter = state.faqFilter || 'Медицина';
+    state.mobileJourneyStep = Number.isFinite(Number(state.mobileJourneyStep)) ? Number(state.mobileJourneyStep) : 0;
+    state.mobileProgramShiftId = state.mobileProgramShiftId || '';
+    state.mobilePhotoIndex = Number.isFinite(Number(state.mobilePhotoIndex)) ? Number(state.mobilePhotoIndex) : 0;
+    state.mobileVideoIndex = Number.isFinite(Number(state.mobileVideoIndex)) ? Number(state.mobileVideoIndex) : 0;
+    state.mobileReviewIndex = Number.isFinite(Number(state.mobileReviewIndex)) ? Number(state.mobileReviewIndex) : 0;
+    state.mobileStayIndex = Number.isFinite(Number(state.mobileStayIndex)) ? Number(state.mobileStayIndex) : 0;
+    state.mobileFaqGroup = state.mobileFaqGroup || 'Медицина';
+    state.mobileFaqOpenKey = state.mobileFaqOpenKey || '';
+    state.mobileTeamIndex = Number.isFinite(Number(state.mobileTeamIndex)) ? Number(state.mobileTeamIndex) : 0;
+    // Mobile docs block must stay compact by default: requisites visible, legal links collapsed.
+    state.mobileDocsExpanded = false;
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
     let offerTimeoutIds = [];
@@ -8126,14 +10315,16 @@
     function applyDebugUiState(){
       const badge = document.getElementById('version-badge');
       if(!badge) return;
+      const badgeLabel = document.getElementById('version-badge-label');
+      const isHidden = localStorage.getItem(VERSION_BADGE_HIDDEN_KEY) === '1';
       const label = String(badge.dataset.version || BUILD_VERSION_LABEL || '').trim();
       if(label){
-        badge.textContent = label;
+        if(badgeLabel) badgeLabel.textContent = label;
         badge.title = label;
-        badge.classList.remove('hidden');
+        badge.classList.toggle('hidden', isHidden);
         return;
       }
-      badge.classList.toggle('hidden', !DEBUG_UI);
+      badge.classList.toggle('hidden', isHidden || !DEBUG_UI);
     }
 
     function trackOnce(event, params = {}){
@@ -8651,6 +10842,22 @@
       }
     }
 
+    function setHeroMenuOpen(isOpen){
+      const wrap = document.getElementById('heroMenuWrap');
+      const toggle = document.getElementById('heroMenuToggle');
+      const menu = document.getElementById('serviceMenu');
+      if(!wrap || !toggle || !menu) return;
+      const next = !!isOpen;
+      wrap.dataset.open = next ? '1' : '0';
+      toggle.setAttribute('aria-expanded', next ? 'true' : 'false');
+      menu.classList.toggle('is-open', next);
+      menu.hidden = !next;
+    }
+
+    function isHeroMenuOpen(){
+      return document.getElementById('heroMenuWrap')?.dataset.open === '1';
+    }
+
     function scrollVideoCarousel(direction = 1, scopeRoot = null){
       const scope = scopeRoot && scopeRoot.nodeType === 1 ? scopeRoot : document;
       const list = scope.querySelector('#videoList, .video-list');
@@ -8726,8 +10933,8 @@
       const sourceSection = document.getElementById(sectionId);
       if(!modal || !titleEl || !bodyEl || !sourceSection) return false;
       closeTransientModals('section');
-      const isCompactDesktop = state.view === 'desktop' && state.desktopMode === 'compact';
-      const isMobilePanel = state.view === 'mobile';
+      const isCompactDesktop = state.previewView === 'desktop' && state.desktopMode === 'compact';
+      const isMobilePanel = state.previewView === 'mobile';
       modal.classList.toggle('section-modal-compact', isCompactDesktop);
       modal.classList.toggle('section-modal-mobile', isMobilePanel);
 
@@ -8837,6 +11044,16 @@
         return true;
       }
 
+      if(action === 'open-referral-photo'){
+        activePhotoList = [{
+          src:'/assets/images/referral-hoodie.jpeg',
+          alt:'Фирменная толстовка лагеря',
+          cat:'all'
+        }];
+        openMedia('photo', 0);
+        return true;
+      }
+
       if(action === 'video-carousel-prev'){
         const scopeRoot = actionEl.closest('.section-modal-body') || document;
         scrollVideoCarousel(-1, scopeRoot);
@@ -8877,6 +11094,172 @@
 
       if(action === 'open-all-shifts'){
         navigateToSection('section-programs');
+        return true;
+      }
+
+      if(action === 'mobile-focus-age'){
+        focusMobileAgeGate();
+        return true;
+      }
+
+      if(action === 'mobile-photo-select'){
+        const index = Number(actionEl.dataset.photoIndex || 0);
+        if(Number.isFinite(index)){
+          const photosByFilter = {
+            camp: ['all'],
+            pool: ['pool'],
+            sport: ['sport'],
+            study: ['study'],
+            food: ['food']
+          };
+          const tags = photosByFilter[state.photoFilter] || ['all'];
+          const list = mediaContent.photos.filter((item) => tags.includes(item.cat));
+          const maxIndex = Math.max(0, (list.length || 1) - 1);
+          state.mobilePhotoIndex = Math.max(0, Math.min(index, maxIndex));
+          renderCompactTrustPanelContent();
+          openMedia('photo', state.mobilePhotoIndex);
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-video-select'){
+        const index = Number(actionEl.dataset.videoIndex || 0);
+        if(Number.isFinite(index)){
+          const maxIndex = Math.max(0, (mediaContent.videos?.length || 1) - 1);
+          state.mobileVideoIndex = Math.max(0, Math.min(index, maxIndex));
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-review-select'){
+        const index = Number(actionEl.dataset.reviewIndex || 0);
+        if(Number.isFinite(index)){
+          const maxIndex = Math.max(0, (mediaContent.reviews?.length || 1) - 1);
+          state.mobileReviewIndex = Math.max(0, Math.min(index, maxIndex));
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-review-prev'){
+        const total = Math.max(0, mediaContent.reviews?.length || 0);
+        if(total){
+          state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) - 1 + total) % total;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-review-next'){
+        const total = Math.max(0, mediaContent.reviews?.length || 0);
+        if(total){
+          state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) + 1) % total;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-stay-select'){
+        const index = Number(actionEl.dataset.stayIndex || 0);
+        if(Number.isFinite(index)){
+          state.mobileStayIndex = Math.max(0, index);
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-faq-filter'){
+        const group = (actionEl.dataset.faqGroup || '').trim();
+        if(group){
+          state.mobileFaqGroup = group;
+          state.mobileFaqOpenKey = '';
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-faq-toggle'){
+        const key = (actionEl.dataset.faqKey || '').trim();
+        if(key){
+          state.mobileFaqOpenKey = key;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-team-prev'){
+        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
+        if(list.length){
+          state.mobileTeamIndex = (state.mobileTeamIndex - 1 + list.length) % list.length;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-team-next'){
+        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
+        if(list.length){
+          state.mobileTeamIndex = (state.mobileTeamIndex + 1 + list.length) % list.length;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-team-select'){
+        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
+        if(list.length){
+          const index = Number(actionEl.dataset.teamIndex || 0);
+          if(Number.isFinite(index)){
+            state.mobileTeamIndex = Math.max(0, Math.min(index, list.length - 1));
+            renderCompactTrustPanelContent();
+            persist();
+          }
+        }
+        return true;
+      }
+
+      if(action === 'mobile-journey-step'){
+        const index = Number(actionEl.dataset.stepIndex || 0);
+        if(Number.isFinite(index)){
+          state.mobileJourneyStep = Math.max(0, Math.min(index, 3));
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-program-select'){
+        const shiftId = (actionEl.dataset.shiftId || '').trim();
+        if(shiftId){
+          state.mobileProgramShiftId = shiftId;
+          renderCompactTrustPanelContent();
+          persist();
+        }
+        return true;
+      }
+
+      if(action === 'mobile-docs-toggle'){
+        state.mobileDocsExpanded = !state.mobileDocsExpanded;
+        renderCompactTrustPanelContent();
+        renderDesktopMobileDocsBlock();
+        persist();
+        return true;
+      }
+
+      if(action === 'open-book-photo'){
+        activePhotoList = [{ src: '/assets/images/cdn-cache/8fc8172e_8991804334.webp', alt: 'Собственная книга по Python', cat: 'study' }];
+        openMedia('photo', 0);
         return true;
       }
 
@@ -8988,8 +11371,31 @@
         return true;
       }
 
+      if(action === 'copy-invite-link'){
+        const inviteUrl = `${window.location.origin}${window.location.pathname}?invite=${encodeURIComponent(state.code || 'aidacamp')}`;
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(inviteUrl)
+            .then(() => openNoticeModal('Ссылка приглашения скопирована.'))
+            .catch(() => openNoticeModal('Не удалось скопировать автоматически. Скопируйте ссылку из адресной строки.'));
+        } else {
+          openNoticeModal('Скопируйте ссылку из адресной строки браузера.');
+        }
+        return true;
+      }
+
       if(action === 'close-debug-controls'){
         document.getElementById('debugControls')?.classList.add('hidden');
+        return true;
+      }
+
+      if(action === 'close-version-badge'){
+        document.getElementById('version-badge')?.classList.add('hidden');
+        localStorage.setItem(VERSION_BADGE_HIDDEN_KEY, '1');
+        return true;
+      }
+
+      if(action === 'toggle-hero-menu'){
+        setHeroMenuOpen(!isHeroMenuOpen());
         return true;
       }
 
@@ -9182,7 +11588,7 @@
     }
 
     function getStayGallery(){
-      return Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
+      const fromDesktopCards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
         const image = card.querySelector('img');
         if(!image) return null;
         const title = (card.querySelector('.stay-card-body strong')?.textContent || '').trim();
@@ -9192,6 +11598,31 @@
           alt:image.getAttribute('alt') || title || 'Размещение'
         };
       }).filter((item) => item && item.src);
+
+      if(fromDesktopCards.length){
+        return fromDesktopCards;
+      }
+
+      const fromMobilePreview = Array.from(document.querySelectorAll('.mobile-stay-preview-thumb img, .mobile-stay-feature-photo img'))
+        .map((img) => {
+          const src = img.getAttribute('src') || '';
+          if(!src) return null;
+          return {
+            cat:'stay',
+            src,
+            alt:img.getAttribute('alt') || 'Размещение'
+          };
+        })
+        .filter((item) => item && item.src);
+
+      const unique = [];
+      const seen = new Set();
+      fromMobilePreview.forEach((item) => {
+        if(seen.has(item.src)) return;
+        seen.add(item.src);
+        unique.push(item);
+      });
+      return unique;
     }
 
     function prepareStayGalleryTriggers(){
@@ -9292,7 +11723,7 @@
       });
       activePhotoList = [];
 
-      const keepView = state.view || 'desktop';
+      const keepView = state.previewView || state.view || 'desktop';
       const keepDesktopMode = state.desktopMode || 'full';
       const keepMobileMode = state.mobileMode || 'full';
       const keepOfferModalTheme = state.offerModalTheme === 'dark' ? 'dark' : 'light';
@@ -9308,6 +11739,7 @@
         expiresAt: null,
         offerStage: 0,
         view: keepView,
+        previewView: keepView,
         phone: '',
         desktopMode: keepDesktopMode,
         mobileMode: keepMobileMode,
@@ -9315,6 +11747,16 @@
         offerLayout: keepOfferLayout,
         photoFilter: 'camp',
         faqFilter: 'Медицина',
+        mobileJourneyStep: 0,
+        mobileProgramShiftId: '',
+        mobilePhotoIndex: 0,
+        mobileVideoIndex: 0,
+        mobileReviewIndex: 0,
+        mobileStayIndex: 0,
+        mobileFaqGroup: 'Медицина',
+        mobileFaqOpenKey: '',
+        mobileTeamIndex: 0,
+        mobileDocsExpanded: false,
         offerSearching: false
       };
 
@@ -9538,6 +11980,7 @@
       }
 
       shiftList.classList.remove('disabled','highlight','collapsed');
+      ctaWrap.classList.remove('hidden');
       ctaWrap.classList.remove('highlight');
       ageTabs.classList.remove('hidden');
       ageChip.classList.remove('visible');
@@ -9600,7 +12043,9 @@
     }
 
     function nudgeUserToNextStep(message = 'Сначала завершите предыдущий шаг.'){
-      const prefixes = state.view === 'mobile' ? ['mobile'] : ['desktop'];
+      const prefixes = (state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE)
+        ? ['mobile']
+        : ['desktop'];
       prefixes.forEach((prefix) => {
         const inlineHint = document.getElementById(`${prefix}InlineHint`);
         if(inlineHint){
@@ -9630,7 +12075,10 @@
     }
 
     function showHint(message, requiredStep = ''){
-      ['desktop', 'mobile'].forEach((prefix) => {
+      const prefixes = (state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE)
+        ? ['mobile']
+        : ['desktop'];
+      prefixes.forEach((prefix) => {
         const el = document.getElementById(`${prefix}BookingHintInline`);
         const baseHint = document.getElementById(`${prefix}BookingHint`);
         if(!el) return;
@@ -9844,9 +12292,11 @@
                 </div>
               </div>
               <p class="completed-followup-text">Мы свяжемся с вами в ближайшее время.</p>
-              <img class="completed-followup-image" src="/assets/images/referral-hoodie.jpeg" alt="Фирменная толстовка лагеря">
-              <p class="completed-followup-note">Позовите друга, подарим вам обоим фирменную толстовку лагеря.</p>
-              <a class="completed-followup-link" href="#" data-action="invite-friend">Отправить приглашение</a>
+              <button class="completed-followup-image-trigger" type="button" data-action="open-referral-photo" aria-label="Открыть фото в полном размере">
+                <img class="completed-followup-image" src="/assets/images/referral-hoodie.jpeg" alt="Фирменная толстовка лагеря">
+              </button>
+              <p class="completed-followup-note">Обычно дети приезжают с друзьями, так им проще адаптироваться. Позовите друга, подарим вам обоим фирменную толстовку.</p>
+              <a class="completed-followup-link" href="#" data-action="copy-invite-link">Копировать ссылку приглашения</a>
               <div class="booking-price-head">
                 <div class="booking-price-col">
                   <small>Зафиксированная цена</small>
@@ -9881,6 +12331,9 @@
       const currentPrice = formatPrice(shift.price);
       const visiblePriceValue = getVisiblePrice();
       const visiblePrice = formatPrice(visiblePriceValue);
+      const shiftDescription = hasSelectedAge()
+        ? getShiftAgeFocusedDescription(shift, state.age || '7-9')
+        : (shift.desc || '');
       const timerText = isOfferActive() ? formatRemainingCompact(state.expiresAt - Date.now()) : '';
       const deadlineText = formatOfferDeadline(state.expiresAt);
       const basePriceValue = Number(state.basePrice || shift.price || 0);
@@ -9925,6 +12378,7 @@
           </div>
           <div class="booking-code-line">Даты: <strong style="color:#fff;">${shift.dates}</strong></div>
           ${state.code ? `<div class="booking-code-line">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
+          <div class="booking-shift-description">${shiftDescription}</div>
           ${timerText ? `<div class="booking-timer-line" data-live-timer="true">${timerText}</div>` : ''}
         </div>
       ` : `
@@ -9945,6 +12399,7 @@
 
     function renderBookingPanels(){
       syncGuidedState();
+      const useLegacyMobileRuntime = !USE_DESKTOP_BASE_FOR_MOBILE;
       renderBookingInfo(
         'desktop-booking-info',
         'desktopBookingTitle',
@@ -9953,53 +12408,82 @@
         'desktopBookingHint'
       );
 
-      renderBookingInfo(
-        'mobile-booking-info',
-        'mobileBookingTitle',
-        'mobileBookingLead',
-        'mobileStartBtn',
-        'mobileBookingHint'
-      );
+      if(useLegacyMobileRuntime){
+        renderBookingInfo(
+          'mobile-booking-info',
+          'mobileBookingTitle',
+          'mobileBookingLead',
+          'mobileStartBtn',
+          'mobileBookingHint'
+        );
+      }
 
       renderSteps('desktopBookingSteps');
-      renderSteps('mobileBookingSteps');
+      if(useLegacyMobileRuntime){
+        renderSteps('mobileBookingSteps');
+      }
       renderGuidedState('desktop');
-      renderGuidedState('mobile');
+      if(useLegacyMobileRuntime){
+        renderGuidedState('mobile');
+      }
       applyBookingStageClass('desktop');
-      applyBookingStageClass('mobile');
+      if(useLegacyMobileRuntime){
+        applyBookingStageClass('mobile');
+      }
       syncBookingHints();
       updateBookingScarcityUi();
       if(getBookingStage() < 4){
         closeInlineLead('booking-desktop');
-        closeInlineLead('booking-mobile');
+        if(useLegacyMobileRuntime){
+          closeInlineLead('booking-mobile');
+        }
       }
     }
 
+    function getViewportPreviewView(){
+      return window.matchMedia('(max-width: 820px)').matches ? 'mobile' : 'desktop';
+    }
+
     function switchView(view){
-      state.view = view;
-      const desktopBtn = document.getElementById('desktopBtn');
-      const mobileBtn = document.getElementById('mobileBtn');
+      const requestedView = view === 'mobile' ? 'mobile' : 'desktop';
+      const effectiveView = (requestedView === 'mobile' && USE_DESKTOP_BASE_FOR_MOBILE)
+        ? 'desktop'
+        : requestedView;
+      setHeroMenuOpen(false);
+      if(requestedView === 'mobile'){
+        state.mobileDocsExpanded = false;
+      }
+      state.previewView = requestedView;
+      state.view = effectiveView;
       const desktopView = document.getElementById('desktopView');
       const mobileView = document.getElementById('mobileView');
-      if(desktopBtn){
-        desktopBtn.classList.toggle('active', view === 'desktop');
-      }
-      if(mobileBtn){
-        mobileBtn.classList.toggle('active', view === 'mobile');
-      }
       if(desktopView){
-        desktopView.classList.toggle('hidden', view !== 'desktop');
+        desktopView.classList.toggle('hidden', effectiveView !== 'desktop');
+        desktopView.classList.toggle(
+          'mobile-preview-active',
+          requestedView === 'mobile' && USE_DESKTOP_BASE_FOR_MOBILE
+        );
       }
       if(mobileView){
-        mobileView.classList.toggle('hidden', view !== 'mobile');
+        const showLegacyMobile = requestedView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE;
+        mobileView.classList.toggle('hidden', !showLegacyMobile);
       }
       const desktopModeWrap = document.getElementById('desktopModeWrap');
       if(desktopModeWrap){
-        desktopModeWrap.classList.toggle('hidden', view !== 'desktop');
+        desktopModeWrap.classList.toggle('hidden', effectiveView !== 'desktop');
       }
-      if(view !== 'desktop'){
+      if(effectiveView !== 'desktop'){
         closeSectionModal();
       }
+      if(requestedView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE){
+        applyMobileMode();
+      }
+      if(effectiveView === 'desktop'){
+        applyDesktopMode();
+      }
+      applyMobileTemplatesToDesktopSections();
+      renderMediaSections();
+      renderDesktopMobileDocsBlock();
       updateSummaryBarVisibility();
       persist();
       requestAnimationFrame(() => {
@@ -10117,7 +12601,8 @@
 
       desktopView.classList.toggle('compact-mode', state.desktopMode === 'compact');
       fullBtn.classList.toggle('active', state.desktopMode === 'full');
-      compactBtn.classList.toggle('active', state.desktopMode === 'compact');
+      compactBtn.classList.toggle('active', state.desktopMode === 'full');
+      compactBtn.setAttribute('aria-pressed', state.desktopMode === 'full' ? 'true' : 'false');
     }
 
     function switchDesktopMode(mode){
@@ -10131,14 +12616,28 @@
     }
 
     function applyMobileMode(){
+      if(USE_DESKTOP_BASE_FOR_MOBILE){
+        return;
+      }
       const mobileView = document.getElementById('mobileView');
       const fullBtn = document.getElementById('mobileFullModeBtn');
       const compactBtn = document.getElementById('mobileCompactModeBtn');
-      if(!mobileView || !fullBtn || !compactBtn) return;
+      const modeToggle = document.getElementById('mobileModeToggle');
+      const modeToggleLabel = modeToggle?.querySelector('.mobile-mode-toggle-label');
+      if(!mobileView) return;
 
       mobileView.classList.toggle('mobile-compact-mode', state.mobileMode === 'compact');
-      fullBtn.classList.toggle('active', state.mobileMode === 'full');
-      compactBtn.classList.toggle('active', state.mobileMode === 'compact');
+      if(fullBtn) fullBtn.classList.toggle('active', state.mobileMode === 'full');
+      if(compactBtn) compactBtn.classList.toggle('active', state.mobileMode === 'compact');
+      if(modeToggle){
+        const isFull = state.mobileMode === 'full';
+        modeToggle.setAttribute('aria-checked', isFull ? 'true' : 'false');
+        modeToggle.classList.toggle('is-compact', !isFull);
+        if(modeToggleLabel){
+          modeToggleLabel.textContent = isFull ? 'Подробный' : 'Кратко';
+        }
+      }
+      applyMobileSectionAccordion();
     }
 
     function switchMobileMode(mode){
@@ -10147,13 +12646,18 @@
       updateSummaryBarVisibility();
       persist();
     }
-
-    document.getElementById('desktopBtn')?.addEventListener('click', () => switchView('desktop'));
-    document.getElementById('mobileBtn')?.addEventListener('click', () => switchView('mobile'));
     document.getElementById('fullModeBtn')?.addEventListener('click', () => switchDesktopMode('full'));
-    document.getElementById('compactModeBtn')?.addEventListener('click', () => switchDesktopMode('compact'));
-    document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => switchMobileMode('full'));
-    document.getElementById('mobileCompactModeBtn')?.addEventListener('click', () => switchMobileMode('compact'));
+    document.getElementById('compactModeBtn')?.addEventListener('click', () => {
+      const nextMode = state.desktopMode === 'compact' ? 'full' : 'compact';
+      switchDesktopMode(nextMode);
+    });
+    if(!USE_DESKTOP_BASE_FOR_MOBILE){
+      document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => switchMobileMode('full'));
+      document.getElementById('mobileCompactModeBtn')?.addEventListener('click', () => switchMobileMode('compact'));
+      document.getElementById('mobileModeToggle')?.addEventListener('click', () => {
+        switchMobileMode(state.mobileMode === 'full' ? 'compact' : 'full');
+      });
+    }
 
     document.addEventListener('click', (e) => {
       if(handleDataActionClick(e.target)){
@@ -10165,7 +12669,7 @@
         setPhotoFilter(photoFilterBtn.dataset.photoFilter);
         const sectionModal = document.getElementById('sectionModal');
         const sectionModalOpened = !!(sectionModal && !sectionModal.classList.contains('hidden'));
-        if((state.view === 'desktop' && state.desktopMode === 'compact') || (state.view === 'mobile' && sectionModalOpened)){
+        if((state.previewView === 'desktop' && state.desktopMode === 'compact') || (state.previewView === 'mobile' && sectionModalOpened)){
           openSectionModal('section-photos');
         }
         return;
@@ -10176,13 +12680,13 @@
         setFaqFilter(faqFilterBtn.dataset.faqFilter);
         const sectionModal = document.getElementById('sectionModal');
         const sectionModalOpened = !!(sectionModal && !sectionModal.classList.contains('hidden'));
-        if((state.view === 'desktop' && state.desktopMode === 'compact') || (state.view === 'mobile' && sectionModalOpened)){
+        if((state.previewView === 'desktop' && state.desktopMode === 'compact') || (state.previewView === 'mobile' && sectionModalOpened)){
           openSectionModal('section-faq');
         }
         return;
       }
 
-      const ageWrap = e.target.closest('#desktopAgeTabs, #mobileAgeTabs');
+      const ageWrap = e.target.closest('#desktopAgeTabs');
       const ageBtn = e.target.closest('button');
       if(ageWrap && ageBtn){
         const ageText = (ageBtn.textContent || '').trim();
@@ -10191,7 +12695,7 @@
         }
       }
 
-      const shiftWrap = e.target.closest('#desktop-shift-options, #mobileShiftOptions');
+      const shiftWrap = e.target.closest('#desktop-shift-options');
       const shiftBtn = e.target.closest('button, .shift-option, .slot-card');
       if(shiftWrap && shiftBtn){
         const shiftText = (shiftBtn.textContent || '').trim().split('\n')[0];
@@ -10215,7 +12719,7 @@
         }
       }
 
-      const shiftDisabled = e.target.closest('#desktopShiftList.disabled, #mobileShiftList.disabled');
+      const shiftDisabled = e.target.closest('#desktopShiftList.disabled');
       if(shiftDisabled){
         showHint('Сначала выберите возраст ребёнка', 'age');
         nudgeUserToNextStep('Сначала выберите возраст ребёнка — тогда откроется список смен.');
@@ -10227,7 +12731,7 @@
         nudgeUserToNextStep('Сначала выберите возраст ребёнка — после этого откроются смены.');
       }
 
-      const ctaBtn = e.target.closest('#desktopStartBtn, #mobileStartBtn');
+      const ctaBtn = e.target.closest('#desktopStartBtn');
       if(ctaBtn && ctaBtn.classList.contains('is-disabled')){
         if(!hasSelectedAge()){
           showHint('Выберите возраст', 'age');
@@ -10302,6 +12806,9 @@
       const safeView = viewKey === 'mobile' ? 'mobile' : 'desktop';
       const current = shiftOptionPanels[safeView]?.[panelType] || null;
       shiftOptionPanels[safeView][panelType] = current === shiftId ? null : shiftId;
+      if(safeView === 'mobile' && USE_DESKTOP_BASE_FOR_MOBILE){
+        return;
+      }
       renderShiftOptions(safeView === 'mobile' ? 'mobileShiftOptions' : 'desktop-shift-options');
     }
 
@@ -10474,6 +12981,16 @@
       });
     }
 
+    function focusMobileAgeGate(){
+      const gate = (USE_DESKTOP_BASE_FOR_MOBILE
+        ? document.getElementById('desktopAgeTabs')
+        : (document.getElementById('mobileAgeGateCard') || document.getElementById('mobileAgeTabs')));
+      if(!gate) return;
+      gate.scrollIntoView({behavior:'smooth', block:'center'});
+      gate.classList.add('guided-pulse');
+      setTimeout(() => gate.classList.remove('guided-pulse'), 1100);
+    }
+
     function waitDesktopAgeTapHint(ms){
       return new Promise(resolve => {
         setTimeout(resolve, ms);
@@ -10483,7 +13000,8 @@
     function canRunDesktopAgeTapHint(){
       const card = document.getElementById('desktop-booking-card');
       if(!card || !card.classList.contains('booking-stage-1')) return false;
-      if(state.view !== 'desktop') return false;
+      if(state.previewView === 'mobile') return false;
+      if(state.previewView !== 'desktop') return false;
       if(hasSelectedAge() || state.ageSelected) return false;
       const tabs = document.getElementById('desktopAgeTabs');
       if(!tabs) return false;
@@ -10664,7 +13182,9 @@
     }
 
     bindAgeTabs('desktopAgeTabs');
-    bindAgeTabs('mobileAgeTabs');
+    if(!USE_DESKTOP_BASE_FOR_MOBILE){
+      bindAgeTabs('mobileAgeTabs');
+    }
 
     function getShiftSummaryLines(ageKey){
       const summaryByAge = {
@@ -10695,6 +13215,42 @@
       return shift.desc || '';
     }
 
+    function normalizeShiftText(value){
+      return String(value || '').replace(/\s+/g, ' ').trim();
+    }
+
+    function getShiftAgeFocusedDescription(shift, ageKey){
+      if(!shift) return '';
+      const full = String(shift.fullDesc || '').replace(/\r/g, '').trim();
+      if(!full) return shift.desc || '';
+      const compact = normalizeShiftText(full);
+      const firstPart = normalizeShiftText(
+        compact.split(/Для\s+(?:7[–-]9|10[–-]12|13[–-]14)\s+лет:/i)[0] || ''
+      );
+
+      const markerPatternByAge = {
+        '7-9': 'Для\\s+7[–-]9\\s+лет:',
+        '10-12': 'Для\\s+10[–-]12\\s+лет:',
+        '13-14': 'Для\\s+13[–-]14\\s+лет:'
+      };
+      const markerPattern = markerPatternByAge[ageKey] || markerPatternByAge['7-9'];
+      const agePartMatch = compact.match(
+        new RegExp(`${markerPattern}\\s*([\\s\\S]*?)(?=\\s*Для\\s+(?:7[–-]9|10[–-]12|13[–-]14)\\s+лет:|$)`, 'i')
+      );
+      const agePart = normalizeShiftText(agePartMatch?.[1] || '');
+
+      const sentences = compact.match(/[^.!?]+[.!?]?/g) || [];
+      const finalPart = normalizeShiftText(sentences.length ? sentences[sentences.length - 1] : '');
+
+      const result = [];
+      if(firstPart) result.push(firstPart);
+      if(agePart) result.push(agePart);
+      if(finalPart && !result.includes(finalPart)){
+        result.push(finalPart);
+      }
+      return result.join(' ').trim();
+    }
+
     function openShiftAboutModal(shiftId){
       const modal = document.getElementById('sectionModal');
       const titleEl = document.getElementById('sectionModalTitle');
@@ -10703,8 +13259,8 @@
       if(!modal || !titleEl || !bodyEl || !shift) return false;
 
       closeTransientModals('section');
-      const isCompactDesktop = state.view === 'desktop' && state.desktopMode === 'compact';
-      const isMobilePanel = state.view === 'mobile';
+      const isCompactDesktop = state.previewView === 'desktop' && state.desktopMode === 'compact';
+      const isMobilePanel = state.previewView === 'mobile';
       modal.classList.toggle('section-modal-compact', isCompactDesktop);
       modal.classList.toggle('section-modal-mobile', isMobilePanel);
 
@@ -10810,11 +13366,13 @@
       const grid = document.getElementById('shiftCardsGrid');
       if(!grid) return;
       const shortGrid = document.getElementById('shortShiftCards');
-      const mainShifts = shifts.slice(0, 4);
+      const shortShiftIds = new Set(['shift-2','shift-3']);
+      const mainShifts = shifts.filter((s) => !shortShiftIds.has(s.id));
+      const shortShifts = shifts.filter((s) => shortShiftIds.has(s.id));
 
       grid.innerHTML = mainShifts.map(s => `
         <div class="mini-card">
-          <h4><span class="program-shift-index program-shift-index-main">${s.label || `Смена ${s.title}`}</span></h4>
+          <h4><span class="program-shift-index program-shift-index-main">${s.title}</span></h4>
           <div class="price-row">
             <strong>${formatPrice(s.price)}</strong>
             <span>
@@ -10825,15 +13383,32 @@
               </button>
             </span>
           </div>
-          <p><strong>Коротко:</strong> ${s.desc}</p>
-          <p><strong>Подробно:</strong> ${s.fullDesc || s.desc}</p>
+          <p>${s.desc || ''}</p>
           ${getShiftContextLine(s) ? `<div class="shift-context-line">${getShiftContextLine(s)}</div>` : ''}
         </div>
       `).join('');
 
       if(shortGrid){
-        shortGrid.innerHTML = '';
-        shortGrid.closest('.programs-short-block')?.classList.add('hidden');
+        shortGrid.innerHTML = shortShifts.map((s) => `
+          <div class="mini-card short-shift-card">
+            <div class="short-shift-head">
+              <h4><span class="program-shift-index">${s.title}</span></h4>
+              <span class="short-shift-tag">короткий формат</span>
+            </div>
+            <div class="price-row">
+              <strong>${formatPrice(s.price)}</strong>
+              <span>
+                ${s.dates}
+                <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
+                  <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                  <span class="shift-calendar-btn-label">календарь</span>
+                </button>
+              </span>
+            </div>
+            ${getShiftContextLine(s) ? `<div class="shift-context-line">${getShiftContextLine(s)}</div>` : ''}
+          </div>
+        `).join('');
+        shortGrid.closest('.programs-short-block')?.classList.remove('hidden');
       }
     }
 
@@ -11104,120 +13679,673 @@
       renderCompactTrustPanelContent();
     }
 
-    function renderCompactTrustPanelContent(){
-      const mobileInlinePhotoGrid = document.getElementById('mobileInlinePhotoGrid');
-      const mobileInlineVideoList = document.getElementById('mobileInlineVideoList');
-      const mobileInlineReviewsList = document.getElementById('mobileInlineReviewsList');
-      const mobileFaqList = document.getElementById('mobileFaqList');
-      const mobileInlineTeamList = document.getElementById('mobileInlineTeamList');
-      const mobileInlineStayList = document.getElementById('mobileInlineStayList');
-      const mobileInlineContactsList = document.getElementById('mobileInlineContactsList');
-      const mobileInlineSocials = document.getElementById('mobileInlineSocials');
-
-      if (mobileInlinePhotoGrid) {
-        mobileInlinePhotoGrid.innerHTML = mediaContent.photos.slice(0,4).map(item => `
-          <div class="compact-panel-photo">
-            <img src="${item.src}" alt="${item.alt}">
-          </div>
-        `).join('');
+    function renderCompactInlineStayList(mobileInlineStayList){
+      if(!mobileInlineStayList) return;
+      let stayCards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
+        return {
+          img: card.querySelector('img')?.getAttribute('src') || '',
+          title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
+          text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
+        };
+      }).filter((item) => item.title);
+      if(!stayCards.length){
+        stayCards = [
+          {
+            img:'/assets/images/cdn-cache/53d52bed_45b1eb46cf5961c2188d.jpg.webp',
+            title:'Комнаты и размещение',
+            text:'Спокойные светлые комнаты, удобное размещение и бытовая среда без ощущения «походного лагеря».'
+          },
+          {
+            img:'/assets/images/cdn-cache/62b758b3_63e9322f53ec8ca1b307.jpg.webp',
+            title:'Санузлы и бытовые зоны',
+            text:'Родителям важно понимать не только программу, но и бытовой комфорт ребёнка.'
+          },
+          {
+            img:'/assets/images/stay-common-lounge.webp',
+            title:'Общая гостиная и зона отдыха',
+            text:'Тёплое общее пространство для спокойного досуга, настольных игр и вечернего общения под присмотром вожатых.'
+          }
+        ];
+      }
+      if(!stayCards.length){
+        mobileInlineStayList.innerHTML = '';
+        return;
       }
 
-      if (mobileInlineVideoList) {
-        mobileInlineVideoList.innerHTML = mediaContent.videos.map((item, idx) => `
-          <button class="compact-panel-video-card" type="button" data-video="${item.url}">
-            <h4>${item.title}</h4>
-            <p>${idx === 0 ? 'Про быстрые изменения ребёнка за одну смену.' : idx === 1 ? 'Про внутреннюю экономику и зачем она детям.' : 'Про отказ от телефона и что происходит вместо него.'}</p>
-            <span class="compact-panel-link">Смотреть видео</span>
+      const safeIndex = Math.min(Math.max(state.mobileStayIndex || 0, 0), stayCards.length - 1);
+      state.mobileStayIndex = safeIndex;
+      const active = stayCards[safeIndex];
+
+      mobileInlineStayList.innerHTML = `
+        <article class="mobile-stay-feature">
+          <button
+            type="button"
+            class="mobile-stay-feature-photo"
+            data-action="open-stay-photo"
+            data-stay-index="${safeIndex}"
+            aria-label="Открыть фото: ${active.title}"
+          >
+            ${active.img ? `<img src="${active.img}" alt="${active.title}">` : ''}
           </button>
-        `).join('');
-      }
+          <strong>${active.title}</strong>
+          <p>${active.text}</p>
+        </article>
+        <div class="mobile-stay-preview-strip">
+          ${stayCards.map((item, idx) => `
+            <button
+              type="button"
+              class="mobile-stay-preview-thumb ${idx === safeIndex ? 'active' : ''}"
+              data-action="mobile-stay-select"
+              data-stay-index="${idx}"
+              aria-label="Показать: ${item.title}"
+            >
+              ${item.img ? `<img src="${item.img}" alt="${item.title}">` : ''}
+            </button>
+          `).join('')}
+        </div>
+      `;
+    }
 
-      if (mobileInlineReviewsList) {
-        mobileInlineReviewsList.innerHTML = mediaContent.reviews.slice(0,3).map(item => `
-          <div class="compact-panel-review-card">
-            <strong>${item.name}</strong>
-            <div class="review-stars">★★★★★</div>
-            <span>${item.quote}</span>
+    function renderCompactInlineTeamList(mobileInlineTeamList){
+      if(!mobileInlineTeamList) return;
+      const founder = mediaContent.team.find((item) => item.fio === 'Дарья Афанасьева') || mediaContent.team[0];
+      const teachers = mediaContent.team.filter((item) => item.fio !== founder?.fio);
+      const founderSummary = founder?.bio
+        ? founder.bio.split('.').map((part) => part.trim()).filter(Boolean).slice(0, 2).join('. ') + '.'
+        : '';
+      const teacherFocusMap = {
+        'Никита Брагин':'Scratch, Minecraft и Python',
+        'Омар Алхамви':'Python и нейросети',
+        'Александр Ташкин':'Scratch, Minecraft и Python'
+      };
+
+      mobileInlineTeamList.innerHTML = `
+        <article class="mobile-team-feature-card">
+          <div class="mobile-team-feature-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
+            <img class="mobile-team-feature-cover" src="/assets/images/cdn-cache/8fc8172e_8991804334.webp" alt="Собственная книга по Python">
           </div>
-        `).join('');
+          <strong>Собственная книга по Python</strong>
+          <span>Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики.</span>
+          <a class="mobile-team-feature-cta" href="${mediaContent.references.programmingBookUrl}" target="_blank" rel="noopener noreferrer">Смотреть книгу</a>
+        </article>
+        ${founder ? `
+          <article class="mobile-team-founder-card">
+            <div class="mobile-team-avatar">
+              <img src="${founder.avatarUrl}" alt="${founder.fio}">
+            </div>
+            <strong>${founder.fio}</strong>
+            <span class="mobile-team-role">${founder.role}</span>
+            <p>${founderSummary}</p>
+          </article>
+        ` : ''}
+        ${teachers.length ? `
+          <div class="mobile-team-carousel-block">
+            <div class="mobile-team-carousel-head">
+              <strong>Преподаватели</strong>
+            </div>
+            <div class="mobile-team-carousel-track">
+              ${teachers.map((teacher) => `
+                <article class="mobile-team-teacher-card">
+                  <div class="mobile-team-avatar">
+                    <img src="${teacher.avatarUrl}" alt="${teacher.fio}">
+                  </div>
+                  <strong>${teacher.fio}</strong>
+                  <span class="mobile-team-role">${teacherFocusMap[teacher.fio] || teacher.role}</span>
+                </article>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderCompactInlineContactsList(mobileInlineContactsList){
+      if(!mobileInlineContactsList) return;
+      const mapUrl = mediaContent.references.locationMapUrl;
+      const mapEmbedUrl = mediaContent.references.locationMapEmbedUrl;
+      const cityPhone = mediaContent.contacts.find((item) => item.label === 'city_phone');
+      const mobilePhone = mediaContent.contacts.find((item) => item.label === 'mobile_phone');
+      mobileInlineContactsList.innerHTML = `
+        <article class="mobile-map-preview-card">
+          <div class="mobile-map-preview">
+            <iframe
+              src="${mapEmbedUrl}"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Карта локации лагеря"
+            ></iframe>
+          </div>
+          <strong>Московская область, Наро-Фоминский округ</strong>
+          <span>Удобный заезд и понятная локация. Маршрут открывается в Яндекс Картах.</span>
+          <a class="mobile-map-open-btn" href="${mapUrl}" target="_blank" rel="noopener noreferrer">Открыть карту</a>
+        </article>
+        <div class="mobile-contact-grid">
+          ${cityPhone ? `<a class="mobile-contact-card" href="${cityPhone.href}"><small>Телефон 1</small><strong>${cityPhone.text}</strong></a>` : ''}
+          ${mobilePhone ? `<a class="mobile-contact-card" href="${mobilePhone.href}"><small>Телефон 2</small><strong>${mobilePhone.text}</strong></a>` : ''}
+        </div>
+      `;
+    }
+
+    function renderCompactInlineSocials(mobileInlineSocials){
+      if(!mobileInlineSocials) return;
+      mobileInlineSocials.innerHTML = mediaContent.socials.map((item) => `
+        <a class="mobile-social-link" href="${item.href}" target="_blank" rel="noopener noreferrer" aria-label="${item.key}">
+          <span class="mobile-social-icon"><span class="social-badge-mark">${socialBadgeMark(item)}</span></span>
+          <span class="mobile-social-label">${item.key}</span>
+        </a>
+      `).join('');
+    }
+
+    function renderCompactTrustPanelContent(){
+      const aboutTargets = document.querySelectorAll('#mobileAboutFeatures, #mobileAboutFeaturesDesktop');
+      const journeyTargets = document.querySelectorAll('#mobileJourneyContent, #mobileJourneyContentDesktop');
+      const programsTargets = document.querySelectorAll('#mobileProgramsContent, #mobileProgramsContentDesktop');
+      const photoGalleryTargets = document.querySelectorAll('#mobilePhotoGallery, #mobilePhotoGalleryDesktop');
+      const videoGalleryTargets = document.querySelectorAll('#mobileVideoGallery, #mobileVideoGalleryDesktop');
+      const reviewsGalleryTargets = document.querySelectorAll('#mobileReviewsGallery, #mobileReviewsGalleryDesktop');
+      const faqFiltersTargets = document.querySelectorAll('#mobileFaqFilters, #mobileFaqFiltersDesktop');
+      const faqListTargets = document.querySelectorAll('#mobileFaqList, #mobileFaqListDesktop');
+      const teamTargets = document.querySelectorAll('#mobileInlineTeamList, #mobileInlineTeamListDesktop');
+      const stayTargets = document.querySelectorAll('#mobileInlineStayList, #mobileInlineStayListDesktop');
+      const contactsTargets = document.querySelectorAll('#mobileInlineContactsList, #mobileInlineContactsListDesktop');
+      const socialsTargets = document.querySelectorAll('#mobileInlineSocials, #mobileInlineSocialsDesktop');
+      const mobileDocsRequisites = document.getElementById('mobileDocsRequisites');
+      const mobileDocsAccordion = document.getElementById('mobileDocsAccordion');
+
+      if (aboutTargets.length) {
+        const aboutHtml = `
+          <article class="mobile-about-feature-item">
+            <small>Проекты</small>
+            <strong>AI и программирование</strong>
+            <p>Реальные проекты: Scratch, Python, Minecraft, нейросети.</p>
+          </article>
+          <article class="mobile-about-feature-item">
+            <small>Среда</small>
+            <strong>Бассейн и живая лагерная среда</strong>
+            <p>Спорт, команда и общение — не только экран.</p>
+          </article>
+          <article class="mobile-about-feature-item">
+            <small>Результат</small>
+            <strong>Итог за смену</strong>
+            <p>Ребёнок уезжает с проектом, опытом и уверенностью.</p>
+          </article>
+        `;
+        aboutTargets.forEach((target) => {
+          target.innerHTML = aboutHtml;
+        });
       }
 
-      if (mobileFaqList) {
-        const flatFaq = mediaContent.faq.flatMap(group => group.items.map(item => ({
-          group: group.group,
+      if (journeyTargets.length) {
+        const steps = [
+          {
+            title: 'Быстрое включение',
+            text: 'В первый же день дети знакомятся, собираются в команды и входят в механику смены без долгой раскачки.'
+          },
+          {
+            title: 'Практика вместо теории',
+            text: 'Scratch, Python, Minecraft и AI через реальные задачи: меньше теории, больше практики.'
+          },
+          {
+            title: 'Живая среда',
+            text: 'Бассейн, спорт и командная среда формируют ритм, дисциплину и уверенность.'
+          },
+          {
+            title: 'Финальный результат',
+            text: 'К концу смены у ребёнка есть проект, защита и заметный рост по навыкам.'
+          }
+        ];
+        const safeStep = Math.max(0, Math.min(state.mobileJourneyStep || 0, steps.length - 1));
+        state.mobileJourneyStep = safeStep;
+        const activeStep = steps[safeStep];
+        const journeyHtml = `
+          <article class="mobile-journey-active">
+            <div class="mobile-journey-active-heading">
+              <div class="mobile-journey-active-index">${safeStep + 1}</div>
+              <strong>${activeStep.title}</strong>
+            </div>
+            <p>${activeStep.text}</p>
+          </article>
+          <div class="mobile-journey-switcher">
+            ${steps.map((step, idx) => `
+              <button
+                type="button"
+                class="mobile-journey-switch ${idx === safeStep ? 'active' : ''}"
+                data-action="mobile-journey-step"
+                data-step-index="${idx}"
+              >
+                <span>${idx + 1}</span>${step.title}
+              </button>
+            `).join('')}
+          </div>
+        `;
+        journeyTargets.forEach((target) => {
+          target.innerHTML = journeyHtml;
+        });
+      }
+
+      if (programsTargets.length) {
+        const mainShifts = shifts.slice();
+        if(mainShifts.length){
+          const activeShiftId = mainShifts.some((shift) => shift.id === state.mobileProgramShiftId)
+            ? state.mobileProgramShiftId
+            : mainShifts[0].id;
+          state.mobileProgramShiftId = activeShiftId;
+          const activeShift = mainShifts.find((shift) => shift.id === activeShiftId) || mainShifts[0];
+          const selectorLabel = (shift) => (shift.label || `Смена ${shift.title || ''}`).trim();
+          const ageHint = hasSelectedAge()
+            ? ''
+            : 'Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.';
+
+          const programsHtml = `
+            <div class="mobile-program-selector">
+              ${mainShifts.map((shift) => `
+                <button
+                  type="button"
+                  class="mobile-program-chip ${shift.id === activeShift.id ? 'active' : ''}"
+                  data-action="mobile-program-select"
+                  data-shift-id="${shift.id}"
+                >${selectorLabel(shift)}</button>
+              `).join('')}
+            </div>
+            <article class="mobile-program-active-card">
+              <strong>${selectorLabel(activeShift)}</strong>
+              <div class="mobile-program-dates">${activeShift.dates}</div>
+              <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
+              <div class="mobile-program-meta">
+                <span>${shiftDaysLabel(activeShift)}</span>
+                <span>Осталось ${activeShift.left} мест</span>
+              </div>
+              <p>${activeShift.desc}</p>
+              ${ageHint ? `<div class="mobile-program-hint">${ageHint}</div>` : ''}
+              <button
+                class="shift-calendar-btn"
+                type="button"
+                data-action="open-calendar"
+                data-shift-id="${activeShift.id}"
+                aria-label="Календарь ${activeShift.title}"
+              >
+                <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true"><span>Календарь</span>
+              </button>
+            </article>
+          `;
+          programsTargets.forEach((target) => {
+            target.innerHTML = programsHtml;
+          });
+        } else {
+          programsTargets.forEach((target) => {
+            target.innerHTML = '';
+          });
+        }
+      }
+
+      if (photoGalleryTargets.length) {
+        const photoByFilter = {
+          camp: ['all'],
+          pool: ['pool'],
+          sport: ['sport'],
+          study: ['study'],
+          food: ['food']
+        };
+        const tags = photoByFilter[state.photoFilter] || ['all'];
+        const list = mediaContent.photos.filter((item) => tags.includes(item.cat));
+        const activeIndex = Math.min(Math.max(state.mobilePhotoIndex || 0, 0), Math.max(list.length - 1, 0));
+        state.mobilePhotoIndex = activeIndex;
+        const active = list[activeIndex];
+
+        if(active){
+          const photoHtml = `
+            <div class="mobile-media-stage mobile-photo-stage">
+              <button type="button" data-action="open-photo" data-photo-index="${activeIndex}">
+                <img src="${active.src}" alt="${active.alt || 'Фото лагеря'}">
+                <div class="mobile-media-overlay">
+                  <strong>${(active.alt || 'Атмосфера лагеря').replace(/^all$/i, 'Атмосфера')}</strong>
+                  <span>Тапните, чтобы открыть фото</span>
+                </div>
+              </button>
+            </div>
+            <div class="mobile-photo-preview-strip">
+              ${list.map((item, idx) => `
+                <button class="mobile-photo-preview-thumb ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-photo-select" data-photo-index="${idx}" aria-label="Выбрать фото ${idx + 1}">
+                  <img src="${item.src}" alt="${item.alt || 'Фото'}">
+                </button>
+              `).join('')}
+            </div>
+            <div class="mobile-photo-more">
+              <button type="button" class="mobile-photo-more-btn" data-action="open-photo" data-photo-index="${activeIndex}">Открыть всю галерею</button>
+            </div>
+          `;
+          photoGalleryTargets.forEach((target) => {
+            target.innerHTML = photoHtml;
+          });
+        } else {
+          photoGalleryTargets.forEach((target) => {
+            target.innerHTML = '';
+          });
+        }
+      }
+
+      if (videoGalleryTargets.length) {
+        const list = mediaContent.videos || [];
+        const activeIndex = Math.min(Math.max(state.mobileVideoIndex || 0, 0), Math.max(list.length - 1, 0));
+        state.mobileVideoIndex = activeIndex;
+        const active = list[activeIndex];
+
+        if(active){
+          const videoHtml = `
+            <div class="mobile-media-stage mobile-video-stage">
+              <button type="button" data-action="open-video" data-video="${active.url}">
+                <img src="${active.cover}" alt="${active.title}">
+                <span class="mobile-media-play"><img class="ac-icon" src="/assets/icons/play.svg" alt="" aria-hidden="true"></span>
+                <div class="mobile-media-overlay">
+                  <strong>${active.title}</strong>
+                  <span>Смотреть видео</span>
+                </div>
+              </button>
+            </div>
+            <div class="mobile-video-preview-strip">
+              ${list.map((item, idx) => `
+                <button class="mobile-video-preview-thumb ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-video-select" data-video-index="${idx}" aria-label="Выбрать видео ${idx + 1}">
+                  <img src="${item.cover}" alt="${item.title}">
+                </button>
+              `).join('')}
+            </div>
+          `;
+          videoGalleryTargets.forEach((target) => {
+            target.innerHTML = videoHtml;
+          });
+        } else {
+          videoGalleryTargets.forEach((target) => {
+            target.innerHTML = '';
+          });
+        }
+      }
+
+      if (reviewsGalleryTargets.length) {
+        const list = mediaContent.reviews || [];
+        const activeIndex = Math.min(Math.max(state.mobileReviewIndex || 0, 0), Math.max(list.length - 1, 0));
+        state.mobileReviewIndex = activeIndex;
+        const active = list[activeIndex];
+        if(active){
+          const reviewsHtml = `
+            <div class="mobile-review-social-proof">
+              <div class="mobile-review-top">
+                <div class="mobile-review-scoreline">
+                  <strong>5.0</strong><span class="mobile-review-stars">★★★★★</span>
+                </div>
+                <a class="inline-link-btn primary" href="${mediaContent.references.yandexReviewsUrl}" target="_blank" rel="noopener noreferrer">Отзывы в Яндекс</a>
+              </div>
+              <div class="mobile-review-proof">Более 40 реальных отзывов на Яндекс.Картах</div>
+              <p class="mobile-review-trust-note">Родители пишут не про “анимацию”, а про сильную команду и реальные проекты.</p>
+            </div>
+            <div class="mobile-review-main">
+              <div class="mobile-review-card">
+                <div class="mobile-review-head">
+                  <img src="${active.avatar}" alt="${active.name}">
+                  <div>
+                    <strong>${active.name}</strong>
+                    <span>${active.meta}</span>
+                    <span class="mobile-review-stars">★★★★★</span>
+                  </div>
+                </div>
+                <div class="mobile-review-text">${active.quote}</div>
+              </div>
+              <div class="mobile-review-dots">
+                ${list.map((_, idx) => `
+                  <button class="mobile-review-dot ${idx === activeIndex ? 'active' : ''}" type="button" data-action="mobile-review-select" data-review-index="${idx}" aria-label="Показать отзыв ${idx + 1}"></button>
+                `).join('')}
+              </div>
+              <div class="mobile-review-main-nav">
+                <button class="mobile-review-nav-btn" type="button" data-action="mobile-review-prev" aria-label="Предыдущий отзыв">Назад</button>
+                <button class="mobile-review-nav-btn" type="button" data-action="mobile-review-next" aria-label="Следующий отзыв">Далее</button>
+              </div>
+              <div class="mobile-review-more">
+                <a class="mobile-review-more-btn" href="${mediaContent.references.yandexReviewsUrl}" target="_blank" rel="noopener noreferrer">Смотреть все отзывы</a>
+              </div>
+            </div>
+          `;
+          reviewsGalleryTargets.forEach((target) => {
+            target.innerHTML = reviewsHtml;
+          });
+        } else {
+          reviewsGalleryTargets.forEach((target) => {
+            target.innerHTML = '';
+          });
+        }
+      }
+
+      if (faqListTargets.length || faqFiltersTargets.length) {
+        const rawGroups = mediaContent.faq.map((group) => group.group);
+        const primaryGroups = rawGroups.filter((group) => group !== 'all' && group !== 'Все');
+        const tailGroups = rawGroups.filter((group) => group === 'all' || group === 'Все');
+        const groups = [...primaryGroups, ...tailGroups];
+        const safeGroup = groups.includes(state.mobileFaqGroup) ? state.mobileFaqGroup : (groups[0] || 'Медицина');
+        state.mobileFaqGroup = safeGroup;
+        const activeFaqGroup = mediaContent.faq.find((group) => group.group === safeGroup);
+        const faqItems = (activeFaqGroup?.items || []).map((item, index) => ({
+          key: `${safeGroup}:${index}`,
           q: item.q,
           a: item.a
-        })));
-        mobileFaqList.innerHTML = flatFaq.slice(0, 6).map(item => `
-          <div class="mobile-faq-card">
-            <strong>${item.group} · ${item.q}</strong>
-            <span>${item.a}</span>
-          </div>
+        }));
+        const fallbackKey = faqItems[0]?.key || '';
+        const activeKey = faqItems.some((item) => item.key === state.mobileFaqOpenKey) ? state.mobileFaqOpenKey : fallbackKey;
+        state.mobileFaqOpenKey = activeKey;
+
+        const faqFiltersHtml = groups.map((group) => `
+            <button
+              type="button"
+              class="mobile-faq-filter-chip ${group === safeGroup ? 'active' : ''}"
+              data-action="mobile-faq-filter"
+              data-faq-group="${group}"
+            >${group}</button>
+          `).join('');
+        faqFiltersTargets.forEach((target) => {
+          target.innerHTML = faqFiltersHtml;
+        });
+
+        const faqListHtml = faqItems.map((item) => `
+          <article class="mobile-faq-item ${item.key === activeKey ? 'open' : ''}">
+            <button
+              type="button"
+              class="mobile-faq-question"
+              data-action="mobile-faq-toggle"
+              data-faq-key="${item.key}"
+            >
+              <span>${item.q}</span>
+              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+            </button>
+            <div class="mobile-faq-answer">${item.a}</div>
+          </article>
         `).join('');
+        faqListTargets.forEach((target) => {
+          target.innerHTML = faqListHtml;
+        });
       }
 
-      if (mobileInlineTeamList) {
-        mobileInlineTeamList.innerHTML = mediaContent.team.slice(0, 4).map(item => `
-          <div class="mobile-team-card">
-            <div class="mobile-team-avatar">
-              <img src="${item.avatarUrl}" alt="${item.fio}">
+      teamTargets.forEach((target) => renderCompactInlineTeamList(target));
+      stayTargets.forEach((target) => renderCompactInlineStayList(target));
+      contactsTargets.forEach((target) => renderCompactInlineContactsList(target));
+      socialsTargets.forEach((target) => renderCompactInlineSocials(target));
+
+      if (mobileDocsRequisites) {
+        mobileDocsRequisites.innerHTML = '';
+      }
+
+      if (mobileDocsAccordion) {
+        mobileDocsAccordion.innerHTML = `
+          <article class="mobile-docs-accordion-item ${state.mobileDocsExpanded ? 'open' : ''}">
+            <button type="button" class="mobile-docs-toggle" data-action="mobile-docs-toggle">
+              <span class="mobile-docs-toggle-copy">
+                <span class="mobile-docs-toggle-main">ООО «ВОИП КОННЕКТ»</span>
+                <span class="mobile-docs-toggle-meta">ИНН 7729713637 · РТО 025773</span>
+              </span>
+              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+            </button>
+            <div class="mobile-docs-links">
+              <a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a>
+              <a href="mailto:hello@codims.ru">hello@codims.ru</a>
+              <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+              <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
+              <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
+              <a href="legal.html#children-rest" target="_blank" rel="noopener noreferrer">Отдых и оздоровление детей</a>
+              <a href="legal.html#partners-info" target="_blank" rel="noopener noreferrer">Условия для партнёров</a>
+              <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
             </div>
-            <div>
-              <strong>${item.fio}</strong>
-              <span>${item.role}</span>
+          </article>
+        `;
+      }
+
+      document.querySelectorAll('#mobilePhotoFilters [data-photo-filter], #mobilePhotoFiltersDesktop [data-photo-filter]').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.photoFilter === state.photoFilter);
+      });
+    }
+
+    function renderDesktopMobileDocsBlock(){
+      const footer = document.getElementById('section-legal');
+      if(!footer) return;
+
+      if(!footer.dataset.originalMarkup){
+        footer.dataset.originalMarkup = footer.innerHTML;
+      }
+
+      const useMobileDocs = USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile';
+      if(!useMobileDocs){
+        if(footer.dataset.mobileDocsApplied === '1'){
+          footer.innerHTML = footer.dataset.originalMarkup || footer.innerHTML;
+          footer.dataset.mobileDocsApplied = '0';
+        }
+        footer.classList.remove('mobile-docs-inline');
+        return;
+      }
+
+      footer.classList.add('mobile-docs-inline');
+      footer.dataset.mobileDocsApplied = '1';
+      footer.innerHTML = `
+        <div class="mobile-docs-shell">
+          <article class="mobile-docs-accordion-item ${state.mobileDocsExpanded ? 'open' : ''}">
+            <button type="button" class="mobile-docs-toggle" data-action="mobile-docs-toggle">
+              <span class="mobile-docs-toggle-copy">
+                <span class="mobile-docs-toggle-main">ООО «ВОИП КОННЕКТ»</span>
+                <span class="mobile-docs-toggle-meta">ИНН 7729713637 · РТО 025773</span>
+              </span>
+              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+            </button>
+            <div class="mobile-docs-links">
+              <a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a>
+              <a href="mailto:hello@codims.ru">hello@codims.ru</a>
+              <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+              <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
+              <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
+              <a href="legal.html#children-rest" target="_blank" rel="noopener noreferrer">Отдых и оздоровление детей</a>
+              <a href="legal.html#partners-info" target="_blank" rel="noopener noreferrer">Условия для партнёров</a>
+              <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
             </div>
-          </div>
-        `).join('');
-      }
+          </article>
+        </div>
+      `;
+    }
 
-      if (mobileInlineStayList) {
-        const stayCards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
-          return {
-            img: card.querySelector('img')?.getAttribute('src') || '',
-            title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
-            text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
-          };
-        }).filter(item => item.title);
+    const DESKTOP_MOBILE_SECTION_TEMPLATES = {
+      'section-about': `
+        <h3>О лагере</h3>
+        <p class="section-lead">AiDaCamp — место, где ребёнок создаёт, двигается, работает в команде и уезжает со смены с понятным результатом.</p>
+        <div class="mobile-about-features" id="mobileAboutFeaturesDesktop"></div>
+      `,
+      'section-journey': `
+        <h3>Как проходит смена</h3>
+        <p class="section-lead">4 шага: от быстрого включения к понятному результату за смену.</p>
+        <div class="mobile-journey-flow" id="mobileJourneyContentDesktop"></div>
+      `,
+      'section-programs': `
+        <h3>Описание смен</h3>
+        <p class="section-lead">Выберите смену в селекторе — ниже покажем одну карточку с ключевыми деталями.</p>
+        <div class="mobile-programs-flow" id="mobileProgramsContentDesktop"></div>
+      `,
+      'section-photos': `
+        <h3>Фото</h3>
+        <p class="section-lead">Живые кадры лагеря: занятия, бассейн, спорт, питание, команда и атмосфера.</p>
+        <div class="mobile-media-filter-row" id="mobilePhotoFiltersDesktop">
+          <button class="mobile-media-filter active" type="button" data-photo-filter="camp">Атмосфера</button>
+          <button class="mobile-media-filter" type="button" data-photo-filter="pool">Бассейн</button>
+          <button class="mobile-media-filter" type="button" data-photo-filter="sport">Спорт</button>
+          <button class="mobile-media-filter" type="button" data-photo-filter="study">Учёба</button>
+          <button class="mobile-media-filter" type="button" data-photo-filter="food">Питание</button>
+        </div>
+        <div id="mobilePhotoGalleryDesktop"></div>
+      `,
+      'section-videos': `
+        <h3>Видео</h3>
+        <p class="section-lead">Короткие видео, которые быстро объясняют, почему дети в лагере меняются сильнее, чем родители ожидают.</p>
+        <div id="mobileVideoGalleryDesktop"></div>
+      `,
+      'section-reviews': `
+        <h3>Отзывы</h3>
+        <p class="section-lead">Сильный внешний social proof: реальные отзывы родителей на Яндекс Картах.</p>
+        <div id="mobileReviewsGalleryDesktop"></div>
+      `,
+      'section-faq': `
+        <h3>FAQ</h3>
+        <p class="section-lead">Ключевые вопросы по медицине, безопасности, питанию и проживанию.</p>
+        <div class="mobile-faq-filter-row" id="mobileFaqFiltersDesktop"></div>
+        <div class="mobile-faq-accordion" id="mobileFaqListDesktop"></div>
+      `,
+      'section-team': `
+        <h3>Команда</h3>
+        <p class="section-lead">Люди, которые ведут смены и работают с детьми в проектном формате.</p>
+        <div class="mobile-team-list" id="mobileInlineTeamListDesktop"></div>
+      `,
+      'section-stay': `
+        <h3>Размещение</h3>
+        <p class="section-lead">Комнаты, бытовые зоны и территория лагеря.</p>
+        <div class="mobile-stay-list" id="mobileInlineStayListDesktop"></div>
+      `,
+      'section-contacts': `
+        <h3>Контакты</h3>
+        <p class="section-lead">Быстрая связь и маршрут до лагеря.</p>
+        <div class="mobile-contacts-list" id="mobileInlineContactsListDesktop"></div>
+        <div class="mobile-socials-row" id="mobileInlineSocialsDesktop"></div>
+      `
+    };
 
-        mobileInlineStayList.innerHTML = stayCards.slice(0, 3).map((item, idx) => `
-          <div class="mobile-stay-card is-clickable" data-action="open-stay-photo" data-stay-index="${idx}" role="button" tabindex="0">
-            <div class="mobile-stay-thumb">${item.img ? `<img src="${item.img}" alt="${item.title}">` : ''}</div>
-            <div>
-              <strong>${item.title}</strong>
-              <span>${item.text}</span>
-            </div>
-          </div>
-        `).join('');
-      }
+    function applyMobileTemplatesToDesktopSections(){
+      const useMobileTemplates = USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile';
+      Object.entries(DESKTOP_MOBILE_SECTION_TEMPLATES).forEach(([sectionId, template]) => {
+        const section = document.getElementById(sectionId);
+        if(!section) return;
+        if(!section.dataset.desktopOriginalMarkup){
+          section.dataset.desktopOriginalMarkup = section.innerHTML;
+        }
+        if(useMobileTemplates){
+          section.innerHTML = template;
+          section.classList.add('mobile-template');
+        } else if(section.dataset.desktopOriginalMarkup){
+          section.innerHTML = section.dataset.desktopOriginalMarkup;
+          section.classList.remove('mobile-template');
+        }
+      });
+    }
 
-      if (mobileInlineContactsList) {
-        const primaryContacts = mediaContent.contacts.filter(item => item.label === 'whatsapp' || item.label === 'telegram');
-        mobileInlineContactsList.innerHTML = primaryContacts.map(item => `
-          <div class="mobile-contact-card">
-            <a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.label === 'whatsapp' ? 'WhatsApp' : '@proga_school'}</a>
-          </div>
-        `).join('');
-      }
-
-      if (mobileInlineSocials) {
-        mobileInlineSocials.innerHTML = mediaContent.socials.map(item => `
-          <a class="mobile-social-link" href="${item.href}" target="_blank" rel="noopener noreferrer" aria-label="${item.key}">
-            <span class="mobile-social-icon"><span class="social-badge-mark">${socialBadgeMark(item)}</span></span>
-            <span class="mobile-social-label">${item.key}</span>
-          </a>
-        `).join('');
-      }
+    function applyMobileSectionAccordion(){
+      return;
     }
 
     function renderAll(){
+      applyMobileTemplatesToDesktopSections();
       renderShiftOptions('desktop-shift-options');
-      renderShiftOptions('mobileShiftOptions');
+      if(!USE_DESKTOP_BASE_FOR_MOBILE){
+        renderShiftOptions('mobileShiftOptions');
+      }
       renderBookingPanels();
       renderGuidedState('desktop');
-      renderGuidedState('mobile');
+      if(!USE_DESKTOP_BASE_FOR_MOBILE){
+        renderGuidedState('mobile');
+      }
       syncDesktopAgeTapHintVisibility();
       scheduleDesktopAgeTapHint();
       renderMediaSections();
+      if(!USE_DESKTOP_BASE_FOR_MOBILE){
+        applyMobileSectionAccordion();
+      }
+      renderDesktopMobileDocsBlock();
       renderSummary();
     }
 
@@ -11538,16 +14666,14 @@
     }
 
     function isSummaryCompactMode(){
-      if(state.view === 'mobile'){
+      if(state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE){
         return state.mobileMode === 'compact';
       }
       return state.desktopMode === 'compact';
     }
 
     function isSummaryBelowHero(){
-      const heroSelector = state.view === 'mobile'
-        ? '#mobileView .mobile-hero'
-        : '#desktopView .hero-shell';
+      const heroSelector = '#desktopView .hero-shell';
       const hero = document.querySelector(heroSelector);
       if(!hero) return true;
       const rect = hero.getBoundingClientRect();
@@ -11555,7 +14681,7 @@
     }
 
     function isBookingPrimaryCtaVisibleInViewport(){
-      const cardSelector = state.view === 'mobile'
+      const cardSelector = (state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE)
         ? '#mobileBookingCard'
         : '#desktop-booking-card';
       const card = document.querySelector(cardSelector);
@@ -11614,6 +14740,9 @@
         persist();
       }
       const bar = document.getElementById('summaryBar');
+      if(bar){
+        bar.classList.remove('summary-bar--stage4');
+      }
 
       if(!state.shiftId){
         updateSummaryBarVisibility();
@@ -11623,14 +14752,28 @@
 
       const shift = shifts.find(s => s.id === state.shiftId);
       const price = state.offerPrice || state.basePrice || shift.price;
+      const summaryStage = getBookingStage();
+      const isStageFourSummary = summaryStage === 4 && !state.bookingCompleted;
+      bar.classList.toggle('summary-bar--stage4', isStageFourSummary);
 
-      document.getElementById('summaryMain').textContent = `${labelAge(state.age)}`;
+      document.getElementById('summaryMain').textContent = isStageFourSummary ? '' : `${labelAge(state.age)}`;
       document.getElementById('summaryMeta').textContent = `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
       document.getElementById('summaryPrice').textContent = formatPrice(price);
       const summaryCtaBtn = bar.querySelector('[data-action="primary-cta"]');
       if(summaryCtaBtn){
         const action = getPrimaryActionState();
-        summaryCtaBtn.textContent = getResolvedPrimaryActionText(action, shift);
+        const actionText = getResolvedPrimaryActionText(action, shift);
+        if(isStageFourSummary && /^Оформить заявку · выгода /i.test(actionText)){
+          const gainText = actionText.replace(/^Оформить заявку · выгода /i, '').trim();
+          summaryCtaBtn.innerHTML = `
+            <span class="cta-main-line cta-main-line--primary">Оформить заявку</span>
+            <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
+          `;
+          summaryCtaBtn.setAttribute('aria-label', actionText);
+        } else {
+          summaryCtaBtn.textContent = actionText;
+          summaryCtaBtn.removeAttribute('aria-label');
+        }
         summaryCtaBtn.classList.toggle('is-disabled', !!action.disabled);
         summaryCtaBtn.setAttribute('aria-disabled', action.disabled ? 'true' : 'false');
         summaryCtaBtn.disabled = false;
@@ -11946,7 +15089,7 @@
         price_text: price ? formatPrice(price) : '—',
         promo_code: state.code || '',
         promo_status: state.offerPrice ? (state.offerStage >= 2 ? 'improved_again' : 'fixed') : 'none',
-        mode: state.view === 'mobile'
+        mode: state.previewView === 'mobile'
           ? `mobile:${state.mobileMode || 'full'}`
           : `desktop:${state.desktopMode || 'full'}`,
         sent_at_local: new Date().toLocaleString('ru-RU')
@@ -11990,24 +15133,7 @@
     function scrollToSection(id){
       const cleanId = String(id || '').replace(/^#/, '');
       if(!cleanId) return false;
-
-      const mobileMap = {
-        'section-about':'mobile-section-about',
-        'section-journey':'mobile-section-journey',
-        'section-programs':'mobileBookingCard',
-        'section-photos':'mobile-section-photos',
-        'section-videos':'mobile-section-videos',
-        'section-reviews':'mobile-section-reviews',
-        'section-faq':'mobile-section-faq',
-        'section-team':'mobile-section-team',
-        'section-stay':'mobile-section-stay',
-        'section-contacts':'mobile-section-contacts'
-      };
-
-      const targetId = state.view === 'mobile'
-        ? (mobileMap[cleanId] || cleanId)
-        : cleanId;
-      const el = document.getElementById(targetId) || document.getElementById(cleanId);
+      const el = document.getElementById(cleanId);
       if(!el) return false;
 
       el.scrollIntoView({behavior:'smooth', block:'start'});
@@ -12017,9 +15143,30 @@
     function navigateToSection(id){
       const cleanId = String(id || '').replace(/^#/, '');
       if(!cleanId) return;
+      const isMobilePreview = state.previewView === 'mobile';
 
-      const isDesktopCompact = state.view === 'desktop' && state.desktopMode === 'compact';
-      const isMobileCompact = state.view === 'mobile' && state.mobileMode === 'compact';
+      if(isMobilePreview && cleanId === 'section-programs' && !hasSelectedAge()){
+        track('mobile_shifts_click_without_age', {
+          mode: state.mobileMode || 'full'
+        });
+        showHint('Сначала выберите возраст ребёнка', 'age');
+        focusMobileAgeGate();
+        return;
+      }
+
+      if(isMobilePreview && cleanId === 'section-programs' && hasSelectedAge()){
+        track('mobile_shifts_opened_after_age', {
+          mode: state.mobileMode || 'full',
+          age: state.age || ''
+        });
+      }
+
+      const isDesktopCompact = !isMobilePreview && state.desktopMode === 'compact';
+      const isMobileCompact = isMobilePreview && (
+        USE_DESKTOP_BASE_FOR_MOBILE
+          ? state.desktopMode === 'compact'
+          : state.mobileMode === 'compact'
+      );
 
       if(isDesktopCompact || isMobileCompact){
         if(COMPACT_MODAL_SECTIONS.has(cleanId) && openSectionModal(cleanId)){
@@ -12047,6 +15194,7 @@
       if(navEl.closest('#serviceMenu')){
         document.querySelectorAll('#serviceMenu [data-nav]').forEach(x => x.classList.remove('active'));
         navEl.classList.add('active');
+        setHeroMenuOpen(false);
       }
 
       navigateToSection(target);
@@ -12059,6 +15207,14 @@
       if(!href) return;
       e.preventDefault();
       navigateToSection(href);
+    });
+
+    document.addEventListener('click', (e) => {
+      if(!isHeroMenuOpen()) return;
+      const withinMenu = e.target.closest('#heroMenuWrap');
+      if(!withinMenu){
+        setHeroMenuOpen(false);
+      }
     });
 
     bindPhoneMaskForScope('drawer');
@@ -12100,6 +15256,84 @@
     document.getElementById('mediaLightbox').addEventListener('click', (e) => {
       if(e.target.id === 'mediaLightbox') closeMedia();
     });
+
+    (function bindMediaSwipe(){
+      const lightbox = document.getElementById('mediaLightbox');
+      const content = document.getElementById('mediaContent');
+      if(!lightbox || !content) return;
+      let startX = 0;
+      let startY = 0;
+      let moved = false;
+
+      content.addEventListener('touchstart', (e) => {
+        if(lightbox.classList.contains('hidden')) return;
+        const touch = e.touches && e.touches[0];
+        if(!touch) return;
+        startX = touch.clientX;
+        startY = touch.clientY;
+        moved = false;
+      }, {passive:true});
+
+      content.addEventListener('touchmove', (e) => {
+        if(lightbox.classList.contains('hidden')) return;
+        const touch = e.touches && e.touches[0];
+        if(!touch) return;
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if(Math.abs(dx) > 6 || Math.abs(dy) > 6){
+          moved = true;
+        }
+      }, {passive:true});
+
+      content.addEventListener('touchend', (e) => {
+        if(lightbox.classList.contains('hidden')) return;
+        const touch = (e.changedTouches && e.changedTouches[0]) || null;
+        if(!touch || !moved) return;
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if(Math.abs(dx) < 36 || Math.abs(dx) <= Math.abs(dy)) return;
+        if(dx < 0){
+          nextMedia();
+        } else {
+          prevMedia();
+        }
+      }, {passive:true});
+    })();
+
+    (function bindMobileReviewSwipe(){
+      let startX = 0;
+      let startY = 0;
+      let track = null;
+
+      document.addEventListener('touchstart', (e) => {
+        const card = e.target.closest('.mobile-review-card');
+        if(!card) return;
+        const touch = e.touches && e.touches[0];
+        if(!touch) return;
+        track = card;
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }, {passive:true});
+
+      document.addEventListener('touchend', (e) => {
+        if(!track) return;
+        const touch = (e.changedTouches && e.changedTouches[0]) || null;
+        track = null;
+        if(!touch) return;
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if(Math.abs(dx) < 36 || Math.abs(dx) <= Math.abs(dy)) return;
+        const total = Math.max(0, mediaContent.reviews?.length || 0);
+        if(!total) return;
+        if(dx < 0){
+          state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) + 1) % total;
+        } else {
+          state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) - 1 + total) % total;
+        }
+        renderCompactTrustPanelContent();
+        persist();
+      }, {passive:true});
+    })();
 
     const videoModal = document.getElementById('videoModal');
     if(videoModal){
@@ -12151,6 +15385,28 @@
       }, {passive:false});
     }
 
+    document.addEventListener('visibilitychange', () => {
+      try{
+        // FastTrack toggle: temporarily disable welcome-back popup on return.
+        const ENABLE_WELCOME_BACK_POPUP = false;
+        if(!ENABLE_WELCOME_BACK_POPUP) return;
+        const hiddenKey = 'aidacamp_hidden_once';
+        const shownKey = 'aidacamp_welcome_back_shown';
+        if(document.hidden){
+          sessionStorage.setItem(hiddenKey, '1');
+          return;
+        }
+        if(
+          sessionStorage.getItem(hiddenKey) === '1' &&
+          sessionStorage.getItem(shownKey) !== '1'
+        ){
+          openNoticeModal('А мы уже заждались. Рады, что вернулись.', 'С возвращением');
+          sessionStorage.setItem(shownKey, '1');
+        }
+      }catch(e){
+      }
+    });
+
     document.addEventListener('keydown', (e) => {
       if(document.getElementById('mediaLightbox').classList.contains('hidden')) return;
       if(e.key === 'Escape') closeMedia();
@@ -12181,6 +15437,11 @@
         clearTimeout(heroResizeTimer);
       }
       heroResizeTimer = setTimeout(() => {
+        const autoView = getViewportPreviewView();
+        if(autoView !== state.previewView){
+          switchView(autoView);
+          return;
+        }
         initHero();
         applyCompactSectionModalLayout();
         updateSummaryBarVisibility();
@@ -12191,7 +15452,9 @@
     loadVideoMetaCache();
 
     renderShiftOptions('desktop-shift-options');
-    renderShiftOptions('mobileShiftOptions');
+    if(!USE_DESKTOP_BASE_FOR_MOBILE){
+      renderShiftOptions('mobileShiftOptions');
+    }
     renderShiftCards();
     renderMediaSections();
     renderSummary();
@@ -12206,13 +15469,15 @@
     initScrollTracking();
     initSummaryBarViewportSync();
     initSectionViewTracking();
-    switchView(state.view || 'desktop');
+    switchView(getViewportPreviewView());
     applyHeroContrastMode();
     applyHeroMicroMode();
     applyOfferModalTheme();
     applyOfferLayoutMode();
     applyDesktopMode();
-    applyMobileMode();
+    if(!USE_DESKTOP_BASE_FOR_MOBILE){
+      applyMobileMode();
+    }
     refreshVideoMeta({force:true});
     scheduleVideoMetaRefresh();
     scheduleDesktopAgeTapHint();
