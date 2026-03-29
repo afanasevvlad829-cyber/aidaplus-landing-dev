@@ -37,3 +37,8 @@
 
 ## Iteration plan
 - See `docs/quality/roadmap.md`
+
+## Debt register
+- File: `docs/quality/debt-register.md`
+- Add item via:
+  - `./tools/debt-register-add.sh "Area" "Type" "Risk" "Created By" "Fix Plan" "Iteration"`
