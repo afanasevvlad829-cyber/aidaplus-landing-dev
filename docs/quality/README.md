@@ -18,6 +18,11 @@
   - captures metrics
   - fails on baseline/threshold regression
 
+## Commit policy guard
+- Install local hooks once:
+  - `./tools/install-git-hooks.sh`
+- Hook blocks commits where `dist` artifacts are staged without source-of-truth updates.
+
 ## CI gates
 - Workflow `Quality Gate` runs on PR and push (`main`, `dev`, `codex/**`).
 - Deploy workflow depends on quality pass.
@@ -29,3 +34,6 @@
   - direct state mutations
   - replacement characters in `dist`
 - Small deltas allowed only for unavoidable formatting/packaging metrics.
+
+## Iteration plan
+- See `docs/quality/roadmap.md`
