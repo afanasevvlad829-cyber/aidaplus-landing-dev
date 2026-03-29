@@ -212,7 +212,9 @@
 
     const STORAGE_KEY = 'aidacamp_proto_state_v3';
 
-    let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
+    const storedState = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {};
+    const normalizeStoredView = (value) => ((value === 'mobile' || value === 'desktop') && value) || 'desktop';
+    const defaultState = {
       age:null,
       shiftId:null,
       basePrice:null,
@@ -220,9 +222,10 @@
       code:null,
       expiresAt:null,
       offerStage:0,
-      view:'desktop',
+      view: normalizeStoredView(storedState.view),
       phone:''
     };
+    let state = { ...defaultState, ...storedState, view: normalizeStoredView(storedState.view) };
 
     const METRIKA_ID = 96499295;
     const DEBUG_UI = false;
@@ -230,18 +233,94 @@
     const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v1';
     const VIDEO_META_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
     const VIDEO_META_REFRESH_INTERVAL_MS = 1000 * 60 * 60 * 4;
-    const COMPACT_MODAL_SECTIONS = new Set([
-      'section-about',
-      'section-journey',
-      'section-programs',
-      'section-photos',
-      'section-videos',
-      'section-reviews',
-      'section-faq',
-      'section-team',
-      'section-stay',
-      'section-contacts'
-    ]);
+    const SECTION_NAVIGATION_RULES = {
+      defaultNavigationMode: 'scroll-or-fallback',
+      compactNavigationMode: 'modal-or-scroll',
+      sectionPolicies: {
+        'section-about': { mode: 'modal-or-scroll' },
+        'section-journey': { mode: 'modal-or-scroll' },
+        'section-programs': {
+          mode: 'modal-or-scroll',
+          requiresAge: true
+        },
+        'section-photos': { mode: 'modal-or-scroll' },
+        'section-videos': { mode: 'modal-or-scroll' },
+        'section-reviews': { mode: 'modal-or-scroll' },
+        'section-faq': { mode: 'modal-or-scroll' },
+        'section-team': { mode: 'modal-or-scroll' },
+        'section-stay': { mode: 'modal-or-scroll' },
+        'section-contacts': { mode: 'modal-or-scroll' }
+      },
+      fallbackBySection: {
+        'section-legal': 'legal.html#legal-info'
+      },
+      fallbackPolicy: {
+        openInNewTab: ['section-legal'],
+        openInNewTabMode: '_blank'
+      }
+    };
+    const sectionPolicySchema = {
+      mode: new Set(['scroll-or-fallback', 'modal-or-scroll']),
+    };
+
+    const SECTION_NAVIGATION_ACTIONS = {
+      'modal-or-scroll': (navAction) => {
+        const section = navAction?.sectionId || '';
+        if(openSectionModal(section)){
+          return {
+            navigated: true,
+            source: 'section-modal'
+          };
+        }
+        const navigated = openSectionOrFallback(section);
+        return {
+          navigated,
+          source: navigated ? 'section-scroll' : 'none'
+        };
+      },
+      'scroll-or-fallback': (navAction) => {
+        const section = navAction?.sectionId || '';
+        return {
+          navigated: openSectionOrFallback(section),
+          source: 'section-scroll'
+        };
+      },
+      noop: () => {
+        return {
+          navigated: false,
+          source: 'noop'
+        };
+      }
+    };
+    function getSectionPolicy(sectionId){
+      return SECTION_NAVIGATION_RULES.sectionPolicies[sectionId] || {};
+    }
+    function getNavigationMode(sectionId){
+      const policy = getSectionPolicy(sectionId);
+      const mode = policy.mode || SECTION_NAVIGATION_RULES.defaultNavigationMode;
+      return sectionPolicySchema.mode.has(mode) && mode || SECTION_NAVIGATION_RULES.defaultNavigationMode;
+    }
+
+    function resolveNavigationProfile(sectionId){
+      const cleanId = normalizeSectionId(sectionId);
+      if(!cleanId){
+        return {
+        sectionId: '',
+        mode: 'noop'
+      };
+      }
+      const fallback = resolveSectionFallbackPolicy(cleanId);
+      const baseMode = getNavigationMode(cleanId);
+      const compactOnlyMode = isCompactMode() && baseMode === SECTION_NAVIGATION_RULES.compactNavigationMode && baseMode
+        || SECTION_NAVIGATION_RULES.defaultNavigationMode;
+
+      return {
+        sectionId: cleanId,
+        mode: compactOnlyMode,
+        fallbackPath: fallback.path,
+        fallbackTarget: fallback.target
+      };
+    }
     let timerId = null;
     let mediaIndex = 0;
     let mediaType = 'photo';
@@ -284,11 +363,8 @@
         if(typeof ym !== 'undefined'){
           ym(METRIKA_ID, 'reachGoal', event, params);
         }
-      } catch (err){
-        console.warn('Metrika track error:', event, err);
-      }
-      if(DEBUG_UI){
-        console.log('[TRACK]', event, params);
+      } catch (_){
+        // keep analytics failures non-blocking
       }
     }
 
@@ -454,12 +530,13 @@
       }
       renderMediaViewer();
       updateMediaNavState();
-      document.getElementById('mediaLightbox').classList.remove('hidden');
+      document.getElementById('mediaLightbox')?.classList.remove('hidden');
     }
 
     function closeMedia(){
-      document.getElementById('mediaLightbox').classList.add('hidden');
-      document.getElementById('mediaContent').innerHTML = '';
+      document.getElementById('mediaLightbox')?.classList.add('hidden');
+      const mediaContent = document.getElementById('mediaContent');
+      if(mediaContent) mediaContent.innerHTML = '';
       mediaCustomCaption = '';
     }
 
@@ -811,16 +888,48 @@
       list.scrollBy({left: step * direction, behavior:'smooth'});
     }
 
+    function getSectionByTargetId(sectionId, view = getCurrentView()){
+      const normalizedSectionId = resolveSectionTargetId(sectionId, view);
+      return document.getElementById(normalizedSectionId) || document.getElementById(normalizeSectionId(normalizedSectionId));
+    }
+
+    function getSectionFallbackPath(sectionId){
+      const cleanId = normalizeSectionId(sectionId);
+      if(!cleanId) return null;
+      return SECTION_NAVIGATION_RULES.fallbackBySection[cleanId] || null;
+    }
+
+    function resolveSectionFallbackPolicy(sectionId){
+      const cleanId = normalizeSectionId(sectionId);
+      return {
+        path: getSectionFallbackPath(cleanId),
+        target: SECTION_NAVIGATION_RULES.fallbackPolicy.openInNewTab.includes(cleanId)
+          ? SECTION_NAVIGATION_RULES.fallbackPolicy.openInNewTabMode
+          : '_self'
+      };
+    }
+
+    function isSectionModalOpen(){
+      const sectionModal = document.getElementById('sectionModal');
+      return !!(sectionModal && !sectionModal.classList.contains('hidden'));
+    }
+
+    function shouldOpenSectionModalForCurrentMode(){
+      const isMobile = isCurrentViewMobile();
+      const isCompact = isCompactMode();
+      return (isCompact && !isMobile) || (isMobile && isSectionModalOpen());
+    }
+
     function openSectionModal(sectionId){
       const modal = document.getElementById('sectionModal');
       const titleEl = document.getElementById('sectionModalTitle');
       const bodyEl = document.getElementById('sectionModalBody');
-      const sourceSection = document.getElementById(sectionId);
+      const sourceSection = getSectionByTargetId(sectionId, getCurrentView());
       if(!modal || !titleEl || !bodyEl || !sourceSection) return false;
       closeTransientModals('section');
-      const isCompactDesktop = state.view === 'desktop' && state.desktopMode === 'compact';
-      const isMobilePanel = state.view === 'mobile';
-      modal.classList.toggle('section-modal-compact', isCompactDesktop);
+      const isMobilePanel = isCurrentViewMobile();
+      const isCompactCurrentView = isCompactMode();
+      modal.classList.toggle('section-modal-compact', isCompactCurrentView && !isMobilePanel);
       modal.classList.toggle('section-modal-mobile', isMobilePanel);
 
       const sourceTitle = sourceSection.querySelector('h3')?.textContent?.trim() || 'Раздел';
@@ -1198,10 +1307,8 @@
         }
 
         saveLeadFallbackMeta(eventName, endpoint, `http_${response.status}`);
-        console.warn('[LEAD_MOCK_FALLBACK]', {endpoint, body});
         return {ok: false, delivered: false, fallback: true};
       } catch(error){
-        console.error('notifyLead error', error);
         const cfg = window.AC_NOTIFY_CONFIG || {};
         const endpoint = cfg.leadEndpoint || '/api/lead';
         saveLeadFallbackMeta(eventName, endpoint, String(error));
@@ -1430,9 +1537,9 @@
       });
       activePhotoList = [];
 
-      const keepView = state.view || 'desktop';
-      const keepDesktopMode = state.desktopMode || 'full';
-      const keepMobileMode = state.mobileMode || 'full';
+      const keepView = normalizeViewState(state.view);
+      const keepDesktopMode = getModeByView('desktop');
+      const keepMobileMode = getModeByView('mobile');
       state = {
         age: null,
         ageSelected: false,
@@ -1475,8 +1582,7 @@
       renderShiftCards();
       renderAll();
       switchView(keepView);
-      applyDesktopMode();
-      applyMobileMode();
+      applyAllModeStates();
       persist();
       showHint('Сценарий бронирования сброшен. Начните с выбора возраста.');
     }
@@ -1572,7 +1678,7 @@
     }
 
     function applyBookingStageClass(prefix){
-      const cardId = prefix === 'desktop' ? 'desktop-booking-card' : `${prefix}BookingCard`;
+      const cardId = BOOKING_CARD_IDS[prefix];
       const card = document.getElementById(cardId);
       if(!card) return;
       card.classList.remove('booking-stage-1', 'booking-stage-2', 'booking-stage-3', 'booking-stage-4');
@@ -1604,7 +1710,7 @@
 
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
       const isMobile = prefix === 'mobile';
-      const stepOne = isMobile ? document.querySelector('#mobileBookingCard .booking-step-1') : null;
+      const stepOne = document.querySelector(BOOKING_STEP_ONE_SELECTORS[prefix] || '');
       if(isMobile && stepOne && shiftChip.parentElement !== stepOne){
         stepOne.insertBefore(shiftChip, ageTabs);
       }
@@ -1615,7 +1721,8 @@
       ageChip.classList.remove('visible');
       shiftChip.classList.remove('visible');
       if(isMobile){
-        document.getElementById('mobileBookingCard')?.classList.remove('has-mobile-summary-chips');
+        const card = document.getElementById(BOOKING_CARD_IDS[prefix]);
+        card?.classList.remove('has-mobile-summary-chips');
       }
 
       if(!hasSelectedAge()){
@@ -1637,7 +1744,8 @@
       if(shift){
         shiftChipText.textContent = isMobile ? shift.dates : `Смена: ${shift.title} · ${shift.dates}`;
         if(isMobile){
-          document.getElementById('mobileBookingCard')?.classList.add('has-mobile-summary-chips');
+          const card = document.getElementById(BOOKING_CARD_IDS[prefix]);
+          card?.classList.add('has-mobile-summary-chips');
         }
         shiftChip.classList.add('visible');
         shiftList.classList.add('collapsed');
@@ -1659,9 +1767,62 @@
       }, 1300);
     }
 
+    const BOOKING_INFO_IDS = {
+      desktop: 'desktop-booking-info',
+      mobile: 'mobile-booking-info'
+    };
+
+    const BOOKING_CARD_IDS = {
+      desktop: 'desktop-booking-card',
+      mobile: 'mobileBookingCard'
+    };
+
+    const BOOKING_STEP_ONE_SELECTORS = {
+      mobile: '#mobileBookingCard .booking-step-1'
+    };
+
+    const SECTION_ID_MAP_BY_VIEW = {
+      desktop: {},
+      mobile: {
+        'section-about':'mobile-section-about',
+        'section-journey':'mobile-section-journey',
+        'section-programs':'mobile-section-programs',
+        'section-photos':'mobile-section-photos',
+        'section-videos':'mobile-section-videos',
+        'section-reviews':'mobile-section-reviews',
+        'section-faq':'mobile-section-faq',
+        'section-team':'mobile-section-team',
+        'section-stay':'mobile-section-stay',
+        'section-contacts':'mobile-section-contacts',
+        'section-legal':'mobile-section-docs'
+      }
+    };
+
+    const getSectionIdMapForView = (view) => {
+      const safeView = normalizeViewState(view);
+      return SECTION_ID_MAP_BY_VIEW[safeView] || {};
+    };
+
+    function resolveSectionTargetId(sectionId, view = getCurrentView()){
+      const normalized = normalizeSectionId(sectionId);
+      const map = getSectionIdMapForView(view);
+      return map[normalized] || normalized;
+    }
+
+    function normalizeSectionId(sectionId){
+      return String(sectionId || '').trim().replace(/^#/, '');
+    }
+
+    function getBookingViewPrefixes(){
+      return Object.keys(modeViewConfig);
+    }
+
+    function getActiveBookingViewPrefixes(){
+      return [getCurrentView()];
+    }
+
     function nudgeUserToNextStep(message = 'Сначала завершите предыдущий шаг.'){
-      const prefixes = state.view === 'mobile' ? ['mobile'] : ['desktop'];
-      prefixes.forEach((prefix) => {
+      getActiveBookingViewPrefixes().forEach((prefix) => {
         const inlineHint = document.getElementById(`${prefix}InlineHint`);
         if(inlineHint){
           inlineHint.textContent = message;
@@ -1690,7 +1851,7 @@
     }
 
     function showHint(message, requiredStep = ''){
-      ['desktop', 'mobile'].forEach((prefix) => {
+      getBookingViewPrefixes().forEach((prefix) => {
         const el = document.getElementById(`${prefix}BookingHintInline`);
         const baseHint = document.getElementById(`${prefix}BookingHint`);
         if(!el) return;
@@ -1712,7 +1873,7 @@
     }
 
     function syncBookingHints(){
-      ['desktop', 'mobile'].forEach((prefix) => {
+      getBookingViewPrefixes().forEach((prefix) => {
         const el = document.getElementById(`${prefix}BookingHintInline`);
         const baseHint = document.getElementById(`${prefix}BookingHint`);
         if(!el) return;
@@ -1826,28 +1987,19 @@
 
     function renderBookingPanels(){
       syncGuidedState();
-      renderBookingInfo(
-        'desktop-booking-info',
-        'desktopBookingTitle',
-        'desktopBookingLead',
-        'desktopStartBtn',
-        'desktopBookingHint'
-      );
-
-      renderBookingInfo(
-        'mobile-booking-info',
-        'mobileBookingTitle',
-        'mobileBookingLead',
-        'mobileStartBtn',
-        'mobileBookingHint'
-      );
-
-      renderSteps('desktopBookingSteps');
-      renderSteps('mobileBookingSteps');
-      renderGuidedState('desktop');
-      renderGuidedState('mobile');
-      applyBookingStageClass('desktop');
-      applyBookingStageClass('mobile');
+      const views = getBookingViewPrefixes();
+      views.forEach((prefix) => {
+        const infoId = BOOKING_INFO_IDS[prefix];
+        const titleId = `${prefix}BookingTitle`;
+        const leadId = `${prefix}BookingLead`;
+        const btnId = `${prefix}StartBtn`;
+        const hintId = `${prefix}BookingHint`;
+        const stepsId = `${prefix}BookingSteps`;
+        renderBookingInfo(infoId, titleId, leadId, btnId, hintId);
+        renderSteps(stepsId);
+        renderGuidedState(prefix);
+        applyBookingStageClass(prefix);
+      });
       syncBookingHints();
       updateMobileAgeGateUi();
     }
@@ -1867,27 +2019,28 @@
     function updateMobileAgeGateUi(){
       const sticky = document.getElementById('mobileAgeStickyBar');
       if(!sticky) return;
-      const showSticky = state.view === 'mobile' && !hasSelectedAge();
+      const showSticky = isCurrentViewMobile() && !hasSelectedAge();
       sticky.classList.toggle('hidden', !showSticky);
 
       if(showSticky){
         trackOncePerSession('mobile_age_gate_shown', MOBILE_AGE_GATE_SHOWN_KEY, {
-          mode: state.mobileMode || 'full'
+          mode: getModeSummaryForView('mobile')
         });
       }
     }
 
     function switchView(view){
-      patchState({view});
-      document.getElementById('desktopBtn')?.classList.toggle('active', view === 'desktop');
-      document.getElementById('mobileBtn')?.classList.toggle('active', view === 'mobile');
-      document.getElementById('desktopView')?.classList.toggle('hidden', view !== 'desktop');
-      document.getElementById('mobileView')?.classList.toggle('hidden', view !== 'mobile');
-      const desktopModeWrap = document.getElementById('desktopModeWrap');
-      if(desktopModeWrap){
-        desktopModeWrap.classList.toggle('hidden', view !== 'desktop');
-      }
-      if(view !== 'desktop'){
+      const safeView = normalizeViewState(view);
+      patchState({view: safeView});
+      setActiveViewButtons(safeView);
+      Object.entries(modeViewConfig).forEach(([key, cfg]) => {
+        const isCurrent = key === safeView;
+        document.getElementById(cfg.rootId || '')?.classList.toggle('hidden', !isCurrent);
+        if(cfg.modeWrapId){
+          document.getElementById(cfg.modeWrapId)?.classList.toggle('hidden', !isCurrent);
+        }
+      });
+      if(safeView !== 'desktop'){
         closeSectionModal();
       }
       updateMobileAgeGateUi();
@@ -1897,59 +2050,119 @@
       });
     }
 
-    function applyDesktopMode(){
-      const desktopView = document.getElementById('desktopView');
-      const fullBtn = document.getElementById('fullModeBtn');
-      const compactBtn = document.getElementById('compactModeBtn');
+    const modeViewConfig = {
+      desktop: {
+        rootId: 'desktopView',
+        viewButtonId: 'desktopBtn',
+        fullBtnId: 'fullModeBtn',
+        compactBtnId: 'compactModeBtn',
+        modeWrapId: 'desktopModeWrap',
+        closeSectionModalOnFull: true,
+        postModeApply: () => {}
+      },
+      mobile: {
+        rootId: 'mobileView',
+        viewButtonId: 'mobileBtn',
+        fullBtnId: 'mobileFullModeBtn',
+        compactBtnId: 'mobileCompactModeBtn',
+        compactToggleId: 'mobileModeToggle',
+        closeSectionModalOnFull: false,
+        postModeApply: () => updateMobileAgeGateUi()
+      }
+    };
 
-      desktopView.classList.toggle('compact-mode', state.desktopMode === 'compact');
-      fullBtn.classList.toggle('active', state.desktopMode === 'full');
-      compactBtn.classList.toggle('active', state.desktopMode === 'compact');
+    const MODE_ROOT_CLASS_BY_VIEW = {
+      desktop: 'compact-mode',
+      mobile: 'mobile-compact-mode'
+    };
+
+    const MODE_VALUE_MAP = {
+      compact: 'compact',
+      full: 'full'
+    };
+
+    const MODE_TOGGLE_MAP = {
+      full: 'compact',
+      compact: 'full'
+    };
+
+    function getModeStateKey(view){
+      return `${view}Mode`;
     }
 
-    function switchDesktopMode(mode){
-      patchState({desktopMode: mode});
-      applyDesktopMode();
-      if(mode !== 'compact'){
+    function getModeByView(view){
+      return MODE_VALUE_MAP[state[getModeStateKey(view)]] || 'full';
+    }
+
+    function isCurrentViewMobile(){
+      return state.view === 'mobile';
+    }
+
+    function getCurrentView(){
+      return state.view || 'desktop';
+    }
+
+    function isCompactMode(view){
+      return getModeByView(view || getCurrentView()) === 'compact';
+    }
+
+    function getCurrentModeSummary(){
+      return getModeSummaryForView();
+    }
+
+    function getModeSummaryForView(view = getCurrentView()){
+      const safeView = normalizeViewState(view);
+      return safeView + ':' + getModeByView(safeView);
+    }
+
+    function applyModeForView(view){
+      const cfg = modeViewConfig[view];
+      const isCompact = getModeByView(view) === 'compact';
+      document.getElementById(cfg.rootId || '')?.classList.toggle(MODE_ROOT_CLASS_BY_VIEW[view] || 'compact-mode', isCompact);
+      document.getElementById(cfg.fullBtnId || '')?.classList.toggle('active', !isCompact);
+      document.getElementById(cfg.compactBtnId || '')?.classList.toggle('active', isCompact);
+
+      const isCompactToggle = cfg.compactToggleId;
+      const toggleState = !isCompact;
+      document.getElementById(isCompactToggle || '')?.classList.toggle('is-full', toggleState);
+      document.getElementById(isCompactToggle || '')?.setAttribute('aria-checked', String(toggleState));
+      cfg.postModeApply?.();
+    }
+
+    function switchModeForView(view, mode){
+      const safeMode = MODE_VALUE_MAP[mode] || 'full';
+      const key = getModeStateKey(view);
+      patchState({[key]: safeMode});
+      applyModeForView(view);
+      if(safeMode !== 'compact' && modeViewConfig[view]?.closeSectionModalOnFull){
         closeSectionModal();
       }
       persist();
     }
 
-    function applyMobileMode(){
-      const mobileView = document.getElementById('mobileView');
-      const fullBtn = document.getElementById('mobileFullModeBtn');
-      const compactBtn = document.getElementById('mobileCompactModeBtn');
-      const mobileModeToggle = document.getElementById('mobileModeToggle');
-      if(!mobileView) return;
-
-      mobileView.classList.toggle('mobile-compact-mode', state.mobileMode === 'compact');
-      if(fullBtn && compactBtn){
-        fullBtn.classList.toggle('active', state.mobileMode === 'full');
-        compactBtn.classList.toggle('active', state.mobileMode === 'compact');
-      }
-      if(mobileModeToggle){
-        const isFull = state.mobileMode === 'full';
-        mobileModeToggle.classList.toggle('is-full', isFull);
-        mobileModeToggle.setAttribute('aria-checked', String(isFull));
-      }
-      updateMobileAgeGateUi();
+    function applyAllModeStates(){
+      Object.keys(modeViewConfig).forEach(applyModeForView);
     }
 
-    function switchMobileMode(mode){
-      patchState({mobileMode: mode});
-      applyMobileMode();
-      persist();
-    }
 
-    document.getElementById('desktopBtn')?.addEventListener('click', () => switchView('desktop'));
-    document.getElementById('mobileBtn')?.addEventListener('click', () => switchView('mobile'));
-    document.getElementById('fullModeBtn').addEventListener('click', () => switchDesktopMode('full'));
-    document.getElementById('compactModeBtn').addEventListener('click', () => switchDesktopMode('compact'));
-    document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => switchMobileMode('full'));
-    document.getElementById('mobileCompactModeBtn')?.addEventListener('click', () => switchMobileMode('compact'));
-    document.getElementById('mobileModeToggle')?.addEventListener('click', () => {
-      switchMobileMode(state.mobileMode === 'full' ? 'compact' : 'full');
+    const setActiveViewButtons = (activeView) => {
+      const currentView = activeView || getCurrentView();
+      Object.entries(modeViewConfig).forEach(([key, cfg]) => {
+        document.getElementById(cfg.viewButtonId || '')?.classList.toggle('active', key === currentView);
+      });
+    };
+
+    const normalizeViewState = (value) => {
+      return modeViewConfig[value] ? value : 'desktop';
+    };
+
+    Object.entries(modeViewConfig).forEach(([view, cfg]) => {
+      document.getElementById(cfg.viewButtonId || '')?.addEventListener('click', () => switchView(view));
+      document.getElementById(cfg.fullBtnId || '')?.addEventListener('click', () => switchModeForView(view, MODE_VALUE_MAP.full));
+      document.getElementById(cfg.compactBtnId || '')?.addEventListener('click', () => switchModeForView(view, MODE_VALUE_MAP.compact));
+      document.getElementById(cfg.compactToggleId || '')?.addEventListener('click', () => {
+        switchModeForView(view, MODE_TOGGLE_MAP[getModeByView(view)] || MODE_VALUE_MAP.compact);
+      });
     });
 
     document.addEventListener('click', (e) => {
@@ -1960,9 +2173,7 @@
       const photoFilterBtn = e.target.closest('[data-photo-filter]');
       if(photoFilterBtn){
         setPhotoFilter(photoFilterBtn.dataset.photoFilter);
-        const sectionModal = document.getElementById('sectionModal');
-        const sectionModalOpened = !!(sectionModal && !sectionModal.classList.contains('hidden'));
-        if((state.view === 'desktop' && state.desktopMode === 'compact') || (state.view === 'mobile' && sectionModalOpened)){
+        if(shouldOpenSectionModalForCurrentMode()){
           openSectionModal('section-photos');
         }
         return;
@@ -1971,9 +2182,7 @@
       const faqFilterBtn = e.target.closest('[data-faq-filter]');
       if(faqFilterBtn){
         setFaqFilter(faqFilterBtn.dataset.faqFilter);
-        const sectionModal = document.getElementById('sectionModal');
-        const sectionModalOpened = !!(sectionModal && !sectionModal.classList.contains('hidden'));
-        if((state.view === 'desktop' && state.desktopMode === 'compact') || (state.view === 'mobile' && sectionModalOpened)){
+        if(shouldOpenSectionModalForCurrentMode()){
           openSectionModal('section-faq');
         }
         return;
@@ -2419,7 +2628,7 @@
             <span>
               ${s.dates} · ${shiftDaysLabel(s)}
               <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
-                <span aria-hidden="true">📅</span>
+                <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true" />
                 <span>календарь</span>
               </button>
             </span>
@@ -2540,7 +2749,7 @@
           <div class="video-card" data-video="${item.url}">
             <div class="video-poster">
               <img src="${item.cover || '/assets/video-covers/cover-week-change.jpg'}" alt="${item.title}">
-              <div class="video-play"><span>▶</span></div>
+              <div class="video-play"><img class="ac-icon" src="/assets/icons/play.svg" alt="" aria-hidden="true" /></div>
             </div>
             <h4>${item.title}</h4>
           </div>
@@ -2833,7 +3042,8 @@
                 data-shift-id="${activeShift.id}"
                 aria-label="Календарь ${activeShift.title}"
               >
-                <span aria-hidden="true">📅</span><span>Календарь</span>
+                <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true" />
+                <span>Календарь</span>
               </button>
             </article>
           `;
@@ -3160,8 +3370,6 @@
       renderShiftOptions('desktop-shift-options');
       renderShiftOptions('mobileShiftOptions');
       renderBookingPanels();
-      renderGuidedState('desktop');
-      renderGuidedState('mobile');
       renderMediaSections();
       renderSummary();
     }
@@ -3198,13 +3406,11 @@
       if(action.disabled) return;
 
       if(state.offerStage === 0){
-        if(state.view === 'mobile'){
-          track('mobile_price_or_booking_started', {
-            mode: state.mobileMode || 'full',
-            age: state.age || '',
-            shift_id: state.shiftId || ''
-          });
-        }
+        track(isCurrentViewMobile() ? 'mobile_price_or_booking_started' : 'desktop_price_or_booking_started', {
+          mode: getCurrentModeSummary(),
+          age: state.age || '',
+          shift_id: state.shiftId || ''
+        });
         runOfferSearch();
         return;
       }
@@ -3232,7 +3438,7 @@
       card.innerHTML = `
         <div class="offer-headline">
           <h3>Ищем лучшую цену</h3>
-          <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
+          <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть"><img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true" /></button>
         </div>
         <p id="offerProgressLead">Проверяем остаток мест и доступные условия для выбранной смены.</p>
         <div class="offer-progress-track">
@@ -3306,7 +3512,7 @@
       card.innerHTML = `
         <div class="offer-headline">
           <h3>Удалось закрепить цену</h3>
-          <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">×</button>
+          <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть"><img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true" /></button>
         </div>
         <p>Ваша цена сохранится на ограниченное время, чтобы вы могли спокойно принять решение.</p>
         <div class="big-price">${formatPrice(state.offerPrice)}</div>
@@ -3327,7 +3533,7 @@
     function saveOfferAndClose(){
       syncGuidedState();
       clearOfferTimeout();
-      document.getElementById('offerOverlay').classList.add('hidden');
+      document.getElementById('offerOverlay')?.classList.add('hidden');
       renderSummary();
       renderBookingPanels();
     }
@@ -3371,6 +3577,7 @@
         persist();
       }
       const bar = document.getElementById('summaryBar');
+      if(!bar) return;
 
       if(!state.shiftId){
         bar.classList.add('hidden');
@@ -3382,9 +3589,12 @@
       const shift = shifts.find(s => s.id === state.shiftId);
       const price = state.offerPrice || state.basePrice || shift.price;
 
-      document.getElementById('summaryMain').textContent = `${labelAge(state.age)} · ${shift.title}`;
-      document.getElementById('summaryMeta').textContent = `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
-      document.getElementById('summaryPrice').textContent = formatPrice(price);
+      const summaryMain = document.getElementById('summaryMain');
+      const summaryMeta = document.getElementById('summaryMeta');
+      const summaryPrice = document.getElementById('summaryPrice');
+      if(summaryMain) summaryMain.textContent = `${labelAge(state.age)} · ${shift.title}`;
+      if(summaryMeta) summaryMeta.textContent = `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
+      if(summaryPrice) summaryPrice.textContent = formatPrice(price);
 
       bar.classList.remove('hidden');
       document.body.classList.add('summary-visible');
@@ -3440,6 +3650,14 @@
       error.classList.toggle('visible', !!show);
     }
 
+    function setFormValidationHint(message){
+      const hint = document.getElementById('formValidationHint');
+      hint && (
+        hint.textContent = message || 'Без предоплаты. Мы сначала подтверждаем бронь вручную.',
+        hint.style.color = message && 'rgb(255 153 153)' || ''
+      );
+    }
+
     function setLeadSubmitState(loading){
       const btn = document.getElementById('submitLeadBtn');
       if(!btn) return;
@@ -3455,66 +3673,63 @@
       const price = state.offerPrice || state.basePrice || shift.price;
 
       const formLead = document.getElementById('formLead');
-      if(formLead){
-        formLead.textContent = `${shift.title} · ${shift.dates} · ${labelAge(state.age)} · ${formatPrice(price)}${state.code ? ` · Код ${state.code}` : ''}`;
-      }
-
+      formLead && (formLead.textContent = `${shift.title} · ${shift.dates} · ${labelAge(state.age)} · ${formatPrice(price)}${state.code ? ` · Код ${state.code}` : ''}`);
       const phoneInput = document.getElementById('parentPhone');
-      document.getElementById('parentPhone').value = state.phone || '';
-      if(phoneInput) phoneInput.value = formatPhoneInput(state.phone || '');
+      phoneInput && (phoneInput.value = formatPhoneInput(state.phone || ''));
       const bookingSummaryBox = document.getElementById('bookingSummaryBox');
-      if(bookingSummaryBox) bookingSummaryBox.innerHTML = buildBookingSummaryHtml();
+      bookingSummaryBox && (bookingSummaryBox.innerHTML = buildBookingSummaryHtml());
       setPhoneError(false);
       setLeadSubmitState(false);
+      setFormValidationHint('');
       track('form_open', selectedShiftPayload());
-      document.getElementById('formDrawer').classList.remove('hidden');
+      document.getElementById('formDrawer')?.classList.remove('hidden');
     }
 
     function closeForm(){
-      document.getElementById('formDrawer').classList.add('hidden');
+      document.getElementById('formDrawer')?.classList.add('hidden');
     }
 
     function openSuccessModal(deliveryResult){
       const box = document.getElementById('successSummaryBox');
-      if(box) box.innerHTML = buildBookingSummaryHtml();
+      box && (box.innerHTML = buildBookingSummaryHtml());
       const deliveryState = document.getElementById('successDeliveryState');
+      if(deliveryState) deliveryState.textContent = deliveryResult && deliveryResult.ok === false
+        ? 'Заявка сохранена локально, но сейчас нет связи с сервером отправки. Если мы не ответим в течение 15 минут, напишите нам в Telegram.'
+        : '';
       if(deliveryState){
-        if(deliveryResult && deliveryResult.ok === false){
-          deliveryState.textContent = 'Заявка сохранена локально, но сейчас нет связи с сервером отправки. Если мы не ответим в течение 15 минут, напишите нам в Telegram.';
-          deliveryState.classList.remove('hidden');
-          deliveryState.classList.add('error');
-        } else {
-          deliveryState.textContent = '';
-          deliveryState.classList.add('hidden');
-          deliveryState.classList.remove('error');
-        }
+        deliveryState.classList.toggle('hidden', !(deliveryResult && deliveryResult.ok === false));
+        deliveryState.classList.toggle('error', deliveryResult && deliveryResult.ok === false);
       }
-      document.getElementById('successOverlay').classList.remove('hidden');
+      document.getElementById('successOverlay')?.classList.remove('hidden');
     }
 
     function closeSuccessModal(){
-      document.getElementById('successOverlay').classList.add('hidden');
+      document.getElementById('successOverlay')?.classList.add('hidden');
     }
 
     async function submitLead(){
       if(leadSubmitInProgress) return;
       syncGuidedState();
-      const name = document.getElementById('parentName').value.trim();
-      const phoneRaw = document.getElementById('parentPhone').value.trim();
+      const parentNameInput = document.getElementById('parentName');
+      const consentInput = document.getElementById('consentCheck');
+      const phoneInput = document.getElementById('parentPhone');
+      const name = parentNameInput ? parentNameInput.value.trim() : '';
+      const phoneRaw = phoneInput ? phoneInput.value.trim() : '';
       const phone = normalizePhone(phoneRaw);
-      const consent = document.getElementById('consentCheck').checked;
+      const consent = !!(consentInput && consentInput.checked);
 
       if(!name || !phoneRaw || !consent){
         if(!phoneRaw) setPhoneError(true);
-        alert('Заполните имя, телефон и подтвердите согласие.');
+        setFormValidationHint('Заполните имя, телефон и подтвердите согласие.');
         return;
       }
 
       if(!isValidPhone(phoneRaw)){
         setPhoneError(true);
-        alert('Проверьте номер телефона.');
+        setFormValidationHint('Проверьте номер телефона.');
         return;
       }
+      setFormValidationHint('');
 
       setPhoneError(false);
       leadSubmitInProgress = true;
@@ -3536,9 +3751,7 @@
         price_text: price ? formatPrice(price) : '—',
         promo_code: state.code || '',
         promo_status: state.offerPrice ? 'fixed' : 'none',
-        mode: state.view === 'mobile'
-          ? `mobile:${state.mobileMode || 'full'}`
-          : `desktop:${state.desktopMode || 'full'}`,
+        mode: getCurrentModeSummary(),
         sent_at_local: new Date().toLocaleString('ru-RU')
       };
       track('form_submit', {
@@ -3558,68 +3771,80 @@
     }
 
     function scrollToSection(id){
-      const cleanId = String(id || '').replace(/^#/, '');
+      const cleanId = normalizeSectionId(id);
       if(!cleanId) return false;
 
-      const mobileMap = {
-        'section-about':'mobile-section-about',
-        'section-journey':'mobile-section-journey',
-        'section-programs':'mobile-section-programs',
-        'section-photos':'mobile-section-photos',
-        'section-videos':'mobile-section-videos',
-        'section-reviews':'mobile-section-reviews',
-        'section-faq':'mobile-section-faq',
-        'section-team':'mobile-section-team',
-        'section-stay':'mobile-section-stay',
-        'section-contacts':'mobile-section-contacts',
-        'section-legal':'mobile-section-docs'
-      };
-
-      const targetId = state.view === 'mobile'
-        ? (mobileMap[cleanId] || cleanId)
-        : cleanId;
-      const el = document.getElementById(targetId) || document.getElementById(cleanId);
+      const el = getSectionByTargetId(cleanId, getCurrentView());
       if(!el) return false;
 
       el.scrollIntoView({behavior:'smooth', block:'start'});
       return true;
     }
 
-    function navigateToSection(id){
-      const cleanId = String(id || '').replace(/^#/, '');
-      if(!cleanId) return;
+    function openSectionOrFallback(id){
+      const cleanId = normalizeSectionId(id);
+      if(!cleanId) return false;
+      if(scrollToSection(cleanId)){
+        return true;
+      }
+      return false;
+    }
 
-      if(state.view === 'mobile' && cleanId === 'section-programs' && !hasSelectedAge()){
-        track('mobile_shifts_click_without_age', {
-          mode: state.mobileMode || 'full'
-        });
-        showHint('Сначала выберите возраст ребёнка', 'age');
-        focusMobileAgeGate();
-        return;
+    function isNavigationDispatched(result){
+      return !!result?.navigated;
+    }
+
+    function resolveSectionNavigationAction(sectionId){
+      const cleanId = normalizeSectionId(sectionId);
+      const profile = resolveNavigationProfile(cleanId);
+      if(profile.mode === 'noop'){
+        return profile;
       }
 
-      if(state.view === 'mobile' && cleanId === 'section-programs' && hasSelectedAge()){
+      const sectionPolicy = getSectionPolicy(cleanId);
+      const action = {
+        mode: profile.mode,
+        sectionId: cleanId,
+        requiresAge: !!sectionPolicy.requiresAge,
+        fallbackPath: profile.fallbackPath,
+        fallbackTarget: profile.fallbackTarget
+      };
+      return action;
+    }
+
+    function resolveAgeGate(action){
+      if(!action?.requiresAge || !isCurrentViewMobile()){
+        return { allowed: true, shouldReturn: false };
+      }
+      if(hasSelectedAge()){
         track('mobile_shifts_opened_after_age', {
-          mode: state.mobileMode || 'full',
+          mode: getModeSummaryForView('mobile'),
           age: state.age || ''
         });
+        return { allowed: true, shouldReturn: false };
       }
+      track('mobile_shifts_click_without_age', {
+        mode: getModeSummaryForView('mobile')
+      });
+      showHint('Сначала выберите возраст ребёнка', 'age');
+      focusMobileAgeGate();
+      return { allowed: false, shouldReturn: true };
+    }
 
-      const isDesktopCompact = state.view === 'desktop' && state.desktopMode === 'compact';
-      const isMobileCompact = state.view === 'mobile' && state.mobileMode === 'compact';
+    function navigateToSection(id){
+      const cleanId = normalizeSectionId(id);
+      if(!cleanId) return;
 
-      if(isDesktopCompact || isMobileCompact){
-        if(COMPACT_MODAL_SECTIONS.has(cleanId) && openSectionModal(cleanId)){
-          return;
-        }
-        if(!scrollToSection(cleanId) && cleanId === 'section-legal'){
-          window.open('legal.html#legal-info', '_blank', 'noopener');
-        }
+      const navAction = resolveSectionNavigationAction(cleanId);
+      const programsGuard = resolveAgeGate(navAction);
+      if(!programsGuard.allowed){
         return;
       }
 
-      if(!scrollToSection(cleanId) && cleanId === 'section-legal'){
-        window.open('legal.html#legal-info', '_blank', 'noopener');
+      const action = SECTION_NAVIGATION_ACTIONS[navAction.mode] || SECTION_NAVIGATION_ACTIONS.noop;
+      const navResult = action(navAction);
+      if(!isNavigationDispatched(navResult) && navAction.fallbackPath){
+        window.open(navAction.fallbackPath, navAction.fallbackTarget || '_self', 'noopener');
       }
     }
 
@@ -3671,24 +3896,19 @@
       if(e.target.id === 'formDrawer') closeForm();
     });
 
-    const successOverlay = document.getElementById('successOverlay');
-    if(successOverlay){
-      successOverlay.addEventListener('click', (e) => {
-        if(e.target.id === 'successOverlay') closeSuccessModal();
-      });
-    }
+    document.getElementById('successOverlay')?.addEventListener('click', (e) => {
+      if(e.target.id === 'successOverlay') closeSuccessModal();
+    });
 
-    const offerOverlay = document.getElementById('offerOverlay');
-    if(offerOverlay){
-      offerOverlay.addEventListener('click', (e) => {
-        if(e.target.id === 'offerOverlay'){
-          offerRunId += 1;
-          clearOfferTimeout();
-          offerOverlay.classList.add('hidden');
-          resetOfferProgressUI();
-        }
-      });
-    }
+    document.getElementById('offerOverlay')?.addEventListener('click', (e) => {
+      if(e.target.id === 'offerOverlay'){
+        offerRunId += 1;
+        clearOfferTimeout();
+        const offerOverlay = document.getElementById('offerOverlay');
+        offerOverlay && offerOverlay.classList.add('hidden');
+        resetOfferProgressUI();
+      }
+    });
 
     document.getElementById('mediaClose').addEventListener('click', closeMedia);
     document.getElementById('mediaNext').addEventListener('click', nextMedia);
@@ -3698,29 +3918,21 @@
       if(e.target.id === 'mediaLightbox') closeMedia();
     });
 
-    const videoModal = document.getElementById('videoModal');
-    if(videoModal){
-      videoModal.addEventListener('click', (e) => {
-        if(e.target.id === 'videoModal') closeVideo();
-      });
-    }
+    document.getElementById('videoModal')?.addEventListener('click', (e) => {
+      if(e.target.id === 'videoModal') closeVideo();
+    });
 
-    const calendarModal = document.getElementById('calendarModal');
-    if(calendarModal){
-      calendarModal.addEventListener('click', (e) => {
-        if(e.target.id === 'calendarModal') closeCalendar();
-      });
-    }
+    document.getElementById('calendarModal')?.addEventListener('click', (e) => {
+      if(e.target.id === 'calendarModal') closeCalendar();
+    });
 
-    const sectionModal = document.getElementById('sectionModal');
-    if(sectionModal){
-      sectionModal.addEventListener('click', (e) => {
-        if(e.target.id === 'sectionModal') closeSectionModal();
-      });
-    }
+    document.getElementById('sectionModal')?.addEventListener('click', (e) => {
+      if(e.target.id === 'sectionModal') closeSectionModal();
+    });
 
     document.addEventListener('keydown', (e) => {
-      if(document.getElementById('mediaLightbox').classList.contains('hidden')) return;
+      const mediaLightbox = document.getElementById('mediaLightbox');
+      if(!mediaLightbox || mediaLightbox.classList.contains('hidden')) return;
       if(e.key === 'Escape') closeMedia();
       if(e.key === 'ArrowRight') nextMedia();
       if(e.key === 'ArrowLeft') prevMedia();
@@ -3765,15 +3977,14 @@
     resetOfferProgressUI();
     applyDebugUiState();
     track('page_view', {
-      view: state.view || 'desktop',
-      desktop_mode: state.desktopMode || '',
-      mobile_mode: state.mobileMode || ''
+      view: getCurrentView(),
+      desktop_mode: getModeByView('desktop'),
+      mobile_mode: getModeByView('mobile')
     });
     initScrollTracking();
     initSectionViewTracking();
-    switchView(state.view || 'desktop');
-    applyDesktopMode();
-    applyMobileMode();
+    switchView(state.view);
+    applyAllModeStates();
     refreshVideoMeta();
     scheduleVideoMetaRefresh();
 
