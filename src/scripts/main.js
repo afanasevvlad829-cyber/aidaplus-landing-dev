@@ -247,20 +247,6 @@
     let mediaType = 'photo';
     let activePhotoList = [];
     let mediaCustomCaption = '';
-    state.desktopMode = state.desktopMode || 'full';
-    state.mobileMode = state.mobileMode || 'full';
-    state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
-    state.photoFilter = state.photoFilter || 'camp';
-    state.faqFilter = state.faqFilter || 'Медицина';
-    state.mobilePhotoIndex = Number.isFinite(state.mobilePhotoIndex) ? state.mobilePhotoIndex : 0;
-    state.mobileVideoIndex = Number.isFinite(state.mobileVideoIndex) ? state.mobileVideoIndex : 0;
-    state.mobileReviewIndex = Number.isFinite(state.mobileReviewIndex) ? state.mobileReviewIndex : 0;
-    state.mobileFaqGroup = state.mobileFaqGroup || state.faqFilter || 'Медицина';
-    state.mobileFaqOpenKey = state.mobileFaqOpenKey || '';
-    state.mobileTeamIndex = Number.isFinite(state.mobileTeamIndex) ? state.mobileTeamIndex : 0;
-    state.mobileJourneyStep = Number.isFinite(state.mobileJourneyStep) ? state.mobileJourneyStep : 0;
-    state.mobileProgramShiftId = state.mobileProgramShiftId || '';
-    state.mobileDocsExpanded = typeof state.mobileDocsExpanded === 'boolean' ? state.mobileDocsExpanded : false;
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
     let offerTimeoutIds = [];
@@ -271,6 +257,27 @@
       desktop:{aboutId:null, calendarId:null},
       mobile:{aboutId:null, calendarId:null}
     };
+
+    function patchState(patch){
+      Object.assign(state, patch);
+    }
+
+    patchState({
+      desktopMode: state.desktopMode || 'full',
+      mobileMode: state.mobileMode || 'full',
+      ageSelected: typeof state.ageSelected === 'boolean' ? state.ageSelected : false,
+      photoFilter: state.photoFilter || 'camp',
+      faqFilter: state.faqFilter || 'Медицина',
+      mobilePhotoIndex: Number.isFinite(state.mobilePhotoIndex) ? state.mobilePhotoIndex : 0,
+      mobileVideoIndex: Number.isFinite(state.mobileVideoIndex) ? state.mobileVideoIndex : 0,
+      mobileReviewIndex: Number.isFinite(state.mobileReviewIndex) ? state.mobileReviewIndex : 0,
+      mobileFaqGroup: state.mobileFaqGroup || state.faqFilter || 'Медицина',
+      mobileFaqOpenKey: state.mobileFaqOpenKey || '',
+      mobileTeamIndex: Number.isFinite(state.mobileTeamIndex) ? state.mobileTeamIndex : 0,
+      mobileJourneyStep: Number.isFinite(state.mobileJourneyStep) ? state.mobileJourneyStep : 0,
+      mobileProgramShiftId: state.mobileProgramShiftId || '',
+      mobileDocsExpanded: typeof state.mobileDocsExpanded === 'boolean' ? state.mobileDocsExpanded : false
+    });
 
     function track(event, params = {}){
       try {
@@ -939,7 +946,7 @@
       if(action === 'mobile-photo-select'){
         const index = Number(actionEl.dataset.photoIndex || 0);
         if(Number.isFinite(index)){
-          state.mobilePhotoIndex = Math.max(0, index);
+          patchState({mobilePhotoIndex: Math.max(0, index)});
           renderCompactTrustPanelContent();
           persist();
         }
@@ -949,7 +956,7 @@
       if(action === 'mobile-video-select'){
         const index = Number(actionEl.dataset.videoIndex || 0);
         if(Number.isFinite(index)){
-          state.mobileVideoIndex = Math.max(0, index);
+          patchState({mobileVideoIndex: Math.max(0, index)});
           renderCompactTrustPanelContent();
           persist();
         }
@@ -959,7 +966,7 @@
       if(action === 'mobile-review-select'){
         const index = Number(actionEl.dataset.reviewIndex || 0);
         if(Number.isFinite(index)){
-          state.mobileReviewIndex = Math.max(0, index);
+          patchState({mobileReviewIndex: Math.max(0, index)});
           renderCompactTrustPanelContent();
           persist();
         }
@@ -969,8 +976,10 @@
       if(action === 'mobile-faq-filter'){
         const group = (actionEl.dataset.faqGroup || '').trim();
         if(group){
-          state.mobileFaqGroup = group;
-          state.mobileFaqOpenKey = '';
+          patchState({
+            mobileFaqGroup: group,
+            mobileFaqOpenKey: ''
+          });
           renderCompactTrustPanelContent();
           persist();
         }
@@ -980,7 +989,7 @@
       if(action === 'mobile-faq-toggle'){
         const key = (actionEl.dataset.faqKey || '').trim();
         if(key){
-          state.mobileFaqOpenKey = state.mobileFaqOpenKey === key ? '' : key;
+          patchState({mobileFaqOpenKey: state.mobileFaqOpenKey === key ? '' : key});
           renderCompactTrustPanelContent();
           persist();
         }
@@ -991,7 +1000,7 @@
         const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
         if(list.length){
           const delta = action === 'mobile-team-next' ? 1 : -1;
-          state.mobileTeamIndex = (state.mobileTeamIndex + delta + list.length) % list.length;
+          patchState({mobileTeamIndex: (state.mobileTeamIndex + delta + list.length) % list.length});
           renderCompactTrustPanelContent();
           persist();
         }
@@ -1003,7 +1012,7 @@
         if(list.length){
           const index = Number(actionEl.dataset.teamIndex || 0);
           if(Number.isFinite(index)){
-            state.mobileTeamIndex = Math.max(0, Math.min(index, list.length - 1));
+            patchState({mobileTeamIndex: Math.max(0, Math.min(index, list.length - 1))});
             renderCompactTrustPanelContent();
             persist();
           }
@@ -1014,7 +1023,7 @@
       if(action === 'mobile-journey-step'){
         const index = Number(actionEl.dataset.stepIndex || 0);
         if(Number.isFinite(index)){
-          state.mobileJourneyStep = Math.max(0, Math.min(index, 3));
+          patchState({mobileJourneyStep: Math.max(0, Math.min(index, 3))});
           renderCompactTrustPanelContent();
           persist();
         }
@@ -1024,7 +1033,7 @@
       if(action === 'mobile-program-select'){
         const shiftId = (actionEl.dataset.shiftId || '').trim();
         if(shiftId){
-          state.mobileProgramShiftId = shiftId;
+          patchState({mobileProgramShiftId: shiftId});
           renderCompactTrustPanelContent();
           persist();
         }
@@ -1032,7 +1041,7 @@
       }
 
       if(action === 'mobile-docs-toggle'){
-        state.mobileDocsExpanded = !state.mobileDocsExpanded;
+        patchState({mobileDocsExpanded: !state.mobileDocsExpanded});
         renderCompactTrustPanelContent();
         persist();
         return true;
@@ -1123,7 +1132,7 @@
 
       if(action === 'apply-offer'){
         clearOfferTimeout();
-        state.offerStage = Math.max(state.offerStage, 1);
+        patchState({offerStage: Math.max(state.offerStage, 1)});
         document.getElementById('offerOverlay')?.classList.add('hidden');
         renderAll();
         openForm();
@@ -1288,7 +1297,7 @@
 
     function syncGuidedState(){
       if(hasActiveBookingContext() && state.age){
-        state.ageSelected = true;
+        patchState({ageSelected: true});
       }
     }
 
@@ -1869,11 +1878,11 @@
     }
 
     function switchView(view){
-      state.view = view;
-      document.getElementById('desktopBtn').classList.toggle('active', view === 'desktop');
-      document.getElementById('mobileBtn').classList.toggle('active', view === 'mobile');
-      document.getElementById('desktopView').classList.toggle('hidden', view !== 'desktop');
-      document.getElementById('mobileView').classList.toggle('hidden', view !== 'mobile');
+      patchState({view});
+      document.getElementById('desktopBtn')?.classList.toggle('active', view === 'desktop');
+      document.getElementById('mobileBtn')?.classList.toggle('active', view === 'mobile');
+      document.getElementById('desktopView')?.classList.toggle('hidden', view !== 'desktop');
+      document.getElementById('mobileView')?.classList.toggle('hidden', view !== 'mobile');
       const desktopModeWrap = document.getElementById('desktopModeWrap');
       if(desktopModeWrap){
         desktopModeWrap.classList.toggle('hidden', view !== 'desktop');
@@ -1899,7 +1908,7 @@
     }
 
     function switchDesktopMode(mode){
-      state.desktopMode = mode;
+      patchState({desktopMode: mode});
       applyDesktopMode();
       if(mode !== 'compact'){
         closeSectionModal();
@@ -1928,13 +1937,13 @@
     }
 
     function switchMobileMode(mode){
-      state.mobileMode = mode;
+      patchState({mobileMode: mode});
       applyMobileMode();
       persist();
     }
 
-    document.getElementById('desktopBtn').addEventListener('click', () => switchView('desktop'));
-    document.getElementById('mobileBtn').addEventListener('click', () => switchView('mobile'));
+    document.getElementById('desktopBtn')?.addEventListener('click', () => switchView('desktop'));
+    document.getElementById('mobileBtn')?.addEventListener('click', () => switchView('mobile'));
     document.getElementById('fullModeBtn').addEventListener('click', () => switchDesktopMode('full'));
     document.getElementById('compactModeBtn').addEventListener('click', () => switchDesktopMode('compact'));
     document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => switchMobileMode('full'));
@@ -2192,14 +2201,18 @@
 
     function resetOfferState({preserveShift = true} = {}){
       clearOfferTimeout();
-      state.offerStage = 0;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerSearching = false;
+      patchState({
+        offerStage: 0,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerSearching: false
+      });
       if(!preserveShift){
-        state.shiftId = null;
-        state.basePrice = null;
+        patchState({
+          shiftId: null,
+          basePrice: null
+        });
       }
     }
 
@@ -2231,14 +2244,16 @@
         btn.addEventListener('click', () => {
           root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
           btn.classList.add('active');
-          state.age = btn.dataset.age;
-          state.ageSelected = true;
-          state.shiftId = null;
-          state.basePrice = null;
-          state.offerPrice = null;
-          state.code = null;
-          state.expiresAt = null;
-          state.offerStage = 0;
+          patchState({
+            age: btn.dataset.age,
+            ageSelected: true,
+            shiftId: null,
+            basePrice: null,
+            offerPrice: null,
+            code: null,
+            expiresAt: null,
+            offerStage: 0
+          });
           if(rootId === 'mobileAgeTabs'){
             track('mobile_age_selected', {
               age: state.age || '',
@@ -2253,14 +2268,16 @@
 
     function resetAgeSelection(){
       clearShiftOptionPanels();
-      state.age = null;
-      state.ageSelected = false;
-      state.shiftId = null;
-      state.basePrice = null;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerStage = 0;
+      patchState({
+        age: null,
+        ageSelected: false,
+        shiftId: null,
+        basePrice: null,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerStage: 0
+      });
 
       ['desktopAgeTabs','mobileAgeTabs'].forEach(id => {
         const root = document.getElementById(id);
@@ -2275,26 +2292,28 @@
 
     function resetShiftSelection(){
       clearShiftOptionPanels();
-      state.shiftId = null;
-      state.basePrice = null;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerStage = 0;
-      state.offerSearching = false;
+      patchState({
+        shiftId: null,
+        basePrice: null,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerStage: 0,
+        offerSearching: false
+      });
       showHint('Смена сброшена. Выберите подходящий вариант.', 'shift');
       renderAll();
       persist();
     }
 
     function setPhotoFilter(filter){
-      state.photoFilter = filter;
+      patchState({photoFilter: filter});
       renderMediaSections();
       persist();
     }
 
     function setFaqFilter(filter){
-      state.faqFilter = filter;
+      patchState({faqFilter: filter});
       track('faq_filter', {filter});
       renderMediaSections();
       persist();
@@ -2752,7 +2771,7 @@
           }
         ];
         const safeStep = Math.max(0, Math.min(state.mobileJourneyStep || 0, steps.length - 1));
-        state.mobileJourneyStep = safeStep;
+        patchState({mobileJourneyStep: safeStep});
         const activeStep = steps[safeStep];
 
         mobileJourneyContent.innerHTML = `
@@ -2785,7 +2804,7 @@
           const activeShiftId = mainShifts.some((shift) => shift.id === state.mobileProgramShiftId)
             ? state.mobileProgramShiftId
             : mainShifts[0].id;
-          state.mobileProgramShiftId = activeShiftId;
+          patchState({mobileProgramShiftId: activeShiftId});
           const activeShift = mainShifts.find((shift) => shift.id === activeShiftId) || mainShifts[0];
 
           mobileProgramsContent.innerHTML = `
@@ -2834,7 +2853,7 @@
         const tags = photoByFilter[state.photoFilter] || ['all'];
         const list = mediaContent.photos.filter(item => tags.includes(item.cat));
         const activeIndex = Math.min(Math.max(state.mobilePhotoIndex || 0, 0), Math.max(list.length - 1, 0));
-        state.mobilePhotoIndex = activeIndex;
+        patchState({mobilePhotoIndex: activeIndex});
         const active = list[activeIndex];
 
         const filters = document.getElementById('mobilePhotoFilters');
@@ -2871,7 +2890,7 @@
       if (mobileVideoGallery) {
         const list = mediaContent.videos || [];
         const activeIndex = Math.min(Math.max(state.mobileVideoIndex || 0, 0), Math.max(list.length - 1, 0));
-        state.mobileVideoIndex = activeIndex;
+        patchState({mobileVideoIndex: activeIndex});
         const active = list[activeIndex];
 
         if(active){
@@ -2902,7 +2921,7 @@
       if (mobileReviewsGallery) {
         const list = mediaContent.reviews || [];
         const activeIndex = Math.min(Math.max(state.mobileReviewIndex || 0, 0), Math.max(list.length - 1, 0));
-        state.mobileReviewIndex = activeIndex;
+        patchState({mobileReviewIndex: activeIndex});
         const active = list[activeIndex];
         if(active){
           mobileReviewsGallery.innerHTML = `
@@ -2942,7 +2961,7 @@
       if (mobileFaqList) {
         const groups = mediaContent.faq.map((group) => group.group);
         const safeGroup = groups.includes(state.mobileFaqGroup) ? state.mobileFaqGroup : (groups[0] || 'Медицина');
-        state.mobileFaqGroup = safeGroup;
+        patchState({mobileFaqGroup: safeGroup});
         const activeFaqGroup = mediaContent.faq.find((group) => group.group === safeGroup);
         const faqItems = (activeFaqGroup?.items || []).map((item, index) => ({
           key: `${safeGroup}:${index}`,
@@ -2951,7 +2970,7 @@
         }));
         const fallbackKey = faqItems[0]?.key || '';
         const activeKey = faqItems.some((item) => item.key === state.mobileFaqOpenKey) ? state.mobileFaqOpenKey : fallbackKey;
-        state.mobileFaqOpenKey = activeKey;
+        patchState({mobileFaqOpenKey: activeKey});
 
         const mobileFaqFilters = document.getElementById('mobileFaqFilters');
         if(mobileFaqFilters){
@@ -2985,7 +3004,7 @@
         const founder = mediaContent.team.find((item) => item.fio === 'Дарья Афанасьева') || mediaContent.team[0];
         const teachers = mediaContent.team.filter((item) => item.fio !== founder?.fio);
         const safeIndex = teachers.length ? ((state.mobileTeamIndex % teachers.length) + teachers.length) % teachers.length : 0;
-        state.mobileTeamIndex = safeIndex;
+        patchState({mobileTeamIndex: safeIndex});
         const activeTeacher = teachers[safeIndex];
 
         mobileInlineTeamList.innerHTML = `
@@ -3150,12 +3169,14 @@
     function selectShift(id){
       const shift = shifts.find(s => s.id === id);
       clearShiftOptionPanels();
-      state.shiftId = id;
-      state.basePrice = shift.price;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerStage = 0;
+      patchState({
+        shiftId: id,
+        basePrice: shift.price,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerStage: 0
+      });
       renderAll();
       persist();
     }
@@ -3202,7 +3223,7 @@
       const card = document.getElementById('offerCard');
       offerRunId += 1;
       const currentRunId = offerRunId;
-      state.offerSearching = true;
+      patchState({offerSearching: true});
       clearOfferTimeout();
       track('offer_open', selectedShiftPayload());
       track('offer_start', selectedShiftPayload());
@@ -3268,13 +3289,17 @@
       const selectedShift = getSelectedShift();
       const basePrice = state.basePrice || (selectedShift ? selectedShift.price : null);
       if(basePrice){
-        state.offerPrice = Math.round(basePrice * OFFER_DISCOUNT_FACTOR);
-        state.expiresAt = Date.now() + 72 * 60 * 60 * 1000;
-        state.offerStage = 1;
+        patchState({
+          offerPrice: Math.round(basePrice * OFFER_DISCOUNT_FACTOR),
+          expiresAt: Date.now() + 72 * 60 * 60 * 1000,
+          offerStage: 1
+        });
       }
 
-      state.code = generateCode();
-      state.offerSearching = false;
+      patchState({
+        code: generateCode(),
+        offerSearching: false
+      });
       persist();
       track('offer_complete', selectedShiftPayload());
 
@@ -3309,7 +3334,7 @@
 
     function resetOfferProgressUI(){
       clearOfferTimeout();
-      state.offerSearching = false;
+      patchState({offerSearching: false});
     }
 
     function startTimer(){
@@ -3495,7 +3520,7 @@
       leadSubmitInProgress = true;
       setLeadSubmitState(true);
 
-      state.phone = phone;
+      patchState({phone});
       persist();
 
       const shift = shifts.find(s => s.id === state.shiftId);
