@@ -10255,7 +10255,7 @@
     state.heroContrastMode = 'after-soft';
     state.heroMicroMode = 'off';
     state.offerModalTheme = 'light';
-    state.offerLayout = 'legacy';
+    state.offerLayout = state.offerLayout || 'legacy';
     state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
     state.bookingCompleted = !!state.bookingCompleted;
     state.photoFilter = state.photoFilter || 'camp';
@@ -11727,7 +11727,7 @@
       const keepDesktopMode = state.desktopMode || 'full';
       const keepMobileMode = state.mobileMode || 'full';
       const keepOfferModalTheme = state.offerModalTheme === 'dark' ? 'dark' : 'light';
-      const keepOfferLayout = 'legacy';
+      const keepOfferLayout = state.offerLayout || 'legacy';
       state = {
         age: null,
         ageSelected: false,
@@ -12568,7 +12568,7 @@
     }
 
     function applyOfferLayoutMode(){
-      const mode = 'legacy';
+      const mode = state.offerLayout === 'legacy' ? 'legacy' : 'current';
       const currentBtn = document.getElementById('offerLayoutCurrentBtn');
       const legacyBtn = document.getElementById('offerLayoutLegacyBtn');
       if(currentBtn){
@@ -12584,7 +12584,8 @@
     }
 
     function switchOfferLayout(mode){
-      state.offerLayout = 'legacy';
+      const normalizedMode = mode === 'legacy' ? 'legacy' : 'current';
+      state.offerLayout = normalizedMode;
       applyOfferLayoutMode();
       persist();
       const overlay = document.getElementById('offerOverlay');
