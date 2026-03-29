@@ -461,13 +461,7 @@
         radial-gradient(circle at 50% 36%, rgba(8, 12, 18, 0.03) 0%, rgba(8, 12, 18, 0) 64%);
     }
 
-    /* Compact mode: keep clean hero background without bottom-right gradient artifact */
-    #desktopView.compact-mode .hero-shell::after,
-    #desktopView.compact-mode .hero-bg.active::after{
-      background:none !important;
-      opacity:0 !important;
-      animation:none !important;
-    }
+    /* Compact mode must keep the same hero background treatment as full mode. */
 
     /* Debug microanimation toggle */
     #desktopView.hero-micro-off .hero-bg.active,
@@ -475,14 +469,11 @@
     #desktopView.hero-micro-off .hero-shell::before{
       animation:none !important;
       transform:none !important;
+      opacity:.06 !important;
     }
 
     #desktopView.hero-micro-off .hero-bg.active::after{
       opacity:0 !important;
-    }
-
-    #desktopView.hero-micro-off .hero-shell::before{
-      opacity:.06 !important;
     }
 
     #desktopView.hero-micro-on:not(.compact-mode) .hero-bg.active{
@@ -513,6 +504,20 @@
     #desktopView.hero-micro-demo .hero-shell::before{
       opacity:.14 !important;
       animation:heroLightBreathDemo 10s ease-in-out infinite !important;
+    }
+
+    #desktopView.hero-static-bg .hero-bg{
+      transition:none !important;
+    }
+
+    #desktopView.hero-static-bg #heroBg1{
+      opacity:1 !important;
+    }
+
+    #desktopView.hero-static-bg #heroBg2{
+      display:none !important;
+      opacity:0 !important;
+      background-image:none !important;
     }
 
     #mobileView .hero-shell::before,
@@ -671,24 +676,27 @@
 
     .hero-mode-inline{
       display:inline-flex;
-      gap:6px;
-      padding:4px;
-      border-radius:12px;
-      background:rgba(8,12,18,.62);
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:0 8px 24px rgba(0,0,0,.18);
-      backdrop-filter:blur(12px);
+      flex-direction:row-reverse;
+      align-items:center;
+      gap:0;
+      padding:0;
+      border-radius:0;
+      background:transparent;
+      border:none;
+      box-shadow:none;
+      backdrop-filter:none;
+      margin-left:-8px;
     }
 
     .hero-mode-inline .mode-btn{
-      min-height:28px;
-      min-width:92px;
-      padding:0 9px;
+      min-height:32px;
+      min-width:112px;
+      padding:0 14px 0 36px;
       font-size:10px;
-      border-radius:9px;
+      border-radius:12px;
       background:transparent;
       color:rgba(255,255,255,.82);
-      border:1px solid rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.09);
       box-shadow:none;
       transition:background .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
     }
@@ -701,43 +709,51 @@
     .hero-mode-inline .mode-btn.active{
       background:linear-gradient(135deg,var(--accent),var(--accent-2));
       color:#fff;
-      border-color:transparent;
-      box-shadow:var(--ac-shadow-chip-active);
-      transform:translateY(-1px);
+      border-color:rgba(255,255,255,.28);
+      box-shadow:0 10px 20px rgba(255,138,0,.24);
+      transform:none;
     }
 
     .hero-mode-inline .mode-toggle{
-      min-width:46px;
-      width:46px;
+      min-width:42px;
+      width:42px;
+      min-height:32px;
       padding:0;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(15,23,42,.72);
+      border:none;
+      background:transparent;
       position:relative;
       transition:background .18s ease, border-color .18s ease, box-shadow .18s ease;
+      margin-right:-34px;
+      z-index:2;
     }
 
     .hero-mode-inline .mode-toggle .mode-toggle-thumb{
       position:absolute;
-      top:4px;
+      top:3px;
       left:4px;
-      width:18px;
-      height:18px;
+      width:26px;
+      height:26px;
       border-radius:50%;
       background:#fff;
-      box-shadow:0 2px 8px rgba(0,0,0,.28);
+      box-shadow:0 3px 10px rgba(0,0,0,.24);
       transition:transform .18s ease, background .18s ease;
     }
 
     .hero-mode-inline .mode-toggle.active{
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      background:transparent;
       border-color:transparent;
-      box-shadow:var(--ac-shadow-chip-active);
+      box-shadow:none;
     }
 
     .hero-mode-inline .mode-toggle.active .mode-toggle-thumb{
-      transform:translateX(18px);
-      background:#fff8ef;
+      transform:none;
+      background:#fff;
+    }
+
+    .hero-mode-inline .mode-toggle:not(.active) .mode-toggle-thumb{
+      transform:translateX(10px);
+      background:#f3f4f6;
     }
 
     .hero-mode-hashtag{
@@ -750,10 +766,6 @@
       line-height:1.25;
       color:rgba(255,193,128,.92);
       text-shadow:0 1px 2px rgba(0,0,0,.3);
-    }
-
-    #desktopView.compact-mode .hero-mode-hashtag{
-      display:block;
     }
 
     .brand{
@@ -855,6 +867,14 @@
       border-bottom:2px solid currentColor;
     }
 
+    .hero-menu-toggle-icon-img{
+      display:none;
+      width:18px;
+      height:18px;
+      flex:0 0 auto;
+      object-fit:contain;
+    }
+
     .hero-menu-toggle-icon::before{
       content:"";
       position:absolute;
@@ -912,6 +932,107 @@
     .menu-pill:hover{
       transform:translateY(-1px);
       box-shadow:0 12px 24px rgba(20,29,45,.10);
+    }
+
+    #desktopView .hero-menu-toggle{
+      display:none;
+    }
+
+    #desktopView #serviceMenu{
+      position:static;
+      top:auto;
+      right:auto;
+      width:auto;
+      min-width:0;
+      display:flex !important;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:8px;
+      padding:0;
+      border:none;
+      border-radius:0;
+      background:transparent;
+      box-shadow:none;
+      backdrop-filter:none;
+    }
+
+    #desktopView #serviceMenu[hidden]{
+      display:flex !important;
+    }
+
+    #desktopView .menu-pill{
+      width:auto;
+      text-align:center;
+      padding:8px 13px;
+      border-radius:11px;
+      border:none;
+      background:rgba(255,255,255,.92);
+      color:#111827;
+      font-size:13px;
+      font-weight:650;
+      box-shadow:0 8px 18px rgba(2,8,20,.14);
+    }
+
+    #desktopView .menu-pill:hover{
+      background:#ffffff;
+      transform:translateY(-1px);
+      box-shadow:0 12px 22px rgba(2,8,20,.18);
+    }
+
+    #desktopView .menu-pill.active{
+      border-color:rgba(255,171,74,.52);
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      box-shadow:0 12px 28px rgba(255,138,0,.34);
+    }
+
+    #desktopView.mobile-preview-active .hero-menu-toggle{
+      display:inline-flex;
+    }
+
+    #desktopView.mobile-preview-active #serviceMenu{
+      position:absolute;
+      top:calc(100% + 8px);
+      right:0;
+      width:max-content;
+      min-width:max-content;
+      max-width:calc(100vw - 24px);
+      max-height:min(62vh, 420px);
+      overflow-y:auto;
+      display:none !important;
+      grid-template-columns:1fr;
+      flex-wrap:nowrap;
+      justify-content:start;
+      justify-items:stretch;
+      gap:6px;
+      padding:10px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:14px;
+      background:rgba(10,15,24,.92);
+      box-shadow:0 20px 42px rgba(2,8,20,.45);
+      backdrop-filter:blur(12px);
+    }
+
+    #desktopView.mobile-preview-active #serviceMenu.is-open{
+      display:grid !important;
+    }
+
+    #desktopView.mobile-preview-active #serviceMenu[hidden]{
+      display:none !important;
+    }
+
+    #desktopView.mobile-preview-active .menu-pill{
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border:none;
+      border-radius:10px;
+      background:rgba(255,255,255,.92);
+      color:#111827;
+      font-size:12px;
+      font-weight:600;
+      box-shadow:none;
+      white-space:nowrap;
     }
 
     .hero-content{
@@ -1110,6 +1231,13 @@
       content:none;
     }
 
+    #desktopView.hero-contrast-after-soft .hero-shell::after{
+      background:
+        radial-gradient(circle at 92% 14%, rgba(255,208,132,.28) 0%, rgba(255,188,104,.12) 16%, rgba(255,166,86,.06) 30%, rgba(255,150,72,0) 48%),
+        linear-gradient(90deg, rgba(8,12,18,.44) 0%, rgba(8,12,18,.30) 34%, rgba(8,12,18,.16) 64%, rgba(8,12,18,.06) 100%),
+        linear-gradient(180deg, rgba(8,12,18,.06) 0%, rgba(8,12,18,.20) 100%);
+    }
+
     #desktopView.hero-contrast-after-soft .hero-bg{
       filter:brightness(.95) contrast(1.08) saturate(1.02);
     }
@@ -1229,10 +1357,10 @@
 
     .hero-shell:not(.mobile-hero) .feature-row{
       margin-top:10px;
+      justify-content:center;
     }
 
-    .hero-shell:not(.mobile-hero) .hero-proofline,
-    .hero-shell:not(.mobile-hero) .feature-row{
+    .hero-shell:not(.mobile-hero) .hero-proofline{
       justify-content:center;
     }
 
@@ -1295,11 +1423,14 @@
       backdrop-filter:blur(18px);
       isolation:isolate;
       background-clip:padding-box;
+      overflow:hidden;
+      clip-path:inset(0 round 26px);
       box-shadow:0 24px 70px rgba(0,0,0,.34);
       color:#fff;
       transition:transform .2s ease, box-shadow .2s ease;
       z-index:3;
       box-sizing:border-box;
+      contain:paint;
       will-change:transform;
       transform:translateY(var(--hero-overlap-y));
     }
@@ -1592,9 +1723,9 @@
     }
 
     .mobile-programs-flow{
-      margin-top:10px;
+      margin-top:8px;
       display:grid;
-      gap:8px;
+      gap:6px;
     }
 
     .mobile-program-selector{
@@ -1634,9 +1765,9 @@
       border-radius:16px;
       background:#fff;
       box-shadow:var(--shadow);
-      padding:12px;
+      padding:10px;
       display:grid;
-      gap:8px;
+      gap:6px;
     }
 
     .mobile-program-active-card strong{
@@ -1682,6 +1813,10 @@
       color:#5b6474;
       font-size:13px;
       line-height:1.5;
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:3;
+      overflow:hidden;
     }
 
     .mobile-program-hint{
@@ -2236,26 +2371,6 @@
       gap:8px;
     }
 
-    .mobile-contact-card{
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:#fff;
-      box-shadow:var(--shadow);
-      padding:9px 10px;
-      text-decoration:none;
-      display:grid;
-      gap:3px;
-      min-height:60px;
-      align-content:center;
-    }
-
-    .mobile-contact-card small,
-    .mobile-contact-card strong{
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
     .mobile-map-open-btn{
       min-height:36px;
       padding:0 12px;
@@ -2509,10 +2624,6 @@
       display:none !important;
     }
 
-    .booking-stage-4 .booking-save-btn{
-      display:block;
-    }
-
     .selected-shift-chip{
       display:none;
       align-items:center;
@@ -2669,7 +2780,7 @@
       font-size:14px;
       font-weight:700;
       line-height:1.2;
-      display:flex;
+      display:none;
       align-items:center;
       justify-content:center;
       cursor:pointer;
@@ -3369,16 +3480,9 @@
       min-width:0;
     }
 
-    #desktop-booking-card.booking-stage-2 #desktop-booking-info:empty{
-      display:none;
-      margin-bottom:0 !important;
-    }
-
     #desktop-booking-card.booking-stage-2 #desktopBookingLead,
     #desktop-booking-card.booking-stage-2 #desktop-booking-info{
       display:none !important;
-      margin:0 !important;
-      min-height:0 !important;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option{
@@ -3410,8 +3514,20 @@
     }
 
     #desktop-booking-card.booking-stage-2 .booking-all-shifts-link{
+      display:flex;
       margin-top:6px;
       align-self:stretch;
+    }
+
+    #mobileBookingCard.booking-stage-2 .booking-all-shifts-link{
+      display:flex;
+      margin-top:6px;
+      align-self:stretch;
+    }
+
+    #desktop-booking-card.booking-stage-3 .booking-all-shifts-link,
+    #desktop-booking-card.booking-stage-4 .booking-all-shifts-link{
+      display:none !important;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head > strong{
@@ -4019,15 +4135,6 @@
       margin:8px 0 0;
     }
 
-    .booking-save-btn{
-      display:none;
-      margin-top:10px;
-      border-color:rgb(255 255 255 / 24%);
-      background:rgb(255 255 255 / 6%);
-      color:#fff;
-      box-shadow:none;
-    }
-
     .cta-subtext{
       margin-top:8px;
       font-size:12px;
@@ -4139,18 +4246,24 @@
     #desktop-booking-card.booking-stage-3 .booking-step-3 .under-cta,
     #desktop-booking-card.booking-stage-3 .booking-step-3 .booking-step1-hooks,
     #desktop-booking-card.booking-stage-3 .booking-step-3 .trust-mini,
-    #desktop-booking-card.booking-stage-3 .booking-step-3 .booking-scarcity{
+    #desktop-booking-card.booking-stage-3 .booking-step-3 .booking-scarcity,
+    #desktop-booking-card.booking-stage-4 .booking-step-3 .under-cta,
+    #desktop-booking-card.booking-stage-4 .booking-step-3 .booking-step1-hooks,
+    #desktop-booking-card.booking-stage-4 .booking-step-3 .trust-mini,
+    #desktop-booking-card.booking-stage-4 .booking-step-3 .booking-scarcity{
       display:none;
     }
 
-    #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-wrap{
+    #desktop-booking-card.booking-stage-3 .booking-step-3,
+    #desktop-booking-card.booking-stage-4 .booking-step-3{
+      margin-top:0;
+    }
+
+    #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-wrap,
+    #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-wrap{
       margin:0;
       padding:0;
       box-shadow:none;
-    }
-
-    #desktop-booking-card.booking-stage-3 .booking-step-3{
-      margin-top:0;
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info{
@@ -4158,16 +4271,22 @@
       flex:1 1 auto;
       min-height:0;
       min-width:0;
-      margin:0 0 8px !important;
+      margin:0 0 6px !important;
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus{
       flex:1 1 auto;
       min-height:100%;
+      height:100%;
       min-width:0;
-      padding:18px 16px;
-      gap:12px;
-      align-content:start;
+      padding:0;
+      gap:8px;
+      align-content:stretch;
+      display:flex;
+      flex-direction:column;
+      border:none;
+      border-radius:0;
+      background:transparent;
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__dates{
@@ -4188,6 +4307,18 @@
       font-size:clamp(15px,1.02vw,17px);
       line-height:1.44;
       color:rgba(255,255,255,.92);
+      flex:1 1 auto;
+      margin:0;
+      max-height:none;
+      overflow:visible;
+    }
+
+    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__desc-title{
+      font-size:clamp(14px,.95vw,16px);
+      line-height:1.25;
+      font-weight:800;
+      color:rgba(255,255,255,.96);
+      margin:2px 0 0;
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__context{
@@ -4197,13 +4328,29 @@
       color:rgba(255,255,255,.84);
     }
 
+    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-preliminary-chip{
+      align-self:flex-start;
+      margin-top:6px;
+      min-height:30px;
+      padding:0 12px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.01em;
+      color:rgba(255,255,255,.94);
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.18);
+    }
+
     #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-main,
     #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-main.cta-main-compact{
       width:100%;
-      min-height:54px;
+      min-height:52px;
       border-radius:14px;
-      padding:12px 16px;
-      font-size:22px;
+      padding:11px 16px;
+      font-size:20px;
       font-weight:900;
     }
 
@@ -4213,7 +4360,7 @@
       align-items:center;
       min-height:0;
       min-width:0;
-      margin:0 0 6px !important;
+      margin:0 0 4px !important;
     }
 
     /* Stage 4 compositing fix: prevent bottom-right backdrop-filter artifact */
@@ -4285,43 +4432,33 @@
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-shift-description{
       flex:1 1 auto;
-      min-height:0;
-      margin-top:4px;
+      min-height:auto;
+      margin-top:2px;
       padding:0;
       border:none;
       background:transparent;
       color:rgba(255,255,255,.88);
       font-size:12px;
       line-height:1.24;
-      max-height:5.2em;
-      overflow:hidden;
+      max-height:none;
+      overflow:visible;
     }
 
-    #desktop-booking-card.booking-stage-4 .booking-step-3{
-      margin-top:0;
-    }
-
-    #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-wrap{
-      margin:0;
-      padding:0;
-      box-shadow:none;
-    }
-
-    #desktop-booking-card.booking-stage-4 .booking-step-3 .under-cta,
-    #desktop-booking-card.booking-stage-4 .booking-step-3 .booking-step1-hooks,
-    #desktop-booking-card.booking-stage-4 .booking-step-3 .trust-mini,
-    #desktop-booking-card.booking-stage-4 .booking-step-3 .booking-scarcity{
-      display:none;
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-shift-description{
+      flex:1 1 auto;
+      min-height:auto;
+      max-height:none;
+      overflow:visible;
     }
 
     #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-main,
     #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-main.cta-main-compact{
       width:100%;
-      min-height:58px;
+      min-height:54px;
       border-radius:14px;
       font-size:18px;
       font-weight:800;
-      padding:10px 16px;
+      padding:9px 16px;
       letter-spacing:-.02em;
     }
 
@@ -4380,6 +4517,13 @@
     #desktop-booking-card.booking-completed .booking-summary-mini,
     #mobileBookingCard.booking-completed .booking-summary-mini{
       margin-top:0;
+    }
+
+    #desktop-booking-card.booking-completed .booking-summary-mini--completed,
+    #mobileBookingCard.booking-completed .booking-summary-mini--completed{
+      border:none;
+      background:transparent;
+      box-shadow:none;
     }
 
     .booking-shift-focus{
@@ -6722,7 +6866,7 @@
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts{
       display:grid;
-      grid-template-columns:minmax(0,4.25fr) minmax(170px,0.95fr);
+      grid-template-columns:minmax(0,1fr) minmax(290px,340px);
       align-items:stretch;
       grid-template-rows:auto minmax(0,1fr) auto;
       gap:10px;
@@ -6775,13 +6919,18 @@
       gap:10px;
       padding:10px 10px;
       border-radius:14px;
+      min-width:0;
+      align-items:center;
     }
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .contact-link strong,
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .contact-link span{
-      white-space:nowrap;
+      white-space:normal;
       overflow:visible;
       text-overflow:clip;
+      overflow-wrap:anywhere;
+      word-break:normal;
+      line-height:1.25;
     }
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .map-preview,
@@ -6807,10 +6956,10 @@
     }
 
     .overlay.section-modal-compact .section-modal-body .section-modal-contacts .map-address > span{
-      display:-webkit-box;
-      -webkit-box-orient:vertical;
-      -webkit-line-clamp:3;
-      overflow:hidden;
+      display:block;
+      -webkit-box-orient:initial;
+      -webkit-line-clamp:initial;
+      overflow:visible;
       font-size:12px;
       line-height:1.38;
     }
@@ -6863,9 +7012,9 @@
 
     .overlay.section-modal-compact .section-modal-close-floating{
       display:flex;
-      top:9px;
+      top:20px;
       bottom:auto;
-      right:4px;
+      right:22px;
       left:auto;
       transform:none;
       position:absolute;
@@ -6979,33 +7128,19 @@
     }
 
     .notice-card{
-      width:min(100%, 460px);
+      width:min(100%, 430px);
+      padding:18px;
     }
 
     .notice-card .form-head{
-      margin-bottom:10px;
+      margin-bottom:4px;
     }
 
     .notice-message{
       margin:0;
       color:var(--muted);
-      line-height:1.55;
-      font-size:14px;
-    }
-
-    .notice-actions{
-      margin-top:14px;
-      display:flex;
-      justify-content:flex-end;
-    }
-
-    .notice-actions .cta-main{
-      width:auto;
-      min-width:132px;
-      padding:12px 16px;
-      font-size:15px;
-      border-radius:14px;
-      box-shadow:0 12px 24px rgba(255,122,0,.28);
+      line-height:1.4;
+      font-size:13px;
     }
 
     .overlay-card.dark p{
@@ -7041,6 +7176,10 @@
       font-size:14px;
       line-height:1.45;
       color:#111827;
+    }
+
+    .mobile-contact-card strong:last-child{
+      margin-bottom:0;
     }
 
     .mobile-faq-card span,
@@ -7128,19 +7267,12 @@
       display:block;
     }
 
-    .mobile-team-feature-cta{
-      width:max-content;
-      min-height:32px;
-      padding:0 12px;
-      border-radius:999px;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      color:#fff;
-      font-size:12px;
-      font-weight:800;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    .mobile-team-feature-link{
+      color:var(--accent);
+      font-weight:700;
+      text-decoration:underline;
+      text-underline-offset:2px;
+      white-space:nowrap;
     }
 
     .mobile-team-founder-card{
@@ -7420,9 +7552,9 @@
     }
 
     .offer-card-stable{
-      min-height:520px;
-      height:520px;
-      max-height:520px;
+      min-height:0;
+      height:auto;
+      max-height:min(92vh, 760px);
       overflow:hidden;
     }
 
@@ -7554,7 +7686,6 @@
       background:#fff;
       border:none;
       box-shadow:none;
-      font-size:24px;
     }
 
     .offer-legacy-search-icon__asset{
@@ -7613,7 +7744,6 @@
       align-items:center;
       justify-content:center;
       background:#fff;
-      font-size:18px;
       border:none;
       box-shadow:none;
       flex:0 0 54px;
@@ -7861,13 +7991,125 @@
     }
 
     @media (max-width: 720px){
+      #offerOverlay{
+        align-items:flex-start;
+        justify-content:center;
+        padding:10px;
+      }
+
+      #offerOverlay .overlay-card{
+        width:100%;
+        max-width:100%;
+        max-height:calc(100vh - 20px);
+        padding:14px;
+        border-radius:20px;
+        overflow:hidden;
+      }
+
       .offer-card-stable{
-        min-height:420px;
-        height:420px;
+        min-height:0;
+        height:auto;
+        max-height:calc(100vh - 20px);
+        overflow:hidden;
       }
 
       .offer-state-shell{
-        min-height:340px;
+        min-height:0;
+        height:auto;
+      }
+
+      .offer-state-shell--result{
+        gap:6px;
+      }
+
+      .offer-headline{
+        margin-bottom:4px;
+      }
+
+      .offer-headline h3{
+        font-size:18px;
+        line-height:1.1;
+      }
+
+      .offer-legacy-result-banner{
+        padding:10px 11px;
+        gap:10px;
+      }
+
+      .offer-legacy-result-banner__icon{
+        width:42px;
+        height:42px;
+        border-radius:10px;
+        flex:0 0 42px;
+      }
+
+      .offer-legacy-result-banner__asset{
+        width:24px;
+        height:24px;
+      }
+
+      .offer-legacy-result-banner__text strong{
+        font-size:14px;
+        line-height:1.2;
+      }
+
+      .offer-legacy-result-banner__text span{
+        margin-top:2px;
+        font-size:12px;
+        line-height:1.2;
+      }
+
+      .offer-legacy-price-box{
+        padding:8px 10px;
+        gap:2px;
+      }
+
+      .offer-legacy-price-box strong{
+        font-size:24px;
+        line-height:1.04;
+      }
+
+      .offer-legacy-price-box span{
+        font-size:10px;
+      }
+
+      .offer-price-compare{
+        gap:7px;
+        margin:2px 0 6px;
+      }
+
+      .offer-price-compare__new strong{
+        font-size:24px;
+        line-height:1.05;
+      }
+
+      .offer-benefit-chip{
+        min-height:26px;
+        padding:5px 8px;
+        font-size:10px;
+      }
+
+      .offer-booking-block{
+        margin-top:4px;
+        padding:9px;
+        border-radius:12px;
+        gap:6px;
+      }
+
+      .offer-booking-note{
+        font-size:11px;
+        line-height:1.28;
+      }
+
+      .overlay-actions{
+        margin-top:6px;
+      }
+
+      .overlay-actions .cta-main{
+        min-height:44px;
+        padding:10px 14px;
+        font-size:18px;
+        line-height:1.05;
       }
     }
 
@@ -8768,15 +9010,14 @@
       }
 
       #desktopView.mobile-preview-active .hero-menu-toggle-icon{
-        width:22px;
-        height:14px;
-        border-top-width:3px;
-        border-bottom-width:3px;
+        display:none;
       }
 
-      #desktopView.mobile-preview-active .hero-menu-toggle-icon::before{
-        top:4px;
-        border-top-width:3px;
+      #desktopView.mobile-preview-active .hero-menu-toggle-icon-img{
+        display:block;
+        width:24px;
+        height:24px;
+        filter:brightness(0) saturate(100%) invert(57%) sepia(93%) saturate(1792%) hue-rotate(3deg) brightness(102%) contrast(103%);
       }
 
       #desktopView.mobile-preview-active .hero-menu-toggle-text{
@@ -8835,8 +9076,8 @@
       }
 
       #desktopView.mobile-preview-active .hero-mobile-age-cta{
-        display:inline-flex;
-        margin:0 0 8px;
+        display:none;
+        margin:0;
       }
 
       #desktopView.mobile-preview-active .hero-slogan{
@@ -8904,13 +9145,21 @@
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs{
         grid-template-columns:repeat(3,minmax(0,1fr));
-        gap:7px;
+        gap:6px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab{
-        min-height:86px;
-        padding:8px 8px 9px;
+        min-height:96px;
+        padding:6px 7px 7px;
         border-radius:12px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-main{
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+        gap:6px;
+        min-height:100%;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-head{
@@ -8918,18 +9167,32 @@
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-range{
-        font-size:13px;
+        font-size:12px;
         line-height:1.05;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-track{
-        font-size:11px;
+        font-size:10px;
         line-height:1.12;
       }
 
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-anchor,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-anchor{
+        display:block;
+        font-size:10px;
+        line-height:1.2;
+        margin:0;
+      }
+
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-bullets{
-        display:none;
+        display:flex;
+        gap:4px;
+        flex-wrap:wrap;
+        margin-top:0;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-bullets span{
+        font-size:9px;
+        line-height:1.15;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option{
@@ -9120,7 +9383,7 @@
 </head>
 <body>
   <!-- @block:version -->
-  <div class="version-badge" id="version-badge" data-version="v0.0.134 (css-dedup-stage4-hidden-children)" style="
+  <div class="version-badge" id="version-badge" style="
     position:fixed;
     top:12px;
     right:16px;
@@ -9134,7 +9397,7 @@
     font-family: monospace;
     opacity:0.7;
   ">
-    <span class="version-badge-label" id="version-badge-label">v0.0.134 (css-dedup-stage4-hidden-children)</span>
+    <span class="version-badge-label" id="version-badge-label"></span>
     <button class="version-badge-close" type="button" data-action="close-version-badge" aria-label="Скрыть версию">
       <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
     </button>
@@ -9155,8 +9418,8 @@
       <div class="screen">
         <!-- @block:hero -->
         <div class="hero-shell">
-          <div id="heroBg1" class="hero-bg active"></div>
-          <div id="heroBg2" class="hero-bg hidden"></div>
+          <div id="heroBg1" class="hero-bg active" style="background-image:url('/assets/images/hero-camp-sunset-20260328.jpeg');"></div>
+          <div id="heroBg2" class="hero-bg hidden" style="background-image:url('/assets/images/hero-camp-sunset-20260328.jpeg');"></div>
           <div class="hero-topbar">
             <div class="hero-left-tools">
               <div class="brand desktop-brand-mark" aria-label="AiDaCamp">
@@ -9184,6 +9447,7 @@
                 aria-expanded="false"
                 aria-controls="serviceMenu"
               >
+                <img class="hero-menu-toggle-icon-img" src="/assets/icons/burger-menu-svgrepo-com.svg" alt="" aria-hidden="true">
                 <span class="hero-menu-toggle-icon" aria-hidden="true"></span>
                 <span class="hero-menu-toggle-text">Меню</span>
               </button>
@@ -9653,17 +9917,17 @@
                 <button class="age-tab" data-age="7-9" data-track="track-1">
                   <span class="age-tab-range">7–9 лет</span>
                   <span class="age-tab-track">Scratch + Minecraft</span>
-                  <span class="age-tab-note">Первые проекты, визуальная логика, игровые механики</span>
+                  <span class="age-tab-note">Первый опыт через игру · Первые проекты · Логика</span>
                 </button>
                 <button class="age-tab" data-age="10-12" data-track="track-2">
                   <span class="age-tab-range">10–12 лет</span>
                   <span class="age-tab-track">Python</span>
-                  <span class="age-tab-note">Игры, боты, мини-проекты и уверенный вход в код</span>
+                  <span class="age-tab-note">Первый код · Игры · Боты · Проект</span>
                 </button>
                 <button class="age-tab" data-age="13-14" data-track="track-3">
                   <span class="age-tab-range">13–14 лет</span>
                   <span class="age-tab-track">Python + JavaScript + AI</span>
-                  <span class="age-tab-note">Сложнее проекты, нейросети, логика продуктов и презентация</span>
+                  <span class="age-tab-note">Серьёзные проекты · AI · Продукты · Презентация</span>
                 </button>
               </div>
             </div>
@@ -9890,9 +10154,6 @@
           <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
         </button>
       </div>
-      <div class="notice-actions">
-        <button class="cta-main" type="button" data-action="close-notice">Понятно</button>
-      </div>
     </div>
   </div>
 
@@ -10006,7 +10267,7 @@
       },
       {
         id:'shift-2',
-        title:'2.1',
+        title:'2',
         label:'Смена 2',
         dates:'10 июня — 16 июня',
         start:'2025-06-10',
@@ -10020,7 +10281,7 @@
       },
       {
         id:'shift-3',
-        title:'2.2',
+        title:'3',
         label:'Смена 3',
         dates:'16 июня — 23 июня',
         start:'2025-06-16',
@@ -10034,7 +10295,7 @@
       },
       {
         id:'shift-4',
-        title:'2',
+        title:'4',
         label:'Смена 4',
         dates:'10 июня — 23 июня',
         start:'2025-06-10',
@@ -10269,9 +10530,59 @@
     };
 
     const METRIKA_ID = 96499295;
-    const DEBUG_UI = false;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.134 (css-dedup-stage4-hidden-children)';
+    const BUILD_VERSION_LABEL = 'v0.0.200 (mobile-menu-scroll-behavior-fixed)';
+    const QUALITY_SCORE_MODEL = Object.freeze({
+      scale: '0..10',
+      debtScale: '0 best .. 10 worst',
+      baselineVersion: 'v0.0.112 (debug-offer-layout-switch)',
+      css: Object.freeze({
+        start: 10,
+        penalties: Object.freeze({
+          duplicateSelectors: 0.25,
+          deadRules: 0.2,
+          highSpecificityHotspots: 0.35,
+          stageLeakage: 0.4,
+          mobileDesktopDivergence: 0.35
+        })
+      }),
+      js: Object.freeze({
+        start: 10,
+        penalties: Object.freeze({
+          branchComplexity: 0.35,
+          stateCoupling: 0.35,
+          duplicateHandlers: 0.25,
+          magicNumbers: 0.15,
+          legacyFlagsInProdPath: 0.35
+        })
+      }),
+      debt: Object.freeze({
+        start: 0,
+        increments: Object.freeze({
+          noGuardrails: 0.8,
+          monolithEdits: 0.7,
+          duplicatedUiLogic: 0.7,
+          unresolvedStageRegressions: 0.9,
+          debugArtifactsInProdPath: 0.7
+        })
+      })
+    });
+    window.__AIDACAMP_QUALITY_SCORE_MODEL = QUALITY_SCORE_MODEL;
+    window.__AIDACAMP_QUALITY_SCORE_SNAPSHOT = Object.freeze({
+      version: BUILD_VERSION_LABEL,
+      css: 8.8,
+      js: 8.6,
+      techDebt: 1.5,
+      debtScale: '0 best .. 10 worst',
+      baselineVersion: QUALITY_SCORE_MODEL.baselineVersion
+    });
+    const HERO_CONTRAST_MODES = Object.freeze(['before', 'after', 'after-soft']);
+    const HERO_MICRO_MODES = Object.freeze(['on', 'demo']);
+    const OFFER_MODAL_THEMES = Object.freeze(['light', 'dark']);
+    const OFFER_LAYOUT_MODES = Object.freeze(['legacy', 'current']);
+    const normalizeMode = (value, allowedModes, fallbackMode) => (
+      allowedModes.includes(value) ? value : fallbackMode
+    );
     const VERSION_BADGE_HIDDEN_KEY = 'aidacamp_version_badge_hidden_v1';
     const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v2';
     const VIDEO_META_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
@@ -10292,6 +10603,7 @@
     let mediaIndex = 0;
     let mediaType = 'photo';
     let activePhotoList = [];
+    let photoGalleryList = [];
     state.previewView = state.previewView || state.view || 'desktop';
     if(USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile'){
       state.view = 'desktop';
@@ -10398,9 +10710,6 @@
       } catch (err){
         console.warn('Metrika track error:', event, err);
       }
-      if(DEBUG_UI){
-        console.log('[TRACK]', event, params);
-      }
     }
 
     function applyDebugUiState(){
@@ -10408,14 +10717,10 @@
       if(!badge) return;
       const badgeLabel = document.getElementById('version-badge-label');
       const isHidden = localStorage.getItem(VERSION_BADGE_HIDDEN_KEY) === '1';
-      const label = String(badge.dataset.version || BUILD_VERSION_LABEL || '').trim();
-      if(label){
-        if(badgeLabel) badgeLabel.textContent = label;
-        badge.title = label;
-        badge.classList.toggle('hidden', isHidden);
-        return;
-      }
-      badge.classList.toggle('hidden', isHidden || !DEBUG_UI);
+      const label = BUILD_VERSION_LABEL.trim();
+      if(badgeLabel) badgeLabel.textContent = label;
+      badge.title = label;
+      badge.classList.toggle('hidden', isHidden);
     }
 
     function trackOnce(event, params = {}){
@@ -10439,7 +10744,6 @@
           "[data-action='close-debug-controls']",
           "[data-action='close-form']",
           "[data-action='close-success']",
-          "[data-action='close-notice']",
           "[data-action='close-section-modal']",
           "[data-action='close-video-modal']",
           "[data-action='close-calendar']"
@@ -10458,8 +10762,7 @@
           btn.classList.contains('media-close') ||
           btn.classList.contains('video-close') ||
           btn.classList.contains('form-close') ||
-          btn.classList.contains('offer-close-btn') ||
-          /^close-/.test(btn.dataset.action || '')
+          btn.classList.contains('offer-close-btn')
         ){
           if(!btn.querySelector('img.ac-icon')){
             btn.innerHTML = CLOSE_ICON_HTML;
@@ -10559,10 +10862,14 @@
 
       const bg1 = document.getElementById('heroBg1');
       const bg2 = document.getElementById('heroBg2');
+      const desktopView = document.getElementById('desktopView');
       if(!bg1) return;
       if(heroTimer){
         clearInterval(heroTimer);
         heroTimer = null;
+      }
+      if(desktopView){
+        desktopView.classList.toggle('hero-static-bg', HERO_IMAGES.length <= 1);
       }
 
       if(isMobile){
@@ -10586,7 +10893,11 @@
       bg2.classList.add('hidden');
 
       if(HERO_IMAGES.length <= 1){
+        bg1.classList.add('active');
+        bg1.classList.remove('hidden');
         bg2.style.backgroundImage = 'none';
+        bg2.classList.remove('active');
+        bg2.classList.add('hidden');
         return;
       }
 
@@ -11155,6 +11466,7 @@
 
       if(action === 'open-photo'){
         const index = Number(actionEl.dataset.photoIndex || 0);
+        activePhotoList = photoGalleryList.length ? photoGalleryList.slice() : mediaContent.photos.slice();
         openMedia('photo', index);
         return true;
       }
@@ -11387,8 +11699,9 @@
 
       if(action === 'mobile-docs-toggle'){
         state.mobileDocsExpanded = !state.mobileDocsExpanded;
-        renderCompactTrustPanelContent();
+        syncMobileDocsExpandedUi();
         renderDesktopMobileDocsBlock();
+        syncMobileDocsExpandedUi();
         persist();
         return true;
       }
@@ -12066,6 +12379,7 @@
 
     function renderGuidedState(prefix){
       syncGuidedState();
+      const stage = getBookingStage();
       const shiftList = document.getElementById(`${prefix}ShiftList`);
       const ctaWrap = document.getElementById(`${prefix}CtaWrap`);
       const ageTabs = document.getElementById(`${prefix}AgeTabs`);
@@ -12104,7 +12418,7 @@
         allShiftsBtn.textContent = hasSelectedAge()
           ? `Все смены для ${ageLabel(state.age)}`
           : 'Все смены по возрастам';
-        allShiftsBtn.classList.toggle('hidden', state.offerStage >= 1);
+        allShiftsBtn.classList.toggle('hidden', stage !== 2 || state.offerStage >= 1);
       }
       if(chipHost){
         if(ageChip.parentElement !== chipHost){
@@ -12486,13 +12800,13 @@
       }
 
       if(isDesktopPanel && state.offerStage === 0){
-        const shiftContext = getShiftContextLine(shift);
+        const shiftLongDescription = getShiftDisplayDescription(shift);
         if(info) info.innerHTML = `
           <div class="booking-shift-focus">
             <div class="booking-shift-focus__dates">${shift.dates}</div>
             <div class="booking-shift-focus__meta">${shiftDaysLabel(shift)} · ${formatPrice(shift.price)} · осталось ${shift.left} мест</div>
-            <p class="booking-shift-focus__desc">${shift.desc}</p>
-            ${shiftContext ? `<p class="booking-shift-focus__context">${shiftContext}</p>` : ''}
+            <div class="booking-shift-focus__desc-title">Описание смены</div>
+            <p class="booking-shift-focus__desc">${shiftLongDescription}</p>
           </div>
         `;
         return;
@@ -12633,7 +12947,7 @@
       const afterBtn = document.getElementById('heroContrastAfterBtn');
       const afterSoftBtn = document.getElementById('heroContrastAfterSoftBtn');
       if(!desktopView) return;
-      const mode = ['before', 'after', 'after-soft'].includes(state.heroContrastMode) ? state.heroContrastMode : 'after-soft';
+      const mode = normalizeMode(state.heroContrastMode, HERO_CONTRAST_MODES, 'after-soft');
       desktopView.classList.toggle('hero-contrast-before', mode === 'before');
       desktopView.classList.toggle('hero-contrast-after', mode === 'after');
       desktopView.classList.toggle('hero-contrast-after-soft', mode === 'after-soft');
@@ -12649,7 +12963,7 @@
     }
 
     function switchHeroContrastMode(mode){
-      state.heroContrastMode = ['before', 'after', 'after-soft'].includes(mode) ? mode : 'after-soft';
+      state.heroContrastMode = normalizeMode(mode, HERO_CONTRAST_MODES, 'after-soft');
       applyHeroContrastMode();
       persist();
     }
@@ -12660,7 +12974,7 @@
       const onBtn = document.getElementById('heroMicroOnBtn');
       const demoBtn = document.getElementById('heroMicroDemoBtn');
       if(!desktopView) return;
-      const mode = ['on', 'demo'].includes(state.heroMicroMode) ? state.heroMicroMode : 'off';
+      const mode = normalizeMode(state.heroMicroMode, HERO_MICRO_MODES, 'off');
       desktopView.classList.toggle('hero-micro-on', mode === 'on');
       desktopView.classList.toggle('hero-micro-demo', mode === 'demo');
       desktopView.classList.toggle('hero-micro-off', mode === 'off');
@@ -12676,13 +12990,13 @@
     }
 
     function switchHeroMicroMode(mode){
-      state.heroMicroMode = ['on', 'demo'].includes(mode) ? mode : 'off';
+      state.heroMicroMode = normalizeMode(mode, HERO_MICRO_MODES, 'off');
       applyHeroMicroMode();
       persist();
     }
 
     function applyOfferModalTheme(cardEl = null){
-      const mode = state.offerModalTheme === 'dark' ? 'dark' : 'light';
+      const mode = normalizeMode(state.offerModalTheme, OFFER_MODAL_THEMES, 'light');
       const lightBtn = document.getElementById('offerThemeLightBtn');
       const darkBtn = document.getElementById('offerThemeDarkBtn');
       if(lightBtn){
@@ -12698,13 +13012,13 @@
     }
 
     function switchOfferModalTheme(mode){
-      state.offerModalTheme = mode === 'dark' ? 'dark' : 'light';
+      state.offerModalTheme = normalizeMode(mode, OFFER_MODAL_THEMES, 'light');
       applyOfferModalTheme();
       persist();
     }
 
     function applyOfferLayoutMode(){
-      const mode = state.offerLayout === 'legacy' ? 'legacy' : 'current';
+      const mode = normalizeMode(state.offerLayout, OFFER_LAYOUT_MODES, 'current');
       const currentBtn = document.getElementById('offerLayoutCurrentBtn');
       const legacyBtn = document.getElementById('offerLayoutLegacyBtn');
       if(currentBtn){
@@ -12720,7 +13034,7 @@
     }
 
     function switchOfferLayout(mode){
-      const normalizedMode = mode === 'legacy' ? 'legacy' : 'current';
+      const normalizedMode = normalizeMode(mode, OFFER_LAYOUT_MODES, 'current');
       state.offerLayout = normalizedMode;
       applyOfferLayoutMode();
       persist();
@@ -12974,7 +13288,7 @@
       const ruWeek = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
       const ruMonth = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
 
-      title.textContent = `${shift.title}: ${start.toLocaleDateString('ru-RU')} — ${end.toLocaleDateString('ru-RU')}`;
+      title.textContent = `${start.toLocaleDateString('ru-RU')} — ${end.toLocaleDateString('ru-RU')}`;
 
       const firstMonth = new Date(start.getFullYear(), start.getMonth(), 1);
       const lastMonth = new Date(end.getFullYear(), end.getMonth(), 1);
@@ -13352,6 +13666,12 @@
       return shift.desc || '';
     }
 
+    function getShiftDisplayDescription(shift){
+      if(!shift) return '';
+      if(!hasSelectedAge()) return shift.desc || '';
+      return getShiftAgeFocusedDescription(shift, state.age || '7-9');
+    }
+
     function normalizeShiftText(value){
       return String(value || '').replace(/\s+/g, ' ').trim();
     }
@@ -13415,7 +13735,7 @@
             <span>${formatPrice(shift.price)} · ${shiftDaysLabel(shift)} · осталось ${shift.left} мест</span>
           </div>
           <p class="shift-modal-content__desc"><strong>Коротко:</strong> ${shift.desc}</p>
-          <p class="shift-modal-content__desc"><strong>Подробно:</strong> ${shift.fullDesc || shift.desc}</p>
+          <p class="shift-modal-content__desc"><strong>Подробно:</strong> ${getShiftDisplayDescription(shift)}</p>
           <ul class="shift-modal-content__list">
             ${summaryLines.map((line) => `<li>${line}</li>`).join('')}
           </ul>
@@ -13457,7 +13777,7 @@
               <span class="shift-option-seats">осталось ${s.left} мест</span>
             </small>
           </div>
-          <div class="shift-option-tagline">${getShiftCardTagline(s)}</div>
+          <div class="shift-option-tagline">${s.desc || ''}</div>
           <div class="shift-option-actions">
             <button class="shift-option-action" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${viewKey}">
               О смене
@@ -13504,8 +13824,13 @@
       if(!grid) return;
       const shortGrid = document.getElementById('shortShiftCards');
       const shortShiftIds = new Set(['shift-2','shift-3']);
-      const mainShifts = shifts.filter((s) => !shortShiftIds.has(s.id));
-      const shortShifts = shifts.filter((s) => shortShiftIds.has(s.id));
+      const mainShifts = shifts;
+      const shortShifts = shifts
+        .filter((s) => shortShiftIds.has(s.id))
+        .map((s) => ({
+          ...s,
+          title: s.id === 'shift-2' ? '2.1' : '2.2'
+        }));
 
       grid.innerHTML = mainShifts.map(s => `
         <div class="mini-card">
@@ -13521,7 +13846,6 @@
             </span>
           </div>
           <p>${s.desc || ''}</p>
-          ${getShiftContextLine(s) ? `<div class="shift-context-line">${getShiftContextLine(s)}</div>` : ''}
         </div>
       `).join('');
 
@@ -13542,7 +13866,7 @@
                 </button>
               </span>
             </div>
-            ${getShiftContextLine(s) ? `<div class="shift-context-line">${getShiftContextLine(s)}</div>` : ''}
+            <p>${s.desc || ''}</p>
           </div>
         `).join('');
         shortGrid.closest('.programs-short-block')?.classList.remove('hidden');
@@ -13620,7 +13944,8 @@
             filteredPhotos = filteredPhotos.slice(0, 4);
           }
         }
-        activePhotoList = filteredPhotos;
+        photoGalleryList = filteredPhotos.slice();
+        activePhotoList = photoGalleryList.slice();
 
         photoGrid.innerHTML = filteredPhotos.map((item, idx) => `
           <div
@@ -13902,8 +14227,7 @@
             <img class="mobile-team-feature-cover" src="/assets/images/cdn-cache/8fc8172e_8991804334.webp" alt="Собственная книга по Python">
           </div>
           <strong>Собственная книга по Python</strong>
-          <span>Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики.</span>
-          <a class="mobile-team-feature-cta" href="${mediaContent.references.programmingBookUrl}" target="_blank" rel="noopener noreferrer">Смотреть книгу</a>
+          <span>Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики. <a class="mobile-team-feature-link" href="${mediaContent.references.programmingBookUrl}" target="_blank" rel="noopener noreferrer">Смотреть книгу</a></span>
         </article>
         ${founder ? `
           <article class="mobile-team-founder-card">
@@ -13942,6 +14266,8 @@
       const mapEmbedUrl = mediaContent.references.locationMapEmbedUrl;
       const cityPhone = mediaContent.contacts.find((item) => item.label === 'city_phone');
       const mobilePhone = mediaContent.contacts.find((item) => item.label === 'mobile_phone');
+      const whatsapp = mediaContent.contacts.find((item) => item.label === 'whatsapp');
+      const telegram = mediaContent.contacts.find((item) => item.label === 'telegram');
       mobileInlineContactsList.innerHTML = `
         <article class="mobile-map-preview-card">
           <div class="mobile-map-preview">
@@ -13957,8 +14283,10 @@
           <a class="mobile-map-open-btn" href="${mapUrl}" target="_blank" rel="noopener noreferrer">Открыть карту</a>
         </article>
         <div class="mobile-contact-grid">
-          ${cityPhone ? `<a class="mobile-contact-card" href="${cityPhone.href}"><small>Телефон 1</small><strong>${cityPhone.text}</strong></a>` : ''}
-          ${mobilePhone ? `<a class="mobile-contact-card" href="${mobilePhone.href}"><small>Телефон 2</small><strong>${mobilePhone.text}</strong></a>` : ''}
+          ${cityPhone ? `<a class="mobile-contact-card" href="${cityPhone.href}"><strong>${cityPhone.text}</strong></a>` : ''}
+          ${mobilePhone ? `<a class="mobile-contact-card" href="${mobilePhone.href}"><strong>${mobilePhone.text}</strong></a>` : ''}
+          ${whatsapp ? `<a class="mobile-contact-card" href="${whatsapp.href}" target="_blank" rel="noopener noreferrer"><strong>${whatsapp.text}</strong></a>` : ''}
+          ${telegram ? `<a class="mobile-contact-card" href="${telegram.href}" target="_blank" rel="noopener noreferrer"><strong>Telegram</strong></a>` : ''}
         </div>
       `;
     }
@@ -14092,7 +14420,7 @@
                 <span>${shiftDaysLabel(activeShift)}</span>
                 <span>Осталось ${activeShift.left} мест</span>
               </div>
-              <p>${activeShift.desc}</p>
+              <p>${getShiftDisplayDescription(activeShift)}</p>
               ${ageHint ? `<div class="mobile-program-hint">${ageHint}</div>` : ''}
               <button
                 class="shift-calendar-btn"
@@ -14379,6 +14707,12 @@
           </article>
         </div>
       `;
+    }
+
+    function syncMobileDocsExpandedUi(){
+      document.querySelectorAll('.mobile-docs-accordion-item').forEach((item) => {
+        item.classList.toggle('open', !!state.mobileDocsExpanded);
+      });
     }
 
     const DESKTOP_MOBILE_SECTION_TEMPLATES = {
@@ -15363,6 +15697,12 @@
         setHeroMenuOpen(false);
       }
     });
+
+    window.addEventListener('scroll', () => {
+      if(isHeroMenuOpen()){
+        setHeroMenuOpen(false);
+      }
+    }, {passive:true});
 
     bindPhoneMaskForScope('drawer');
 

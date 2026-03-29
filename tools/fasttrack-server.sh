@@ -6,6 +6,7 @@ PORT="${FASTTRACK_PORT:-4180}"
 HOST="${FASTTRACK_HOST:-0.0.0.0}"
 PID_FILE="$ROOT_DIR/.runtime/fasttrack-server.pid"
 LOG_FILE="$ROOT_DIR/.runtime/fasttrack-server.log"
+ENV_FILE="${FASTTRACK_ENV_FILE:-$ROOT_DIR/.runtime/server.env}"
 
 is_running() {
   if [[ -f "$PID_FILE" ]]; then
@@ -24,18 +25,39 @@ start_server() {
     return 0
   fi
   mkdir -p "$ROOT_DIR/.runtime"
+  if [[ -f "$ENV_FILE" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    . "$ENV_FILE"
+    set +a
+  fi
   local runner
   if command -v caffeinate >/dev/null 2>&1; then
-    runner="caffeinate -dimsu python3 -m http.server '$PORT' --bind '$HOST'"
+    runner="caffeinate -dimsu python3 '$ROOT_DIR/tools/fasttrack_server.py' --host '$HOST' --port '$PORT' --root '$ROOT_DIR'"
   else
-    runner="python3 -m http.server '$PORT' --bind '$HOST'"
+    runner="python3 '$ROOT_DIR/tools/fasttrack_server.py' --host '$HOST' --port '$PORT' --root '$ROOT_DIR'"
   fi
-  nohup sh -c "cd '$ROOT_DIR' && exec $runner" >"$LOG_FILE" 2>&1 &
+  nohup sh -c "cd '$ROOT_DIR' && if [[ -f '$ENV_FILE' ]]; then set -a; . '$ENV_FILE'; set +a; fi; exec $runner" >"$LOG_FILE" 2>&1 &
   local pid=$!
   echo "$pid" > "$PID_FILE"
   sleep 0.8
   if kill -0 "$pid" 2>/dev/null; then
     echo "started: pid=$pid url=http://127.0.0.1:$PORT/dist/index.html"
+    if [[ -f "$ENV_FILE" ]]; then
+      echo "env file: $ENV_FILE"
+    else
+      echo "env file: missing ($ENV_FILE)"
+    fi
+    if [[ -n "${AIDAPLUS_TELEGRAM_BOT_TOKEN:-}" ]]; then
+      echo "telegram token: loaded"
+    else
+      echo "telegram token: missing"
+    fi
+    if [[ -n "${AIDAPLUS_TELEGRAM_CHAT_ID:-}" ]]; then
+      echo "telegram chat id: loaded"
+    else
+      echo "telegram chat id: missing"
+    fi
     if command -v caffeinate >/dev/null 2>&1; then
       echo "sleep protection: enabled (caffeinate)"
     else
@@ -82,7 +104,7 @@ restart_server() {
 }
 
 healthcheck() {
-  curl -sS -I "http://127.0.0.1:$PORT/dist/index.html" | sed -n '1,5p'
+  curl -sS "http://127.0.0.1:$PORT/health"
 }
 
 cmd="${1:-status}"
