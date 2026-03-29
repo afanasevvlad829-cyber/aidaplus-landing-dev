@@ -16,6 +16,7 @@ IFS=',' read -r _ css_lines css_max_line css_blocks css_dupe js_lines js_max_lin
 # Conservative guardrails: fail only on clearly bad regressions.
 MAX_CSS_DUPE=90
 MAX_JS_IFS=460
+MAX_JS_TERNARIES=140
 MAX_JS_LINE_LEN=380
 MAX_JS_STATE_MUTATIONS=120
 MAX_DIST_BYTES=560000
@@ -38,6 +39,7 @@ check_max() {
 
 check_max "css_duplicate_selectors" "$css_dupe" "$MAX_CSS_DUPE"
 check_max "js_if_count" "$js_ifs" "$MAX_JS_IFS"
+check_max "js_ternary_count" "$js_ternaries" "$MAX_JS_TERNARIES"
 check_max "js_max_line_length" "$js_max_line" "$MAX_JS_LINE_LEN"
 check_max "js_state_mutations" "$js_state_mutations" "$MAX_JS_STATE_MUTATIONS"
 check_max "dist_bytes" "$dist_bytes" "$MAX_DIST_BYTES"
@@ -65,6 +67,7 @@ if [[ -f "$BASELINE_FILE" ]]; then
 
   check_baseline_max "css_duplicate_selectors" "$css_dupe" "${BASELINE_CSS_DUPE:-$css_dupe}" "${ALLOW_CSS_DUPE_DELTA:-0}"
   check_baseline_max "js_if_count" "$js_ifs" "${BASELINE_JS_IFS:-$js_ifs}" "${ALLOW_JS_IFS_DELTA:-0}"
+  check_baseline_max "js_ternary_count" "$js_ternaries" "${BASELINE_JS_TERNARIES:-$js_ternaries}" "${ALLOW_JS_TERNARIES_DELTA:-0}"
   check_baseline_max "js_max_line_length" "$js_max_line" "${BASELINE_JS_MAX_LINE:-$js_max_line}" "${ALLOW_JS_MAX_LINE_DELTA:-0}"
   check_baseline_max "js_state_mutations" "$js_state_mutations" "${BASELINE_JS_STATE_MUTATIONS:-$js_state_mutations}" "${ALLOW_JS_STATE_MUTATIONS_DELTA:-0}"
   check_baseline_max "dist_bytes" "$dist_bytes" "${BASELINE_DIST_BYTES:-$dist_bytes}" "${ALLOW_DIST_BYTES_DELTA:-0}"
