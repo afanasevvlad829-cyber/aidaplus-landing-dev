@@ -868,6 +868,8 @@
       modal.classList.add('hidden');
       modal.classList.remove('section-modal-compact');
       modal.classList.remove('section-modal-mobile');
+      document.documentElement.style.overflowX = '';
+      document.body.style.overflowX = '';
     }
 
     function scrollVideoCarousel(direction = 1){
@@ -942,6 +944,8 @@
       bodyEl.innerHTML = '';
       bodyEl.appendChild(clone);
       modal.classList.remove('hidden');
+      document.documentElement.style.overflowX = 'hidden';
+      document.body.style.overflowX = 'hidden';
       return true;
     }
 

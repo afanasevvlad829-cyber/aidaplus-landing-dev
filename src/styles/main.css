@@ -18,7 +18,7 @@
       --hero-overlap-bottom:-32px;
       --hero-overlap-y:30px;
       --hero-overlap-y-hover:28px;
-      --desktop-booking-height:520px;
+      --desktop-booking-height:clamp(500px,68vh,620px);
       --section-modal-compact-width:clamp(360px,48vw,640px);
       --section-modal-compact-max-height:min(56vh,500px);
       --video-card-gap:12px;
@@ -2349,8 +2349,9 @@
     }
 
     .media-video{
-      width:360px;
-      height:640px;
+      width:min(360px,92vw);
+      aspect-ratio:9 / 16;
+      height:auto;
       max-height:80vh;
       border-radius:18px;
       overflow:hidden;
@@ -4214,7 +4215,7 @@
 
     .overlay.section-modal-compact .section-modal-card{
       width:var(--section-modal-compact-width);
-      max-width:calc(100vw - 420px);
+      max-width:min(var(--section-modal-compact-width), calc(100vw - 24px));
       max-height:var(--section-modal-compact-max-height);
       border-radius:20px;
       box-shadow:0 20px 56px rgb(7 12 20 / 30%);
@@ -4268,15 +4269,27 @@
 
     .section-modal-body{
       padding:18px;
-      overflow:auto;
+      overflow-y:auto;
+      overflow-x:hidden;
       display:grid;
+      grid-template-columns:minmax(0,1fr);
       gap:12px;
     }
 
     .section-modal-body .section-card{
       margin:0;
+      width:100%;
+      max-width:100%;
+      min-width:0;
       border-radius:20px;
       box-shadow:none;
+    }
+
+    .section-modal-body .section-card.mobile-template,
+    .section-modal-body .section-card.mobile-template *{
+      min-width:0;
+      max-width:100%;
+      box-sizing:border-box;
     }
 
     .section-modal-body .section-card h3{
@@ -4386,6 +4399,26 @@
       text-align:left;
     }
 
+    .mobile-photo-stage{
+      height:auto;
+      min-height:0;
+      max-height:min(52vh,260px);
+      aspect-ratio:16 / 10;
+      background:#0f172a;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .mobile-photo-stage img{
+      width:100%;
+      height:100%;
+      min-height:0;
+      object-fit:contain;
+      display:block;
+      background:#0f172a;
+    }
+
     .mobile-media-overlay{
       position:absolute;
       inset:auto 0 0 0;
@@ -4441,6 +4474,15 @@
       scrollbar-width:none;
     }
 
+    .mobile-photo-preview-strip{
+      margin-top:8px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(52px,1fr));
+      gap:6px;
+      overflow:visible;
+      padding-bottom:0;
+    }
+
     .mobile-media-strip::-webkit-scrollbar{
       display:none;
     }
@@ -4457,6 +4499,12 @@
       cursor:pointer;
       border:2px solid transparent;
       box-shadow:0 8px 16px rgb(15 23 42 / 18%);
+    }
+
+    .mobile-photo-preview-thumb{
+      min-width:0;
+      width:100%;
+      height:clamp(44px,13vw,56px);
     }
 
     .mobile-media-thumb.active{
@@ -5734,11 +5782,26 @@
       .overlay.section-modal-compact{
         padding:18px 12px;
         background:rgb(9 14 22 / 64%);
+        overflow-x:hidden;
       }
 
       .overlay.section-modal-compact .section-modal-card{
         width:min(100%, 980px);
         max-height:min(90vh, 920px);
+      }
+
+      .overlay.section-modal-compact .section-modal-body{
+        overflow-x:hidden;
+      }
+
+      .overlay.section-modal-compact .section-modal-body > *{
+        min-width:0;
+        max-width:100%;
+      }
+
+      .overlay.section-modal-compact .mobile-media-filter-row,
+      .overlay.section-modal-compact .mobile-media-strip{
+        max-width:100%;
       }
     }
 

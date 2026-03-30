@@ -33,7 +33,7 @@ start_server() {
   fi
   local runner
   if command -v caffeinate >/dev/null 2>&1; then
-    runner="caffeinate -dimsu python3 '$ROOT_DIR/tools/fasttrack_server.py' --host '$HOST' --port '$PORT' --root '$ROOT_DIR'"
+    runner="caffeinate -dims python3 '$ROOT_DIR/tools/fasttrack_server.py' --host '$HOST' --port '$PORT' --root '$ROOT_DIR'"
   else
     runner="python3 '$ROOT_DIR/tools/fasttrack_server.py' --host '$HOST' --port '$PORT' --root '$ROOT_DIR'"
   fi
