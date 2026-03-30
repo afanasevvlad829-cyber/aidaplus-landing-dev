@@ -9,10 +9,11 @@
         dates:'30 мая — 8 июня',
         start:'2025-05-30',
         end:'2025-06-08',
-        price:94800,
+        price:74900,
         left:12,
         occupied:33,
         badge:'HIT',
+        isShort:false,
         desc:'Стартовая смена с мягким входом в программирование и знакомством с ИИ.',
         fullDesc:'Мягкий вход в программирование через понятные и быстрые результаты. Для 7–9 лет: ребёнок работает в Scratch и Minecraft, делает первые проекты и понимает базовую логику через игру. Для 10–12 лет: начинает писать код на Python, создаёт простые программы и видит, как работает логика внутри. Для 13–14 лет: пробует первые проекты с элементами AI, знакомится с нейросетями и делает первые осмысленные шаги в сторону современных технологий. Главное — ребёнок не слушает, а делает и получает результат уже в первые дни.'
       },
@@ -20,41 +21,76 @@
         id:'shift-2',
         title:'2',
         label:'Смена 2',
-        dates:'10 июня — 16 июня',
+        dates:'10 июня — 23 июня',
         start:'2025-06-10',
-        end:'2025-06-16',
-        price:57600,
+        end:'2025-06-23',
+        price:95000,
         left:8,
         occupied:37,
         badge:'',
-        desc:'Полное погружение: проекты, логика и первые шаги в нейросетях.',
+        isShort:false,
+        desc:'Полная смена на 13 дней: проекты, логика и первые шаги в нейросетях.',
         fullDesc:'Смена, где ребёнок начинает реально понимать, как всё устроено. Для 7–9 лет: усложняются проекты, появляется больше самостоятельности, ребёнок начинает осознанно собирать логику. Для 10–12 лет: работает с Python, делает игры и ботов, начинает понимать структуру кода и алгоритмы. Для 13–14 лет: разбирается с более сложными задачами, пробует нейросети и делает проекты с логикой «как в реальных IT-продуктах». Результат — не просто интерес, а ощущение «я могу и понимаю».'
       },
       {
-        id:'shift-3',
-        title:'3',
-        label:'Смена 3',
-        dates:'3 августа — 15 августа',
-        start:'2025-08-03',
-        end:'2025-08-15',
-        price:78000,
-        left:5,
-        occupied:40,
+        id:'shift-2-1',
+        title:'2.1',
+        label:'Смена 2.1',
+        dates:'10 июня — 16 июня',
+        start:'2025-06-10',
+        end:'2025-06-16',
+        price:48000,
+        left:8,
+        occupied:37,
         badge:'',
-        desc:'Летняя смена с акцентом на проекты, командную работу и уверенность.',
-        fullDesc:'Баланс между программированием, командной работой и лагерной жизнью. Для 7–9 лет: ребёнок продолжает делать проекты, но больше взаимодействует с другими, учится работать в команде. Для 10–12 лет: объединяет навыки кода и общения, участвует в командных задачах и учится доводить идеи до результата. Для 13–14 лет: работает над более цельными проектами, распределяет роли в команде и понимает, как создаются продукты. Смена даёт уверенность: ребёнок не просто учится, а начинает действовать.'
+        isShort:true,
+        sourceId:'shift-2',
+        desc:'Короткая смена 7 дней: быстрый вход в программу и проектную работу.',
+        fullDesc:''
+      },
+      {
+        id:'shift-2-2',
+        title:'2.2',
+        label:'Смена 2.2',
+        dates:'16 июня — 23 июня',
+        start:'2025-06-16',
+        end:'2025-06-23',
+        price:65000,
+        left:8,
+        occupied:37,
+        badge:'',
+        isShort:true,
+        sourceId:'shift-2',
+        desc:'Короткая смена 7 дней: интенсив по проектам и закрепление навыков.',
+        fullDesc:''
       },
       {
         id:'shift-4',
         title:'4',
         label:'Смена 4',
+        dates:'3 августа — 15 августа',
+        start:'2025-08-03',
+        end:'2025-08-15',
+        price:89400,
+        left:5,
+        occupied:40,
+        badge:'',
+        isShort:false,
+        desc:'Летняя смена с акцентом на проекты, командную работу и уверенность.',
+        fullDesc:'Баланс между программированием, командной работой и лагерной жизнью. Для 7–9 лет: ребёнок продолжает делать проекты, но больше взаимодействует с другими, учится работать в команде. Для 10–12 лет: объединяет навыки кода и общения, участвует в командных задачах и учится доводить идеи до результата. Для 13–14 лет: работает над более цельными проектами, распределяет роли в команде и понимает, как создаются продукты. Смена даёт уверенность: ребёнок не просто учится, а начинает действовать.'
+      },
+      {
+        id:'shift-5',
+        title:'5',
+        label:'Смена 5',
         dates:'17 августа — 26 августа',
         start:'2025-08-17',
         end:'2025-08-26',
-        price:114000,
+        price:69600,
         left:14,
         occupied:31,
         badge:'',
+        isShort:false,
         desc:'Финальная смена: закрепление навыков и защита мини-проектов.',
         fullDesc:'Смена, где ребёнок собирает всё, чему научился, в понятный результат. Для 7–9 лет: заканчивает проекты и начинает объяснять, как они работают. Для 10–12 лет: делает законченные программы и может показать, что именно он сделал и как. Для 13–14 лет: создаёт более сложные проекты, оформляет их и презентует как готовый продукт. Итог — ребёнок уезжает не с эмоциями, а с реальным результатом и пониманием своего прогресса.'
       }
@@ -282,7 +318,14 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.267 (august-shifts-3-and-4-restored)';
+    const BUILD_VERSION_LABEL = 'v0.0.274 (mobile-stage1-age-cards-typography-fill)';
+    const ARCHITECTURE_POLICY = Object.freeze({
+      id: 'desktop-source-mobile-presentation',
+      version: '2026-03-30',
+      desktopSourceOfTruth: true,
+      sharedStatePipeline: true,
+      mobileUsesDesktopTemplates: true
+    });
     const QUALITY_SCORE_MODEL = Object.freeze({
       scale: '0..10',
       debtScale: '0 best .. 10 worst',
@@ -324,6 +367,7 @@
     window.__AIDACAMP_RUNTIME = AIDACAMP_RUNTIME;
     AIDACAMP_RUNTIME.quality = AIDACAMP_RUNTIME.quality || {};
     AIDACAMP_RUNTIME.quality.scoreModel = QUALITY_SCORE_MODEL;
+    AIDACAMP_RUNTIME.architecture = ARCHITECTURE_POLICY;
     AIDACAMP_RUNTIME.quality.scoreSnapshot = Object.freeze({
       version: BUILD_VERSION_LABEL,
       css: 8.8,
@@ -570,15 +614,49 @@
       };
     }
 
+    function runUnifiedArchitectureGuardrail(){
+      const issues = [];
+      if(!USE_DESKTOP_BASE_FOR_MOBILE){
+        issues.push('USE_DESKTOP_BASE_FOR_MOBILE=false');
+      }
+      const desktopView = document.getElementById('desktopView');
+      if(!desktopView){
+        issues.push('desktopView_missing');
+      }
+      const mobileView = document.getElementById('mobileView');
+      if(mobileView && state.previewView === 'mobile'){
+        const styles = window.getComputedStyle(mobileView);
+        const legacyVisible = styles.display !== 'none' && styles.visibility !== 'hidden' && !mobileView.hidden;
+        if(legacyVisible){
+          issues.push('legacy_mobile_view_visible');
+        }
+      }
+      const ok = issues.length === 0;
+      if(!ok){
+        console.error('[GUARDRAIL] Unified architecture check failed', { issues });
+        trackOnce('guardrail_architecture_failed', {
+          issues: issues.slice(0, 4).join(',')
+        });
+      }
+      return {
+        ok,
+        policy: ARCHITECTURE_POLICY.id,
+        policyVersion: ARCHITECTURE_POLICY.version,
+        issues
+      };
+    }
+
     function runGuardrails(){
       const version = runBuildVersionGuardrail();
       const smoke = runRuntimeSmokeGuardrail();
+      const architecture = runUnifiedArchitectureGuardrail();
       const summary = {
         timestamp: new Date().toISOString(),
         build: BUILD_VERSION_LABEL,
         version,
         smoke,
-        ok: !!(version.ok && smoke.ok)
+        architecture,
+        ok: !!(version.ok && smoke.ok && architecture.ok)
       };
       AIDACAMP_RUNTIME.quality.guardrails = summary;
       return summary;
@@ -2630,24 +2708,27 @@
       const shouldStabilize = window.matchMedia('(max-width: 820px)').matches && state.previewView === 'mobile';
       if(!shouldStabilize){
         card.style.removeProperty('--booking-card-min-height');
+        card.style.removeProperty('--booking-card-fixed-height');
+        card.style.removeProperty('--booking-card-mobile-overlap');
         return;
       }
 
-      const currentStage = BOOKING_STAGE_CLASSES.find((name) => card.classList.contains(name)) || `booking-stage-${getBookingStage()}`;
-      card.style.setProperty('--booking-card-min-height', '0px');
+      const heroShell = card.closest('.hero-shell');
+      const cardRect = card.getBoundingClientRect();
+      const heroRect = heroShell ? heroShell.getBoundingClientRect() : null;
+      const viewportHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
+      const preferred = Math.floor(viewportHeight * 0.62);
+      let availableByHero = Math.floor(viewportHeight * 0.60);
 
-      let maxHeight = 0;
-      BOOKING_STAGE_CLASSES.forEach((stageName) => {
-        card.classList.remove(...BOOKING_STAGE_CLASSES);
-        card.classList.add(stageName);
-        maxHeight = Math.max(maxHeight, Math.ceil(card.scrollHeight));
-      });
-
-      card.classList.remove(...BOOKING_STAGE_CLASSES);
-      card.classList.add(currentStage);
-      if(maxHeight > 0){
-        card.style.setProperty('--booking-card-min-height', `${maxHeight}px`);
+      if(heroRect && Number.isFinite(heroRect.bottom) && Number.isFinite(cardRect.top)){
+        availableByHero = Math.floor(heroRect.bottom - cardRect.top + Math.max(8, viewportHeight * 0.025));
       }
+
+      const runtimeHeight = Math.max(420, Math.min(620, Math.min(preferred, availableByHero)));
+      const mobileOverlap = Math.max(14, Math.min(34, Math.round(runtimeHeight * 0.065)));
+      card.style.setProperty('--booking-card-fixed-height', `${runtimeHeight}px`);
+      card.style.setProperty('--booking-card-min-height', `${runtimeHeight}px`);
+      card.style.setProperty('--booking-card-mobile-overlap', `${mobileOverlap}px`);
     }
 
     function scheduleBookingCardMinHeightSync(){
@@ -3554,11 +3635,11 @@
       if(!shift) return '';
       const map = {
         'shift-1':'10 дней',
-        'shift-2':'7 дней',
-        'shift-3':'8 дней',
-        'shift-4':'14 дней',
-        'shift-5':'13 дней',
-        'shift-6':'10 дней'
+        'shift-2':'13 дней',
+        'shift-2-1':'7 дней',
+        'shift-2-2':'7 дней',
+        'shift-4':'13 дней',
+        'shift-5':'10 дней'
       };
       return map[shift.id] || '';
     }
@@ -4144,17 +4225,8 @@
       const grid = document.getElementById('shiftCardsGrid');
       if(!grid) return;
       const shortGrid = document.getElementById('shortShiftCards');
-      const shortShiftIds = new Set(['shift-2','shift-3']);
-      const mainShifts = shifts;
-      const shortShifts = shifts
-        .filter((s) => shortShiftIds.has(s.id))
-        .map((s) => ({
-          ...s,
-          id: `${s.id}-short`,
-          sourceId: s.id,
-          isShort:true,
-          title: s.id === 'shift-2' ? '2.1' : '2.2'
-        }));
+      const mainShifts = shifts.filter((s) => !s.isShort);
+      const shortShifts = shifts.filter((s) => !!s.isShort);
       const showExtendedDescription = hasSelectedAge();
 
       grid.innerHTML = mainShifts.map(s => `
@@ -4726,16 +4798,7 @@
       }
 
       if (programsTargets.length) {
-        const shortProgramShifts = shifts
-          .filter((s) => s.id === 'shift-2' || s.id === 'shift-3')
-          .map((s) => ({
-            ...s,
-            id: `${s.id}-short`,
-            title: s.id === 'shift-2' ? '2.1' : '2.2',
-            isShort:true,
-            sourceId:s.id
-          }));
-        const mainShifts = [...shifts.slice(), ...shortProgramShifts];
+        const mainShifts = shifts.slice();
         if(mainShifts.length){
           const activeShiftId = mainShifts.some((shift) => shift.id === state.mobileProgramShiftId)
             ? state.mobileProgramShiftId
