@@ -22,8 +22,6 @@ blocked_ext=(
   ".tgz"
   ".zip"
   ".mp4"
-  ".webp"
-  ".jpeg"
 )
 
 while IFS= read -r file; do
