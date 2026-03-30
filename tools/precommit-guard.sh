@@ -12,7 +12,6 @@ if [[ -z "$staged_files" ]]; then
 fi
 
 touches_dist=0
-touches_source=0
 blocked=0
 max_bytes=$((10 * 1024 * 1024))
 blocked_paths=(
@@ -29,15 +28,17 @@ blocked_ext=(
 
 while IFS= read -r file; do
   [[ -z "$file" ]] && continue
-  if [[ "$file" == "gpt.html" || "$file" == "build/gpt.html" ]]; then
+  is_added_or_modified=0
+  if echo "$staged_added_or_modified" | rg -q "^${file}$"; then
+    is_added_or_modified=1
+  fi
+
+  if (( is_added_or_modified == 1 )) && [[ "$file" == "gpt.html" || "$file" == "build/gpt.html" ]]; then
     echo "[precommit-guard] FAIL: gpt.html artifacts are deprecated and forbidden: $file"
     blocked=1
   fi
   if [[ "$file" == "dist/index.html" || "$file" == "dist/index.htm" ]]; then
     touches_dist=1
-  fi
-  if [[ "$file" == "index.html" || "$file" == "src/scripts/main.js" || "$file" == "src/styles/main.css" || "$file" == "build.sh" ]]; then
-    touches_source=1
   fi
 
   for prefix in "${blocked_paths[@]}"; do
@@ -54,14 +55,6 @@ while IFS= read -r file; do
     fi
   done
 done <<< "$staged_files"
-
-if (( touches_dist == 1 && touches_source == 0 )); then
-  echo "[precommit-guard] FAIL: dist artifacts staged without source-of-truth changes."
-  echo "[precommit-guard] Update source first (index.html/src/**), then regenerate dist via build.sh."
-  echo "[precommit-guard] Staged files:"
-  echo "$staged_files" | sed 's/^/  - /'
-  exit 1
-fi
 
 get_effective_file_content() {
   local file_path="$1"
@@ -116,20 +109,19 @@ if echo "$staged_files" | rg -q "^dist/index\\.html$"; then
   fi
 fi
 
-if echo "$staged_files" | rg -q "^(index\\.html|dist/index\\.html|dist/index\\.htm)$"; then
-  effective_index_html="$(get_effective_file_content "index.html")"
+if echo "$staged_files" | rg -q "^(dist/index\\.html|dist/index\\.htm)$"; then
   effective_dist_index_html="$(get_effective_file_content "dist/index.html")"
   effective_dist_index_htm="$(get_effective_file_content "dist/index.htm")"
 
-  if [[ -z "$effective_index_html" || -z "$effective_dist_index_html" || -z "$effective_dist_index_htm" ]]; then
-    echo "[precommit-guard] FAIL: cannot read one of canonical runtime artifacts (index.html, dist/index.html, dist/index.htm)."
+  if [[ -z "$effective_dist_index_html" ]]; then
+    echo "[precommit-guard] FAIL: cannot read canonical runtime artifact (dist/index.html)."
     exit 1
   fi
 
-  if [[ "$effective_dist_index_html" != "$effective_index_html" || "$effective_dist_index_html" != "$effective_dist_index_htm" ]]; then
+  if [[ -n "$effective_dist_index_htm" && "$effective_dist_index_html" != "$effective_dist_index_htm" ]]; then
     echo "[precommit-guard] FAIL: runtime artifacts are out of sync."
-    echo "[precommit-guard] Required: index.html == dist/index.html == dist/index.htm"
-    echo "[precommit-guard] Fix by syncing from dist/index.html (or re-running build)."
+    echo "[precommit-guard] Required: dist/index.html == dist/index.htm (if dist/index.htm is present)."
+    echo "[precommit-guard] Fix by syncing from dist/index.html or remove dist/index.htm."
     exit 1
   fi
 fi

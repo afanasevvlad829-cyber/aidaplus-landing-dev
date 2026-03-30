@@ -17,17 +17,43 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 root = Path(".")
-base_path = root / "index.html"
+base_path = root / "dist" / "index.html"
 out_path = root / "dist" / "index.html"
 cdn_bundle_path = root / "dist" / "cdn" / "app.bundle.js"
 cdn_repo_bundle_path = root / "cdn" / "app.bundle.js"
+cdn_tilda_bundle_path = root / "dist" / "cdn" / "app.tilda.js"
+cdn_tilda_repo_bundle_path = root / "cdn" / "app.tilda.js"
 css_path = root / "src" / "styles" / "main.css"
 script_paths = [
     root / "src" / "scripts" / "main.js",
 ]
 components_dir = root / "src" / "components"
 
+if not base_path.exists():
+    raise SystemExit("ERROR: dist/index.html is missing (canonical source file).")
 base = base_path.read_text(encoding="utf-8")
+
+def extract_block(src: str, start_marker: str, end_marker: str) -> str:
+    if start_marker not in src or end_marker not in src:
+        return ""
+    start = src.index(start_marker) + len(start_marker)
+    end = src.index(end_marker, start)
+    return src[start:end].strip()
+
+def extract_built_css_js(src: str):
+    css_match = re.search(
+        r'<style[^>]+id=["\']ac-build-main-css["\'][^>]*>(?P<css>.*?)</style>',
+        src,
+        flags=re.I | re.S,
+    )
+    js_match = re.search(
+        r'<script[^>]+id=["\']ac-build-main-js["\'][^>]*>(?P<js>.*?)</script>',
+        src,
+        flags=re.I | re.S,
+    )
+    css = css_match.group("css").strip() if css_match else ""
+    js = js_match.group("js").strip() if js_match else ""
+    return css, js
 
 def load_css_bundle(path: Path, seen=None) -> str:
     if seen is None:
@@ -47,13 +73,15 @@ def load_css_bundle(path: Path, seen=None) -> str:
             out.append(line)
     return "\n".join(out) + "\n"
 
-css = load_css_bundle(css_path) if css_path.exists() else ""
-script_chunks = []
-for script_path in script_paths:
-    if not script_path.exists():
-        continue
-    script_chunks.append(f"/* {script_path.as_posix()} */\n" + script_path.read_text(encoding="utf-8"))
-js = "\n\n".join(script_chunks)
+css, js = extract_built_css_js(base)
+if not css or not js:
+    css = load_css_bundle(css_path) if css_path.exists() else ""
+    script_chunks = []
+    for script_path in script_paths:
+        if not script_path.exists():
+            continue
+        script_chunks.append(f"/* {script_path.as_posix()} */\n" + script_path.read_text(encoding="utf-8"))
+    js = "\n\n".join(script_chunks)
 
 def detect_github_repo_slug() -> str:
     override = (os.getenv("AC_CDN_REPO") or "").strip()
@@ -250,8 +278,12 @@ out = re.sub(r'<link[^>]+href=["\']/src/styles/main\.css["\'][^>]*>\s*', "", out
 out = re.sub(r'<script[^>]+src=["\']/src/scripts/[^"\']+["\'][^>]*>\s*</script>\s*', "", out, flags=re.I)
 out = replace_or_insert(out, "<!-- AC_BUILD_STYLE_START -->", "<!-- AC_BUILD_STYLE_END -->", style_block, "</head>")
 out = replace_or_insert(out, "<!-- AC_BUILD_SCRIPT_START -->", "<!-- AC_BUILD_SCRIPT_END -->", script_block, "</body>")
-out_path.write_text(out, encoding="utf-8")
-print(f"Built: {out_path}")
+allow_dist_rewrite = (os.getenv("AC_ALLOW_DIST_REWRITE", "0") == "1")
+if allow_dist_rewrite:
+    out_path.write_text(out, encoding="utf-8")
+    print(f"Built: {out_path}")
+else:
+    print(f"Skipped rewrite: {out_path} (set AC_ALLOW_DIST_REWRITE=1 to enable)")
 
 # Single-file CDN bundle for Tilda/jsDelivr:
 # injects CSS once, then executes app JS.
@@ -274,18 +306,61 @@ cdn_bundle_path.write_text(bundle, encoding="utf-8")
 print(f"Built: {cdn_bundle_path}")
 cdn_repo_bundle_path.write_text(bundle, encoding="utf-8")
 print(f"Built: {cdn_repo_bundle_path}")
+
+body_match = re.search(r"<body[^>]*>(?P<body>.*)</body>", out, flags=re.I | re.S)
+body_html = body_match.group("body") if body_match else ""
+body_html = re.sub(r"<script\\b[^>]*>.*?</script>\\s*", "", body_html, flags=re.I | re.S)
+body_for_cdn = rewrite_assets_to_cdn(body_html, cdn_asset_base)
+
+tilda_bundle = (
+    "(function(){\n"
+    "  var mount = function(){\n"
+    "    var root = document.getElementById('aidaplus-root');\n"
+    "    if (!root) {\n"
+    "      root = document.createElement('div');\n"
+    "      root.id = 'aidaplus-root';\n"
+    "      document.body.appendChild(root);\n"
+    "    }\n"
+    "    if (root.dataset.aidaplusMounted === '1') return;\n"
+    "    root.dataset.aidaplusMounted = '1';\n"
+    f"    root.innerHTML = {json.dumps(body_for_cdn, ensure_ascii=False)};\n"
+    "    var cssId = 'ac-cdn-main-css';\n"
+    "    if (!document.getElementById(cssId)) {\n"
+    "      var style = document.createElement('style');\n"
+    "      style.id = cssId;\n"
+    f"      style.textContent = {json.dumps(css_for_cdn, ensure_ascii=False)};\n"
+    "      document.head.appendChild(style);\n"
+    "    }\n"
+    "    var jsId = 'ac-cdn-main-js';\n"
+    "    if (!document.getElementById(jsId)) {\n"
+    "      var script = document.createElement('script');\n"
+    "      script.id = jsId;\n"
+    f"      script.textContent = {json.dumps(js_for_cdn, ensure_ascii=False)};\n"
+    "      document.body.appendChild(script);\n"
+    "    }\n"
+    "  };\n"
+    "  if (document.readyState === 'loading') {\n"
+    "    document.addEventListener('DOMContentLoaded', mount);\n"
+    "  } else {\n"
+    "    mount();\n"
+    "  }\n"
+    "})();\n"
+)
+cdn_tilda_bundle_path.write_text(tilda_bundle, encoding="utf-8")
+print(f"Built: {cdn_tilda_bundle_path}")
+cdn_tilda_repo_bundle_path.write_text(tilda_bundle, encoding="utf-8")
+print(f"Built: {cdn_tilda_repo_bundle_path}")
 if cdn_asset_base:
     print(f"CDN asset base: {cdn_asset_base}")
 else:
     print("CDN asset base: disabled (set AC_CDN_REF to enable '/assets' rewriting)")
 PY
 
-echo "Build completed: dist/index.html"
-echo "Canonical release artifact: dist/index.html"
-cp dist/index.html dist/index.htm
-echo "Artifacts updated: dist/index.htm"
+echo "Canonical runtime source: dist/index.html (not rewritten unless AC_ALLOW_DIST_REWRITE=1)"
 echo "CDN artifact: dist/cdn/app.bundle.js"
 echo "CDN artifact for GitHub/jsDelivr: cdn/app.bundle.js"
+echo "Tilda single-script artifact: dist/cdn/app.tilda.js"
+echo "Tilda single-script artifact for GitHub/jsDelivr: cdn/app.tilda.js"
 
 if [ -f src/pages/legal.html ]; then
   cp src/pages/legal.html dist/legal.html
