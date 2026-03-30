@@ -45,8 +45,8 @@
         badge:'',
         isShort:true,
         sourceId:'shift-2',
-        desc:'Короткая смена 7 дней: быстрый вход в программу и проектную работу.',
-        fullDesc:''
+        desc:'Короткая смена 7 дней: проекты, логика и быстрый вход в программу.',
+        fullDesc:'Короткая смена на 7 дней. Ускоренный формат с фокусом на практике: ребёнок делает проект, прокачивает логику и закрепляет базовые навыки программирования через понятные задачи. Для 7–9 лет — упор на Scratch и визуальную логику; для 10–12 лет — первые уверенные шаги в Python и структуре кода; для 13–14 лет — проектная сборка с элементами AI. Формат короткий, но результатный.'
       },
       {
         id:'shift-2-2',
@@ -61,8 +61,8 @@
         badge:'',
         isShort:true,
         sourceId:'shift-2',
-        desc:'Короткая смена 7 дней: интенсив по проектам и закрепление навыков.',
-        fullDesc:''
+        desc:'Короткая смена 8 дней: интенсив по проектам, логике и закреплению навыков.',
+        fullDesc:'Короткая смена на 8 дней. Интенсивное продолжение проектной работы: ребёнок усиливает логику, доводит задачи до результата и закрепляет навыки программирования в прикладном формате. Для 7–9 лет — развитие проектов в Scratch; для 10–12 лет — практический Python и алгоритмы; для 13–14 лет — более сложные задачи и работа с AI-инструментами. Короткий цикл с фокусом на конкретный прогресс.'
       },
       {
         id:'shift-4',
@@ -310,6 +310,8 @@
       basePrice:null,
       offerPrice:null,
       code:null,
+      previousCode:null,
+      nextCodePreview:null,
       expiresAt:null,
       offerStage:0,
       view:'desktop',
@@ -318,7 +320,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.279 (mobile-stage2-compact-chip-title-button-rhythm)';
+    const BUILD_VERSION_LABEL = 'v0.0.281 (mobile-age-cards-15pct-menu-overlay-shift-about-modal)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
@@ -431,8 +433,8 @@
     if(USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile'){
       state.view = 'desktop';
     }
-    state.desktopMode = state.desktopMode || 'compact';
-    state.mobileMode = state.mobileMode || 'compact';
+    state.desktopMode = 'full';
+    state.mobileMode = 'full';
     state.heroContrastMode = 'after-soft';
     state.heroMicroMode = 'off';
     state.offerModalTheme = 'light';
@@ -485,6 +487,8 @@
       }
     }
     state.photoFilter = state.photoFilter || 'camp';
+    state.previousCode = state.previousCode || null;
+    state.nextCodePreview = state.nextCodePreview || null;
     state.faqFilter = state.faqFilter || 'Медицина';
     state.mobileJourneyStep = Number.isFinite(Number(state.mobileJourneyStep)) ? Number(state.mobileJourneyStep) : 0;
     state.mobileProgramShiftId = state.mobileProgramShiftId || '';
@@ -1804,6 +1808,27 @@
       renderMediaViewer();
     }
 
+    function getPhotoTagsByFilter(filter){
+      const photoByFilter = {
+        all: ['all', 'camp', 'pool', 'sport', 'study', 'food'],
+        camp: ['all', 'camp'],
+        pool: ['pool'],
+        sport: ['sport'],
+        study: ['study'],
+        food: ['food']
+      };
+      return photoByFilter[String(filter || '').trim()] || ['all', 'camp'];
+    }
+
+    function getPhotosForActiveFilter(filter = state.photoFilter){
+      const tags = getPhotoTagsByFilter(filter);
+      let list = mediaContent.photos.filter((item) => tags.includes(item.cat));
+      if(!list.length){
+        list = mediaContent.photos.filter((item) => item.cat === 'all' || item.cat === 'camp');
+      }
+      return list.length ? list : mediaContent.photos.slice();
+    }
+
     function handleDataActionClick(target){
       const actionEl = target.closest('[data-action]');
       if(!actionEl) return false;
@@ -1812,8 +1837,14 @@
 
       if(action === 'open-photo'){
         const index = Number(actionEl.dataset.photoIndex || 0);
-        activePhotoList = photoGalleryList.length ? photoGalleryList.slice() : mediaContent.photos.slice();
-        openMedia('photo', index);
+        const clickedFromMobilePhoto = !!actionEl.closest('.mobile-photo-stage, .mobile-photo-preview-strip');
+        const source = clickedFromMobilePhoto
+          ? getPhotosForActiveFilter(state.photoFilter)
+          : (photoGalleryList.length ? photoGalleryList.slice() : mediaContent.photos.slice());
+        activePhotoList = source;
+        const safeIndex = Math.max(0, Math.min(index, Math.max(source.length - 1, 0)));
+        state.mobilePhotoIndex = safeIndex;
+        openMedia('photo', safeIndex);
         return true;
       }
 
@@ -1862,13 +1893,8 @@
 
       if(action === 'toggle-shift-about'){
         const shiftId = actionEl.dataset.shiftId || '';
-        const viewKey = actionEl.dataset.shiftView || 'desktop';
         if(shiftId){
-          if(viewKey === 'desktop'){
-            openShiftAboutModal(shiftId);
-          } else {
-            toggleShiftOptionPanel(viewKey, 'aboutId', shiftId);
-          }
+          openShiftAboutModal(shiftId);
         }
         return true;
       }
@@ -2096,6 +2122,21 @@
         return true;
       }
 
+      if(action === 'reset-booking-all'){
+        const confirmed = window.confirm(
+          'Это действие аннулирует ваше предварительное бронирование.\n\nВы точно хотите продолжить?'
+        );
+        if(!confirmed){
+          return true;
+        }
+        resetOfferState({preserveShift:false});
+        state.age = null;
+        state.ageSelected = false;
+        persist();
+        renderAll();
+        return true;
+      }
+
       if(action === 'close-offer'){
         offerRunId += 1;
         clearOfferTimeout();
@@ -2172,13 +2213,13 @@
       }
 
       if(action === 'copy-invite-link'){
-        const inviteUrl = `${window.location.origin}${window.location.pathname}?invite=${encodeURIComponent(state.code || 'aidacamp')}`;
+        const invitePayload = buildInviteClipboardText();
         if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(inviteUrl)
-            .then(() => openNoticeModal('Ссылка приглашения скопирована.'))
-            .catch(() => openNoticeModal('Не удалось скопировать автоматически. Скопируйте ссылку из адресной строки.'));
+          navigator.clipboard.writeText(invitePayload)
+            .then(() => openNoticeModal('Ссылка скопирована.'))
+            .catch(() => openNoticeModal('Не удалось скопировать автоматически. Скопируйте ссылку вручную.'));
         } else {
-          openNoticeModal('Скопируйте ссылку из адресной строки браузера.');
+          openNoticeModal('Скопируйте ссылку вручную.');
         }
         return true;
       }
@@ -2654,7 +2695,7 @@
       }
 
       return {
-        text:'Оформить заявку',
+        text:'Забронировать',
         disabled:false,
         hint:''
       };
@@ -2725,7 +2766,7 @@
       }
 
       const runtimeHeight = Math.max(450, Math.min(700, Math.min(preferred, availableByHero)));
-      const mobileOverlap = Math.max(16, Math.min(40, Math.round(runtimeHeight * 0.072)));
+      const mobileOverlap = Math.max(11, Math.min(27, Math.round(runtimeHeight * 0.048)));
       card.style.setProperty('--booking-card-fixed-height', `${runtimeHeight}px`);
       card.style.setProperty('--booking-card-min-height', `${runtimeHeight}px`);
       card.style.setProperty('--booking-card-mobile-overlap', `${mobileOverlap}px`);
@@ -2762,12 +2803,18 @@
       const root = document.getElementById(targetId);
       if(!root) return;
       const current = getStepState();
+      const isDesktopSteps = targetId === 'desktopBookingSteps';
       root.querySelectorAll('.booking-step').forEach((el, idx) => {
         const num = idx + 1;
-        el.classList.remove('active','done');
+        el.classList.remove('active','done','pulse');
         el.dataset.step = String(num);
         if(num < current) el.classList.add('done');
-        if(num === current) el.classList.add('active');
+        if(num === current){
+          el.classList.add('active');
+          if(isDesktopSteps){
+            el.classList.add('pulse');
+          }
+        }
       });
     }
 
@@ -3082,15 +3129,16 @@
 
       if(btn){
         btn.classList.remove('hidden');
-        const shouldUseStackedCta = isDesktopPanel && state.offerStage >= 1 && /^Оформить заявку · выгода /i.test(actionText);
+        const isStageFour = getBookingStage() === 4 && !state.bookingCompleted;
+        const shouldUseStackedCta = isStageFour && /^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText);
         if(shouldUseStackedCta){
-          const gainText = actionText.replace(/^Оформить заявку · выгода /i, '').trim();
+          const gainText = actionText.replace(/^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
           btn.innerHTML = `
             <span class="cta-main-line cta-main-line--primary">Оформить заявку</span>
             <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
           `;
           btn.dataset.ctaLayout = 'stacked';
-          btn.setAttribute('aria-label', actionText);
+          btn.setAttribute('aria-label', `Оформить заявку. Выгода ${gainText}`);
         } else {
           btn.textContent = actionText;
           btn.removeAttribute('data-cta-layout');
@@ -3105,7 +3153,7 @@
         hint.textContent = action.hint;
       }
       if(state.bookingCompleted){
-        if(title) title.textContent = 'Что дальше?';
+        if(title) title.textContent = '';
         if(lead) lead.textContent = '';
         if(btn){
           btn.classList.add('is-disabled');
@@ -3121,36 +3169,23 @@
           if(info) info.innerHTML = '';
           return;
         }
-        const visiblePriceWithFallback = formatPrice(getVisiblePrice());
         if(info){
           info.innerHTML = `
             <div class="booking-price-box booking-summary-mini booking-summary-mini--completed">
-              <div class="booking-price-head">
-                <div class="booking-price-col">
-                  <small>Ваша смена</small>
-                  <div class="booking-price-main">${shift.dates}</div>
-                </div>
-                <div class="booking-price-col booking-price-col--fixed" style="text-align:right;">
-                  <small>Возраст</small>
-                  <div class="booking-price-main">${ageLabel(state.age)}</div>
-                </div>
+              <div class="booking-completed-top">
+                <button class="booking-completed-reset" type="button" data-action="reset-booking-all" aria-label="Сбросить бронирование">
+                  <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
+                </button>
               </div>
-              <p class="completed-followup-text">Мы свяжемся с вами в ближайшее время.</p>
+              <div class="booking-completed-next">
+                <div class="completed-followup-title">Что дальше?</div>
+                <div class="completed-followup-text">Мы свяжемся с вами в ближайшее время.</div>
+              </div>
               <button class="completed-followup-image-trigger" type="button" data-action="open-referral-photo" aria-label="Открыть фото в полном размере">
                 <img class="completed-followup-image" src="/assets/images/referral-hoodie.jpeg" alt="Фирменная толстовка лагеря">
               </button>
               <p class="completed-followup-note">Обычно дети приезжают с друзьями, так им проще адаптироваться. Позовите друга, подарим вам обоим фирменную толстовку.</p>
-              <a class="completed-followup-link" href="#" data-action="copy-invite-link">Копировать ссылку приглашения</a>
-              <div class="booking-price-head">
-                <div class="booking-price-col">
-                  <small>Зафиксированная цена</small>
-                  <div class="booking-price-main big">${visiblePriceWithFallback}</div>
-                </div>
-                <div class="booking-price-col" style="text-align:right;">
-                  <small>Код бронирования</small>
-                  <div class="booking-price-main">${state.code || '—'}</div>
-                </div>
-              </div>
+              <a class="completed-followup-link" href="#" data-action="copy-invite-link">Копировать ссылку приглашение</a>
             </div>
           `;
         }
@@ -3175,18 +3210,16 @@
       const currentPrice = formatPrice(shift.price);
       const visiblePriceValue = getVisiblePrice();
       const visiblePrice = formatPrice(visiblePriceValue);
-      const shiftDescription = hasSelectedAge()
-        ? getShiftAgeFocusedDescription(shift, state.age || '7-9')
-        : (shift.desc || '');
       const timerText = isOfferActive() ? formatRemainingCompact(state.expiresAt - Date.now()) : '';
-      const deadlineText = formatOfferDeadline(state.expiresAt);
       const basePriceValue = Number(state.basePrice || shift.price || 0);
       const safeVisiblePrice = Number(visiblePriceValue || 0);
+      const savingsValue = Math.max(0, basePriceValue - safeVisiblePrice);
+      const savingsText = formatPrice(savingsValue);
       const discountPercent = basePriceValue > 0
         ? Math.max(0, Math.round(((basePriceValue - safeVisiblePrice) / basePriceValue) * 100))
         : 0;
       if(state.offerStage >= 1){
-        if(title) title.textContent = 'Оформление брони';
+        if(title) title.textContent = 'Ваши условия';
         if(lead) lead.textContent = '';
       } else {
         if(title) title.textContent = 'Проверим цену и условия';
@@ -3194,13 +3227,15 @@
       }
 
       if(isDesktopPanel && state.offerStage === 0){
-        const shiftLongDescription = getShiftDisplayDescription(shift);
         if(info) info.innerHTML = `
           <div class="booking-shift-focus">
             <div class="booking-shift-focus__dates">${shift.dates}</div>
-            <div class="booking-shift-focus__meta">${shiftDaysLabel(shift)} · <span class="booking-shift-focus__meta-price">${formatPrice(shift.price)}</span> · осталось ${shift.left} мест</div>
-            <div class="booking-shift-focus__desc-title">Описание смены</div>
-            <p class="booking-shift-focus__desc">${shiftLongDescription}</p>
+            <div class="booking-shift-focus__days">${shiftDaysLabel(shift)}</div>
+            <div class="booking-shift-focus__preliminary">
+              <span class="booking-shift-focus__preliminary-label">Предварительная цена</span>
+              <span class="booking-shift-focus__preliminary-value">${formatPrice(shift.price)}</span>
+            </div>
+            <div class="booking-shift-focus__seats">Осталось ${shift.left} мест</div>
           </div>
         `;
         return;
@@ -3209,21 +3244,22 @@
       const isSummaryStage = state.offerStage >= 1;
       if(info) info.innerHTML = isSummaryStage ? `
         <div class="booking-price-box booking-summary-mini">
+          <div class="booking-summary-stage4-head">
+            <div class="booking-summary-stage4-age">${ageLabel(state.age)} · ${shift.dates}</div>
+          </div>
           <div class="booking-price-head">
-            <div class="booking-price-col">
-              <small>Возраст</small>
-              <div class="booking-price-main">${ageLabel(state.age)}</div>
-            </div>
-            <div class="booking-price-col booking-price-col--fixed" style="text-align:right;">
+            <div class="booking-price-col booking-price-col--fixed" style="text-align:left;">
               <small>Зафиксированная цена</small>
               <div class="booking-price-main big">${visiblePrice}</div>
-              ${discountPercent > 0 ? `<div class="booking-price-discount">Скидка ${discountPercent}%</div>` : ''}
             </div>
           </div>
-          <div class="booking-code-line">Даты: <strong style="color:#fff;">${shift.dates}</strong></div>
-          ${state.code ? `<div class="booking-code-line">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
-          <div class="booking-shift-description">${shiftDescription}</div>
-          ${timerText ? `<div class="booking-timer-line" data-live-timer="true">${timerText}</div>` : ''}
+          <div class="booking-stage4-badges">
+            ${discountPercent > 0 ? `<span class="booking-stage4-badge">Скидка ${discountPercent}%</span>` : ''}
+            ${savingsValue > 0 ? `<span class="booking-stage4-badge">Выгода ${savingsText}</span>` : ''}
+            ${state.code ? `<span class="booking-stage4-badge booking-stage4-badge--code">Код бронирования: ${state.code}</span>` : ''}
+          </div>
+          <div class="booking-stage4-note">Мы вас ждём</div>
+          ${timerText ? `<div class="booking-timer-line" data-live-timer="true"><span class="booking-timer-label">Осталось</span><span class="booking-timer-value">${stripRemainingPrefix(timerText)}</span></div>` : ''}
         </div>
       ` : `
         <div class="booking-price-box">
@@ -3633,6 +3669,23 @@
 
     function shiftDaysLabel(shift){
       if(!shift) return '';
+      const dayWord = (days) => {
+        const n = Math.abs(Number(days) || 0);
+        const mod10 = n % 10;
+        const mod100 = n % 100;
+        if(mod10 === 1 && mod100 !== 11) return 'день';
+        if(mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'дня';
+        return 'дней';
+      };
+      if(shift.isShort){
+        const start = parseShiftDate(shift.start);
+        const end = parseShiftDate(shift.end);
+        if(start && end){
+          const msPerDay = 24 * 60 * 60 * 1000;
+          const days = Math.max(1, Math.round((end.getTime() - start.getTime()) / msPerDay) + 1);
+          return `${days} ${dayWord(days)}`;
+        }
+      }
       const map = {
         'shift-1':'10 дней',
         'shift-2':'13 дней',
@@ -3789,20 +3842,34 @@
       const shouldShowTimer = !!showTimer && isOfferActive();
       const timeLeft = shouldShowTimer ? stripRemainingPrefix(formatRemainingCompact(state.expiresAt - Date.now())) : '';
       return `
-        <div class="booking-summary-selection">${ageLabel(state.age)} · ${shift.dates}</div>
-        <div class="booking-summary-price">${formatPrice(state.offerPrice || state.basePrice || shift.price)}</div>
+        <div class="booking-summary-line">
+          <span class="booking-summary-line__segment booking-summary-line__segment--price"><span class="booking-summary-price">${formatPrice(state.offerPrice || state.basePrice || shift.price)}</span></span>
+          <span class="booking-summary-sep" aria-hidden="true">•</span>
+          <span class="booking-summary-line__segment">
+            <span class="booking-summary-selection">${ageLabel(state.age)}</span>
+          </span>
+          <span class="booking-summary-sep" aria-hidden="true">•</span>
+          <span class="booking-summary-line__segment booking-summary-line__segment--date">
+            <span class="booking-summary-selection booking-summary-selection--date">${shift.dates}</span>
+          </span>
+        </div>
         ${timeLeft ? `
         <div class="booking-summary-timer">
           <div class="booking-summary-timer-title">Цена закреплена за вами</div>
           <div class="booking-timer-line" data-live-timer="true">${timeLeft}</div>
         </div>
         ` : ''}
-        <div class="booking-summary-guarantee">Мы держим для вас место.<br>Никакой оплаты сейчас не требуется.</div>
       `;
     }
 
     function generateCode(){
       return 'AC-' + Math.random().toString(36).slice(2,6).toUpperCase();
+    }
+
+    function buildInviteClipboardText(){
+      const currentCode = String(state.code || 'aidacamp').trim();
+      const inviteUrl = `${window.location.origin}${window.location.pathname}?invite=${encodeURIComponent(currentCode)}`;
+      return `Ссылка: ${inviteUrl}`;
     }
 
     function bindAgeTabs(rootId){
@@ -4172,24 +4239,26 @@
         return `
         <div class="shift-option ${state.shiftId === s.id ? 'active' : ''}" data-id="${s.id}">
           <div class="shift-option-head">
-            <strong>${s.dates}</strong>
+            <strong>
+              <span class="shift-option-dates">${s.dates}</span>
+            </strong>
             <small>
-              <span class="shift-option-price">${formatPrice(s.price)}</span>
               <span class="shift-option-seats">осталось ${s.left} мест</span>
+              <span class="shift-option-price-row">
+                <span class="shift-option-price">${formatPrice(s.price)}</span>
+                <span class="shift-option-inline-actions">
+                  <button class="shift-option-action shift-option-action-info" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${viewKey}" aria-label="Описание смены ${s.dates}">
+                    <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                  </button>
+                  <button class="shift-option-action shift-option-action-calendar" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${viewKey}" aria-label="Календарь ${s.dates}">
+                    <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                  </button>
+                  <button class="shift-option-select-indicator" type="button" aria-label="Выбрать смену ${s.dates}">
+                    <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+                  </button>
+                </span>
+              </span>
             </small>
-          </div>
-          <div class="shift-option-tagline">${s.desc || ''}</div>
-          <div class="shift-option-actions">
-            <button class="shift-option-action" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${viewKey}">
-              О смене
-            </button>
-            <button class="shift-option-action" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${viewKey}">
-              <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
-              <span>Календарь</span>
-            </button>
-            <button class="shift-option-select-indicator" type="button" aria-label="Выбрать смену ${s.dates}">
-              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
-            </button>
           </div>
           <div class="shift-inline-panel ${showAbout ? 'visible' : ''}">
             <ul>
@@ -4228,20 +4297,30 @@
       const mainShifts = shifts.filter((s) => !s.isShort);
       const shortShifts = shifts.filter((s) => !!s.isShort);
       const showExtendedDescription = hasSelectedAge();
+      const cleanShiftCardTitle = (title) => {
+        const raw = String(title || '').trim();
+        const cleaned = raw
+          .replace(/^\s*\d+(?:[.,]\d+)?\s*[\])}.:\-–—,]?\s*/u, '')
+          .replace(/^(?:TT|ТТ)\s*[\d.]+[\s:.\-–—]*/iu, '')
+          .trim();
+        return cleaned || raw;
+      };
 
       grid.innerHTML = mainShifts.map(s => `
         <div class="mini-card">
-          <h4><span class="program-shift-index program-shift-index-main">${s.title}</span></h4>
+          <h4>${cleanShiftCardTitle(s.title)}</h4>
           <div class="price-row">
             <strong>${formatPrice(s.price)}</strong>
-            <span>
-              ${s.dates} · ${shiftDaysLabel(s)}
+            <span class="price-row-actions">
+              <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" aria-label="Описание смены ${s.title}">
+                <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+              </button>
               <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
                 <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
-                <span class="shift-calendar-btn-label">календарь</span>
               </button>
             </span>
           </div>
+          <div class="price-row-meta">${s.dates} · ${shiftDaysLabel(s)}</div>
           ${showExtendedDescription
             ? `
               <p><strong>Коротко:</strong> ${s.desc || ''}</p>
@@ -4256,19 +4335,21 @@
         shortGrid.innerHTML = shortShifts.map((s) => `
           <div class="mini-card short-shift-card">
             <div class="short-shift-head">
-              <h4><span class="program-shift-index">${s.title}</span></h4>
+              <h4>${cleanShiftCardTitle(s.title)}</h4>
               <span class="short-shift-tag">короткая смена</span>
             </div>
             <div class="price-row">
               <strong>${formatPrice(s.price)}</strong>
-              <span>
-                ${s.dates} · ${shiftDaysLabel(s)}
-                <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.sourceId || s.id}" aria-label="Календарь ${s.title}">
+              <span class="price-row-actions">
+                <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" aria-label="Описание смены ${s.title}">
+                  <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                </button>
+                <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
                   <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
-                  <span class="shift-calendar-btn-label">календарь</span>
                 </button>
               </span>
             </div>
+            <div class="price-row-meta">${s.dates}</div>
             ${showExtendedDescription
               ? `
                 <p><strong>Коротко:</strong> ${s.desc || ''}</p>
@@ -4551,32 +4632,7 @@
 
     function renderCompactInlineStayList(mobileInlineStayList){
       if(!mobileInlineStayList) return;
-      let stayCards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
-        return {
-          img: card.querySelector('img')?.getAttribute('src') || '',
-          title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
-          text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
-        };
-      }).filter((item) => item.title);
-      if(!stayCards.length){
-        stayCards = [
-          {
-            img:'/assets/images/cdn-cache/53d52bed_45b1eb46cf5961c2188d.jpg.webp',
-            title:'Комнаты и размещение',
-            text:'Спокойные светлые комнаты, удобное размещение и бытовая среда без ощущения «походного лагеря».'
-          },
-          {
-            img:'/assets/images/cdn-cache/62b758b3_63e9322f53ec8ca1b307.jpg.webp',
-            title:'Санузлы и бытовые зоны',
-            text:'Родителям важно понимать не только программу, но и бытовой комфорт ребёнка.'
-          },
-          {
-            img:'/assets/images/stay-common-lounge.webp',
-            title:'Общая гостиная и зона отдыха',
-            text:'Тёплое общее пространство для спокойного досуга, настольных игр и вечернего общения под присмотром вожатых.'
-          }
-        ];
-      }
+      const stayCards = getCompactStayCards();
       if(!stayCards.length){
         mobileInlineStayList.innerHTML = '';
         return;
@@ -4614,6 +4670,36 @@
           `).join('')}
         </div>
       `;
+    }
+
+    function getCompactStayCards(){
+      let cards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
+        return {
+          img: card.querySelector('img')?.getAttribute('src') || '',
+          title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
+          text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
+        };
+      }).filter((item) => item.title);
+      if(!cards.length){
+        cards = [
+          {
+            img:'/assets/images/cdn-cache/53d52bed_45b1eb46cf5961c2188d.jpg.webp',
+            title:'Комнаты и размещение',
+            text:'Спокойные светлые комнаты, удобное размещение и бытовая среда без ощущения «походного лагеря».'
+          },
+          {
+            img:'/assets/images/cdn-cache/62b758b3_63e9322f53ec8ca1b307.jpg.webp',
+            title:'Санузлы и бытовые зоны',
+            text:'Родителям важно понимать не только программу, но и бытовой комфорт ребёнка.'
+          },
+          {
+            img:'/assets/images/stay-common-lounge.webp',
+            title:'Общая гостиная и зона отдыха',
+            text:'Тёплое общее пространство для спокойного досуга, настольных игр и вечернего общения под присмотром вожатых.'
+          }
+        ];
+      }
+      return cards;
     }
 
     function renderCompactInlineTeamList(mobileInlineTeamList){
@@ -4822,28 +4908,39 @@
               `).join('')}
             </div>
             <article class="mobile-program-active-card">
-              <strong>${selectorLabel(activeShift)}</strong>
               <div class="mobile-program-dates">
                 ${activeShift.dates}
-                ${activeShift.isShort ? `<span class="mobile-program-dates-sub">${shiftDaysLabel(activeShift)}</span>` : ''}
               </div>
-              <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
+              <div class="mobile-program-price-row">
+                <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
+                <div class="mobile-program-inline-actions">
+                  <button
+                    class="shift-calendar-btn shift-about-btn"
+                    type="button"
+                    data-action="toggle-shift-about"
+                    data-shift-id="${activeShift.id}"
+                    aria-label="Описание смены ${activeShift.title}"
+                  >
+                    <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                  </button>
+                  <button
+                    class="shift-calendar-btn"
+                    type="button"
+                    data-action="open-calendar"
+                    data-shift-id="${activeShift.id}"
+                    aria-label="Календарь ${activeShift.title}"
+                  >
+                    <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                  </button>
+                </div>
+              </div>
               <div class="mobile-program-meta">
-                <span>${shiftDaysLabel(activeShift)}</span>
+                ${activeShift.isShort ? '' : `<span>${shiftDaysLabel(activeShift)}</span>`}
                 <span>Осталось ${activeShift.left} мест</span>
                 ${activeShift.isShort ? '<span class="mobile-program-short-badge">Короткая смена</span>' : ''}
               </div>
               <p>${activeShift.isShort ? (activeShift.desc || '') : getShiftDisplayDescription(activeShift)}</p>
               ${ageHint ? `<div class="mobile-program-hint">${ageHint}</div>` : ''}
-              <button
-                class="shift-calendar-btn"
-                type="button"
-                data-action="open-calendar"
-                data-shift-id="${activeShift.sourceId || activeShift.id}"
-                aria-label="Календарь ${activeShift.title}"
-              >
-                <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true"><span>Календарь</span>
-              </button>
             </article>
             <div class="mobile-program-dots">
               ${mainShifts.map((shift, idx) => `
@@ -4868,15 +4965,9 @@
       }
 
       if (photoGalleryTargets.length) {
-        const photoByFilter = {
-          camp: ['all'],
-          pool: ['pool'],
-          sport: ['sport'],
-          study: ['study'],
-          food: ['food']
-        };
-        const tags = photoByFilter[state.photoFilter] || ['all'];
-        const list = mediaContent.photos.filter((item) => tags.includes(item.cat));
+        const list = getPhotosForActiveFilter(state.photoFilter);
+        photoGalleryList = list.slice();
+        activePhotoList = list.slice();
         const activeIndex = Math.min(Math.max(state.mobilePhotoIndex || 0, 0), Math.max(list.length - 1, 0));
         state.mobilePhotoIndex = activeIndex;
         const active = list[activeIndex];
@@ -5422,7 +5513,11 @@
         }
       }
 
+      if(state.code){
+        state.previousCode = state.code;
+      }
       state.code = generateCode();
+      state.nextCodePreview = null;
       state.offerSearching = false;
       persist();
       track('offer_complete', selectedShiftPayload());
@@ -5470,7 +5565,7 @@
               <p class="offer-booking-note">Действует 72 часа. Вы можете спокойно подумать и вернуться.</p>
             </div>
             <div class="overlay-actions">
-              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Оформить заявку</button>
+              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Забронировать</button>
             </div>
             <div class="inline-lead-host hidden" id="offerInlineLeadHost"></div>
           </div>
@@ -5503,7 +5598,7 @@
             </div>
 
             <div class="overlay-actions">
-              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Оформить заявку</button>
+              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Забронировать</button>
             </div>
             <div class="inline-lead-host hidden" id="offerInlineLeadHost"></div>
           </div>
@@ -5546,7 +5641,12 @@
           if(offerTimer) offerTimer.textContent = '';
           if(summaryTimer) summaryTimer.textContent = '';
           bookingTimers.forEach((node) => {
-            node.textContent = '';
+            const timerValueNode = node.querySelector('.booking-timer-value');
+            if(timerValueNode){
+              timerValueNode.textContent = '';
+            } else {
+              node.textContent = '';
+            }
           });
           renderBookingPanels();
           return;
@@ -5558,7 +5658,12 @@
         if(offerTimer) offerTimer.textContent = fullText;
         if(summaryTimer) summaryTimer.textContent = compactText;
         bookingTimers.forEach((node) => {
-          node.textContent = compactText;
+          const timerValueNode = node.querySelector('.booking-timer-value');
+          if(timerValueNode){
+            timerValueNode.textContent = stripRemainingPrefix(compactText);
+          } else {
+            node.textContent = compactText;
+          }
         });
       };
 
@@ -5678,19 +5783,21 @@
       bar.classList.toggle('summary-bar--stage4', isStageFourSummary);
 
       document.getElementById('summaryMain').textContent = isStageFourSummary ? '' : `${labelAge(state.age)}`;
-      document.getElementById('summaryMeta').textContent = `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
+      document.getElementById('summaryMeta').textContent = isStageFourSummary
+        ? ''
+        : `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
       document.getElementById('summaryPrice').textContent = formatPrice(price);
       const summaryCtaBtn = bar.querySelector('[data-action="primary-cta"]');
       if(summaryCtaBtn){
         const action = getPrimaryActionState();
         const actionText = getResolvedPrimaryActionText(action, shift);
-        if(isStageFourSummary && /^Оформить заявку · выгода /i.test(actionText)){
-          const gainText = actionText.replace(/^Оформить заявку · выгода /i, '').trim();
+        if(isStageFourSummary && /^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText)){
+          const gainText = actionText.replace(/^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
           summaryCtaBtn.innerHTML = `
-            <span class="cta-main-line cta-main-line--primary">Оформить заявку</span>
+            <span class="cta-main-line cta-main-line--primary">Бронировать</span>
             <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
           `;
-          summaryCtaBtn.setAttribute('aria-label', actionText);
+          summaryCtaBtn.setAttribute('aria-label', `Бронировать · Выгода ${gainText}`);
         } else {
           summaryCtaBtn.textContent = actionText;
           summaryCtaBtn.removeAttribute('aria-label');
@@ -5780,7 +5887,7 @@
     }
 
     function getLeadSubmitDefaultText(scope = 'drawer'){
-      return 'Забронировать место';
+      return 'Забронировать';
     }
 
     function setLeadPhoneError(scope = 'drawer', show = false, message = ''){
@@ -6424,6 +6531,71 @@
         const total = 4;
         const current = Math.max(0, Number(state.mobileJourneyStep || 0));
         state.mobileJourneyStep = (current + (dx < 0 ? 1 : -1) + total) % total;
+        renderCompactTrustPanelContent();
+        persist();
+      }, {passive:true});
+    })();
+
+    (function bindMobileStaySwipe(){
+      let startX = 0;
+      let startY = 0;
+      let activeCard = null;
+
+      document.addEventListener('touchstart', (e) => {
+        const card = e.target.closest('.mobile-stay-feature, .mobile-stay-feature-photo');
+        if(!card) return;
+        const touch = e.touches && e.touches[0];
+        if(!touch) return;
+        activeCard = card;
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }, {passive:true});
+
+      document.addEventListener('touchend', (e) => {
+        if(!activeCard) return;
+        const touch = e.changedTouches && e.changedTouches[0];
+        activeCard = null;
+        if(!touch) return;
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if(Math.abs(dx) < 32 || Math.abs(dx) <= Math.abs(dy)) return;
+        const list = getCompactStayCards();
+        const total = Math.max(0, list.length || 0);
+        if(!total) return;
+        state.mobileStayIndex = (Math.max(0, state.mobileStayIndex || 0) + (dx < 0 ? 1 : -1) + total) % total;
+        renderCompactTrustPanelContent();
+        persist();
+      }, {passive:true});
+    })();
+
+    (function bindMobilePhotoSwipe(){
+      let startX = 0;
+      let startY = 0;
+      let activeNode = null;
+
+      document.addEventListener('touchstart', (e) => {
+        const node = e.target.closest('.mobile-photo-stage, .mobile-photo-preview-strip');
+        if(!node) return;
+        const touch = e.touches && e.touches[0];
+        if(!touch) return;
+        activeNode = node;
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }, {passive:true});
+
+      document.addEventListener('touchend', (e) => {
+        if(!activeNode) return;
+        const touch = e.changedTouches && e.changedTouches[0];
+        activeNode = null;
+        if(!touch) return;
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if(Math.abs(dx) < 34 || Math.abs(dx) <= Math.abs(dy)) return;
+        const list = getPhotosForActiveFilter(state.photoFilter);
+        const total = Math.max(0, list.length || 0);
+        if(!total) return;
+        const current = Math.max(0, Number(state.mobilePhotoIndex || 0));
+        state.mobilePhotoIndex = (current + (dx < 0 ? 1 : -1) + total) % total;
         renderCompactTrustPanelContent();
         persist();
       }, {passive:true});
