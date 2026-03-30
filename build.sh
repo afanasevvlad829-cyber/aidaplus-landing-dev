@@ -101,17 +101,52 @@ def detect_github_repo_slug() -> str:
 cdn_ref = (os.getenv("AC_CDN_REF") or "").strip()
 cdn_repo = detect_github_repo_slug()
 cdn_asset_base = f"https://cdn.jsdelivr.net/gh/{cdn_repo}@{cdn_ref}" if cdn_repo and cdn_ref else ""
+cdn_assets_prefix = "/cdn/assets/"
 
 def rewrite_assets_to_cdn(text: str, asset_base: str) -> str:
     if not text or not asset_base:
         return text
+    target = f"{asset_base}{cdn_assets_prefix}"
     out = text
-    out = re.sub(r"(?P<q>['\"])\/assets\/", rf"\g<q>{asset_base}/assets/", out)
-    out = re.sub(r"url\((?P<q>['\"]?)\/assets\/", rf"url(\g<q>{asset_base}/assets/", out)
+    out = re.sub(r"(?P<q>['\"])\/assets\/", rf"\g<q>{target}", out)
+    out = re.sub(r"url\((?P<q>['\"]?)\/assets\/", rf"url(\g<q>{target}", out)
     return out
+
+def collect_asset_refs(*chunks: str):
+    refs = set()
+    pattern = re.compile(r"/assets/[A-Za-z0-9_./-]+")
+    for chunk in chunks:
+        if not chunk:
+            continue
+        for m in pattern.findall(chunk):
+            refs.add(m)
+    return sorted(refs)
+
+def sync_cdn_assets(asset_refs):
+    src_root = root / "assets"
+    dist_cdn_root = root / "dist" / "cdn" / "assets"
+    repo_cdn_root = root / "cdn" / "assets"
+    copied = 0
+    missing = []
+    for ref in asset_refs:
+        rel = ref.replace("/assets/", "", 1)
+        src = src_root / rel
+        if not src.exists() or not src.is_file():
+            missing.append(ref)
+            continue
+        for target_root in (dist_cdn_root, repo_cdn_root):
+            dst = target_root / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            data = src.read_bytes()
+            if not dst.exists() or dst.read_bytes() != data:
+                dst.write_bytes(data)
+                copied += 1
+    return copied, missing
 
 css_for_cdn = rewrite_assets_to_cdn(css, cdn_asset_base)
 js_for_cdn = rewrite_assets_to_cdn(js, cdn_asset_base)
+asset_refs = collect_asset_refs(base, css, js)
+copied_count, missing_assets = sync_cdn_assets(asset_refs)
 
 components = []
 if components_dir.exists():
@@ -351,9 +386,14 @@ print(f"Built: {cdn_tilda_bundle_path}")
 cdn_tilda_repo_bundle_path.write_text(tilda_bundle, encoding="utf-8")
 print(f"Built: {cdn_tilda_repo_bundle_path}")
 if cdn_asset_base:
-    print(f"CDN asset base: {cdn_asset_base}")
+    print(f"CDN asset base: {cdn_asset_base}{cdn_assets_prefix}")
 else:
     print("CDN asset base: disabled (set AC_CDN_REF to enable '/assets' rewriting)")
+print(f"CDN asset sync: refs={len(asset_refs)} copied={copied_count} missing={len(missing_assets)}")
+if missing_assets:
+    print("CDN asset missing examples:")
+    for item in missing_assets[:10]:
+        print(f"  - {item}")
 PY
 
 echo "Canonical runtime source: dist/index.html (not rewritten unless AC_ALLOW_DIST_REWRITE=1)"
