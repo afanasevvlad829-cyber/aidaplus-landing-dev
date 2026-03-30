@@ -294,7 +294,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.246 (offer-booking-modals-compact-33pct)';
+    const BUILD_VERSION_LABEL = 'v0.0.247 (tilda-hero-bg-cdn-fallback-fix)';
     const QUALITY_SCORE_MODEL = Object.freeze({
       scale: '0..10',
       debtScale: '0 best .. 10 worst',
@@ -1087,11 +1087,11 @@
     }
 
     const HERO_IMAGES = [
-      'https://cdn.jsdelivr.net/gh/afanasevvlad829-cyber/aidaplus-landing-dev@tilda-prod/assets/images/hero-camp-sunset-20260328.jpeg'
+      'https://cdn.jsdelivr.net/gh/afanasevvlad829-cyber/aidaplus-landing-dev@tilda-prod/assets/images/cdn-cache/0b6b9a8c_day.png'
     ];
 
     const HERO_MOBILE =
-      'https://cdn.jsdelivr.net/gh/afanasevvlad829-cyber/aidaplus-landing-dev@tilda-prod/assets/images/hero-camp-sunset-20260328.jpeg';
+      'https://cdn.jsdelivr.net/gh/afanasevvlad829-cyber/aidaplus-landing-dev@tilda-prod/assets/images/cdn-cache/0b6b9a8c_day.png';
 
     let heroIndex = 0;
     let heroTimer = null;
