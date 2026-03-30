@@ -37,6 +37,7 @@
       --video-card-gap:12px;
       --team-carousel-card-min:260px;
       --team-carousel-card-max:300px;
+      --close-btn-size:36px;
     }
 
     *{box-sizing:border-box}
@@ -440,6 +441,7 @@
       position:absolute;
       inset:0;
       background:
+        radial-gradient(128% 42% at 50% 100%, rgba(6,10,18,.46) 0%, rgba(6,10,18,.22) 44%, rgba(6,10,18,0) 78%),
         radial-gradient(circle at 92% 14%, rgba(255,208,132,.34) 0%, rgba(255,188,104,.16) 16%, rgba(255,166,86,.08) 30%, rgba(255,150,72,0) 48%),
         linear-gradient(90deg, rgba(8,12,18,.56) 0%, rgba(8,12,18,.42) 34%, rgba(8,12,18,.24) 64%, rgba(8,12,18,.10) 100%),
         linear-gradient(180deg, rgba(8,12,18,.10) 0%, rgba(8,12,18,.30) 100%);
@@ -450,6 +452,7 @@
 
     #desktopView.hero-contrast-before .hero-shell::after{
       background:
+        radial-gradient(128% 42% at 50% 100%, rgba(6,10,18,.50) 0%, rgba(6,10,18,.24) 44%, rgba(6,10,18,0) 78%),
         radial-gradient(circle at 92% 14%, rgba(255,208,132,.36) 0%, rgba(255,188,104,.20) 14%, rgba(255,166,86,.10) 26%, rgba(255,150,72,0) 44%),
         linear-gradient(90deg, rgba(8,12,18,.84) 0%, rgba(8,12,18,.69) 34%, rgba(8,12,18,.42) 64%, rgba(8,12,18,.18) 100%),
         linear-gradient(180deg, rgba(8,12,18,.16) 0%, rgba(8,12,18,.52) 100%);
@@ -457,8 +460,10 @@
 
     #desktopView.hero-contrast-after-soft .hero-shell::after{
       background:
+        radial-gradient(128% 42% at 50% 100%, rgba(6,10,18,.40) 0%, rgba(6,10,18,.16) 44%, rgba(6,10,18,0) 78%),
         radial-gradient(ellipse at 24% 60%, rgba(255, 230, 170, 0.10) 0%, rgba(255, 216, 146, 0.06) 28%, rgba(255, 198, 124, 0.025) 50%, rgba(255, 180, 104, 0) 75%),
-        radial-gradient(circle at 50% 36%, rgba(8, 12, 18, 0.03) 0%, rgba(8, 12, 18, 0) 64%);
+        radial-gradient(circle at 50% 36%, rgba(8, 12, 18, 0.03) 0%, rgba(8, 12, 18, 0) 64%),
+        linear-gradient(180deg, rgba(8,12,18,.06) 0%, rgba(8,12,18,.18) 100%);
     }
 
     /* Compact mode must keep the same hero background treatment as full mode. */
@@ -975,6 +980,7 @@
 
     #desktopView .menu-pill:hover{
       background:#ffffff;
+      color:#111827;
       transform:translateY(-1px);
       box-shadow:0 12px 22px rgba(2,8,20,.18);
     }
@@ -991,13 +997,13 @@
     }
 
     #desktopView.mobile-preview-active #serviceMenu{
-      position:absolute;
-      top:calc(100% + 8px);
-      right:0;
+      position:fixed;
+      top:102px;
+      right:12px;
       width:max-content;
       min-width:max-content;
       max-width:calc(100vw - 24px);
-      max-height:min(62vh, 420px);
+      max-height:calc(100vh - 118px);
       overflow-y:auto;
       display:none !important;
       grid-template-columns:1fr;
@@ -1011,6 +1017,7 @@
       background:rgba(10,15,24,.92);
       box-shadow:0 20px 42px rgba(2,8,20,.45);
       backdrop-filter:blur(12px);
+      z-index:92;
     }
 
     #desktopView.mobile-preview-active #serviceMenu.is-open{
@@ -1425,7 +1432,9 @@
       background-clip:padding-box;
       overflow:hidden;
       clip-path:inset(0 round 26px);
-      box-shadow:0 24px 70px rgba(0,0,0,.34);
+      box-shadow:
+        0 24px 70px rgba(0,0,0,.34),
+        0 20px 30px -18px rgba(76,255,184,.34);
       color:#fff;
       transition:transform .2s ease, box-shadow .2s ease;
       z-index:3;
@@ -1433,6 +1442,25 @@
       contain:paint;
       will-change:transform;
       transform:translateY(var(--hero-overlap-y));
+    }
+
+    .hero-booking-card::after{
+      content:"";
+      position:absolute;
+      left:12px;
+      right:12px;
+      bottom:0;
+      height:52px;
+      border-radius:0 0 20px 20px;
+      background:none;
+      pointer-events:none;
+      z-index:0;
+      opacity:0;
+    }
+
+    .hero-booking-card > *{
+      position:relative;
+      z-index:1;
     }
 
     .hero-booking-card:hover{
@@ -1760,6 +1788,12 @@
       box-shadow:0 8px 16px rgba(255,138,0,.24);
     }
 
+    .mobile-program-chip.short{
+      background:#edf7f0;
+      color:#1f6d45;
+      border:1px solid rgba(61,224,151,.38);
+    }
+
     .mobile-program-active-card{
       border:1px solid var(--line);
       border-radius:16px;
@@ -1781,6 +1815,15 @@
       font-size:12px;
       line-height:1.35;
       margin-top:-2px;
+    }
+
+    .mobile-program-dates .mobile-program-dates-sub{
+      display:block;
+      margin-top:2px;
+      font-size:11px;
+      line-height:1.3;
+      color:#6f7d93;
+      font-weight:700;
     }
 
     .mobile-program-price{
@@ -1808,6 +1851,12 @@
       font-weight:700;
     }
 
+    .mobile-program-short-badge{
+      background:#e9f8ef !important;
+      color:#1f6d45 !important;
+      border:1px solid rgba(61,224,151,.42);
+    }
+
     .mobile-program-active-card p{
       margin:0;
       color:#5b6474;
@@ -1824,6 +1873,37 @@
       font-size:11px;
       line-height:1.35;
       margin-top:-1px;
+    }
+
+    .mobile-program-short-note{
+      margin:0;
+      color:#5f6f87;
+      font-size:11px;
+      line-height:1.35;
+      font-weight:600;
+    }
+
+    .mobile-program-dots{
+      display:flex;
+      justify-content:center;
+      gap:7px;
+      margin-top:6px;
+    }
+
+    .mobile-program-dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      border:none;
+      padding:0;
+      background:#cfd8e5;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
+    .mobile-program-dot.active{
+      background:var(--accent);
+      transform:scale(1.18);
     }
 
     .mobile-body-sections > .section-card{
@@ -2145,7 +2225,7 @@
 
     .mobile-review-main-nav{
       margin-top:8px;
-      display:flex;
+      display:none;
       justify-content:space-between;
       gap:8px;
     }
@@ -2369,21 +2449,24 @@
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:8px;
+      align-items:stretch;
     }
 
     .mobile-map-open-btn{
-      min-height:36px;
-      padding:0 12px;
-      border-radius:10px;
-      text-decoration:none;
+      min-height:0;
+      padding:0;
+      border-radius:0;
       display:inline-flex;
       align-items:center;
-      justify-content:center;
+      justify-content:flex-start;
       font-size:12px;
       font-weight:800;
-      color:#fff;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      width:max-content;
+      color:#d66a00;
+      background:transparent;
+      width:auto;
+      border:none;
+      text-decoration:underline;
+      text-underline-offset:2px;
     }
 
     .mobile-map-preview-card{
@@ -2400,7 +2483,7 @@
       border-radius:10px;
       overflow:hidden;
       border:1px solid rgba(203,213,225,.9);
-      height:132px;
+      height:108px;
       background:#dbe4f4;
     }
 
@@ -2423,6 +2506,14 @@
       font-size:12px;
       line-height:1.4;
       color:#5b6474;
+    }
+
+    .mobile-map-inline-link{
+      color:#d66a00;
+      font-weight:800;
+      text-decoration:underline;
+      text-underline-offset:2px;
+      white-space:nowrap;
     }
 
     .section-card.mobile-template#section-contacts .mobile-socials-row{
@@ -2585,6 +2676,14 @@
 
     .booking-step-block + .booking-step-block{
       margin-top:12px;
+    }
+
+    /* Prevent first-paint flicker before JS applies the current booking stage. */
+    #desktop-booking-card:not(.booking-stage-1):not(.booking-stage-2):not(.booking-stage-3):not(.booking-stage-4) .booking-step-2,
+    #desktop-booking-card:not(.booking-stage-1):not(.booking-stage-2):not(.booking-stage-3):not(.booking-stage-4) .booking-step-3,
+    #mobileBookingCard:not(.booking-stage-1):not(.booking-stage-2):not(.booking-stage-3):not(.booking-stage-4) .booking-step-2,
+    #mobileBookingCard:not(.booking-stage-1):not(.booking-stage-2):not(.booking-stage-3):not(.booking-stage-4) .booking-step-3{
+      display:none;
     }
 
     #desktop-booking-card.booking-stage-2 .booking-step-block + .booking-step-block{
@@ -3430,6 +3529,9 @@
       font-size:12px;
       font-weight:800;
       padding:0 10px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
       cursor:pointer;
       transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
     }
@@ -3438,6 +3540,13 @@
       transform:translateY(-1px);
       border-color:#c4cede;
       box-shadow:0 8px 14px rgb(17 24 39 / 10%);
+    }
+
+    .shift-option-action .ac-icon{
+      width:16px;
+      height:16px;
+      flex:0 0 16px;
+      display:block;
     }
 
     #desktop-shift-options .shift-option-head small{
@@ -3693,14 +3802,15 @@
     .shift-list-veil{
       display:none;
       margin:0 0 10px;
-      padding:11px 12px;
-      border-radius:14px;
-      background:rgb(255 255 255 / 8%);
-      border:1px dashed rgb(255 255 255 / 14%);
+      padding:2px 0 0;
+      border-radius:0;
+      background:transparent;
+      border:none;
       color:rgb(255 255 255 / 72%);
       font-size:12px;
       line-height:1.5;
       cursor:pointer;
+      box-shadow:none;
     }
 
     .shift-calendar-discovery{
@@ -4290,8 +4400,8 @@
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__dates{
-      font-size:clamp(28px,2.2vw,34px);
-      line-height:1.04;
+      font-size:clamp(24px,1.9vw,30px);
+      line-height:1.06;
       letter-spacing:-.02em;
       white-space:normal;
       overflow-wrap:anywhere;
@@ -4299,22 +4409,22 @@
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__meta{
-      font-size:clamp(15px,1.05vw,17px);
-      line-height:1.32;
+      font-size:clamp(14px,1vw,16px);
+      line-height:1.3;
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__desc{
-      font-size:clamp(15px,1.02vw,17px);
-      line-height:1.44;
+      font-size:clamp(13px,.95vw,15px);
+      line-height:1.36;
       color:rgba(255,255,255,.92);
       flex:1 1 auto;
       margin:0;
       max-height:none;
-      overflow:visible;
+      overflow:auto;
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__desc-title{
-      font-size:clamp(14px,.95vw,16px);
+      font-size:clamp(13px,.88vw,15px);
       line-height:1.25;
       font-weight:800;
       color:rgba(255,255,255,.96);
@@ -4323,8 +4433,8 @@
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__context{
       margin-top:auto;
-      font-size:clamp(14px,.95vw,16px);
-      line-height:1.4;
+      font-size:clamp(12px,.82vw,14px);
+      line-height:1.32;
       color:rgba(255,255,255,.84);
     }
 
@@ -4347,10 +4457,10 @@
     #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-main,
     #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-main.cta-main-compact{
       width:100%;
-      min-height:52px;
+      min-height:48px;
       border-radius:14px;
       padding:11px 16px;
-      font-size:20px;
+      font-size:18px;
       font-weight:900;
     }
 
@@ -4389,14 +4499,14 @@
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-main{
-      font-size:26px;
+      font-size:24px;
       line-height:1.08;
       letter-spacing:-.03em;
       font-variant-numeric:tabular-nums;
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-main.big{
-      font-size:clamp(24px,2vw,30px);
+      font-size:clamp(22px,1.8vw,27px);
       white-space:normal;
       overflow-wrap:anywhere;
       line-height:1;
@@ -4908,6 +5018,23 @@
       line-height:1.25;
     }
 
+    .short-shift-subline{
+      display:block;
+      margin-top:2px;
+      font-size:11px;
+      line-height:1.3;
+      color:#6f7d93;
+      font-weight:700;
+    }
+
+    .short-shift-note{
+      margin:0;
+      color:#5f6f87;
+      font-size:12px;
+      line-height:1.4;
+      font-weight:600;
+    }
+
     .mini-card{
       background:#fff;
       border-radius:20px;
@@ -5246,14 +5373,19 @@
       position:absolute;
       top:-60px;
       right:0;
-      width:42px;
-      height:42px;
+      width:var(--close-btn-size);
+      height:var(--close-btn-size);
       border-radius:12px;
-      border:none;
-      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.42);
+      background:rgba(255,255,255,.22);
       color:#fff;
       font-size:20px;
       cursor:pointer;
+      display:grid;
+      place-items:center;
+      padding:0;
+      line-height:0;
+      box-shadow:0 10px 22px rgba(0,0,0,.24);
     }
 
     .media-caption{
@@ -5333,11 +5465,11 @@
       position:absolute;
       top:10px;
       right:10px;
-      width:38px;
-      height:38px;
-      border:none;
+      width:var(--close-btn-size);
+      height:var(--close-btn-size);
+      border:1px solid rgba(255,255,255,.38);
       border-radius:10px;
-      background:rgba(0,0,0,.56);
+      background:rgba(255,255,255,.20);
       color:#fff;
       font-size:20px;
       line-height:1;
@@ -5346,6 +5478,7 @@
       align-items:center;
       justify-content:center;
       z-index:2;
+      box-shadow:0 8px 18px rgba(0,0,0,.28);
     }
 
     .video-fallback{
@@ -6759,6 +6892,13 @@
       line-height:1.55;
     }
 
+    .footer-copyright-mini{
+      margin-top:8px;
+      font-size:11px;
+      line-height:1.35;
+      color:#8a93a3;
+    }
+
     .mobile-journey-band{
       margin-top:8px;
     }
@@ -6783,6 +6923,32 @@
       padding:22px;
       border:1px solid #edf0f5;
       animation:modal-up .22s ease;
+    }
+
+    /* Unified geometry for booking flow modals:
+       "Ищем цену" -> "Нашли лучшие условия" -> "Оформление брони" */
+    #offerOverlay,
+    #formDrawer{
+      align-items:center;
+      justify-content:center;
+    }
+
+    #offerOverlay .overlay-card,
+    #formDrawer .form-panel{
+      width:min(100%, 620px);
+      min-height:min(88vh, 640px);
+      max-height:min(88vh, 640px);
+      border-radius:24px;
+    }
+
+    #offerOverlay .overlay-card{
+      padding:18px;
+      overflow:hidden;
+    }
+
+    #formDrawer .form-panel{
+      padding:18px 18px 18px;
+      overflow:auto;
     }
 
     .overlay-card.success-card{
@@ -6823,6 +6989,7 @@
       max-height:calc(100vh - var(--section-modal-compact-runtime-top, 84px) - 14px);
       margin:0;
       border-radius:20px;
+      overflow:visible;
       box-shadow:0 20px 56px rgba(7,12,20,.30);
     }
 
@@ -7003,33 +7170,33 @@
 
     .section-modal-close-floating{
       position:absolute;
-      top:22px;
+      top:-14px;
       bottom:auto;
-      right:22px;
-      z-index:12;
+      right:-14px;
+      z-index:20;
       display:none;
     }
 
     .overlay.section-modal-compact .section-modal-close-floating{
       display:flex;
-      top:20px;
+      top:-14px;
       bottom:auto;
-      right:22px;
+      right:-14px;
       left:auto;
       transform:none;
       position:absolute;
     }
 
     .overlay.section-modal-compact .form-close.section-modal-close-floating{
-      width:34px;
-      height:34px;
-      border-radius:10px;
-      background:transparent;
-      color:#111827;
-      box-shadow:none;
-      border:none;
-      backdrop-filter:none;
-      transition:transform .16s ease;
+      width:36px;
+      height:36px;
+      border-radius:11px;
+      background:rgba(255,255,255,.90);
+      color:rgba(17,24,39,.96);
+      box-shadow:0 10px 22px rgba(15,23,42,.28);
+      border:1px solid rgba(255,255,255,.52);
+      backdrop-filter:blur(4px);
+      transition:transform .16s ease, background .16s ease, border-color .16s ease;
     }
 
     .overlay.section-modal-compact .section-modal-body > p:first-child,
@@ -7039,8 +7206,8 @@
     }
 
     .overlay.section-modal-compact .form-close.section-modal-close-floating:hover{
-      background:transparent;
-      box-shadow:none;
+      background:rgba(255,255,255,.44);
+      border-color:rgba(255,255,255,.78);
       animation:close-float-wiggle .22s ease-out 1;
     }
 
@@ -7180,6 +7347,35 @@
 
     .mobile-contact-card strong:last-child{
       margin-bottom:0;
+    }
+
+    .mobile-contact-card{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:42px;
+      padding:10px 8px;
+      text-align:center;
+      overflow:hidden;
+      color:#111827;
+      text-decoration:none;
+    }
+
+    .mobile-contact-card:visited,
+    .mobile-contact-card:hover,
+    .mobile-contact-card:active,
+    .mobile-contact-card:focus-visible{
+      color:#111827;
+      text-decoration:none;
+    }
+
+    .mobile-contact-card strong{
+      margin:0;
+      font-size:13px;
+      line-height:1.2;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .mobile-faq-card span,
@@ -7601,14 +7797,46 @@
       border-radius:10px;
       background:transparent;
       border:none;
-      color:rgba(17,24,39,.82);
+      color:rgba(17,24,39,.72);
       box-shadow:none;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+      line-height:0;
     }
 
     .overlay-card.dark .offer-close-btn{
       background:transparent;
       border:none;
       color:#fff;
+    }
+
+    .media-close .ac-icon,
+    .video-close .ac-icon,
+    .offer-close-btn .ac-icon{
+      width:16px;
+      height:16px;
+      display:block;
+      margin:0;
+      transform:translate(0.5px, 0.5px);
+      filter:brightness(0) invert(1) drop-shadow(0 1px 1px rgba(0,0,0,.45));
+    }
+
+    .offer-close-btn .ac-icon{
+      filter:brightness(0) saturate(100%) invert(14%) sepia(13%) saturate(897%) hue-rotate(182deg) brightness(95%) contrast(90%);
+    }
+
+    .overlay-card.dark .offer-close-btn .ac-icon{
+      filter:brightness(0) invert(1) drop-shadow(0 1px 1px rgba(0,0,0,.45));
+    }
+
+    .overlay.section-modal-compact .form-close.section-modal-close-floating .ac-icon{
+      width:16px;
+      height:16px;
+      display:block;
+      filter:brightness(0) saturate(100%) invert(8%) sepia(9%) saturate(1128%) hue-rotate(182deg) brightness(95%) contrast(95%);
     }
 
     .offer-progress-track{
@@ -8001,7 +8229,7 @@
         width:100%;
         max-width:100%;
         max-height:calc(100vh - 20px);
-        padding:14px;
+        padding:12px;
         border-radius:20px;
         overflow:hidden;
       }
@@ -8019,53 +8247,53 @@
       }
 
       .offer-state-shell--result{
-        gap:6px;
+        gap:4px;
       }
 
       .offer-headline{
-        margin-bottom:4px;
+        margin-bottom:2px;
       }
 
       .offer-headline h3{
-        font-size:18px;
+        font-size:17px;
         line-height:1.1;
       }
 
       .offer-legacy-result-banner{
-        padding:10px 11px;
-        gap:10px;
+        padding:8px 10px;
+        gap:8px;
       }
 
       .offer-legacy-result-banner__icon{
-        width:42px;
-        height:42px;
-        border-radius:10px;
-        flex:0 0 42px;
+        width:36px;
+        height:36px;
+        border-radius:9px;
+        flex:0 0 36px;
       }
 
       .offer-legacy-result-banner__asset{
-        width:24px;
-        height:24px;
+        width:20px;
+        height:20px;
       }
 
       .offer-legacy-result-banner__text strong{
-        font-size:14px;
+        font-size:13px;
         line-height:1.2;
       }
 
       .offer-legacy-result-banner__text span{
         margin-top:2px;
-        font-size:12px;
+        font-size:11px;
         line-height:1.2;
       }
 
       .offer-legacy-price-box{
-        padding:8px 10px;
+        padding:7px 10px;
         gap:2px;
       }
 
       .offer-legacy-price-box strong{
-        font-size:24px;
+        font-size:22px;
         line-height:1.04;
       }
 
@@ -8074,42 +8302,59 @@
       }
 
       .offer-price-compare{
-        gap:7px;
-        margin:2px 0 6px;
+        gap:6px;
+        margin:1px 0 4px;
       }
 
       .offer-price-compare__new strong{
-        font-size:24px;
+        font-size:22px;
         line-height:1.05;
       }
 
       .offer-benefit-chip{
-        min-height:26px;
-        padding:5px 8px;
-        font-size:10px;
+        min-height:24px;
+        padding:4px 7px;
+        font-size:9px;
       }
 
       .offer-booking-block{
-        margin-top:4px;
-        padding:9px;
+        margin-top:2px;
+        padding:7px;
         border-radius:12px;
-        gap:6px;
+        gap:4px;
       }
 
       .offer-booking-note{
-        font-size:11px;
-        line-height:1.28;
+        font-size:10px;
+        line-height:1.2;
       }
 
       .overlay-actions{
-        margin-top:6px;
+        margin-top:4px;
       }
 
       .overlay-actions .cta-main{
-        min-height:44px;
-        padding:10px 14px;
-        font-size:18px;
+        min-height:40px;
+        padding:8px 12px;
+        font-size:16px;
         line-height:1.05;
+      }
+
+      #offerOverlay,
+      #formDrawer{
+        align-items:flex-start;
+        justify-content:center;
+        padding:10px;
+      }
+
+      #offerOverlay .overlay-card,
+      #formDrawer .form-panel{
+        width:100%;
+        max-width:100%;
+        min-height:calc(100vh - 20px);
+        max-height:calc(100vh - 20px);
+        border-radius:20px;
+        padding:12px;
       }
     }
 
@@ -8165,6 +8410,7 @@
     }
 
     .summary-inner{
+      position:relative;
       max-width:1440px;
       margin:0 auto;
       padding:14px 24px;
@@ -8200,6 +8446,35 @@
       display:flex;
       align-items:center;
       gap:12px;
+    }
+
+    .summary-dismiss-btn{
+      position:absolute;
+      top:8px;
+      right:8px;
+      width:22px;
+      height:22px;
+      border:none;
+      border-radius:8px;
+      background:rgba(15,23,42,.10);
+      color:#0f172a;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      padding:0;
+      line-height:0;
+    }
+
+    .summary-dismiss-btn .ac-icon{
+      width:11px;
+      height:11px;
+      display:block;
+      filter:brightness(0) saturate(100%) invert(9%) sepia(13%) saturate(1388%) hue-rotate(184deg) brightness(92%) contrast(95%);
+    }
+
+    .summary-dismiss-btn:hover{
+      background:rgba(15,23,42,.16);
     }
 
     .summary-price{
@@ -8523,8 +8798,8 @@
     }
 
     .form-close{
-      width:42px;
-      height:42px;
+      width:var(--close-btn-size);
+      height:var(--close-btn-size);
       border:none;
       border-radius:12px;
       background:transparent;
@@ -8860,6 +9135,10 @@
         padding:12px 14px;
       }
 
+      .summary-dismiss-btn{
+        display:inline-flex;
+      }
+
       .summary-right{
         justify-content:space-between;
         flex-wrap:wrap;
@@ -8994,8 +9273,8 @@
 
       #desktopView.mobile-preview-active .hero-menu-toggle{
         min-width:auto;
-        width:44px;
-        height:44px;
+        width:56px;
+        height:56px;
         padding:0;
         border:none;
         background:transparent;
@@ -9013,11 +9292,15 @@
         display:none;
       }
 
+      #desktopView.mobile-preview-active .summary-dismiss-btn{
+        display:inline-flex;
+      }
+
       #desktopView.mobile-preview-active .hero-menu-toggle-icon-img{
         display:block;
-        width:24px;
-        height:24px;
-        filter:brightness(0) saturate(100%) invert(57%) sepia(93%) saturate(1792%) hue-rotate(3deg) brightness(102%) contrast(103%);
+        width:36px;
+        height:36px;
+        filter:brightness(0) invert(1);
       }
 
       #desktopView.mobile-preview-active .hero-menu-toggle-text{
@@ -9038,12 +9321,12 @@
 
       #desktopView.mobile-preview-active .hero-shell{
         min-height:auto;
-        padding:12px 12px 14px;
+        padding:10px 10px 10px;
         border-radius:22px;
       }
 
       #desktopView.mobile-preview-active .hero-topbar{
-        margin-bottom:8px;
+        margin-bottom:6px;
         gap:8px;
       }
 
@@ -9062,16 +9345,16 @@
       }
 
       #desktopView.mobile-preview-active .hero-title{
-        margin:0 0 8px;
-        font-size:29px;
+        margin:0 0 6px;
+        font-size:26px;
         line-height:1.06;
         max-width:100%;
       }
 
       #desktopView.mobile-preview-active .hero-sub{
-        margin:0 0 8px;
-        font-size:13px;
-        line-height:1.34;
+        margin:0 0 6px;
+        font-size:12px;
+        line-height:1.28;
         max-width:100%;
       }
 
@@ -9097,7 +9380,7 @@
       #desktopView.mobile-preview-active .hero-benefits-grid .hero-benefit-card:first-child{
         display:grid;
         min-height:auto;
-        padding:10px 11px;
+        padding:8px 10px;
         border-radius:12px;
       }
 
@@ -9112,7 +9395,10 @@
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card{
-        margin-top:10px;
+        margin-top:8px;
+        height:auto;
+        min-height:0;
+        max-height:none;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card h3{
@@ -9128,7 +9414,7 @@
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card .booking-steps{
-        margin-bottom:8px;
+        margin-bottom:6px;
         gap:2px;
       }
 
@@ -9145,49 +9431,58 @@
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs{
         grid-template-columns:repeat(3,minmax(0,1fr));
-        gap:6px;
+        gap:4px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab{
-        min-height:96px;
-        padding:6px 7px 7px;
+        height:auto;
+        min-height:68px;
+        padding:4px 6px 5px;
         border-radius:12px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-main{
         display:flex;
         flex-direction:column;
-        justify-content:space-between;
-        gap:6px;
-        min-height:100%;
+        justify-content:flex-start;
+        gap:4px;
+        min-height:0;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-head{
-        gap:4px;
+        gap:3px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-range{
-        font-size:12px;
+        font-size:10px;
         line-height:1.05;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-track{
-        font-size:10px;
-        line-height:1.12;
+        font-size:8px;
+        line-height:1.08;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-anchor{
         display:block;
-        font-size:10px;
-        line-height:1.2;
+        font-size:8px;
+        line-height:1.1;
         margin:0;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-bullets{
-        display:flex;
-        gap:4px;
-        flex-wrap:wrap;
-        margin-top:0;
+        display:none;
+      }
+
+      #desktopView.mobile-preview-active .hero-shell{
+        min-height:auto;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card{
+        width:68%;
+        max-width:68%;
+        margin-left:auto;
+        margin-right:0;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-bullets span{
@@ -9323,8 +9618,8 @@
       }
 
       .form-close{
-        width:38px;
-        height:38px;
+        width:var(--close-btn-size);
+        height:var(--close-btn-size);
         border-radius:10px;
       }
 
@@ -9339,6 +9634,22 @@
       .form-drawer{
         align-items:flex-end;
         padding:0;
+      }
+
+      #offerOverlay,
+      #formDrawer{
+        align-items:flex-start;
+        justify-content:center;
+        padding:10px;
+      }
+
+      #offerOverlay .overlay-card,
+      #formDrawer .form-panel{
+        width:100%;
+        max-width:100%;
+        min-height:calc(100vh - 20px);
+        max-height:calc(100vh - 20px);
+        border-radius:20px;
       }
 
       .hero-shell{
@@ -9497,7 +9808,7 @@
           </div>
 
           <!-- @block:booking-card -->
-          <div class="hero-booking-card" id="desktop-booking-card">
+          <div class="hero-booking-card booking-stage-1" id="desktop-booking-card">
             <div class="booking-steps" id="desktopBookingSteps">
               <div class="booking-step active">Возраст</div>
               <div class="booking-step">Смена</div>
@@ -9825,11 +10136,12 @@
                 <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
               </div>
               <div class="footer-org-meta">
-                <div>© 2012-2026 © ООО «ВОИП КОННЕКТ»</div>
+                <div>© 2019-2026 © ООО «ВОИП КОННЕКТ»</div>
                 <div>ИНН 7729713637 • Реестровый номер туроператора РТО 025773</div>
                 <div><a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a></div>
                 <div><a href="mailto:hello@codims.ru">hello@codims.ru</a></div>
               </div>
+              <div class="footer-copyright-mini">© 2019–2026</div>
             </div>
             <div>
               <h4>Разделы</h4>
@@ -9944,7 +10256,7 @@
               <span>● Собственная программа</span>
             </div>
 
-            <div class="hero-booking-card mobile-booking-card" id="mobileBookingCard" style="position:static;width:100%;margin-top:18px;">
+            <div class="hero-booking-card mobile-booking-card booking-stage-1" id="mobileBookingCard" style="position:static;width:100%;margin-top:18px;">
               <div class="booking-steps" id="mobileBookingSteps">
                 <div class="booking-step active">Возраст</div>
                 <div class="booking-step">Смена</div>
@@ -10159,6 +10471,9 @@
 
   <div class="summary-bar hidden" id="summaryBar">
     <div class="summary-inner">
+      <button class="summary-dismiss-btn" type="button" data-action="dismiss-summary-bar" aria-label="Закрыть нижнюю плашку">
+        <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
+      </button>
       <div class="summary-left">
         <div>
           <div class="summary-item" id="summaryMain">—</div>
@@ -10314,7 +10629,7 @@
         yandexReviewsLabel: 'Отзывы на Яндекс Картах',
         yandexReviewsUrl: 'https://yandex.ru/maps/org/aydakemp/35558479035/reviews/',
         locationMapUrl: 'https://yandex.ru/maps/-/CPR0vYMT',
-        locationMapEmbedUrl: 'https://yandex.ru/map-widget/v1/?ll=36.719422%2C55.261573&z=9&pt=36.719422,55.261573,pm2rdm',
+        locationMapEmbedUrl: 'https://yandex.ru/map-widget/v1/?ll=36.719422%2C55.261573&z=8&pt=36.719422,55.261573,pm2rdm',
         programmingBookUrl: 'https://www.codims.ru/python-book'
       },
       faq: [
@@ -10531,7 +10846,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.200 (mobile-menu-scroll-behavior-fixed)';
+    const BUILD_VERSION_LABEL = 'v0.0.236 (runtime-one-line-debug-status-report)';
     const QUALITY_SCORE_MODEL = Object.freeze({
       scale: '0..10',
       debtScale: '0 best .. 10 worst',
@@ -10583,6 +10898,29 @@
     const normalizeMode = (value, allowedModes, fallbackMode) => (
       allowedModes.includes(value) ? value : fallbackMode
     );
+    const VERSION_MONOTONIC_KEY = 'aidacamp_build_version_last_v1';
+    const QUALITY_BASELINE_KEY = 'aidacamp_quality_baseline_v1';
+    const DEBT_REGISTER_KEY = 'aidacamp_debt_register_v1';
+    const QUALITY_SOFT_GATES = Object.freeze({
+      cssDuplicateSelectorsMax: 320,
+      jsBranchPointsMax: 520,
+      jsListenersMax: 220,
+      jsBytesMax: 360000,
+      cssBytesMax: 240000
+    });
+    const GUARDRAIL_REQUIRED_SELECTORS = Object.freeze([
+      '#desktopView',
+      '#mobileView',
+      '.hero-shell',
+      '#desktop-booking-card',
+      '#mobileBookingCard',
+      '#summaryBar',
+      '#offerOverlay',
+      '#offerCard',
+      '#sectionModal',
+      '#videoModal',
+      '#calendarModal'
+    ]);
     const VERSION_BADGE_HIDDEN_KEY = 'aidacamp_version_badge_hidden_v1';
     const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v2';
     const VIDEO_META_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
@@ -10730,6 +11068,370 @@
       track(event, params);
     }
 
+    function parseBuildVersionNumber(label){
+      const match = String(label || '').trim().match(/^v(\d+)\.(\d+)\.(\d+)/i);
+      if(!match) return null;
+      const major = Number(match[1]);
+      const minor = Number(match[2]);
+      const patch = Number(match[3]);
+      if(!Number.isFinite(major) || !Number.isFinite(minor) || !Number.isFinite(patch)) return null;
+      return (major * 1000000) + (minor * 1000) + patch;
+    }
+
+    function runBuildVersionGuardrail(){
+      const currentLabel = BUILD_VERSION_LABEL.trim();
+      const currentValue = parseBuildVersionNumber(currentLabel);
+      const previousLabel = String(localStorage.getItem(VERSION_MONOTONIC_KEY) || '').trim();
+      const previousValue = parseBuildVersionNumber(previousLabel);
+      let monotonic = true;
+
+      if(previousValue !== null && currentValue !== null && currentValue < previousValue){
+        monotonic = false;
+        console.error('[GUARDRAIL] Version regression detected', {
+          previous: previousLabel,
+          current: currentLabel
+        });
+        trackOnce('guardrail_version_regression', {
+          previous: previousLabel,
+          current: currentLabel
+        });
+      } else if(currentValue !== null){
+        localStorage.setItem(VERSION_MONOTONIC_KEY, currentLabel);
+      }
+
+      return {
+        ok: monotonic,
+        previous: previousLabel || null,
+        current: currentLabel,
+        previousValue,
+        currentValue
+      };
+    }
+
+    function runRuntimeSmokeGuardrail(){
+      const missing = [];
+      GUARDRAIL_REQUIRED_SELECTORS.forEach((selector) => {
+        if(!document.querySelector(selector)){
+          missing.push(selector);
+        }
+      });
+      const ok = missing.length === 0;
+      if(!ok){
+        console.error('[GUARDRAIL] Smoke check failed', { missing });
+        trackOnce('guardrail_smoke_failed', {
+          missing: missing.slice(0, 6).join(',')
+        });
+      }
+      return {
+        ok,
+        checked: GUARDRAIL_REQUIRED_SELECTORS.length,
+        missing
+      };
+    }
+
+    function runGuardrails(){
+      const version = runBuildVersionGuardrail();
+      const smoke = runRuntimeSmokeGuardrail();
+      const summary = {
+        timestamp: new Date().toISOString(),
+        build: BUILD_VERSION_LABEL,
+        version,
+        smoke,
+        ok: !!(version.ok && smoke.ok)
+      };
+      window.__AIDACAMP_GUARDRAILS = summary;
+      return summary;
+    }
+
+    function pickMainScriptText(){
+      const scripts = Array.from(document.querySelectorAll('script:not([type="application/json"])'));
+      let candidate = '';
+      scripts.forEach((node) => {
+        const text = String(node.textContent || '');
+        if(text.length > candidate.length){
+          candidate = text;
+        }
+      });
+      return candidate;
+    }
+
+    function collectDuplicateSelectors(cssText){
+      const map = new Map();
+      const cleaned = String(cssText || '')
+        .replace(/\/\*[\s\S]*?\*\//g, '');
+      const blocks = cleaned.split('{');
+      blocks.forEach((left) => {
+        const selectorRaw = String(left || '').trim();
+        if(!selectorRaw || selectorRaw.startsWith('@')) return;
+        selectorRaw
+          .split(',')
+          .map((item) => item.trim().replace(/\s+/g, ' '))
+          .filter(Boolean)
+          .forEach((selector) => {
+            const current = map.get(selector) || 0;
+            map.set(selector, current + 1);
+          });
+      });
+      let duplicates = 0;
+      map.forEach((count) => {
+        if(count > 1) duplicates += 1;
+      });
+      return {
+        uniqueSelectors: map.size,
+        duplicateSelectors: duplicates
+      };
+    }
+
+    function runQualityBaselineAudit(){
+      let previousBaseline = null;
+      try {
+        previousBaseline = JSON.parse(localStorage.getItem(QUALITY_BASELINE_KEY) || 'null');
+      } catch (error){
+        previousBaseline = null;
+      }
+
+      const cssNode = document.querySelector('style');
+      const cssText = String(cssNode?.textContent || '');
+      const jsText = pickMainScriptText();
+      const cssRules = (cssText.match(/{/g) || []).length;
+      const jsFunctions = (jsText.match(/\bfunction\s+[a-zA-Z0-9_$]+\s*\(/g) || []).length;
+      const jsBranches = (jsText.match(/\bif\s*\(|\bswitch\s*\(/g) || []).length;
+      const jsListeners = (jsText.match(/addEventListener\s*\(/g) || []).length;
+      const selectorStats = collectDuplicateSelectors(cssText);
+      const makeDelta = (current, previous) => {
+        if(!Number.isFinite(Number(current)) || !Number.isFinite(Number(previous))) return null;
+        return Number(current) - Number(previous);
+      };
+
+      const delta = Object.freeze({
+        versionFrom: previousBaseline?.version || null,
+        css: Object.freeze({
+          bytes: makeDelta(cssText.length, previousBaseline?.css?.bytes),
+          rules: makeDelta(cssRules, previousBaseline?.css?.rules),
+          uniqueSelectors: makeDelta(selectorStats.uniqueSelectors, previousBaseline?.css?.uniqueSelectors),
+          duplicateSelectors: makeDelta(selectorStats.duplicateSelectors, previousBaseline?.css?.duplicateSelectors)
+        }),
+        js: Object.freeze({
+          bytes: makeDelta(jsText.length, previousBaseline?.js?.bytes),
+          functions: makeDelta(jsFunctions, previousBaseline?.js?.functions),
+          branchPoints: makeDelta(jsBranches, previousBaseline?.js?.branchPoints),
+          listeners: makeDelta(jsListeners, previousBaseline?.js?.listeners)
+        })
+      });
+
+      const snapshot = Object.freeze({
+        version: BUILD_VERSION_LABEL,
+        timestamp: new Date().toISOString(),
+        delta,
+        css: Object.freeze({
+          bytes: cssText.length,
+          rules: cssRules,
+          uniqueSelectors: selectorStats.uniqueSelectors,
+          duplicateSelectors: selectorStats.duplicateSelectors
+        }),
+        js: Object.freeze({
+          bytes: jsText.length,
+          functions: jsFunctions,
+          branchPoints: jsBranches,
+          listeners: jsListeners
+        })
+      });
+
+      window.__AIDACAMP_QUALITY_BASELINE = snapshot;
+      window.__AIDACAMP_QUALITY_BASELINE_DELTA = delta;
+      try {
+        localStorage.setItem(QUALITY_BASELINE_KEY, JSON.stringify(snapshot));
+      } catch (error){
+        console.warn('[QUALITY] baseline persist failed', error);
+      }
+      return snapshot;
+    }
+
+    function evaluateSoftQualityGates(snapshot){
+      const data = snapshot || window.__AIDACAMP_QUALITY_BASELINE;
+      if(!data) return { ok:false, warnings:['baseline_missing'], thresholds: QUALITY_SOFT_GATES };
+
+      const warnings = [];
+      const pushWarn = (key, value, max) => {
+        warnings.push(`${key}:${value}>${max}`);
+      };
+
+      if((data.css?.duplicateSelectors || 0) > QUALITY_SOFT_GATES.cssDuplicateSelectorsMax){
+        pushWarn('css.duplicateSelectors', data.css.duplicateSelectors, QUALITY_SOFT_GATES.cssDuplicateSelectorsMax);
+      }
+      if((data.css?.bytes || 0) > QUALITY_SOFT_GATES.cssBytesMax){
+        pushWarn('css.bytes', data.css.bytes, QUALITY_SOFT_GATES.cssBytesMax);
+      }
+      if((data.js?.branchPoints || 0) > QUALITY_SOFT_GATES.jsBranchPointsMax){
+        pushWarn('js.branchPoints', data.js.branchPoints, QUALITY_SOFT_GATES.jsBranchPointsMax);
+      }
+      if((data.js?.listeners || 0) > QUALITY_SOFT_GATES.jsListenersMax){
+        pushWarn('js.listeners', data.js.listeners, QUALITY_SOFT_GATES.jsListenersMax);
+      }
+      if((data.js?.bytes || 0) > QUALITY_SOFT_GATES.jsBytesMax){
+        pushWarn('js.bytes', data.js.bytes, QUALITY_SOFT_GATES.jsBytesMax);
+      }
+
+      const result = {
+        ok: warnings.length === 0,
+        warnings,
+        thresholds: QUALITY_SOFT_GATES,
+        version: BUILD_VERSION_LABEL
+      };
+      window.__AIDACAMP_QUALITY_SOFT_GATES = result;
+
+      if(!result.ok){
+        console.warn('[QUALITY] soft gates warnings', result);
+        trackOnce('quality_soft_gates_warn', {
+          count: warnings.length,
+          top: warnings[0] || ''
+        });
+      }
+      return result;
+    }
+
+    function buildDebtRegister(guardrails, baseline, gates){
+      const items = [];
+      const addItem = (id, severity, source, detail) => {
+        items.push({
+          id,
+          severity,
+          source,
+          detail
+        });
+      };
+
+      if(!guardrails?.version?.ok){
+        addItem(
+          'version-regression',
+          'critical',
+          'guardrails.version',
+          `Версия откатилась: ${guardrails?.version?.previous || 'n/a'} -> ${guardrails?.version?.current || 'n/a'}`
+        );
+      }
+
+      if(!guardrails?.smoke?.ok){
+        addItem(
+          'runtime-smoke-missing-selectors',
+          'high',
+          'guardrails.smoke',
+          `Отсутствуют критические селекторы: ${(guardrails?.smoke?.missing || []).slice(0, 6).join(', ')}`
+        );
+      }
+
+      const warnings = gates?.warnings || [];
+      warnings.forEach((warning) => {
+        const key = String(warning || '').split(':')[0];
+        const severity = key.includes('bytes') ? 'medium' : 'high';
+        addItem(
+          `quality-gate-${key || 'unknown'}`,
+          severity,
+          'quality.soft-gates',
+          warning
+        );
+      });
+
+      if((baseline?.css?.duplicateSelectors || 0) > 280){
+        addItem(
+          'css-duplicate-selector-pressure',
+          'medium',
+          'quality.baseline.css',
+          `Дубли селекторов=${baseline.css.duplicateSelectors}, желательно < 280`
+        );
+      }
+
+      const scoreMap = { low: 1, medium: 2, high: 3, critical: 4 };
+      const pressure = items.reduce((sum, item) => sum + (scoreMap[item.severity] || 0), 0);
+      const summary = {
+        version: BUILD_VERSION_LABEL,
+        timestamp: new Date().toISOString(),
+        debtItems: items,
+        pressureScore: pressure,
+        pressureLevel: pressure >= 9 ? 'high' : (pressure >= 4 ? 'medium' : 'low')
+      };
+
+      window.__AIDACAMP_DEBT_REGISTER = summary;
+      try {
+        localStorage.setItem(DEBT_REGISTER_KEY, JSON.stringify(summary));
+      } catch (error){
+        console.warn('[DEBT] register persist failed', error);
+      }
+      return summary;
+    }
+
+    function buildRuntimeQualityScore(baseline, gates, debtRegister){
+      const cssDupPenalty = Math.min(2.2, Math.max(0, ((baseline?.css?.duplicateSelectors || 0) - 220) / 120));
+      const cssSizePenalty = Math.min(1.8, Math.max(0, ((baseline?.css?.bytes || 0) - 180000) / 80000));
+      const jsBranchPenalty = Math.min(2.2, Math.max(0, ((baseline?.js?.branchPoints || 0) - 420) / 180));
+      const jsListenerPenalty = Math.min(1.6, Math.max(0, ((baseline?.js?.listeners || 0) - 170) / 90));
+      const jsSizePenalty = Math.min(1.8, Math.max(0, ((baseline?.js?.bytes || 0) - 280000) / 120000));
+      const gatesPenalty = Math.min(1.5, (gates?.warnings?.length || 0) * 0.3);
+
+      const cssScore = Math.max(0, Math.min(10, Number((10 - cssDupPenalty - cssSizePenalty - gatesPenalty * 0.35).toFixed(1))));
+      const jsScore = Math.max(0, Math.min(10, Number((10 - jsBranchPenalty - jsListenerPenalty - jsSizePenalty - gatesPenalty * 0.4).toFixed(1))));
+      const debtScore = Math.max(
+        0,
+        Math.min(
+          10,
+          Number((((debtRegister?.pressureScore || 0) * 0.55) + (gates?.warnings?.length || 0) * 0.35).toFixed(1))
+        )
+      );
+
+      const runtimeScore = Object.freeze({
+        version: BUILD_VERSION_LABEL,
+        timestamp: new Date().toISOString(),
+        css: cssScore,
+        js: jsScore,
+        techDebt: debtScore,
+        debtScale: '0 best .. 10 worst'
+      });
+      window.__AIDACAMP_QUALITY_SCORE_RUNTIME = runtimeScore;
+      return runtimeScore;
+    }
+
+    function runReleaseIntegrityChecks(){
+      const required = Object.freeze([
+        '__AIDACAMP_GUARDRAILS',
+        '__AIDACAMP_QUALITY_BASELINE',
+        '__AIDACAMP_QUALITY_SOFT_GATES',
+        '__AIDACAMP_DEBT_REGISTER',
+        '__AIDACAMP_QUALITY_SCORE_RUNTIME'
+      ]);
+      const missing = required.filter((key) => typeof window[key] === 'undefined' || window[key] === null);
+      const result = Object.freeze({
+        version: BUILD_VERSION_LABEL,
+        timestamp: new Date().toISOString(),
+        ok: missing.length === 0,
+        required,
+        missing
+      });
+      window.__AIDACAMP_RELEASE_INTEGRITY = result;
+
+      if(!result.ok){
+        console.error('[RELEASE] integrity failed', result);
+        trackOnce('release_integrity_failed', {
+          count: missing.length,
+          first: missing[0] || ''
+        });
+      }
+      return result;
+    }
+
+    function printRuntimeStatusReport(){
+      const runtime = window.__AIDACAMP_QUALITY_SCORE_RUNTIME || {};
+      const integrity = window.__AIDACAMP_RELEASE_INTEGRITY || {};
+      const gates = window.__AIDACAMP_QUALITY_SOFT_GATES || {};
+      const reportLine =
+        `[AIDACAMP][STATUS] ${BUILD_VERSION_LABEL} | css=${runtime.css ?? 'n/a'}` +
+        ` | js=${runtime.js ?? 'n/a'}` +
+        ` | debt=${runtime.techDebt ?? 'n/a'}(0 best)` +
+        ` | integrity=${integrity.ok ? 'ok' : 'fail'}` +
+        ` | softWarnings=${Array.isArray(gates.warnings) ? gates.warnings.length : 'n/a'}`;
+      console.info(reportLine);
+      window.__AIDACAMP_STATUS_LINE = reportLine;
+      return reportLine;
+    }
+
     const CLOSE_ICON_HTML = '<img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">';
 
     function normalizeCloseIconButtons(scope = document){
@@ -10836,6 +11538,8 @@
     let heroIndex = 0;
     let heroTimer = null;
     let heroResizeTimer = null;
+    let summaryBarDismissUntilTs = 0;
+    let summaryBarDismissTimer = null;
 
     function persist(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -11550,6 +12254,11 @@
         return true;
       }
 
+      if(action === 'dismiss-summary-bar'){
+        dismissSummaryBarTemporarily(30000);
+        return true;
+      }
+
       if(action === 'mobile-photo-select'){
         const index = Number(actionEl.dataset.photoIndex || 0);
         if(Number.isFinite(index)){
@@ -11999,7 +12708,8 @@
     }
 
     function hasSelectedAge(){
-      return !!state.ageSelected;
+      const age = String(state.age || '').trim();
+      return !!state.ageSelected || age === '7-9' || age === '10-12' || age === '13-14';
     }
 
     function hasActiveBookingContext(){
@@ -13690,7 +14400,13 @@
         '10-12': 'Для\\s+10[–-]12\\s+лет:',
         '13-14': 'Для\\s+13[–-]14\\s+лет:'
       };
+      const ageLabelByAge = {
+        '7-9': 'Для 7–9 лет:',
+        '10-12': 'Для 10–12 лет:',
+        '13-14': 'Для 13–14 лет:'
+      };
       const markerPattern = markerPatternByAge[ageKey] || markerPatternByAge['7-9'];
+      const ageLabel = ageLabelByAge[ageKey] || ageLabelByAge['7-9'];
       const agePartMatch = compact.match(
         new RegExp(`${markerPattern}\\s*([\\s\\S]*?)(?=\\s*Для\\s+(?:7[–-]9|10[–-]12|13[–-]14)\\s+лет:|$)`, 'i')
       );
@@ -13701,7 +14417,7 @@
 
       const result = [];
       if(firstPart) result.push(firstPart);
-      if(agePart) result.push(agePart);
+      if(agePart) result.push(`${ageLabel} ${agePart}`);
       if(finalPart && !result.includes(finalPart)){
         result.push(finalPart);
       }
@@ -13783,7 +14499,8 @@
               О смене
             </button>
             <button class="shift-option-action" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${viewKey}">
-              Календарь
+              <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+              <span>Календарь</span>
             </button>
             <button class="shift-option-select-indicator" type="button" aria-label="Выбрать смену ${s.dates}">
               <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
@@ -13831,6 +14548,7 @@
           ...s,
           title: s.id === 'shift-2' ? '2.1' : '2.2'
         }));
+      const showExtendedDescription = hasSelectedAge();
 
       grid.innerHTML = mainShifts.map(s => `
         <div class="mini-card">
@@ -13845,7 +14563,13 @@
               </button>
             </span>
           </div>
-          <p>${s.desc || ''}</p>
+          ${showExtendedDescription
+            ? `
+              <p><strong>Коротко:</strong> ${s.desc || ''}</p>
+              <p><strong>Подробно:</strong> ${getShiftDisplayDescription(s)}</p>
+            `
+            : `<p>${s.desc || ''}</p>`
+          }
         </div>
       `).join('');
 
@@ -13854,19 +14578,27 @@
           <div class="mini-card short-shift-card">
             <div class="short-shift-head">
               <h4><span class="program-shift-index">${s.title}</span></h4>
-              <span class="short-shift-tag">короткий формат</span>
+              <span class="short-shift-tag">короткая смена</span>
             </div>
             <div class="price-row">
               <strong>${formatPrice(s.price)}</strong>
               <span>
                 ${s.dates}
+                <small class="short-shift-subline">Короткий формат · ${shiftDaysLabel(s)}</small>
                 <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
                   <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
                   <span class="shift-calendar-btn-label">календарь</span>
                 </button>
               </span>
             </div>
-            <p>${s.desc || ''}</p>
+            <p class="short-shift-note">Подходит тем, кто едет впервые, сомневается или хочет мягко попробовать формат лагеря.</p>
+            ${showExtendedDescription
+              ? `
+                <p><strong>Коротко:</strong> ${s.desc || ''}</p>
+                <p><strong>Подробно:</strong> ${getShiftDisplayDescription(s)}</p>
+              `
+              : `<p>${s.desc || ''}</p>`
+            }
           </div>
         `).join('');
         shortGrid.closest('.programs-short-block')?.classList.remove('hidden');
@@ -14279,8 +15011,10 @@
             ></iframe>
           </div>
           <strong>Московская область, Наро-Фоминский округ</strong>
-          <span>Удобный заезд и понятная локация. Маршрут открывается в Яндекс Картах.</span>
-          <a class="mobile-map-open-btn" href="${mapUrl}" target="_blank" rel="noopener noreferrer">Открыть карту</a>
+          <span>
+            Удобный заезд и понятная локация. Маршрут открывается в Яндекс.Картах.
+            <a class="mobile-map-inline-link" href="${mapUrl}" target="_blank" rel="noopener noreferrer">Открыть карту</a>
+          </span>
         </article>
         <div class="mobile-contact-grid">
           ${cityPhone ? `<a class="mobile-contact-card" href="${cityPhone.href}"><strong>${cityPhone.text}</strong></a>` : ''}
@@ -14370,18 +15104,6 @@
             </div>
             <p>${activeStep.text}</p>
           </article>
-          <div class="mobile-journey-switcher">
-            ${steps.map((step, idx) => `
-              <button
-                type="button"
-                class="mobile-journey-switch ${idx === safeStep ? 'active' : ''}"
-                data-action="mobile-journey-step"
-                data-step-index="${idx}"
-              >
-                <span>${idx + 1}</span>${step.title}
-              </button>
-            `).join('')}
-          </div>
         `;
         journeyTargets.forEach((target) => {
           target.innerHTML = journeyHtml;
@@ -14389,14 +15111,23 @@
       }
 
       if (programsTargets.length) {
-        const mainShifts = shifts.slice();
+        const shortProgramShifts = shifts
+          .filter((s) => s.id === 'shift-2' || s.id === 'shift-3')
+          .map((s) => ({
+            ...s,
+            id: `${s.id}-short`,
+            title: s.id === 'shift-2' ? '2.1' : '2.2',
+            isShort:true,
+            sourceId:s.id
+          }));
+        const mainShifts = [...shifts.slice(), ...shortProgramShifts];
         if(mainShifts.length){
           const activeShiftId = mainShifts.some((shift) => shift.id === state.mobileProgramShiftId)
             ? state.mobileProgramShiftId
             : mainShifts[0].id;
           state.mobileProgramShiftId = activeShiftId;
           const activeShift = mainShifts.find((shift) => shift.id === activeShiftId) || mainShifts[0];
-          const selectorLabel = (shift) => (shift.label || `Смена ${shift.title || ''}`).trim();
+          const selectorLabel = (shift) => String(shift.title || '').trim();
           const ageHint = hasSelectedAge()
             ? ''
             : 'Сначала выберите возраст ребёнка, чтобы увидеть персональную подсказку.';
@@ -14406,7 +15137,7 @@
               ${mainShifts.map((shift) => `
                 <button
                   type="button"
-                  class="mobile-program-chip ${shift.id === activeShift.id ? 'active' : ''}"
+                  class="mobile-program-chip ${shift.id === activeShift.id ? 'active' : ''} ${shift.isShort ? 'short' : ''}"
                   data-action="mobile-program-select"
                   data-shift-id="${shift.id}"
                 >${selectorLabel(shift)}</button>
@@ -14414,24 +15145,40 @@
             </div>
             <article class="mobile-program-active-card">
               <strong>${selectorLabel(activeShift)}</strong>
-              <div class="mobile-program-dates">${activeShift.dates}</div>
+              <div class="mobile-program-dates">
+                ${activeShift.dates}
+                ${activeShift.isShort ? `<span class="mobile-program-dates-sub">Короткий формат · ${shiftDaysLabel(activeShift)}</span>` : ''}
+              </div>
               <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
               <div class="mobile-program-meta">
                 <span>${shiftDaysLabel(activeShift)}</span>
                 <span>Осталось ${activeShift.left} мест</span>
+                ${activeShift.isShort ? '<span class="mobile-program-short-badge">Короткая смена</span>' : ''}
               </div>
               <p>${getShiftDisplayDescription(activeShift)}</p>
+              ${activeShift.isShort ? '<p class="mobile-program-short-note">Подходит тем, кто едет впервые, сомневается или хочет мягко попробовать формат лагеря.</p>' : ''}
               ${ageHint ? `<div class="mobile-program-hint">${ageHint}</div>` : ''}
               <button
                 class="shift-calendar-btn"
                 type="button"
                 data-action="open-calendar"
-                data-shift-id="${activeShift.id}"
+                data-shift-id="${activeShift.sourceId || activeShift.id}"
                 aria-label="Календарь ${activeShift.title}"
               >
                 <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true"><span>Календарь</span>
               </button>
             </article>
+            <div class="mobile-program-dots">
+              ${mainShifts.map((shift, idx) => `
+                <button
+                  class="mobile-program-dot ${shift.id === activeShift.id ? 'active' : ''}"
+                  type="button"
+                  data-action="mobile-program-select"
+                  data-shift-id="${shift.id}"
+                  aria-label="Показать смену ${selectorLabel(shift) || (idx + 1)}"
+                ></button>
+              `).join('')}
+            </div>
           `;
           programsTargets.forEach((target) => {
             target.innerHTML = programsHtml;
@@ -14474,9 +15221,6 @@
                   <img src="${item.src}" alt="${item.alt || 'Фото'}">
                 </button>
               `).join('')}
-            </div>
-            <div class="mobile-photo-more">
-              <button type="button" class="mobile-photo-more-btn" data-action="open-photo" data-photo-index="${activeIndex}">Открыть всю галерею</button>
             </div>
           `;
           photoGalleryTargets.forEach((target) => {
@@ -14562,9 +15306,6 @@
               <div class="mobile-review-main-nav">
                 <button class="mobile-review-nav-btn" type="button" data-action="mobile-review-prev" aria-label="Предыдущий отзыв">Назад</button>
                 <button class="mobile-review-nav-btn" type="button" data-action="mobile-review-next" aria-label="Следующий отзыв">Далее</button>
-              </div>
-              <div class="mobile-review-more">
-                <a class="mobile-review-more-btn" href="${mediaContent.references.yandexReviewsUrl}" target="_blank" rel="noopener noreferrer">Смотреть все отзывы</a>
               </div>
             </div>
           `;
@@ -14656,6 +15397,7 @@
               <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
             </div>
           </article>
+          <div class="footer-copyright-mini">© 2019–2026</div>
         `;
       }
 
@@ -14705,6 +15447,7 @@
               <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
             </div>
           </article>
+          <div class="footer-copyright-mini">© 2019–2026</div>
         </div>
       `;
     }
@@ -15200,6 +15943,13 @@
         return;
       }
 
+      if(Date.now() < summaryBarDismissUntilTs){
+        bar.classList.remove('is-visible');
+        bar.classList.add('hidden');
+        document.body.classList.remove('summary-visible');
+        return;
+      }
+
       const action = getPrimaryActionState();
       if(!action || action.disabled){
         bar.classList.remove('is-visible');
@@ -15212,6 +15962,19 @@
       bar.classList.remove('hidden');
       bar.classList.toggle('is-visible', shouldShow);
       document.body.classList.toggle('summary-visible', shouldShow);
+    }
+
+    function dismissSummaryBarTemporarily(ms = 30000){
+      summaryBarDismissUntilTs = Date.now() + Math.max(1000, Number(ms) || 30000);
+      if(summaryBarDismissTimer){
+        clearTimeout(summaryBarDismissTimer);
+      }
+      summaryBarDismissTimer = setTimeout(() => {
+        summaryBarDismissUntilTs = 0;
+        summaryBarDismissTimer = null;
+        updateSummaryBarVisibility();
+      }, Math.max(1000, Number(ms) || 30000));
+      updateSummaryBarVisibility();
     }
 
     function renderSummary(){
@@ -15704,6 +16467,12 @@
       }
     }, {passive:true});
 
+    document.addEventListener('scroll', () => {
+      if(isHeroMenuOpen()){
+        setHeroMenuOpen(false);
+      }
+    }, {capture:true, passive:true});
+
     bindPhoneMaskForScope('drawer');
 
     document.getElementById('formDrawer').addEventListener('click', (e) => {
@@ -15817,6 +16586,167 @@
         } else {
           state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) - 1 + total) % total;
         }
+        renderCompactTrustPanelContent();
+        persist();
+      }, {passive:true});
+    })();
+
+    (function bindMobileEdgeTapNavigation(){
+      function getVisibleElement(nodeList){
+        const list = Array.from(nodeList || []);
+        return list.find((node) => node && node.offsetParent !== null) || list[0] || null;
+      }
+
+      function getEdgeDirection(stageEl, clientX){
+        if(!stageEl || !Number.isFinite(clientX)) return 0;
+        const rect = stageEl.getBoundingClientRect();
+        if(!rect || rect.width < 120) return 0;
+        const leftZone = rect.left + rect.width * 0.28;
+        const rightZone = rect.right - rect.width * 0.28;
+        if(clientX <= leftZone) return -1;
+        if(clientX >= rightZone) return 1;
+        return 0;
+      }
+
+      function stepThumb(root, stripSelector, thumbSelector, direction){
+        const strip = getVisibleElement(root.querySelectorAll(stripSelector));
+        if(!strip) return false;
+        const thumbs = Array.from(strip.querySelectorAll(thumbSelector));
+        if(!thumbs.length) return false;
+        const currentIndex = Math.max(0, thumbs.findIndex((thumb) => thumb.classList.contains('active')));
+        const nextIndex = (currentIndex + direction + thumbs.length) % thumbs.length;
+        thumbs[nextIndex]?.click();
+        return true;
+      }
+
+      document.addEventListener('click', (e) => {
+        const stage = e.target.closest('.mobile-photo-stage, .mobile-video-stage, .mobile-review-card, .mobile-stay-feature, .mobile-program-active-card, .mobile-journey-active');
+        if(!stage) return;
+        if(e.target.closest('button, a, [data-action], iframe, input, textarea, select')) return;
+        const direction = getEdgeDirection(stage, e.clientX);
+        if(!direction) return;
+
+        const root = stage.closest('.section-card, .section-modal-body, #mobileView, #desktopView') || document;
+
+        if(stage.classList.contains('mobile-photo-stage')){
+          if(stepThumb(root, '.mobile-photo-preview-strip', '.mobile-photo-preview-thumb', direction)){
+            persist();
+          }
+          return;
+        }
+
+        if(stage.classList.contains('mobile-video-stage')){
+          if(stepThumb(root, '.mobile-video-preview-strip', '.mobile-video-preview-thumb', direction)){
+            persist();
+          }
+          return;
+        }
+
+        if(stage.classList.contains('mobile-program-active-card')){
+          if(stepThumb(root, '.mobile-program-dots', '.mobile-program-dot', direction)){
+            persist();
+          }
+          return;
+        }
+
+        if(stage.classList.contains('mobile-stay-feature')){
+          if(stepThumb(root, '.mobile-stay-preview-strip', '.mobile-stay-preview-thumb', direction)){
+            persist();
+          }
+          return;
+        }
+
+        if(stage.classList.contains('mobile-journey-active')){
+          const total = 4;
+          const current = Math.max(0, Number(state.mobileJourneyStep || 0));
+          state.mobileJourneyStep = (current + (direction > 0 ? 1 : -1) + total) % total;
+          renderCompactTrustPanelContent();
+          persist();
+          return;
+        }
+
+        if(stage.classList.contains('mobile-review-card')){
+          const total = Math.max(0, mediaContent.reviews?.length || 0);
+          if(!total) return;
+          if(direction > 0){
+            state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) + 1) % total;
+          }else{
+            state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) - 1 + total) % total;
+          }
+          renderCompactTrustPanelContent();
+          persist();
+        }
+      });
+    })();
+
+    (function bindMobileProgramSwipe(){
+      let startX = 0;
+      let startY = 0;
+      let activeCard = null;
+
+      function stepProgramBySwipe(card, direction){
+        if(!card || !direction) return;
+        const root = card.closest('.section-card, .section-modal-body, #mobileView, #desktopView') || document;
+        const dots = Array.from(root.querySelectorAll('.mobile-program-dots .mobile-program-dot'));
+        if(!dots.length) return;
+        const current = Math.max(0, dots.findIndex((dot) => dot.classList.contains('active')));
+        const next = (current + direction + dots.length) % dots.length;
+        dots[next]?.click();
+        persist();
+      }
+
+      document.addEventListener('touchstart', (e) => {
+        const card = e.target.closest('.mobile-program-active-card');
+        if(!card) return;
+        const touch = e.touches && e.touches[0];
+        if(!touch) return;
+        activeCard = card;
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }, {passive:true});
+
+      document.addEventListener('touchend', (e) => {
+        if(!activeCard) return;
+        const card = activeCard;
+        const touch = e.changedTouches && e.changedTouches[0];
+        if(!touch){
+          activeCard = null;
+          return;
+        }
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        activeCard = null;
+        if(Math.abs(dx) < 38 || Math.abs(dx) <= Math.abs(dy)) return;
+        stepProgramBySwipe(card, dx < 0 ? 1 : -1);
+      }, {passive:true});
+    })();
+
+    (function bindMobileJourneySwipe(){
+      let startX = 0;
+      let startY = 0;
+      let activeCard = null;
+
+      document.addEventListener('touchstart', (e) => {
+        const card = e.target.closest('.mobile-journey-active');
+        if(!card) return;
+        const touch = e.touches && e.touches[0];
+        if(!touch) return;
+        activeCard = card;
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }, {passive:true});
+
+      document.addEventListener('touchend', (e) => {
+        if(!activeCard) return;
+        const touch = e.changedTouches && e.changedTouches[0];
+        activeCard = null;
+        if(!touch) return;
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if(Math.abs(dx) < 32 || Math.abs(dx) <= Math.abs(dy)) return;
+        const total = 4;
+        const current = Math.max(0, Number(state.mobileJourneyStep || 0));
+        state.mobileJourneyStep = (current + (dx < 0 ? 1 : -1) + total) % total;
         renderCompactTrustPanelContent();
         persist();
       }, {passive:true});
@@ -15969,6 +16899,13 @@
     refreshVideoMeta({force:true});
     scheduleVideoMetaRefresh();
     scheduleDesktopAgeTapHint();
+    const guardrailReport = runGuardrails();
+    const qualityBaseline = runQualityBaselineAudit();
+    const qualityGates = evaluateSoftQualityGates(qualityBaseline);
+    const debtRegister = buildDebtRegister(guardrailReport, qualityBaseline, qualityGates);
+    buildRuntimeQualityScore(qualityBaseline, qualityGates, debtRegister);
+    runReleaseIntegrityChecks();
+    printRuntimeStatusReport();
 
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();
