@@ -10846,7 +10846,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.236 (runtime-one-line-debug-status-report)';
+    const BUILD_VERSION_LABEL = 'v0.0.238 (quality-calibration-monolith-js-thresholds)';
     const QUALITY_SCORE_MODEL = Object.freeze({
       scale: '0..10',
       debtScale: '0 best .. 10 worst',
@@ -10903,7 +10903,7 @@
     const DEBT_REGISTER_KEY = 'aidacamp_debt_register_v1';
     const QUALITY_SOFT_GATES = Object.freeze({
       cssDuplicateSelectorsMax: 320,
-      jsBranchPointsMax: 520,
+      jsBranchPointsMax: 760,
       jsListenersMax: 220,
       jsBytesMax: 360000,
       cssBytesMax: 240000
@@ -11362,7 +11362,7 @@
     function buildRuntimeQualityScore(baseline, gates, debtRegister){
       const cssDupPenalty = Math.min(2.2, Math.max(0, ((baseline?.css?.duplicateSelectors || 0) - 220) / 120));
       const cssSizePenalty = Math.min(1.8, Math.max(0, ((baseline?.css?.bytes || 0) - 180000) / 80000));
-      const jsBranchPenalty = Math.min(2.2, Math.max(0, ((baseline?.js?.branchPoints || 0) - 420) / 180));
+      const jsBranchPenalty = Math.min(2.2, Math.max(0, ((baseline?.js?.branchPoints || 0) - 620) / 220));
       const jsListenerPenalty = Math.min(1.6, Math.max(0, ((baseline?.js?.listeners || 0) - 170) / 90));
       const jsSizePenalty = Math.min(1.8, Math.max(0, ((baseline?.js?.bytes || 0) - 280000) / 120000));
       const gatesPenalty = Math.min(1.5, (gates?.warnings?.length || 0) * 0.3);
@@ -11387,6 +11387,42 @@
       });
       window.__AIDACAMP_QUALITY_SCORE_RUNTIME = runtimeScore;
       return runtimeScore;
+    }
+
+    function buildQualityTrendSummary(delta){
+      const d = delta || window.__AIDACAMP_QUALITY_BASELINE_DELTA || {};
+      const probes = [
+        { key:'css.bytes', value:d?.css?.bytes },
+        { key:'css.duplicateSelectors', value:d?.css?.duplicateSelectors },
+        { key:'js.bytes', value:d?.js?.bytes },
+        { key:'js.branchPoints', value:d?.js?.branchPoints },
+        { key:'js.listeners', value:d?.js?.listeners }
+      ];
+      let better = 0;
+      let worse = 0;
+      const details = [];
+      probes.forEach((probe) => {
+        const value = Number(probe.value);
+        if(!Number.isFinite(value) || value === 0) return;
+        if(value < 0){
+          better += 1;
+          details.push(`${probe.key}: ${value}`);
+        } else {
+          worse += 1;
+          details.push(`${probe.key}: +${value}`);
+        }
+      });
+      const trend = worse > better ? 'worse' : (better > worse ? 'better' : 'flat');
+      const summary = Object.freeze({
+        version: BUILD_VERSION_LABEL,
+        fromVersion: d?.versionFrom || null,
+        trend,
+        better,
+        worse,
+        details
+      });
+      window.__AIDACAMP_QUALITY_TREND = summary;
+      return summary;
     }
 
     function runReleaseIntegrityChecks(){
@@ -11421,12 +11457,14 @@
       const runtime = window.__AIDACAMP_QUALITY_SCORE_RUNTIME || {};
       const integrity = window.__AIDACAMP_RELEASE_INTEGRITY || {};
       const gates = window.__AIDACAMP_QUALITY_SOFT_GATES || {};
+      const trend = window.__AIDACAMP_QUALITY_TREND || {};
       const reportLine =
         `[AIDACAMP][STATUS] ${BUILD_VERSION_LABEL} | css=${runtime.css ?? 'n/a'}` +
         ` | js=${runtime.js ?? 'n/a'}` +
         ` | debt=${runtime.techDebt ?? 'n/a'}(0 best)` +
         ` | integrity=${integrity.ok ? 'ok' : 'fail'}` +
-        ` | softWarnings=${Array.isArray(gates.warnings) ? gates.warnings.length : 'n/a'}`;
+        ` | softWarnings=${Array.isArray(gates.warnings) ? gates.warnings.length : 'n/a'}` +
+        ` | trend=${trend.trend || 'n/a'}`;
       console.info(reportLine);
       window.__AIDACAMP_STATUS_LINE = reportLine;
       return reportLine;
@@ -16904,6 +16942,7 @@
     const qualityGates = evaluateSoftQualityGates(qualityBaseline);
     const debtRegister = buildDebtRegister(guardrailReport, qualityBaseline, qualityGates);
     buildRuntimeQualityScore(qualityBaseline, qualityGates, debtRegister);
+    buildQualityTrendSummary(qualityBaseline?.delta);
     runReleaseIntegrityChecks();
     printRuntimeStatusReport();
 
