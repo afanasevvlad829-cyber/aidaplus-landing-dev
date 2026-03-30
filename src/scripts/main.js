@@ -1781,6 +1781,44 @@
       mobile: 'mobileBookingCard'
     };
 
+    const BOOKING_STAGE_CLASSES = ['booking-stage-1', 'booking-stage-2', 'booking-stage-3', 'booking-stage-4'];
+    let mobileBookingMinHeightFrame = 0;
+
+    function syncMobileBookingMinHeight(){
+      const card = document.getElementById(BOOKING_CARD_IDS.mobile);
+      if(!card) return;
+      if(!window.matchMedia('(width <= 820px)').matches){
+        card.style.removeProperty('--mobile-booking-min-height');
+        return;
+      }
+
+      const currentStage = BOOKING_STAGE_CLASSES.find((name) => card.classList.contains(name)) || `booking-stage-${getBookingStage()}`;
+      card.style.setProperty('--mobile-booking-min-height', '0px');
+
+      let maxHeight = 0;
+      BOOKING_STAGE_CLASSES.forEach((stageName) => {
+        card.classList.remove(...BOOKING_STAGE_CLASSES);
+        card.classList.add(stageName);
+        maxHeight = Math.max(maxHeight, Math.ceil(card.scrollHeight));
+      });
+
+      card.classList.remove(...BOOKING_STAGE_CLASSES);
+      card.classList.add(currentStage);
+      if(maxHeight > 0){
+        card.style.setProperty('--mobile-booking-min-height', `${maxHeight}px`);
+      }
+    }
+
+    function scheduleMobileBookingMinHeightSync(){
+      if(mobileBookingMinHeightFrame){
+        cancelAnimationFrame(mobileBookingMinHeightFrame);
+      }
+      mobileBookingMinHeightFrame = requestAnimationFrame(() => {
+        mobileBookingMinHeightFrame = 0;
+        syncMobileBookingMinHeight();
+      });
+    }
+
     const BOOKING_STEP_ONE_SELECTORS = {
       mobile: '#mobileBookingCard .booking-step-1'
     };
@@ -2006,6 +2044,7 @@
       });
       syncBookingHints();
       updateMobileAgeGateUi();
+      scheduleMobileBookingMinHeightSync();
     }
 
     function focusMobileAgeGate(){
@@ -3966,6 +4005,7 @@
       }
       heroResizeTimer = setTimeout(() => {
         initHero();
+        scheduleMobileBookingMinHeightSync();
       }, 160);
     }, {passive:true});
 
