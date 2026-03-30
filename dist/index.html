@@ -7026,9 +7026,9 @@
 
     #offerOverlay .overlay-card,
     #formDrawer .form-panel{
-      width:min(100%, 420px);
-      min-height:min(88vh, 500px);
-      max-height:min(88vh, 500px);
+      width:min(92vw, 420px);
+      min-height:min(66vh, 460px);
+      max-height:min(66vh, 460px);
       border-radius:24px;
     }
 
@@ -8328,24 +8328,25 @@
 
     @media (max-width: 720px){
       #offerOverlay{
-        align-items:flex-start;
+        align-items:center;
         justify-content:center;
-        padding:10px;
+        padding:12px;
       }
 
       #offerOverlay .overlay-card{
-        width:100%;
-        max-width:100%;
-        max-height:calc(100vh - 32px);
-        padding:12px;
-        border-radius:20px;
+        width:min(94vw, 380px);
+        max-width:min(94vw, 380px);
+        min-height:min(68vh, 420px);
+        max-height:min(68vh, 420px);
+        padding:10px;
+        border-radius:18px;
         overflow:hidden;
       }
 
       .offer-card-stable{
         min-height:0;
         height:auto;
-        max-height:calc(100vh - 32px);
+        max-height:100%;
         overflow:hidden;
       }
 
@@ -8450,19 +8451,19 @@
 
       #offerOverlay,
       #formDrawer{
-        align-items:flex-start;
+        align-items:center;
         justify-content:center;
-        padding:10px;
+        padding:12px;
       }
 
       #offerOverlay .overlay-card,
       #formDrawer .form-panel{
-        width:min(100%, 420px);
-        max-width:100%;
-        min-height:calc(100vh - 140px);
-        max-height:calc(100vh - 140px);
-        border-radius:20px;
-        padding:12px;
+        width:min(94vw, 380px);
+        max-width:min(94vw, 380px);
+        min-height:min(68vh, 420px);
+        max-height:min(68vh, 420px);
+        border-radius:18px;
+        padding:10px;
       }
     }
 
@@ -11073,7 +11074,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.258 (price-stage-chips-single-line-fit)';
+    const BUILD_VERSION_LABEL = 'v0.0.259 (booking-modals-unified-centered-size)';
     const QUALITY_SCORE_MODEL = Object.freeze({
       scale: '0..10',
       debtScale: '0 best .. 10 worst',
