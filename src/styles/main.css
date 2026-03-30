@@ -18,7 +18,7 @@
       --hero-overlap-bottom:-32px;
       --hero-overlap-y:30px;
       --hero-overlap-y-hover:28px;
-      --desktop-booking-height:520px;
+      --desktop-booking-height:clamp(500px,68vh,620px);
       --section-modal-compact-width:clamp(360px,48vw,640px);
       --section-modal-compact-max-height:min(56vh,500px);
       --video-card-gap:12px;
@@ -2349,8 +2349,9 @@
     }
 
     .media-video{
-      width:360px;
-      height:640px;
+      width:min(360px,92vw);
+      aspect-ratio:9 / 16;
+      height:auto;
       max-height:80vh;
       border-radius:18px;
       overflow:hidden;
@@ -4214,7 +4215,7 @@
 
     .overlay.section-modal-compact .section-modal-card{
       width:var(--section-modal-compact-width);
-      max-width:calc(100vw - 420px);
+      max-width:min(var(--section-modal-compact-width), calc(100vw - 24px));
       max-height:var(--section-modal-compact-max-height);
       border-radius:20px;
       box-shadow:0 20px 56px rgb(7 12 20 / 30%);
