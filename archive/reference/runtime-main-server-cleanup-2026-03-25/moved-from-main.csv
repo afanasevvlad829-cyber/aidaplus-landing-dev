@@ -2312,7 +2312,7 @@ docs/repo_cleanup_2026-03-25_round2.md,docs/repo_cleanup_2026-03-25_round2.md,re
 docs/reports/backup_status_2026-03-21.rtf,docs/reports/backup_status_2026-03-21.rtf,removed from main runtime-only cleanup; preserved in dev
 docs/responsive-contract.md,docs/responsive-contract.md,removed from main runtime-only cleanup; preserved in dev
 docs/state-schema.md,docs/state-schema.md,removed from main runtime-only cleanup; preserved in dev
-gpt.html,gpt.html,removed from main runtime-only cleanup; preserved in dev
+gpt.html,deprecated,removed from runtime flow and deleted
 reports/2026-03-24_hero_overlap_logo_followup/screens/debug-close-after.png,reports/2026-03-24_hero_overlap_logo_followup/screens/debug-close-after.png,removed from main runtime-only cleanup; preserved in dev
 reports/2026-03-24_hero_overlap_logo_followup/screens/debug-close-before.png,reports/2026-03-24_hero_overlap_logo_followup/screens/debug-close-before.png,removed from main runtime-only cleanup; preserved in dev
 reports/2026-03-24_hero_overlap_logo_followup/screens/desktop-compact-smoke-after.png,reports/2026-03-24_hero_overlap_logo_followup/screens/desktop-compact-smoke-after.png,removed from main runtime-only cleanup; preserved in dev

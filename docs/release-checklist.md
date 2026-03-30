@@ -2,7 +2,7 @@
 
 - Run `./build.sh` (dist regenerated from canonical source).
 - Verify canonical target: `dist/index.html`.
-- Verify artifact sync: `dist/index.html` == `gpt.html` == `build/gpt.html`.
+- Verify artifact sync: `dist/index.html` == `dist/index.htm`.
 - If legal page exists: `dist/legal.html` == `legal.html` == `build/legal.html`.
 - Verify `dist/index.html` has `ac-build-main-css` and `ac-build-main-js`.
 - Verify no `/src/scripts/` links remain in `dist/index.html`.

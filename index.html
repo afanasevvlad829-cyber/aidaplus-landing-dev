@@ -10846,7 +10846,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.238 (quality-calibration-monolith-js-thresholds)';
+    const BUILD_VERSION_LABEL = 'v0.0.243 (monolithness-architectural-signals-model)';
     const QUALITY_SCORE_MODEL = Object.freeze({
       scale: '0..10',
       debtScale: '0 best .. 10 worst',
@@ -10882,8 +10882,13 @@
         })
       })
     });
-    window.__AIDACAMP_QUALITY_SCORE_MODEL = QUALITY_SCORE_MODEL;
-    window.__AIDACAMP_QUALITY_SCORE_SNAPSHOT = Object.freeze({
+    const AIDACAMP_RUNTIME = (window.__AIDACAMP_RUNTIME && typeof window.__AIDACAMP_RUNTIME === 'object')
+      ? window.__AIDACAMP_RUNTIME
+      : {};
+    window.__AIDACAMP_RUNTIME = AIDACAMP_RUNTIME;
+    AIDACAMP_RUNTIME.quality = AIDACAMP_RUNTIME.quality || {};
+    AIDACAMP_RUNTIME.quality.scoreModel = QUALITY_SCORE_MODEL;
+    AIDACAMP_RUNTIME.quality.scoreSnapshot = Object.freeze({
       version: BUILD_VERSION_LABEL,
       css: 8.8,
       js: 8.6,
@@ -11139,7 +11144,7 @@
         smoke,
         ok: !!(version.ok && smoke.ok)
       };
-      window.__AIDACAMP_GUARDRAILS = summary;
+      AIDACAMP_RUNTIME.quality.guardrails = summary;
       return summary;
     }
 
@@ -11237,8 +11242,8 @@
         })
       });
 
-      window.__AIDACAMP_QUALITY_BASELINE = snapshot;
-      window.__AIDACAMP_QUALITY_BASELINE_DELTA = delta;
+      AIDACAMP_RUNTIME.quality.baseline = snapshot;
+      AIDACAMP_RUNTIME.quality.baselineDelta = delta;
       try {
         localStorage.setItem(QUALITY_BASELINE_KEY, JSON.stringify(snapshot));
       } catch (error){
@@ -11248,7 +11253,7 @@
     }
 
     function evaluateSoftQualityGates(snapshot){
-      const data = snapshot || window.__AIDACAMP_QUALITY_BASELINE;
+      const data = snapshot || AIDACAMP_RUNTIME.quality.baseline;
       if(!data) return { ok:false, warnings:['baseline_missing'], thresholds: QUALITY_SOFT_GATES };
 
       const warnings = [];
@@ -11278,7 +11283,7 @@
         thresholds: QUALITY_SOFT_GATES,
         version: BUILD_VERSION_LABEL
       };
-      window.__AIDACAMP_QUALITY_SOFT_GATES = result;
+      AIDACAMP_RUNTIME.quality.softGates = result;
 
       if(!result.ok){
         console.warn('[QUALITY] soft gates warnings', result);
@@ -11350,7 +11355,7 @@
         pressureLevel: pressure >= 9 ? 'high' : (pressure >= 4 ? 'medium' : 'low')
       };
 
-      window.__AIDACAMP_DEBT_REGISTER = summary;
+      AIDACAMP_RUNTIME.quality.debtRegister = summary;
       try {
         localStorage.setItem(DEBT_REGISTER_KEY, JSON.stringify(summary));
       } catch (error){
@@ -11360,12 +11365,25 @@
     }
 
     function buildRuntimeQualityScore(baseline, gates, debtRegister){
+      const globalAidacampExports = Object.keys(window).filter((key) => key.startsWith('__AIDACAMP_')).length;
       const cssDupPenalty = Math.min(2.2, Math.max(0, ((baseline?.css?.duplicateSelectors || 0) - 220) / 120));
       const cssSizePenalty = Math.min(1.8, Math.max(0, ((baseline?.css?.bytes || 0) - 180000) / 80000));
+      const cssRulePenalty = Math.min(1.4, Math.max(0, ((baseline?.css?.rules || 0) - 1100) / 400));
       const jsBranchPenalty = Math.min(2.2, Math.max(0, ((baseline?.js?.branchPoints || 0) - 620) / 220));
+      const jsFunctionPenalty = Math.min(1.6, Math.max(0, ((baseline?.js?.functions || 0) - 180) / 80));
       const jsListenerPenalty = Math.min(1.6, Math.max(0, ((baseline?.js?.listeners || 0) - 170) / 90));
       const jsSizePenalty = Math.min(1.8, Math.max(0, ((baseline?.js?.bytes || 0) - 280000) / 120000));
       const gatesPenalty = Math.min(1.5, (gates?.warnings?.length || 0) * 0.3);
+      const globalFootprintPenalty = Math.min(1.1, Math.max(0, ((globalAidacampExports - 2) / 6) * 0.9));
+      const architectureSignals = Object.freeze({
+        runtimeStore: !!AIDACAMP_RUNTIME,
+        qualityStore: !!AIDACAMP_RUNTIME?.quality,
+        pipelineNamespace: !!AIDACAMP_RUNTIME?.quality?.pipeline,
+        runAllOrchestrator: typeof AIDACAMP_RUNTIME?.quality?.pipeline?.runAll === 'function',
+        lowGlobalExports: globalAidacampExports <= 2
+      });
+      const architectureSignalCount = Object.values(architectureSignals).filter(Boolean).length;
+      const architectureBonus = Math.min(1.2, architectureSignalCount * 0.24);
 
       const cssScore = Math.max(0, Math.min(10, Number((10 - cssDupPenalty - cssSizePenalty - gatesPenalty * 0.35).toFixed(1))));
       const jsScore = Math.max(0, Math.min(10, Number((10 - jsBranchPenalty - jsListenerPenalty - jsSizePenalty - gatesPenalty * 0.4).toFixed(1))));
@@ -11376,6 +11394,23 @@
           Number((((debtRegister?.pressureScore || 0) * 0.55) + (gates?.warnings?.length || 0) * 0.35).toFixed(1))
         )
       );
+      const pipelineBonus = AIDACAMP_RUNTIME.quality.pipeline ? 0.6 : 0;
+      const monolithScore = Math.max(
+        0,
+        Math.min(
+          10,
+          Number((
+            10
+            - cssRulePenalty * 0.8
+            - cssSizePenalty * 0.4
+            - jsFunctionPenalty * 0.9
+            - jsBranchPenalty * 0.8
+            - jsSizePenalty * 0.5
+            - globalFootprintPenalty
+            + architectureBonus
+          ).toFixed(1))
+        )
+      );
 
       const runtimeScore = Object.freeze({
         version: BUILD_VERSION_LABEL,
@@ -11383,14 +11418,18 @@
         css: cssScore,
         js: jsScore,
         techDebt: debtScore,
-        debtScale: '0 best .. 10 worst'
+        debtScale: '0 best .. 10 worst',
+        monolithness: monolithScore,
+        monolithScale: '0 monolith .. 10 modular',
+        globalExports: globalAidacampExports,
+        architectureSignals: architectureSignals
       });
-      window.__AIDACAMP_QUALITY_SCORE_RUNTIME = runtimeScore;
+      AIDACAMP_RUNTIME.quality.runtimeScore = runtimeScore;
       return runtimeScore;
     }
 
     function buildQualityTrendSummary(delta){
-      const d = delta || window.__AIDACAMP_QUALITY_BASELINE_DELTA || {};
+      const d = delta || AIDACAMP_RUNTIME.quality.baselineDelta || {};
       const probes = [
         { key:'css.bytes', value:d?.css?.bytes },
         { key:'css.duplicateSelectors', value:d?.css?.duplicateSelectors },
@@ -11421,19 +11460,21 @@
         worse,
         details
       });
-      window.__AIDACAMP_QUALITY_TREND = summary;
+      AIDACAMP_RUNTIME.quality.trend = summary;
       return summary;
     }
 
     function runReleaseIntegrityChecks(){
       const required = Object.freeze([
-        '__AIDACAMP_GUARDRAILS',
-        '__AIDACAMP_QUALITY_BASELINE',
-        '__AIDACAMP_QUALITY_SOFT_GATES',
-        '__AIDACAMP_DEBT_REGISTER',
-        '__AIDACAMP_QUALITY_SCORE_RUNTIME'
+        'guardrails',
+        'baseline',
+        'softGates',
+        'debtRegister',
+        'runtimeScore'
       ]);
-      const missing = required.filter((key) => typeof window[key] === 'undefined' || window[key] === null);
+      const missing = required.filter((key) => (
+        typeof AIDACAMP_RUNTIME.quality[key] === 'undefined' || AIDACAMP_RUNTIME.quality[key] === null
+      ));
       const result = Object.freeze({
         version: BUILD_VERSION_LABEL,
         timestamp: new Date().toISOString(),
@@ -11441,7 +11482,7 @@
         required,
         missing
       });
-      window.__AIDACAMP_RELEASE_INTEGRITY = result;
+      AIDACAMP_RUNTIME.quality.releaseIntegrity = result;
 
       if(!result.ok){
         console.error('[RELEASE] integrity failed', result);
@@ -11454,21 +11495,52 @@
     }
 
     function printRuntimeStatusReport(){
-      const runtime = window.__AIDACAMP_QUALITY_SCORE_RUNTIME || {};
-      const integrity = window.__AIDACAMP_RELEASE_INTEGRITY || {};
-      const gates = window.__AIDACAMP_QUALITY_SOFT_GATES || {};
-      const trend = window.__AIDACAMP_QUALITY_TREND || {};
+      const runtime = AIDACAMP_RUNTIME.quality.runtimeScore || {};
+      const integrity = AIDACAMP_RUNTIME.quality.releaseIntegrity || {};
+      const gates = AIDACAMP_RUNTIME.quality.softGates || {};
+      const trend = AIDACAMP_RUNTIME.quality.trend || {};
       const reportLine =
         `[AIDACAMP][STATUS] ${BUILD_VERSION_LABEL} | css=${runtime.css ?? 'n/a'}` +
         ` | js=${runtime.js ?? 'n/a'}` +
         ` | debt=${runtime.techDebt ?? 'n/a'}(0 best)` +
+        ` | monolith=${runtime.monolithness ?? 'n/a'}(10 best)` +
         ` | integrity=${integrity.ok ? 'ok' : 'fail'}` +
         ` | softWarnings=${Array.isArray(gates.warnings) ? gates.warnings.length : 'n/a'}` +
         ` | trend=${trend.trend || 'n/a'}`;
       console.info(reportLine);
-      window.__AIDACAMP_STATUS_LINE = reportLine;
+      AIDACAMP_RUNTIME.quality.statusLine = reportLine;
       return reportLine;
     }
+
+    function runQualityPipelineAll(){
+      const guardrailReport = runGuardrails();
+      const qualityBaseline = runQualityBaselineAudit();
+      const qualityGates = evaluateSoftQualityGates(qualityBaseline);
+      const debtRegister = buildDebtRegister(guardrailReport, qualityBaseline, qualityGates);
+      buildRuntimeQualityScore(qualityBaseline, qualityGates, debtRegister);
+      buildQualityTrendSummary(qualityBaseline?.delta);
+      runReleaseIntegrityChecks();
+      printRuntimeStatusReport();
+      return {
+        guardrailReport,
+        qualityBaseline,
+        qualityGates,
+        debtRegister
+      };
+    }
+
+    const QUALITY_PIPELINE_NAMESPACE = Object.freeze({
+      runGuardrails,
+      runQualityBaselineAudit,
+      evaluateSoftQualityGates,
+      buildDebtRegister,
+      buildRuntimeQualityScore,
+      buildQualityTrendSummary,
+      runReleaseIntegrityChecks,
+      printRuntimeStatusReport,
+      runAll: runQualityPipelineAll
+    });
+    AIDACAMP_RUNTIME.quality.pipeline = QUALITY_PIPELINE_NAMESPACE;
 
     const CLOSE_ICON_HTML = '<img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">';
 
@@ -16937,14 +17009,7 @@
     refreshVideoMeta({force:true});
     scheduleVideoMetaRefresh();
     scheduleDesktopAgeTapHint();
-    const guardrailReport = runGuardrails();
-    const qualityBaseline = runQualityBaselineAudit();
-    const qualityGates = evaluateSoftQualityGates(qualityBaseline);
-    const debtRegister = buildDebtRegister(guardrailReport, qualityBaseline, qualityGates);
-    buildRuntimeQualityScore(qualityBaseline, qualityGates, debtRegister);
-    buildQualityTrendSummary(qualityBaseline?.delta);
-    runReleaseIntegrityChecks();
-    printRuntimeStatusReport();
+    runQualityPipelineAll();
 
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();

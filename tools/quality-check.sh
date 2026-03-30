@@ -7,9 +7,9 @@ cd "$ROOT_DIR"
 echo "[quality-check] build"
 bash ./build.sh > /tmp/aidaplus-build.log
 if [[ "${QUALITY_ENFORCE_DIST_SYNC:-0}" == "1" ]]; then
-  if ! git diff --quiet -- dist/index.html dist/index.htm gpt.html build/gpt.html; then
+  if ! git diff --quiet -- dist/index.html dist/index.htm; then
     echo "[quality-check] FAIL: dist artifacts are not synchronized with source. Run ./build.sh and commit regenerated artifacts."
-    git diff --name-only -- dist/index.html dist/index.htm gpt.html build/gpt.html
+    git diff --name-only -- dist/index.html dist/index.htm
     exit 1
   fi
 fi

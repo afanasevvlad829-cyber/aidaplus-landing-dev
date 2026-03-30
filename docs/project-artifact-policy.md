@@ -36,7 +36,7 @@ Rule: all summaries must reuse these normalized numbers from CSV, not manual rec
 |---|---|---|---|
 | Product runtime source | Yes | `index.html`, `src/scripts/**`, `src/styles/**`, `assets/**`, `src/pages/**` | Core product source and behavior.
 | Runtime/release docs | Yes | `docs/**` | Process/runtime contract docs are versioned.
-| Generated outputs | No (default) | `build/**`, `dist/**`, root `gpt.html`, root `legal.html` | Generated artifacts, not canonical source.
+| Generated outputs | No (default) | `build/**`, `dist/**`, root `legal.html` | Generated artifacts, not canonical source.
 | Review/debug artifacts | No (default) | `screens/**`, `audit/playwright/artifacts/**`, `diff/**` | Keep minimal curated subset only if explicitly needed.
 | Archive/legacy/backups | No (default) | `archive/**`, `*.bak*`, prototype/sandbox exports | Archive-only/cold-storage class.
 
@@ -45,13 +45,10 @@ Rule: all summaries must reuse these normalized numbers from CSV, not manual rec
 ### 3.1 Source-of-truth HTML
 - `index.html`
 - `src/pages/legal.html`
-- `src/pages/gpt.html` (if used as maintained source page)
 
 ### 3.2 Generated / non-canonical HTML
-- `build/gpt.html`
 - `build/legal.html`
 - `dist/legal.html`
-- root `gpt.html` (unless explicitly promoted by policy)
 - root `legal.html` (unless explicitly promoted by policy)
 
 Rule: generated HTML must not be used as editing baseline.

@@ -10,6 +10,8 @@ __pycache__/
 build/
 dist/legal.html
 diff/*.diff
+gpt.html
+build/gpt.html
 
 # Artifact bundles
 *.zip

@@ -4,12 +4,13 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT_DIR"
 
-mkdir -p dist build
+mkdir -p dist build dist/cdn cdn
 
 python3 - <<'PY'
 import json
 import os
 import re
+import subprocess
 import urllib.request
 from html import unescape
 from pathlib import Path
@@ -18,6 +19,8 @@ from urllib.parse import urljoin
 root = Path(".")
 base_path = root / "index.html"
 out_path = root / "dist" / "index.html"
+cdn_bundle_path = root / "dist" / "cdn" / "app.bundle.js"
+cdn_repo_bundle_path = root / "cdn" / "app.bundle.js"
 css_path = root / "src" / "styles" / "main.css"
 script_paths = [
     root / "src" / "scripts" / "main.js",
@@ -51,6 +54,36 @@ for script_path in script_paths:
         continue
     script_chunks.append(f"/* {script_path.as_posix()} */\n" + script_path.read_text(encoding="utf-8"))
 js = "\n\n".join(script_chunks)
+
+def detect_github_repo_slug() -> str:
+    override = (os.getenv("AC_CDN_REPO") or "").strip()
+    if override:
+        return override
+    try:
+        remote = subprocess.check_output(
+            ["git", "remote", "get-url", "origin"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except Exception:
+        return ""
+    m = re.search(r"github\.com[:/](?P<slug>[^/]+/[^/.]+)(?:\.git)?$", remote)
+    return m.group("slug") if m else ""
+
+cdn_ref = (os.getenv("AC_CDN_REF") or "").strip()
+cdn_repo = detect_github_repo_slug()
+cdn_asset_base = f"https://cdn.jsdelivr.net/gh/{cdn_repo}@{cdn_ref}" if cdn_repo and cdn_ref else ""
+
+def rewrite_assets_to_cdn(text: str, asset_base: str) -> str:
+    if not text or not asset_base:
+        return text
+    out = text
+    out = re.sub(r"(?P<q>['\"])\/assets\/", rf"\g<q>{asset_base}/assets/", out)
+    out = re.sub(r"url\((?P<q>['\"]?)\/assets\/", rf"url(\g<q>{asset_base}/assets/", out)
+    return out
+
+css_for_cdn = rewrite_assets_to_cdn(css, cdn_asset_base)
+js_for_cdn = rewrite_assets_to_cdn(js, cdn_asset_base)
 
 components = []
 if components_dir.exists():
@@ -219,30 +252,46 @@ out = replace_or_insert(out, "<!-- AC_BUILD_STYLE_START -->", "<!-- AC_BUILD_STY
 out = replace_or_insert(out, "<!-- AC_BUILD_SCRIPT_START -->", "<!-- AC_BUILD_SCRIPT_END -->", script_block, "</body>")
 out_path.write_text(out, encoding="utf-8")
 print(f"Built: {out_path}")
+
+# Single-file CDN bundle for Tilda/jsDelivr:
+# injects CSS once, then executes app JS.
+bundle = (
+    "(function(){\n"
+    "  if (typeof document === 'undefined') return;\n"
+    "  var id = 'ac-cdn-main-css';\n"
+    "  if (!document.getElementById(id)) {\n"
+    "    var style = document.createElement('style');\n"
+    "    style.id = id;\n"
+    f"    style.textContent = {json.dumps(css_for_cdn, ensure_ascii=False)};\n"
+    "    document.head.appendChild(style);\n"
+    "  }\n"
+    "})();\n\n"
+    "/* src/scripts/main.js */\n"
+    + js_for_cdn
+    + "\n"
+)
+cdn_bundle_path.write_text(bundle, encoding="utf-8")
+print(f"Built: {cdn_bundle_path}")
+cdn_repo_bundle_path.write_text(bundle, encoding="utf-8")
+print(f"Built: {cdn_repo_bundle_path}")
+if cdn_asset_base:
+    print(f"CDN asset base: {cdn_asset_base}")
+else:
+    print("CDN asset base: disabled (set AC_CDN_REF to enable '/assets' rewriting)")
 PY
 
 echo "Build completed: dist/index.html"
 echo "Canonical release artifact: dist/index.html"
 cp dist/index.html dist/index.htm
-cp dist/index.html gpt.html
-cp dist/index.html build/gpt.html
-echo "Artifacts updated: dist/index.htm, gpt.html, build/gpt.html"
+echo "Artifacts updated: dist/index.htm"
+echo "CDN artifact: dist/cdn/app.bundle.js"
+echo "CDN artifact for GitHub/jsDelivr: cdn/app.bundle.js"
 
 if [ -f src/pages/legal.html ]; then
   cp src/pages/legal.html dist/legal.html
   cp src/pages/legal.html legal.html
   cp src/pages/legal.html build/legal.html
   echo "Artifacts updated: legal.html, build/legal.html"
-fi
-
-if ! cmp -s dist/index.html gpt.html; then
-  echo "ERROR: gpt.html is not synchronized with dist/index.html" >&2
-  exit 1
-fi
-
-if ! cmp -s dist/index.html build/gpt.html; then
-  echo "ERROR: build/gpt.html is not synchronized with dist/index.html" >&2
-  exit 1
 fi
 
 if [ -f dist/legal.html ] && [ -f legal.html ] && ! cmp -s dist/legal.html legal.html; then

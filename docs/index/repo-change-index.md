@@ -6,7 +6,7 @@ Branch: `dev`
 ## 1) Canon runtime map
 - Runtime source: `index.html`, `src/**`, `assets/**`, `src/pages/legal.html`
 - Build output: `dist/index.html`, `dist/legal.html`
-- Published aliases: `gpt.html`, `build/gpt.html`, `legal.html`, `build/legal.html`
+- Published aliases: `legal.html`, `build/legal.html`
 
 ## 2) Change index (by commits)
 Machine-readable timeline:

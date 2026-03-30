@@ -20,7 +20,7 @@ Goal: clean project root while preserving all historical artifacts.
 Total moved tracked paths: **2137**.
 
 ## Runtime/source left in root
-- `index.html`, `legal.html`, `gpt.html`
+- `index.html`, `legal.html`
 - `src/`, `assets/`, `dist/`
 - `build.sh`, `deploy.sh`
 - `docs/`, `reports/`, `tests/`, `tools/`

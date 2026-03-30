@@ -6,7 +6,6 @@
 - `/src/styles/**`
 - `/assets/**`
 - `/docs/**`
-- `gpt.html` не является source-of-truth
 
 ## Runtime entrypoints (dev)
 - HTML: `/index.html`
@@ -25,8 +24,6 @@
 
 ## Build output
 - `/dist/index.html` — **canonical release artifact**, do not edit manually
-- `/gpt.html` — generated mirror of `dist/index.html`, do not edit manually
-- `/build/gpt.html` — generated mirror of `dist/index.html`, do not edit manually
 - `/dist/legal.html` — canonical legal artifact (if `src/pages/legal.html` exists)
 - `/legal.html`, `/build/legal.html` — generated mirrors, do not edit manually
 
@@ -36,8 +33,6 @@
 
 ## Rules
 - Не редактировать `dist/index.html` вручную
-- Не редактировать `gpt.html` вручную
-- Не редактировать `build/gpt.html` вручную
 - Не редактировать `dist/legal.html` / `legal.html` / `build/legal.html` вручную
 - Не добавлять новые deploy/build скрипты вне `build.sh`/`deploy.sh`
 - Весь runtime-код изменять только в `/index.html` и `/src/**`

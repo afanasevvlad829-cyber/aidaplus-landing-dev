@@ -21,6 +21,6 @@ Scope: artifact policy baseline only (no product code changes).
 
 ## Do not commit now
 - `*.zip` bundles (`audit_*`, `patch_*`, `release/*.zip`)
-- Generated outputs (`build/**`, `dist/legal.html`, root `gpt.html`, root `legal.html`)
+- Generated outputs (`build/**`, `dist/legal.html`, root `legal.html`)
 - Debug/review output (`audit/playwright/artifacts/**`, `screens/debug/**`, `screens/tmp/**`, `diff/*.diff`)
 - Archive-only storage (`archive/non-runtime/**`, `prototype-export/**`, sandbox exports)

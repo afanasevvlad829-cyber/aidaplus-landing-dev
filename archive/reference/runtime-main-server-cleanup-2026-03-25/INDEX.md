@@ -35,7 +35,7 @@ Top-level removed groups:
 - `build.sh`: 1
 - `deploy.sh`: 1
 - `dist`: 1
-- `gpt.html`: 1
+- `gpt.html`: 0 (deprecated and removed)
 
 Detailed mapping:
 - `archive/reference/runtime-main-server-cleanup-2026-03-25/moved-from-main.csv`

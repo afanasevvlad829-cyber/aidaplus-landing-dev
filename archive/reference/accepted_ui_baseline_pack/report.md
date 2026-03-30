@@ -1,5 +1,5 @@
 ## 1. Что снято в baseline
-Снят полный baseline snapshot pack для 4 режимов и special zones из текущего принятого состояния `gpt.html`.
+Снят полный baseline snapshot pack для 4 режимов и special zones из текущего принятого состояния `dist/index.html`.
 
 ## 2. По каким режимам снято
 - Desktop Full
