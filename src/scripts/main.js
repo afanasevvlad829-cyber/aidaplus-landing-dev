@@ -320,7 +320,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.281 (mobile-age-cards-15pct-menu-overlay-shift-about-modal)';
+    const BUILD_VERSION_LABEL = 'v0.0.282 (prod-hide-debug-and-version-badge)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
@@ -386,6 +386,7 @@
       allowedModes.includes(value) ? value : fallbackMode
     );
     const VERSION_MONOTONIC_KEY = 'aidacamp_build_version_last_v1';
+    const PROD_DEBUGLESS_DOMAINS = Object.freeze(['aidacamp.ru']);
     const QUALITY_BASELINE_KEY = 'aidacamp_quality_baseline_v1';
     const DEBT_REGISTER_KEY = 'aidacamp_debt_register_v1';
     const QUALITY_SOFT_GATES = Object.freeze({
@@ -540,6 +541,11 @@
     }
 
     function applyDebugUiState(){
+      if(isProductionRuntime() && !isAdminDebugSession()){
+        document.getElementById('debugControls')?.remove();
+        document.getElementById('version-badge')?.remove();
+        return;
+      }
       const badge = document.getElementById('version-badge');
       if(!badge) return;
       const badgeLabel = document.getElementById('version-badge-label');
@@ -2313,6 +2319,16 @@
         if(['1', 'true', 'yes', 'on'].includes(adminFlag)) return true;
         const storedFlag = String(localStorage.getItem('aidacamp_admin_debug') || '').toLowerCase();
         return ['1', 'true', 'yes', 'on'].includes(storedFlag);
+      } catch(error){
+        return false;
+      }
+    }
+
+    function isProductionRuntime(){
+      try {
+        const host = String(window.location.hostname || '').toLowerCase().replace(/^www\./, '');
+        if(!host) return false;
+        return PROD_DEBUGLESS_DOMAINS.some((domain) => host === domain || host.endsWith(`.${domain}`));
       } catch(error){
         return false;
       }
