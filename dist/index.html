@@ -21,6 +21,9 @@
       --accent:#ff8a00;
       --accent-2:#ff9f2f;
       --accent-soft:#fff1df;
+      --short-accent:#2fa768;
+      --short-accent-2:#45c97f;
+      --short-accent-soft:#e9f8ef;
       --shadow:0 18px 40px rgba(20,29,45,.08);
       --z-base:1;
       --z-hero:2;
@@ -136,74 +139,8 @@
 
     .mobile-mode-switch{
       display:flex;
-      gap:6px;
       align-items:center;
-    }
-
-    .mobile-mode-toggle{
-      appearance:none;
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:999px;
-      min-height:34px;
-      padding:3px 10px 3px 6px;
-      background:rgba(255,255,255,.08);
-      color:rgba(255,255,255,.92);
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      cursor:pointer;
-      transition:background .18s ease, border-color .18s ease, box-shadow .18s ease;
-    }
-
-    .mobile-mode-toggle:hover{
-      background:rgba(255,255,255,.12);
-      border-color:rgba(255,255,255,.24);
-    }
-
-    .mobile-mode-toggle-track{
-      width:38px;
-      height:22px;
-      border-radius:999px;
-      background:rgba(15,23,42,.7);
-      border:1px solid rgba(255,255,255,.18);
-      position:relative;
-      flex:0 0 auto;
-    }
-
-    .mobile-mode-toggle-thumb{
-      position:absolute;
-      top:2px;
-      left:2px;
-      width:16px;
-      height:16px;
-      border-radius:50%;
-      background:#fff;
-      box-shadow:0 2px 6px rgba(15,23,42,.3);
-      transition:transform .18s ease, background .18s ease;
-    }
-
-    .mobile-mode-toggle[aria-checked="true"]{
-      background:rgba(255,138,0,.16);
-      border-color:rgba(255,166,74,.54);
-      box-shadow:0 10px 24px rgba(255,138,0,.2);
-    }
-
-    .mobile-mode-toggle[aria-checked="true"] .mobile-mode-toggle-track{
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      border-color:transparent;
-    }
-
-    .mobile-mode-toggle[aria-checked="true"] .mobile-mode-toggle-thumb{
-      transform:translateX(16px);
-      background:#fff8ef;
-    }
-
-    .mobile-mode-toggle-label{
-      font-size:11px;
-      font-weight:800;
-      line-height:1;
-      white-space:nowrap;
-      letter-spacing:.01em;
+      width:100%;
     }
 
     .debug-tools{
@@ -684,85 +621,61 @@
     }
 
     .hero-mode-inline{
-      display:inline-flex;
-      flex-direction:row-reverse;
+      display:inline-grid;
+      grid-template-columns:1fr 1fr;
       align-items:center;
       gap:0;
-      padding:0;
-      border-radius:0;
-      background:transparent;
-      border:none;
-      box-shadow:none;
-      backdrop-filter:none;
-      margin-left:-8px;
+      width:min(100%, 320px);
+      border-radius:999px;
+      background:rgba(24,30,40,.34);
+      border:1px solid rgba(255,255,255,.2);
+      box-shadow:0 10px 26px rgba(0,0,0,.24);
+      overflow:hidden;
+      backdrop-filter:blur(8px);
+      margin-top:4px;
     }
 
     .hero-mode-inline .mode-btn{
-      min-height:32px;
-      min-width:112px;
-      padding:0 14px 0 36px;
-      font-size:10px;
-      border-radius:12px;
+      min-height:38px;
+      width:100%;
+      margin:0;
+      border:none;
+      border-radius:0;
       background:transparent;
-      color:rgba(255,255,255,.82);
-      border:1px solid rgba(255,255,255,.09);
-      box-shadow:none;
-      transition:background .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+      color:rgba(255,255,255,.88);
+      font-size:clamp(12px,1.25vw,16px);
+      font-weight:800;
+      letter-spacing:.01em;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:0 12px;
+      transition:background .18s ease, color .18s ease;
+    }
+
+    .hero-mode-inline .mode-btn::before{
+      content:"";
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:rgba(255,255,255,.42);
+      box-shadow:0 0 0 1px rgba(255,255,255,.24);
+      transition:background .18s ease, box-shadow .18s ease;
     }
 
     .hero-mode-inline .mode-btn:hover{
       background:rgba(255,255,255,.08);
-      color:rgba(255,255,255,.95);
     }
 
     .hero-mode-inline .mode-btn.active{
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
       color:#fff;
-      border-color:rgba(255,255,255,.28);
-      box-shadow:0 10px 20px rgba(255,138,0,.24);
-      transform:none;
+      background:rgba(255,138,0,.16);
     }
 
-    .hero-mode-inline .mode-toggle{
-      min-width:42px;
-      width:42px;
-      min-height:32px;
-      padding:0;
-      border-radius:999px;
-      border:none;
-      background:transparent;
-      position:relative;
-      transition:background .18s ease, border-color .18s ease, box-shadow .18s ease;
-      margin-right:-34px;
-      z-index:2;
-    }
-
-    .hero-mode-inline .mode-toggle .mode-toggle-thumb{
-      position:absolute;
-      top:3px;
-      left:4px;
-      width:26px;
-      height:26px;
-      border-radius:50%;
-      background:#fff;
-      box-shadow:0 3px 10px rgba(0,0,0,.24);
-      transition:transform .18s ease, background .18s ease;
-    }
-
-    .hero-mode-inline .mode-toggle.active{
-      background:transparent;
-      border-color:transparent;
-      box-shadow:none;
-    }
-
-    .hero-mode-inline .mode-toggle.active .mode-toggle-thumb{
-      transform:none;
-      background:#fff;
-    }
-
-    .hero-mode-inline .mode-toggle:not(.active) .mode-toggle-thumb{
-      transform:translateX(10px);
-      background:#f3f4f6;
+    .hero-mode-inline .mode-btn.active::before{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 0 0 1px rgba(255,186,102,.6), 0 0 12px rgba(255,138,0,.32);
     }
 
     .hero-mode-hashtag{
@@ -1706,6 +1619,34 @@
       line-height:1.42;
     }
 
+    .mobile-journey-dots{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:8px;
+      margin-top:4px;
+    }
+
+    .mobile-journey-dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      border:none;
+      padding:0;
+      background:#c8d1df;
+      opacity:.95;
+      cursor:pointer;
+      transition:transform .16s ease, background .16s ease, opacity .16s ease;
+    }
+
+    .mobile-journey-dot.active{
+      width:18px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      opacity:1;
+      transform:translateY(-.5px);
+    }
+
     .mobile-journey-switcher{
       display:flex;
       gap:6px;
@@ -1804,9 +1745,16 @@
     }
 
     .mobile-program-chip.short{
-      background:#edf7f0;
+      background:var(--short-accent-soft);
       color:#1f6d45;
-      border:1px solid rgba(61,224,151,.38);
+      border:1px solid rgba(47,167,104,.34);
+      box-shadow:0 6px 14px rgba(47,167,104,.12);
+    }
+
+    .mobile-program-chip.short.active{
+      color:#fff;
+      background:linear-gradient(135deg,var(--short-accent),var(--short-accent-2));
+      box-shadow:0 10px 20px rgba(47,167,104,.28);
     }
 
     .mobile-program-active-card{
@@ -5162,11 +5110,11 @@
 
     .programs-short-block{
       align-self:stretch;
-      background:linear-gradient(135deg,#f9fbff,#fff);
-      border:1px solid var(--line);
+      background:linear-gradient(135deg,#f7fff9,#f1fbf5);
+      border:1px solid rgba(47,167,104,.2);
       border-radius:20px;
       padding:12px;
-      box-shadow:var(--shadow);
+      box-shadow:0 14px 30px rgba(47,167,104,.08);
       display:flex;
       flex-direction:column;
       gap:8px;
@@ -5191,6 +5139,18 @@
       overflow:hidden;
     }
 
+    .short-shifts-teaser{
+      margin:0;
+      font-size:12px;
+      line-height:1.4;
+      font-weight:700;
+      color:#1f6d45;
+      background:#eaf9f0;
+      border:1px solid rgba(47,167,104,.26);
+      border-radius:10px;
+      padding:8px 10px;
+    }
+
     .short-shifts-list{
       display:grid;
       gap:6px;
@@ -5200,7 +5160,8 @@
       padding:8px 9px;
       border-radius:12px;
       box-shadow:none;
-      background:#fff;
+      background:linear-gradient(135deg,#ffffff,#f3fcf7);
+      border:1px solid rgba(47,167,104,.2);
     }
 
     .short-shift-head{
@@ -5225,9 +5186,9 @@
       border-radius:999px;
       font-size:9px;
       font-weight:700;
-      color:#56627a;
-      background:#eef3fb;
-      border:1px solid #dde6f3;
+      color:#1f6d45;
+      background:#e9f8ef;
+      border:1px solid rgba(47,167,104,.32);
       white-space:nowrap;
     }
 
@@ -5294,10 +5255,15 @@
       min-width:28px;
       height:28px;
       font-size:13px;
-      background:#eef3fb;
-      border-color:#dde6f3;
-      color:#56627a;
+      background:#e7f7ee;
+      border-color:rgba(47,167,104,.36);
+      color:#1f6d45;
       box-shadow:none;
+    }
+
+    .short-shift-card .shift-calendar-btn{
+      border-color:rgba(47,167,104,.35);
+      background:#f4fcf7;
     }
 
     .mini-card p{
@@ -10394,6 +10360,7 @@
             <div class="programs-layout">
               <div class="grid-3 programs-main-grid" id="shiftCardsGrid"></div>
               <aside class="programs-short-block">
+                <p class="short-shifts-teaser">Подходит тем, кто едет впервые, сомневается или хочет мягко попробовать формат лагеря.</p>
                 <div class="short-shifts-list" id="shortShiftCards"></div>
               </aside>
             </div>
@@ -11002,9 +10969,9 @@
         id:'shift-3',
         title:'3',
         label:'Смена 3',
-        dates:'16 июня — 23 июня',
-        start:'2025-06-16',
-        end:'2025-06-23',
+        dates:'3 августа — 15 августа',
+        start:'2025-08-03',
+        end:'2025-08-15',
         price:78000,
         left:5,
         occupied:40,
@@ -11016,9 +10983,9 @@
         id:'shift-4',
         title:'4',
         label:'Смена 4',
-        dates:'10 июня — 23 июня',
-        start:'2025-06-10',
-        end:'2025-06-23',
+        dates:'17 августа — 26 августа',
+        start:'2025-08-17',
+        end:'2025-08-26',
         price:114000,
         left:14,
         occupied:31,
@@ -11250,7 +11217,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.264 (mobile-menu-top-and-popups-centered)';
+    const BUILD_VERSION_LABEL = 'v0.0.267 (august-shifts-3-and-4-restored)';
     const QUALITY_SCORE_MODEL = Object.freeze({
       scale: '0..10',
       debtScale: '0 best .. 10 worst',
@@ -15159,14 +15126,12 @@
               <strong>${formatPrice(s.price)}</strong>
               <span>
                 ${s.dates} · ${shiftDaysLabel(s)}
-                <small class="short-shift-subline">Короткий формат</small>
                 <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.sourceId || s.id}" aria-label="Календарь ${s.title}">
                   <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
                   <span class="shift-calendar-btn-label">календарь</span>
                 </button>
               </span>
             </div>
-            <p class="short-shift-note">Подходит тем, кто едет впервые, сомневается или хочет мягко попробовать формат лагеря.</p>
             ${showExtendedDescription
               ? `
                 <p><strong>Коротко:</strong> ${s.desc || ''}</p>
@@ -15678,6 +15643,17 @@
             </div>
             <p>${activeStep.text}</p>
           </article>
+          <div class="mobile-journey-dots" aria-label="Навигация по шагам">
+            ${steps.map((_, index) => `
+              <button
+                type="button"
+                class="mobile-journey-dot ${index === safeStep ? 'active' : ''}"
+                data-action="mobile-journey-step"
+                data-step-index="${index}"
+                aria-label="Шаг ${index + 1}"
+              ></button>
+            `).join('')}
+          </div>
         `;
         journeyTargets.forEach((target) => {
           target.innerHTML = journeyHtml;
@@ -15721,7 +15697,7 @@
               <strong>${selectorLabel(activeShift)}</strong>
               <div class="mobile-program-dates">
                 ${activeShift.dates}
-                ${activeShift.isShort ? `<span class="mobile-program-dates-sub">Короткий формат · ${shiftDaysLabel(activeShift)}</span>` : ''}
+                ${activeShift.isShort ? `<span class="mobile-program-dates-sub">${shiftDaysLabel(activeShift)}</span>` : ''}
               </div>
               <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
               <div class="mobile-program-meta">
@@ -15730,7 +15706,6 @@
                 ${activeShift.isShort ? '<span class="mobile-program-short-badge">Короткая смена</span>' : ''}
               </div>
               <p>${activeShift.isShort ? (activeShift.desc || '') : getShiftDisplayDescription(activeShift)}</p>
-              ${activeShift.isShort ? '<p class="mobile-program-short-note">Подходит тем, кто едет впервые, сомневается или хочет мягко попробовать формат лагеря.</p>' : ''}
               ${ageHint ? `<div class="mobile-program-hint">${ageHint}</div>` : ''}
               <button
                 class="shift-calendar-btn"
