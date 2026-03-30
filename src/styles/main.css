@@ -10028,6 +10028,130 @@
         display:flex;
       }
 
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info{
+        overflow:hidden;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus{
+        min-height:0;
+        height:auto;
+        padding:8px 10px;
+        gap:5px;
+        overflow:hidden;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__dates{
+        font-size:clamp(17px,5.2vw,22px);
+        line-height:1.03;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__meta{
+        font-size:11px;
+        line-height:1.2;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__meta-price{
+        display:inline-block;
+        font-size:clamp(15px,4.2vw,18px);
+        font-weight:800;
+        line-height:1;
+        letter-spacing:-.01em;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__desc-title{
+        display:none;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__desc{
+        margin-top:2px;
+        font-size:12px;
+        line-height:1.24;
+        display:-webkit-box;
+        -webkit-box-orient:vertical;
+        -webkit-line-clamp:4;
+        overflow:hidden;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__context{
+        margin-top:0;
+        font-size:12px;
+        line-height:1.26;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-main,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-main.cta-main-compact{
+        min-height:44px;
+        border-radius:12px;
+        padding:8px 11px;
+        font-size:15px;
+        line-height:1.1;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktopBookingTitle{
+        margin-top:6px;
+        margin-bottom:4px;
+        font-size:clamp(14px,4.4vw,17px);
+        line-height:1.08;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+
+      /* Stage-3 mobile safety override: works both in mobile-preview-active and direct mobile runtime */
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info{
+        overflow:hidden;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus{
+        min-height:0;
+        height:auto;
+        padding:8px 10px;
+        gap:5px;
+        overflow:hidden;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__dates{
+        font-size:clamp(17px,5.2vw,22px);
+        line-height:1.03;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__meta{
+        font-size:11px;
+        line-height:1.2;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__meta-price,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__meta-price{
+        display:inline-block;
+        font-size:clamp(15px,4.2vw,18px);
+        font-weight:800;
+        line-height:1;
+        letter-spacing:-.01em;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__desc-title,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__desc-title{
+        display:none;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__desc,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__desc{
+        margin-top:2px;
+        font-size:12px;
+        line-height:1.24;
+        display:-webkit-box;
+        -webkit-box-orient:vertical;
+        -webkit-line-clamp:4;
+        overflow:hidden;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__context,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__context{
+        margin-top:0;
+        font-size:12px;
+        line-height:1.26;
+      }
+
       .hero-tag{
         margin-bottom:14px;
       }

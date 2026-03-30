@@ -3198,7 +3198,7 @@
         if(info) info.innerHTML = `
           <div class="booking-shift-focus">
             <div class="booking-shift-focus__dates">${shift.dates}</div>
-            <div class="booking-shift-focus__meta">${shiftDaysLabel(shift)} · ${formatPrice(shift.price)} · осталось ${shift.left} мест</div>
+            <div class="booking-shift-focus__meta">${shiftDaysLabel(shift)} · <span class="booking-shift-focus__meta-price">${formatPrice(shift.price)}</span> · осталось ${shift.left} мест</div>
             <div class="booking-shift-focus__desc-title">Описание смены</div>
             <p class="booking-shift-focus__desc">${shiftLongDescription}</p>
           </div>
