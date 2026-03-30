@@ -1,0 +1,8 @@
+metric,before,after,delta
+sourceLinesOfCode,6058,6058,0
+stylesheetSizeBytes,125583,125591,8
+rulesTotal,806,806,0
+selectorsTotal,1152,1152,0
+selectorsUnique,715,715,0
+importantTotal,17,17,0
+mediaQueriesTotal,2,2,0

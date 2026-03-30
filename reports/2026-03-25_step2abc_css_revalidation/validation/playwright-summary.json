@@ -1,0 +1,5 @@
+{
+  "status": "not_run",
+  "reason": "Smoke automation intentionally skipped in this pass to avoid non-CSS runtime perturbation; local fast-track manual verification remains primary",
+  "recommendation": "Run smoke in dedicated pass after CSS-only batch is approved"
+}

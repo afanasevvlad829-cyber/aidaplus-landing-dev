@@ -1,0 +1,20 @@
+{
+  "before": {
+    "sourceLinesOfCode": 6058,
+    "stylesheetSizeBytes": 125583,
+    "rulesTotal": 806,
+    "selectorsTotal": 1152,
+    "selectorsUnique": 715,
+    "importantTotal": 17,
+    "mediaQueriesTotal": 2
+  },
+  "after": {
+    "sourceLinesOfCode": 6058,
+    "stylesheetSizeBytes": 125591,
+    "rulesTotal": 806,
+    "selectorsTotal": 1152,
+    "selectorsUnique": 715,
+    "importantTotal": 17,
+    "mediaQueriesTotal": 2
+  }
+}

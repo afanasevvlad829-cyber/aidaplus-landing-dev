@@ -1,0 +1,197 @@
+# root_cleanup_2026-03-25 — Quick Index (Top 100 important paths)
+
+Generated automatically for fast navigation. Heavy media/screenshot noise is intentionally deprioritized.
+
+Total files scanned: 7717
+Indexed files: 100
+
+## Priority paths
+
+01. `patch_hero_seam_cleanup/diff/changes.diff`
+02. `patch_p0_version_sync_live_prep/diff/changes.diff`
+03. `patch_replace_video_sources/diff/changes.diff`
+04. `patch_step1_p0_cleanup_validation/diff/changes.diff`
+05. `patch_step2a_css_safe_cleanup/diff/changes.diff`
+06. `patch_step2b_css_hotzones_cleanup/diff/changes.diff`
+07. `patch_step2c_low_risk_css_cleanup/diff/changes.diff`
+08. `audit_artifact_inventory_cleanup_report/report.md`
+09. `audit_code_structure_security_report/report.md`
+10. `audit_target_architecture_and_css_review/report.md`
+11. `audit_version_divergence_report/report.md`
+12. `patch_hero_seam_cleanup/report.md`
+13. `patch_p0_version_sync_live_prep/report.md`
+14. `patch_replace_video_sources/report.md`
+15. `patch_step1_p0_cleanup_validation/report.md`
+16. `patch_step2a_css_safe_cleanup/report.md`
+17. `patch_step2b_css_hotzones_cleanup/report.md`
+18. `patch_step2c_low_risk_css_cleanup/report.md`
+19. `report.md`
+20. `release/patch_big_bundle_report/report.md`
+21. `release/patch_big_bundle_report/diff/changes.diff`
+22. `audit/playwright/README.md`
+23. `ui-sandbox/README.md`
+24. `ui-sandbox/current-design-flow/README.md`
+25. `ui-sandbox/order-flow-copy/README.md`
+26. `ui-sandbox/prototype-export-20260322_134231/README_RELEASE_RU.md`
+27. `release/clean-site-20260322_115728 2/README_RELEASE_RU.md`
+28. `release/clean-site-20260322_115728/README_RELEASE_RU.md`
+29. `release/exports/README_HANDOFF.md`
+30. `audit_target_architecture_and_css_review/validation/playwright-summary.json`
+31. `patch_step2a_css_safe_cleanup/validation/playwright-summary.json`
+32. `patch_step2b_css_hotzones_cleanup/validation/playwright-summary.json`
+33. `patch_step2c_low_risk_css_cleanup/validation/playwright-summary.json`
+34. `audit_target_architecture_and_css_review/validation/csstree-findings.csv`
+35. `audit_target_architecture_and_css_review/validation/project-wallace-metrics.csv`
+36. `audit_target_architecture_and_css_review/validation/purgecss-estimate.csv`
+37. `audit_target_architecture_and_css_review/validation/stylelint-findings.csv`
+38. `patch_step1_p0_cleanup_validation/validation/csstree-findings.csv`
+39. `patch_step1_p0_cleanup_validation/validation/project-wallace-metrics.csv`
+40. `patch_step1_p0_cleanup_validation/validation/purgecss-estimate.csv`
+41. `patch_step1_p0_cleanup_validation/validation/stylelint-findings.csv`
+42. `patch_step2a_css_safe_cleanup/validation/csstree-findings.csv`
+43. `patch_step2a_css_safe_cleanup/validation/project-wallace-before-after.csv`
+44. `patch_step2a_css_safe_cleanup/validation/purgecss-estimate.csv`
+45. `patch_step2a_css_safe_cleanup/validation/stylelint-before-after.csv`
+46. `patch_step2b_css_hotzones_cleanup/validation/csstree-findings.csv`
+47. `patch_step2b_css_hotzones_cleanup/validation/project-wallace-before-after.csv`
+48. `patch_step2b_css_hotzones_cleanup/validation/purgecss-estimate.csv`
+49. `patch_step2b_css_hotzones_cleanup/validation/stylelint-before-after.csv`
+50. `patch_step2b_css_hotzones_cleanup/validation/stylelint-targeted-rules.csv`
+51. `patch_step2c_low_risk_css_cleanup/validation/csstree-findings.csv`
+52. `patch_step2c_low_risk_css_cleanup/validation/project-wallace-before-after.csv`
+53. `patch_step2c_low_risk_css_cleanup/validation/purgecss-estimate.csv`
+54. `patch_step2c_low_risk_css_cleanup/validation/stylelint-before-after.csv`
+55. `audit_artifact_inventory_cleanup_report/tables/artifact-classification.csv`
+56. `audit_artifact_inventory_cleanup_report/tables/artifact-inventory.csv`
+57. `audit_artifact_inventory_cleanup_report/tables/commit-now.csv`
+58. `audit_artifact_inventory_cleanup_report/tables/gitignore-recommendations.csv`
+59. `audit_code_structure_security_report/tables/architecture-risks.csv`
+60. `audit_code_structure_security_report/tables/build-pipeline-risks.csv`
+61. `audit_code_structure_security_report/tables/cleanup-plan.csv`
+62. `audit_code_structure_security_report/tables/css-risks.csv`
+63. `audit_code_structure_security_report/tables/js-state-risks.csv`
+64. `audit_code_structure_security_report/tables/security-findings.csv`
+65. `audit_target_architecture_and_css_review/tables/behavior-divergence.csv`
+66. `audit_target_architecture_and_css_review/tables/block-structure-audit.csv`
+67. `audit_target_architecture_and_css_review/tables/css-risks.csv`
+68. `audit_target_architecture_and_css_review/tables/cut-content.csv`
+69. `audit_target_architecture_and_css_review/tables/data-source-audit.csv`
+70. `audit_target_architecture_and_css_review/tables/js-state-risks.csv`
+71. `audit_target_architecture_and_css_review/tables/security-build-risks.csv`
+72. `audit_target_architecture_and_css_review/tables/sync-plan.csv`
+73. `audit_target_architecture_and_css_review/tables/unique-elements.csv`
+74. `audit_version_divergence_report/tables/content-divergence.csv`
+75. `audit_version_divergence_report/tables/cut-content.csv`
+76. `audit_version_divergence_report/tables/logic-divergence.csv`
+77. `audit_version_divergence_report/tables/sync-plan.csv`
+78. `audit_target_architecture_and_css_review/validation/raw-csstree-cli.txt`
+79. `audit_target_architecture_and_css_review/validation/raw-csstree.txt`
+80. `audit_target_architecture_and_css_review/validation/raw-purgecss.txt`
+81. `audit_target_architecture_and_css_review/validation/raw-stylelint.txt`
+82. `audit_target_architecture_and_css_review/validation/raw-wallace.txt`
+83. `patch_step1_p0_cleanup_validation/validation/raw-csstree-cli.txt`
+84. `patch_step1_p0_cleanup_validation/validation/raw-csstree.txt`
+85. `patch_step1_p0_cleanup_validation/validation/raw-purgecss.txt`
+86. `patch_step1_p0_cleanup_validation/validation/raw-stylelint.txt`
+87. `patch_step1_p0_cleanup_validation/validation/raw-wallace.txt`
+88. `patch_step2a_css_safe_cleanup/validation/raw-csstree.txt`
+89. `patch_step2a_css_safe_cleanup/validation/raw-stylelint-after.txt`
+90. `patch_step2a_css_safe_cleanup/validation/raw-stylelint-before.txt`
+91. `patch_step2a_css_safe_cleanup/validation/raw-wallace.txt`
+92. `patch_step2b_css_hotzones_cleanup/validation/raw-csstree.txt`
+93. `patch_step2b_css_hotzones_cleanup/validation/raw-stylelint-after.txt`
+94. `patch_step2b_css_hotzones_cleanup/validation/raw-stylelint-before.txt`
+95. `patch_step2b_css_hotzones_cleanup/validation/raw-wallace.txt`
+96. `patch_step2c_low_risk_css_cleanup/validation/raw-csstree.txt`
+97. `patch_step2c_low_risk_css_cleanup/validation/raw-stylelint-after.txt`
+98. `patch_step2c_low_risk_css_cleanup/validation/raw-stylelint-before.txt`
+99. `patch_step2c_low_risk_css_cleanup/validation/raw-wallace.txt`
+100. `audit_target_architecture_and_css_review/validation/tools/package-lock.json`
+
+## Grouped quick pointers
+
+- `patch_step2c_low_risk_css_cleanup/`
+  - `patch_step2c_low_risk_css_cleanup/diff/changes.diff`
+  - `patch_step2c_low_risk_css_cleanup/report.md`
+  - `patch_step2c_low_risk_css_cleanup/validation/playwright-summary.json`
+  - `patch_step2c_low_risk_css_cleanup/validation/csstree-findings.csv`
+  - `patch_step2c_low_risk_css_cleanup/validation/project-wallace-before-after.csv`
+  - `patch_step2c_low_risk_css_cleanup/validation/purgecss-estimate.csv`
+  - `patch_step2c_low_risk_css_cleanup/validation/stylelint-before-after.csv`
+  - `patch_step2c_low_risk_css_cleanup/validation/raw-csstree.txt`
+- `patch_step2b_css_hotzones_cleanup/`
+  - `patch_step2b_css_hotzones_cleanup/diff/changes.diff`
+  - `patch_step2b_css_hotzones_cleanup/report.md`
+  - `patch_step2b_css_hotzones_cleanup/validation/playwright-summary.json`
+  - `patch_step2b_css_hotzones_cleanup/validation/csstree-findings.csv`
+  - `patch_step2b_css_hotzones_cleanup/validation/project-wallace-before-after.csv`
+  - `patch_step2b_css_hotzones_cleanup/validation/purgecss-estimate.csv`
+  - `patch_step2b_css_hotzones_cleanup/validation/stylelint-before-after.csv`
+  - `patch_step2b_css_hotzones_cleanup/validation/stylelint-targeted-rules.csv`
+- `patch_step2a_css_safe_cleanup/`
+  - `patch_step2a_css_safe_cleanup/diff/changes.diff`
+  - `patch_step2a_css_safe_cleanup/report.md`
+  - `patch_step2a_css_safe_cleanup/validation/playwright-summary.json`
+  - `patch_step2a_css_safe_cleanup/validation/csstree-findings.csv`
+  - `patch_step2a_css_safe_cleanup/validation/project-wallace-before-after.csv`
+  - `patch_step2a_css_safe_cleanup/validation/purgecss-estimate.csv`
+  - `patch_step2a_css_safe_cleanup/validation/stylelint-before-after.csv`
+  - `patch_step2a_css_safe_cleanup/validation/raw-csstree.txt`
+- `patch_step1_p0_cleanup_validation/`
+  - `patch_step1_p0_cleanup_validation/diff/changes.diff`
+  - `patch_step1_p0_cleanup_validation/report.md`
+  - `patch_step1_p0_cleanup_validation/validation/csstree-findings.csv`
+  - `patch_step1_p0_cleanup_validation/validation/project-wallace-metrics.csv`
+  - `patch_step1_p0_cleanup_validation/validation/purgecss-estimate.csv`
+  - `patch_step1_p0_cleanup_validation/validation/stylelint-findings.csv`
+  - `patch_step1_p0_cleanup_validation/validation/raw-csstree-cli.txt`
+  - `patch_step1_p0_cleanup_validation/validation/raw-csstree.txt`
+- `audit_target_architecture_and_css_review/`
+  - `audit_target_architecture_and_css_review/report.md`
+  - `audit_target_architecture_and_css_review/validation/playwright-summary.json`
+  - `audit_target_architecture_and_css_review/validation/csstree-findings.csv`
+  - `audit_target_architecture_and_css_review/validation/project-wallace-metrics.csv`
+  - `audit_target_architecture_and_css_review/validation/purgecss-estimate.csv`
+  - `audit_target_architecture_and_css_review/validation/stylelint-findings.csv`
+  - `audit_target_architecture_and_css_review/tables/behavior-divergence.csv`
+  - `audit_target_architecture_and_css_review/tables/block-structure-audit.csv`
+- `audit_code_structure_security_report/`
+  - `audit_code_structure_security_report/report.md`
+  - `audit_code_structure_security_report/tables/architecture-risks.csv`
+  - `audit_code_structure_security_report/tables/build-pipeline-risks.csv`
+  - `audit_code_structure_security_report/tables/cleanup-plan.csv`
+  - `audit_code_structure_security_report/tables/css-risks.csv`
+  - `audit_code_structure_security_report/tables/js-state-risks.csv`
+  - `audit_code_structure_security_report/tables/security-findings.csv`
+- `audit_version_divergence_report/`
+  - `audit_version_divergence_report/report.md`
+  - `audit_version_divergence_report/tables/content-divergence.csv`
+  - `audit_version_divergence_report/tables/cut-content.csv`
+  - `audit_version_divergence_report/tables/logic-divergence.csv`
+  - `audit_version_divergence_report/tables/sync-plan.csv`
+- `audit_artifact_inventory_cleanup_report/`
+  - `audit_artifact_inventory_cleanup_report/report.md`
+  - `audit_artifact_inventory_cleanup_report/tables/artifact-classification.csv`
+  - `audit_artifact_inventory_cleanup_report/tables/artifact-inventory.csv`
+  - `audit_artifact_inventory_cleanup_report/tables/commit-now.csv`
+  - `audit_artifact_inventory_cleanup_report/tables/gitignore-recommendations.csv`
+- `patch_p0_version_sync_live_prep/`
+  - `patch_p0_version_sync_live_prep/diff/changes.diff`
+  - `patch_p0_version_sync_live_prep/report.md`
+- `patch_hero_seam_cleanup/`
+  - `patch_hero_seam_cleanup/diff/changes.diff`
+  - `patch_hero_seam_cleanup/report.md`
+- `patch_replace_video_sources/`
+  - `patch_replace_video_sources/diff/changes.diff`
+  - `patch_replace_video_sources/report.md`
+- `release/`
+  - `release/patch_big_bundle_report/report.md`
+  - `release/patch_big_bundle_report/diff/changes.diff`
+  - `release/clean-site-20260322_115728 2/README_RELEASE_RU.md`
+  - `release/clean-site-20260322_115728/README_RELEASE_RU.md`
+  - `release/exports/README_HANDOFF.md`
+- `ui-sandbox/`
+  - `ui-sandbox/README.md`
+  - `ui-sandbox/current-design-flow/README.md`
+  - `ui-sandbox/order-flow-copy/README.md`
+  - `ui-sandbox/prototype-export-20260322_134231/README_RELEASE_RU.md`

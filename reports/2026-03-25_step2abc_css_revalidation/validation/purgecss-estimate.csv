@@ -1,0 +1,5 @@
+metric,value
+source_css_bytes,125591
+purgecss_output_bytes,125492
+bytes_removed_estimate,99
+removed_percent_estimate,0.079

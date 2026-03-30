@@ -2,14 +2,22 @@
 *.log
 node_modules/
 .env
+.runtime/
+tools/__pycache__/
+__pycache__/
 
 # Generated
 build/
 dist/legal.html
 diff/*.diff
+gpt.html
+build/gpt.html
 
 # Artifact bundles
 *.zip
+*.tgz
+*.tar
+*.tar.gz
 
 # Visual debug artifacts
 screens/debug/
@@ -24,3 +32,10 @@ archive/non-runtime/
 # Local heavy external snapshot folders (kept on disk, not in git)
 archive/local_wip/2026-03-25/external-workdirs/*
 !archive/local_wip/2026-03-25/external-workdirs/README.md
+
+# Safety filters for heavy binaries / reports
+reports/**
+*.mp4
+*.webp
+*.jpeg
+*.jpg
