@@ -21,6 +21,8 @@ base_path = root / "index.html"
 out_path = root / "dist" / "index.html"
 cdn_bundle_path = root / "dist" / "cdn" / "app.bundle.js"
 cdn_repo_bundle_path = root / "cdn" / "app.bundle.js"
+cdn_tilda_bundle_path = root / "dist" / "cdn" / "app.tilda.js"
+cdn_tilda_repo_bundle_path = root / "cdn" / "app.tilda.js"
 css_path = root / "src" / "styles" / "main.css"
 script_paths = [
     root / "src" / "scripts" / "main.js",
@@ -274,6 +276,50 @@ cdn_bundle_path.write_text(bundle, encoding="utf-8")
 print(f"Built: {cdn_bundle_path}")
 cdn_repo_bundle_path.write_text(bundle, encoding="utf-8")
 print(f"Built: {cdn_repo_bundle_path}")
+
+body_match = re.search(r"<body[^>]*>(?P<body>.*)</body>", out, flags=re.I | re.S)
+body_html = body_match.group("body") if body_match else ""
+body_html = re.sub(r"<script\\b[^>]*>.*?</script>\\s*", "", body_html, flags=re.I | re.S)
+body_for_cdn = rewrite_assets_to_cdn(body_html, cdn_asset_base)
+
+tilda_bundle = (
+    "(function(){\n"
+    "  var mount = function(){\n"
+    "    var root = document.getElementById('aidaplus-root');\n"
+    "    if (!root) {\n"
+    "      root = document.createElement('div');\n"
+    "      root.id = 'aidaplus-root';\n"
+    "      document.body.appendChild(root);\n"
+    "    }\n"
+    "    if (root.dataset.aidaplusMounted === '1') return;\n"
+    "    root.dataset.aidaplusMounted = '1';\n"
+    f"    root.innerHTML = {json.dumps(body_for_cdn, ensure_ascii=False)};\n"
+    "    var cssId = 'ac-cdn-main-css';\n"
+    "    if (!document.getElementById(cssId)) {\n"
+    "      var style = document.createElement('style');\n"
+    "      style.id = cssId;\n"
+    f"      style.textContent = {json.dumps(css_for_cdn, ensure_ascii=False)};\n"
+    "      document.head.appendChild(style);\n"
+    "    }\n"
+    "    var jsId = 'ac-cdn-main-js';\n"
+    "    if (!document.getElementById(jsId)) {\n"
+    "      var script = document.createElement('script');\n"
+    "      script.id = jsId;\n"
+    f"      script.textContent = {json.dumps(js_for_cdn, ensure_ascii=False)};\n"
+    "      document.body.appendChild(script);\n"
+    "    }\n"
+    "  };\n"
+    "  if (document.readyState === 'loading') {\n"
+    "    document.addEventListener('DOMContentLoaded', mount);\n"
+    "  } else {\n"
+    "    mount();\n"
+    "  }\n"
+    "})();\n"
+)
+cdn_tilda_bundle_path.write_text(tilda_bundle, encoding="utf-8")
+print(f"Built: {cdn_tilda_bundle_path}")
+cdn_tilda_repo_bundle_path.write_text(tilda_bundle, encoding="utf-8")
+print(f"Built: {cdn_tilda_repo_bundle_path}")
 if cdn_asset_base:
     print(f"CDN asset base: {cdn_asset_base}")
 else:
@@ -286,6 +332,8 @@ cp dist/index.html dist/index.htm
 echo "Artifacts updated: dist/index.htm"
 echo "CDN artifact: dist/cdn/app.bundle.js"
 echo "CDN artifact for GitHub/jsDelivr: cdn/app.bundle.js"
+echo "Tilda single-script artifact: dist/cdn/app.tilda.js"
+echo "Tilda single-script artifact for GitHub/jsDelivr: cdn/app.tilda.js"
 
 if [ -f src/pages/legal.html ]; then
   cp src/pages/legal.html dist/legal.html
