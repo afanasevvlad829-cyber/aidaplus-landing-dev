@@ -2293,14 +2293,13 @@
         return {ok:false, delivered:false, fallback:true, reason:'telegram_not_configured'};
       }
       try {
+        const formBody = new URLSearchParams();
+        formBody.set('chat_id', chatId);
+        formBody.set('text', formatTelegramMessage(eventName, payload));
+        formBody.set('disable_web_page_preview', 'true');
         const tgResponse = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
           method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({
-            chat_id: chatId,
-            text: formatTelegramMessage(eventName, payload),
-            disable_web_page_preview: true
-          }),
+          body: formBody,
           keepalive:true
         });
         if(tgResponse.ok){
@@ -2625,19 +2624,23 @@
       const consentCheck = document.getElementById('consentCheck');
       if(consentCheck) consentCheck.checked = false;
       setPhoneError(false);
-      ['desktopInlineLeadHost','mobileInlineLeadHost','offerInlineLeadHost'].forEach((id) => {
-        const host = document.getElementById(id);
+      ['desktop', 'mobile'].forEach((viewKey) => {
+        const hostId = getLeadScopeConfig(getBookingViewConfig(viewKey).inlineLeadScope)?.hostId;
+        const host = hostId ? document.getElementById(hostId) : null;
         if(host){
           host.classList.add('hidden');
           host.innerHTML = '';
         }
       });
-      ['desktopBookingHintInline', 'mobileBookingHintInline', 'desktopInlineHint', 'mobileInlineHint'].forEach((id) => {
-        const el = document.getElementById(id);
-        if(!el) return;
-        el.textContent = '';
-        el.classList.remove('visible');
-        delete el.dataset.requiredStep;
+      ['desktop', 'mobile'].forEach((viewKey) => {
+        const cfg = getBookingViewConfig(viewKey);
+        [cfg.inlineHintId, cfg.guidedInlineHintId].forEach((id) => {
+          const el = document.getElementById(id);
+          if(!el) return;
+          el.textContent = '';
+          el.classList.remove('visible');
+          delete el.dataset.requiredStep;
+        });
       });
       document.querySelectorAll('[data-age].active').forEach((el) => el.classList.remove('active'));
       document.querySelectorAll('#serviceMenu [data-nav]').forEach((el) => el.classList.remove('active'));
@@ -2757,7 +2760,80 @@
     }
 
     const BOOKING_STAGE_CLASSES = ['booking-stage-1', 'booking-stage-2', 'booking-stage-3', 'booking-stage-4'];
+    const BOOKING_VIEWS = Object.freeze({
+      desktop: Object.freeze({
+        key: 'desktop',
+        cardId: 'desktop-booking-card',
+        shiftOptionsId: 'desktop-shift-options',
+        infoId: 'desktop-booking-info',
+        titleId: 'desktopBookingTitle',
+        leadId: 'desktopBookingLead',
+        startBtnId: 'desktopStartBtn',
+        hintId: 'desktopBookingHint',
+        stepsId: 'desktopBookingSteps',
+        inlineHintId: 'desktopBookingHintInline',
+        shiftListId: 'desktopShiftList',
+        ctaWrapId: 'desktopCtaWrap',
+        ageTabsId: 'desktopAgeTabs',
+        summaryChipsId: 'desktopBookingSummaryChips',
+        ageChipId: 'desktopAgeChip',
+        ageChipTextId: 'desktopAgeChipText',
+        shiftChipId: 'desktopShiftChip',
+        shiftChipTextId: 'desktopShiftChipText',
+        guidedInlineHintId: 'desktopInlineHint',
+        inlineLeadScope: 'booking-desktop'
+      }),
+      mobile: Object.freeze({
+        key: 'mobile',
+        cardId: 'mobileBookingCard',
+        shiftOptionsId: 'mobileShiftOptions',
+        infoId: 'mobile-booking-info',
+        titleId: 'mobileBookingTitle',
+        leadId: 'mobileBookingLead',
+        startBtnId: 'mobileStartBtn',
+        hintId: 'mobileBookingHint',
+        stepsId: 'mobileBookingSteps',
+        inlineHintId: 'mobileBookingHintInline',
+        shiftListId: 'mobileShiftList',
+        ctaWrapId: 'mobileCtaWrap',
+        ageTabsId: 'mobileAgeTabs',
+        summaryChipsId: 'mobileBookingSummaryChips',
+        ageChipId: 'mobileAgeChip',
+        ageChipTextId: 'mobileAgeChipText',
+        shiftChipId: 'mobileShiftChip',
+        shiftChipTextId: 'mobileShiftChipText',
+        guidedInlineHintId: 'mobileInlineHint',
+        inlineLeadScope: 'booking-mobile'
+      })
+    });
     let bookingCardMinHeightFrame = 0;
+
+    function getBookingViewConfig(viewKey){
+      if(viewKey === 'mobile') return BOOKING_VIEWS.mobile;
+      return BOOKING_VIEWS.desktop;
+    }
+
+    function getRenderableBookingViewKeys(){
+      if(USE_DESKTOP_BASE_FOR_MOBILE){
+        return ['desktop'];
+      }
+      return ['desktop', 'mobile'];
+    }
+
+    function getActiveBookingViewKeys(){
+      if(state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE){
+        return ['mobile'];
+      }
+      return ['desktop'];
+    }
+
+    function getPrimaryBookingViewKey(){
+      return getActiveBookingViewKeys()[0] || 'desktop';
+    }
+
+    function getPrimaryBookingViewConfig(){
+      return getBookingViewConfig(getPrimaryBookingViewKey());
+    }
 
     function syncBookingCardMinHeight(){
       const card = document.getElementById('desktop-booking-card');
@@ -2799,8 +2875,8 @@
     }
 
     function applyBookingStageClass(prefix){
-      const cardId = prefix === 'desktop' ? 'desktop-booking-card' : `${prefix}BookingCard`;
-      const card = document.getElementById(cardId);
+      const cfg = getBookingViewConfig(prefix);
+      const card = document.getElementById(cfg.cardId);
       if(!card) return;
       const stage = getBookingStage();
       card.classList.remove('booking-stage-1', 'booking-stage-2', 'booking-stage-3', 'booking-stage-4');
@@ -2835,17 +2911,18 @@
     }
 
     function renderGuidedState(prefix){
+      const cfg = getBookingViewConfig(prefix);
       syncGuidedState();
       const stage = getBookingStage();
-      const shiftList = document.getElementById(`${prefix}ShiftList`);
-      const ctaWrap = document.getElementById(`${prefix}CtaWrap`);
-      const ageTabs = document.getElementById(`${prefix}AgeTabs`);
-      const chipHost = document.getElementById(`${prefix}BookingSummaryChips`);
-      const ageChip = document.getElementById(`${prefix}AgeChip`);
-      const ageChipText = document.getElementById(`${prefix}AgeChipText`);
-      const shiftChip = document.getElementById(`${prefix}ShiftChip`);
-      const shiftChipText = document.getElementById(`${prefix}ShiftChipText`);
-      const bookingCard = document.getElementById(prefix === 'desktop' ? 'desktop-booking-card' : `${prefix}BookingCard`);
+      const shiftList = document.getElementById(cfg.shiftListId);
+      const ctaWrap = document.getElementById(cfg.ctaWrapId);
+      const ageTabs = document.getElementById(cfg.ageTabsId);
+      const chipHost = document.getElementById(cfg.summaryChipsId);
+      const ageChip = document.getElementById(cfg.ageChipId);
+      const ageChipText = document.getElementById(cfg.ageChipTextId);
+      const shiftChip = document.getElementById(cfg.shiftChipId);
+      const shiftChipText = document.getElementById(cfg.shiftChipTextId);
+      const bookingCard = document.getElementById(cfg.cardId);
       const stepThree = bookingCard?.querySelector('.booking-step-3');
       const allShiftsBtn = bookingCard?.querySelector('.booking-all-shifts-link');
 
@@ -2867,7 +2944,7 @@
           allShiftsBtn.classList.add('hidden');
         }
         if(isMobile){
-          document.getElementById('mobileBookingCard')?.classList.remove('has-mobile-summary-chips');
+          document.getElementById(cfg.cardId)?.classList.remove('has-mobile-summary-chips');
         }
         return;
       }
@@ -2899,7 +2976,7 @@
         stepThree.classList.add('is-force-hidden');
       }
       if(isMobile){
-        document.getElementById('mobileBookingCard')?.classList.remove('has-mobile-summary-chips');
+        document.getElementById(cfg.cardId)?.classList.remove('has-mobile-summary-chips');
       }
 
       if(!hasSelectedAge()){
@@ -2924,7 +3001,7 @@
       if(shift){
         shiftChipText.textContent = shift.dates;
         if(isMobile){
-          document.getElementById('mobileBookingCard')?.classList.add('has-mobile-summary-chips');
+          document.getElementById(cfg.cardId)?.classList.add('has-mobile-summary-chips');
         }
         shiftChip.classList.add('visible');
         shiftList.classList.add('collapsed');
@@ -2950,11 +3027,9 @@
     }
 
     function nudgeUserToNextStep(message = 'Сначала завершите предыдущий шаг.'){
-      const prefixes = (state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE)
-        ? ['mobile']
-        : ['desktop'];
-      prefixes.forEach((prefix) => {
-        const inlineHint = document.getElementById(`${prefix}InlineHint`);
+      getActiveBookingViewKeys().forEach((prefix) => {
+        const cfg = getBookingViewConfig(prefix);
+        const inlineHint = document.getElementById(cfg.guidedInlineHintId);
         if(inlineHint){
           inlineHint.textContent = message;
           inlineHint.classList.add('visible');
@@ -2966,28 +3041,26 @@
         }
 
         if(!hasSelectedAge()){
-          pulseNode(document.getElementById(`${prefix}AgeTabs`));
+          pulseNode(document.getElementById(cfg.ageTabsId));
           return;
         }
 
         if(!state.shiftId){
-          pulseNode(document.getElementById(`${prefix}ShiftList`));
+          pulseNode(document.getElementById(cfg.shiftListId));
           return;
         }
 
         if(state.offerStage === 0){
-          pulseNode(document.getElementById(`${prefix}CtaWrap`));
+          pulseNode(document.getElementById(cfg.ctaWrapId));
         }
       });
     }
 
     function showHint(message, requiredStep = ''){
-      const prefixes = (state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE)
-        ? ['mobile']
-        : ['desktop'];
-      prefixes.forEach((prefix) => {
-        const el = document.getElementById(`${prefix}BookingHintInline`);
-        const baseHint = document.getElementById(`${prefix}BookingHint`);
+      getActiveBookingViewKeys().forEach((prefix) => {
+        const cfg = getBookingViewConfig(prefix);
+        const el = document.getElementById(cfg.inlineHintId);
+        const baseHint = document.getElementById(cfg.hintId);
         if(!el) return;
         window.clearTimeout(el.__hideTimer);
         el.textContent = message;
@@ -3007,9 +3080,10 @@
     }
 
     function syncBookingHints(){
-      ['desktop', 'mobile'].forEach((prefix) => {
-        const el = document.getElementById(`${prefix}BookingHintInline`);
-        const baseHint = document.getElementById(`${prefix}BookingHint`);
+      getRenderableBookingViewKeys().forEach((prefix) => {
+        const cfg = getBookingViewConfig(prefix);
+        const el = document.getElementById(cfg.inlineHintId);
+        const baseHint = document.getElementById(cfg.hintId);
         if(!el) return;
         const requiredStep = el.dataset.requiredStep || '';
         if(!requiredStep){
@@ -3131,15 +3205,16 @@
       });
     }
 
-    function renderBookingInfo(targetInfoId, targetTitleId, targetLeadId, targetBtnId, targetHintId){
-      const info = document.getElementById(targetInfoId);
-      const title = document.getElementById(targetTitleId);
-      const lead = document.getElementById(targetLeadId);
-      const btn = document.getElementById(targetBtnId);
-      const hint = document.getElementById(targetHintId);
+    function renderBookingInfo(viewCfg){
+      if(!viewCfg) return;
+      const info = document.getElementById(viewCfg.infoId);
+      const title = document.getElementById(viewCfg.titleId);
+      const lead = document.getElementById(viewCfg.leadId);
+      const btn = document.getElementById(viewCfg.startBtnId);
+      const hint = document.getElementById(viewCfg.hintId);
       const shift = getSelectedShift();
       const action = getPrimaryActionState();
-      const isDesktopPanel = targetInfoId === 'desktop-booking-info';
+      const isDesktopPanel = viewCfg.key === 'desktop';
       const isPriceCheckStage = !!shift && state.offerStage === 0;
       const actionText = getResolvedPrimaryActionText(action, shift);
 
@@ -3295,45 +3370,22 @@
 
     function renderBookingPanels(){
       syncGuidedState();
-      const useLegacyMobileRuntime = !USE_DESKTOP_BASE_FOR_MOBILE;
-      renderBookingInfo(
-        'desktop-booking-info',
-        'desktopBookingTitle',
-        'desktopBookingLead',
-        'desktopStartBtn',
-        'desktopBookingHint'
-      );
-
-      if(useLegacyMobileRuntime){
-        renderBookingInfo(
-          'mobile-booking-info',
-          'mobileBookingTitle',
-          'mobileBookingLead',
-          'mobileStartBtn',
-          'mobileBookingHint'
-        );
-      }
-
-      renderSteps('desktopBookingSteps');
-      if(useLegacyMobileRuntime){
-        renderSteps('mobileBookingSteps');
-      }
-      renderGuidedState('desktop');
-      if(useLegacyMobileRuntime){
-        renderGuidedState('mobile');
-      }
-      applyBookingStageClass('desktop');
-      if(useLegacyMobileRuntime){
-        applyBookingStageClass('mobile');
-      }
+      const renderableViews = getRenderableBookingViewKeys();
+      renderableViews.forEach((viewKey) => {
+        const cfg = getBookingViewConfig(viewKey);
+        renderBookingInfo(cfg);
+        renderSteps(cfg.stepsId);
+        renderGuidedState(cfg.key);
+        applyBookingStageClass(cfg.key);
+      });
       syncBookingHints();
       updateBookingScarcityUi();
       scheduleBookingCardMinHeightSync();
       if(getBookingStage() < 4){
-        closeInlineLead('booking-desktop');
-        if(useLegacyMobileRuntime){
-          closeInlineLead('booking-mobile');
-        }
+        renderableViews.forEach((viewKey) => {
+          const cfg = getBookingViewConfig(viewKey);
+          closeInlineLead(cfg.inlineLeadScope);
+        });
       }
     }
 
@@ -3584,7 +3636,7 @@
         return;
       }
 
-      const ageWrap = e.target.closest('#desktopAgeTabs');
+      const ageWrap = e.target.closest(`#${BOOKING_VIEWS.desktop.ageTabsId}, #${BOOKING_VIEWS.mobile.ageTabsId}`);
       const ageBtn = e.target.closest('button');
       if(ageWrap && ageBtn){
         const ageText = (ageBtn.textContent || '').trim();
@@ -3593,7 +3645,7 @@
         }
       }
 
-      const shiftWrap = e.target.closest('#desktop-shift-options');
+      const shiftWrap = e.target.closest(`#${BOOKING_VIEWS.desktop.shiftOptionsId}, #${BOOKING_VIEWS.mobile.shiftOptionsId}`);
       const shiftBtn = e.target.closest('button, .shift-option, .slot-card');
       if(shiftWrap && shiftBtn){
         const shiftText = (shiftBtn.textContent || '').trim().split('\n')[0];
@@ -3617,7 +3669,7 @@
         }
       }
 
-      const shiftDisabled = e.target.closest('#desktopShiftList.disabled');
+      const shiftDisabled = e.target.closest(`#${BOOKING_VIEWS.desktop.shiftListId}.disabled, #${BOOKING_VIEWS.mobile.shiftListId}.disabled`);
       if(shiftDisabled){
         showHint('Сначала выберите возраст ребёнка', 'age');
         nudgeUserToNextStep('Сначала выберите возраст ребёнка — тогда откроется список смен.');
@@ -3717,14 +3769,22 @@
       return String(targetId || '').startsWith('mobile') ? 'mobile' : 'desktop';
     }
 
+    function resolveShiftOptionsTargetId(viewKey){
+      const cfg = getBookingViewConfig(viewKey);
+      return cfg.shiftOptionsId;
+    }
+
+    function renderShiftOptionsForRenderableViews(){
+      getRenderableBookingViewKeys().forEach((viewKey) => {
+        renderShiftOptions(resolveShiftOptionsTargetId(viewKey));
+      });
+    }
+
     function toggleShiftOptionPanel(viewKey, panelType, shiftId){
       const safeView = viewKey === 'mobile' ? 'mobile' : 'desktop';
       const current = shiftOptionPanels[safeView]?.[panelType] || null;
       shiftOptionPanels[safeView][panelType] = current === shiftId ? null : shiftId;
-      if(safeView === 'mobile' && USE_DESKTOP_BASE_FOR_MOBILE){
-        return;
-      }
-      renderShiftOptions(safeView === 'mobile' ? 'mobileShiftOptions' : 'desktop-shift-options');
+      renderShiftOptions(resolveShiftOptionsTargetId(safeView));
     }
 
     function clearShiftOptionPanels(){
@@ -5328,10 +5388,7 @@
 
     function renderAll(){
       applyMobileTemplatesToDesktopSections();
-      renderShiftOptions('desktop-shift-options');
-      if(!USE_DESKTOP_BASE_FOR_MOBILE){
-        renderShiftOptions('mobileShiftOptions');
-      }
+      renderShiftOptionsForRenderableViews();
       renderBookingPanels();
       renderGuidedState('desktop');
       if(!USE_DESKTOP_BASE_FOR_MOBILE){
@@ -5703,9 +5760,7 @@
     }
 
     function isBookingPrimaryCtaVisibleInViewport(){
-      const cardSelector = (state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE)
-        ? '#mobileBookingCard'
-        : '#desktop-booking-card';
+      const cardSelector = `#${getPrimaryBookingViewConfig().cardId}`;
       const card = document.querySelector(cardSelector);
       if(!card || card.classList.contains('hidden')) return false;
       const ctaButtons = Array.from(card.querySelectorAll('[data-action="primary-cta"]'));
@@ -6734,10 +6789,7 @@
     initHero();
     loadVideoMetaCache();
 
-    renderShiftOptions('desktop-shift-options');
-    if(!USE_DESKTOP_BASE_FOR_MOBILE){
-      renderShiftOptions('mobileShiftOptions');
-    }
+    renderShiftOptionsForRenderableViews();
     renderShiftCards();
     renderMediaSections();
     renderSummary();
