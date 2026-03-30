@@ -2687,6 +2687,12 @@
       display:none;
     }
 
+    .booking-stage-2 .booking-step-1,
+    .booking-stage-3 .booking-step-1,
+    .booking-stage-4 .booking-step-1{
+      display:none;
+    }
+
     .booking-stage-3 .booking-step-2,
     .booking-stage-4 .booking-step-2{
       display:none;
@@ -4763,18 +4769,29 @@
     }
 
     #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus{
-      padding:14px 13px;
-      gap:8px;
+      padding:10px 11px;
+      gap:6px;
+      min-height:100%;
     }
 
     #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__dates{
-      font-size:clamp(24px,6.2vw,30px);
-      line-height:1.06;
+      font-size:clamp(18px,5vw,24px);
+      line-height:1.05;
     }
 
     #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__meta{
-      font-size:13px;
-      line-height:1.3;
+      font-size:12px;
+      line-height:1.2;
+    }
+
+    #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__desc{
+      margin-top:2px;
+      font-size:12px;
+      line-height:1.24;
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:8;
+      overflow:hidden;
     }
 
     #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__desc{
@@ -9700,9 +9717,9 @@
 
       #desktopView.mobile-preview-active #desktop-booking-card{
         margin-top:8px;
-        height:auto;
-        min-height:var(--booking-card-min-height, 0);
-        max-height:none;
+        height:var(--booking-card-fixed-height, var(--booking-card-min-height, 420px));
+        min-height:var(--booking-card-fixed-height, var(--booking-card-min-height, 420px));
+        max-height:var(--booking-card-fixed-height, var(--booking-card-min-height, 420px));
         display:flex;
         flex-direction:column;
       }
@@ -9735,39 +9752,209 @@
         font-size:12px;
       }
 
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs{
-        grid-template-columns:repeat(3,minmax(0,1fr));
+      #desktopView.mobile-preview-active .hero-shell{
+        min-height:100svh;
+        padding-bottom:0;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card{
+        width:78%;
+        max-width:78%;
+        margin-left:auto;
+        margin-right:0;
+      }
+
+      #desktopView.mobile-preview-active .hero-booking-card{
+        transform:translateY(var(--booking-card-mobile-overlap, 0px));
+        margin-bottom:calc(var(--booking-card-mobile-overlap, 0px) * -1);
+      }
+
+      #desktopView.mobile-preview-active .hero-booking-card:hover{
+        transform:translateY(var(--booking-card-mobile-overlap, 0px));
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card > .booking-step-block{
+        flex:1 1 auto;
+        min-height:0;
+        height:100%;
+        overflow:hidden;
+        overscroll-behavior:none;
+        display:flex;
+        flex-direction:column;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card .booking-step-block{
+        align-content:stretch;
+      }
+
+      #mobileBookingCard{
+        height:var(--booking-card-fixed-height, var(--booking-card-min-height, 420px));
+        min-height:var(--booking-card-fixed-height, var(--booking-card-min-height, 420px));
+        max-height:var(--booking-card-fixed-height, var(--booking-card-min-height, 420px));
+        display:flex;
+        flex-direction:column;
+      }
+
+      #mobileBookingCard > .booking-step-block{
+        flex:1 1 auto;
+        min-height:0;
+        height:100%;
+        overflow:hidden;
+        overscroll-behavior:none;
+        display:flex;
+        flex-direction:column;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-2,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-3,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .booking-step-1,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .booking-step-3,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-1,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-2,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-1,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-2,
+      #mobileBookingCard.booking-stage-1 .booking-step-2,
+      #mobileBookingCard.booking-stage-1 .booking-step-3,
+      #mobileBookingCard.booking-stage-2 .booking-step-1,
+      #mobileBookingCard.booking-stage-2 .booking-step-3,
+      #mobileBookingCard.booking-stage-3 .booking-step-1,
+      #mobileBookingCard.booking-stage-3 .booking-step-2,
+      #mobileBookingCard.booking-stage-4 .booking-step-1,
+      #mobileBookingCard.booking-stage-4 .booking-step-2{
+        display:none !important;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-bullets span{
+        font-size:9px;
+        line-height:1.15;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option{
+        padding:9px 10px;
+        min-height:0;
+        height:100%;
+        display:grid;
+        grid-template-rows:auto auto auto;
         gap:4px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head > strong{
+        font-size:clamp(13px,4vw,16px);
+        line-height:1.04;
+        letter-spacing:-.015em;
+        display:-webkit-box;
+        -webkit-box-orient:vertical;
+        -webkit-line-clamp:2;
+        overflow:hidden;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small{
+        min-width:0;
+        max-width:100%;
+        font-size:10px;
+        line-height:1.12;
+        margin-top:1px;
+        text-align:left;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:8px;
+        flex-wrap:nowrap;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price{
+        font-size:clamp(12px,3.5vw,14px);
+        line-height:1.08;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-seats{
+        font-size:10px;
+        line-height:1.08;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-tagline{
+        font-size:clamp(10px,2.95vw,11.5px);
+        line-height:1.18;
+        display:-webkit-box;
+        -webkit-box-orient:vertical;
+        -webkit-line-clamp:2;
+        overflow:hidden;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:2px;
+        align-items:start;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-actions{
+        display:grid;
+        grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+        align-items:center;
+        gap:6px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-action{
+        min-height:28px;
+        padding:0 8px;
+        font-size:11px;
+        border-radius:9px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-select-indicator{
+        display:none;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1{
+        justify-content:space-between;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs{
+        flex:1 1 auto;
+        min-height:0;
+        display:grid;
+        grid-template-columns:1fr;
+        grid-template-rows:repeat(3,minmax(0,1fr));
+        gap:6px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab{
-        height:auto;
-        min-height:82px;
-        padding:6px 8px 7px;
-        border-radius:12px;
+        min-height:0;
+        height:100%;
+        padding:8px 10px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-main{
-        display:flex;
-        flex-direction:column;
-        justify-content:flex-start;
-        gap:5px;
-        min-height:0;
+        display:grid;
+        grid-template-rows:auto auto auto;
+        align-content:center;
+        justify-content:center;
+        height:100%;
+        gap:7px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-head{
-        gap:4px;
+        gap:5px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-range{
-        font-size:12px;
-        line-height:1.1;
+        font-size:clamp(16px,4.5vw,19px);
+        line-height:1.04;
         white-space:nowrap;
       }
 
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs .age-tab:nth-child(2) .age-tab-range{
+        margin-left:auto;
+        text-align:right;
+      }
+
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-track{
-        font-size:10px;
-        line-height:1.12;
+        font-size:clamp(12px,3.4vw,14px);
+        line-height:1.14;
         display:-webkit-box;
         -webkit-box-orient:vertical;
         -webkit-line-clamp:2;
@@ -9775,10 +9962,9 @@
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-anchor{
-        display:block;
-        font-size:10px;
-        line-height:1.14;
-        margin:0;
+        font-size:clamp(11.5px,3.15vw,13px);
+        line-height:1.16;
+        margin-top:0;
         display:-webkit-box;
         -webkit-box-orient:vertical;
         -webkit-line-clamp:2;
@@ -9789,93 +9975,70 @@
         display:none;
       }
 
-      #desktopView.mobile-preview-active .hero-shell{
-        min-height:auto;
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .booking-step-2{
+        justify-content:space-between;
+        gap:4px;
       }
 
-      #desktopView.mobile-preview-active #desktop-booking-card{
-        width:68%;
-        max-width:68%;
-        margin-left:auto;
-        margin-right:0;
-      }
-
-      #desktopView.mobile-preview-active #desktop-booking-card > .booking-step-block{
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options{
         flex:1 1 auto;
         min-height:0;
-        overflow:auto;
-        overscroll-behavior:contain;
+        display:grid;
+        grid-template-columns:1fr;
+        grid-template-rows:repeat(2,minmax(0,1fr));
+        gap:6px;
       }
 
-      #desktopView.mobile-preview-active #desktop-booking-card > .booking-step-block::-webkit-scrollbar{
-        width:5px;
-      }
-
-      #desktopView.mobile-preview-active #desktop-booking-card > .booking-step-block::-webkit-scrollbar-thumb{
-        background:rgba(255,255,255,.2);
-        border-radius:999px;
-      }
-
-      #mobileBookingCard{
-        height:auto;
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .shift-list{
+        flex:1 1 auto;
         min-height:0;
-        max-height:none;
+        overflow:hidden;
         display:flex;
         flex-direction:column;
       }
 
-      #mobileBookingCard > .booking-step-block{
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .booking-all-shifts-link{
+        margin-top:4px;
+        min-height:30px;
+        padding:7px 10px;
+        font-size:13px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .selected-shift-chip{
+        margin-bottom:4px;
+        padding:7px 10px;
+        border-radius:12px;
+        min-height:34px;
+        gap:6px;
+        font-size:11px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .selected-shift-chip button{
+        width:20px;
+        height:20px;
+        border-radius:7px;
+        font-size:12px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktopBookingTitle{
+        font-size:clamp(16px,5.7vw,20px);
+        line-height:1.06;
+        margin-bottom:3px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-3,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-3{
+        justify-content:flex-start;
+        flex:0 0 auto;
+        height:auto;
+        min-height:0;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info{
         flex:1 1 auto;
         min-height:0;
-        overflow:auto;
-        overscroll-behavior:contain;
-      }
-
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-bullets span{
-        font-size:9px;
-        line-height:1.15;
-      }
-
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option{
-        padding:12px;
-        min-height:148px;
-      }
-
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head > strong{
-        font-size:clamp(18px,4.8vw,22px);
-        line-height:1.08;
-        letter-spacing:-.015em;
-        display:-webkit-box;
-        -webkit-box-orient:vertical;
-        -webkit-line-clamp:2;
-        overflow:hidden;
-      }
-
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small{
-        min-width:0;
-        flex:0 1 auto;
-        max-width:44%;
-        font-size:11px;
-        line-height:1.2;
-      }
-
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price{
-        font-size:clamp(14px,3.9vw,16px);
-        line-height:1.08;
-      }
-
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-seats{
-        font-size:11px;
-        line-height:1.16;
-      }
-
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-tagline{
-        font-size:clamp(12px,3.4vw,14px);
-        line-height:1.32;
-        display:-webkit-box;
-        -webkit-box-orient:vertical;
-        -webkit-line-clamp:3;
-        overflow:hidden;
+        display:flex;
       }
 
       .hero-tag{
@@ -10059,6 +10222,7 @@
         min-height:220px;
       }
     }
+
 </style>
 <!-- AC_BUILD_STYLE_END -->
 </head>
@@ -10944,10 +11108,11 @@
         dates:'30 мая — 8 июня',
         start:'2025-05-30',
         end:'2025-06-08',
-        price:94800,
+        price:74900,
         left:12,
         occupied:33,
         badge:'HIT',
+        isShort:false,
         desc:'Стартовая смена с мягким входом в программирование и знакомством с ИИ.',
         fullDesc:'Мягкий вход в программирование через понятные и быстрые результаты. Для 7–9 лет: ребёнок работает в Scratch и Minecraft, делает первые проекты и понимает базовую логику через игру. Для 10–12 лет: начинает писать код на Python, создаёт простые программы и видит, как работает логика внутри. Для 13–14 лет: пробует первые проекты с элементами AI, знакомится с нейросетями и делает первые осмысленные шаги в сторону современных технологий. Главное — ребёнок не слушает, а делает и получает результат уже в первые дни.'
       },
@@ -10955,41 +11120,76 @@
         id:'shift-2',
         title:'2',
         label:'Смена 2',
-        dates:'10 июня — 16 июня',
+        dates:'10 июня — 23 июня',
         start:'2025-06-10',
-        end:'2025-06-16',
-        price:57600,
+        end:'2025-06-23',
+        price:95000,
         left:8,
         occupied:37,
         badge:'',
-        desc:'Полное погружение: проекты, логика и первые шаги в нейросетях.',
+        isShort:false,
+        desc:'Полная смена на 13 дней: проекты, логика и первые шаги в нейросетях.',
         fullDesc:'Смена, где ребёнок начинает реально понимать, как всё устроено. Для 7–9 лет: усложняются проекты, появляется больше самостоятельности, ребёнок начинает осознанно собирать логику. Для 10–12 лет: работает с Python, делает игры и ботов, начинает понимать структуру кода и алгоритмы. Для 13–14 лет: разбирается с более сложными задачами, пробует нейросети и делает проекты с логикой «как в реальных IT-продуктах». Результат — не просто интерес, а ощущение «я могу и понимаю».'
       },
       {
-        id:'shift-3',
-        title:'3',
-        label:'Смена 3',
-        dates:'3 августа — 15 августа',
-        start:'2025-08-03',
-        end:'2025-08-15',
-        price:78000,
-        left:5,
-        occupied:40,
+        id:'shift-2-1',
+        title:'2.1',
+        label:'Смена 2.1',
+        dates:'10 июня — 16 июня',
+        start:'2025-06-10',
+        end:'2025-06-16',
+        price:48000,
+        left:8,
+        occupied:37,
         badge:'',
-        desc:'Летняя смена с акцентом на проекты, командную работу и уверенность.',
-        fullDesc:'Баланс между программированием, командной работой и лагерной жизнью. Для 7–9 лет: ребёнок продолжает делать проекты, но больше взаимодействует с другими, учится работать в команде. Для 10–12 лет: объединяет навыки кода и общения, участвует в командных задачах и учится доводить идеи до результата. Для 13–14 лет: работает над более цельными проектами, распределяет роли в команде и понимает, как создаются продукты. Смена даёт уверенность: ребёнок не просто учится, а начинает действовать.'
+        isShort:true,
+        sourceId:'shift-2',
+        desc:'Короткая смена 7 дней: быстрый вход в программу и проектную работу.',
+        fullDesc:''
+      },
+      {
+        id:'shift-2-2',
+        title:'2.2',
+        label:'Смена 2.2',
+        dates:'16 июня — 23 июня',
+        start:'2025-06-16',
+        end:'2025-06-23',
+        price:65000,
+        left:8,
+        occupied:37,
+        badge:'',
+        isShort:true,
+        sourceId:'shift-2',
+        desc:'Короткая смена 7 дней: интенсив по проектам и закрепление навыков.',
+        fullDesc:''
       },
       {
         id:'shift-4',
         title:'4',
         label:'Смена 4',
+        dates:'3 августа — 15 августа',
+        start:'2025-08-03',
+        end:'2025-08-15',
+        price:89400,
+        left:5,
+        occupied:40,
+        badge:'',
+        isShort:false,
+        desc:'Летняя смена с акцентом на проекты, командную работу и уверенность.',
+        fullDesc:'Баланс между программированием, командной работой и лагерной жизнью. Для 7–9 лет: ребёнок продолжает делать проекты, но больше взаимодействует с другими, учится работать в команде. Для 10–12 лет: объединяет навыки кода и общения, участвует в командных задачах и учится доводить идеи до результата. Для 13–14 лет: работает над более цельными проектами, распределяет роли в команде и понимает, как создаются продукты. Смена даёт уверенность: ребёнок не просто учится, а начинает действовать.'
+      },
+      {
+        id:'shift-5',
+        title:'5',
+        label:'Смена 5',
         dates:'17 августа — 26 августа',
         start:'2025-08-17',
         end:'2025-08-26',
-        price:114000,
+        price:69600,
         left:14,
         occupied:31,
         badge:'',
+        isShort:false,
         desc:'Финальная смена: закрепление навыков и защита мини-проектов.',
         fullDesc:'Смена, где ребёнок собирает всё, чему научился, в понятный результат. Для 7–9 лет: заканчивает проекты и начинает объяснять, как они работают. Для 10–12 лет: делает законченные программы и может показать, что именно он сделал и как. Для 13–14 лет: создаёт более сложные проекты, оформляет их и презентует как готовый продукт. Итог — ребёнок уезжает не с эмоциями, а с реальным результатом и пониманием своего прогресса.'
       }
@@ -11217,7 +11417,14 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.267 (august-shifts-3-and-4-restored)';
+    const BUILD_VERSION_LABEL = 'v0.0.279 (mobile-stage2-compact-chip-title-button-rhythm)';
+    const ARCHITECTURE_POLICY = Object.freeze({
+      id: 'desktop-source-mobile-presentation',
+      version: '2026-03-30',
+      desktopSourceOfTruth: true,
+      sharedStatePipeline: true,
+      mobileUsesDesktopTemplates: true
+    });
     const QUALITY_SCORE_MODEL = Object.freeze({
       scale: '0..10',
       debtScale: '0 best .. 10 worst',
@@ -11259,6 +11466,7 @@
     window.__AIDACAMP_RUNTIME = AIDACAMP_RUNTIME;
     AIDACAMP_RUNTIME.quality = AIDACAMP_RUNTIME.quality || {};
     AIDACAMP_RUNTIME.quality.scoreModel = QUALITY_SCORE_MODEL;
+    AIDACAMP_RUNTIME.architecture = ARCHITECTURE_POLICY;
     AIDACAMP_RUNTIME.quality.scoreSnapshot = Object.freeze({
       version: BUILD_VERSION_LABEL,
       css: 8.8,
@@ -11505,15 +11713,49 @@
       };
     }
 
+    function runUnifiedArchitectureGuardrail(){
+      const issues = [];
+      if(!USE_DESKTOP_BASE_FOR_MOBILE){
+        issues.push('USE_DESKTOP_BASE_FOR_MOBILE=false');
+      }
+      const desktopView = document.getElementById('desktopView');
+      if(!desktopView){
+        issues.push('desktopView_missing');
+      }
+      const mobileView = document.getElementById('mobileView');
+      if(mobileView && state.previewView === 'mobile'){
+        const styles = window.getComputedStyle(mobileView);
+        const legacyVisible = styles.display !== 'none' && styles.visibility !== 'hidden' && !mobileView.hidden;
+        if(legacyVisible){
+          issues.push('legacy_mobile_view_visible');
+        }
+      }
+      const ok = issues.length === 0;
+      if(!ok){
+        console.error('[GUARDRAIL] Unified architecture check failed', { issues });
+        trackOnce('guardrail_architecture_failed', {
+          issues: issues.slice(0, 4).join(',')
+        });
+      }
+      return {
+        ok,
+        policy: ARCHITECTURE_POLICY.id,
+        policyVersion: ARCHITECTURE_POLICY.version,
+        issues
+      };
+    }
+
     function runGuardrails(){
       const version = runBuildVersionGuardrail();
       const smoke = runRuntimeSmokeGuardrail();
+      const architecture = runUnifiedArchitectureGuardrail();
       const summary = {
         timestamp: new Date().toISOString(),
         build: BUILD_VERSION_LABEL,
         version,
         smoke,
-        ok: !!(version.ok && smoke.ok)
+        architecture,
+        ok: !!(version.ok && smoke.ok && architecture.ok)
       };
       AIDACAMP_RUNTIME.quality.guardrails = summary;
       return summary;
@@ -13565,24 +13807,27 @@
       const shouldStabilize = window.matchMedia('(max-width: 820px)').matches && state.previewView === 'mobile';
       if(!shouldStabilize){
         card.style.removeProperty('--booking-card-min-height');
+        card.style.removeProperty('--booking-card-fixed-height');
+        card.style.removeProperty('--booking-card-mobile-overlap');
         return;
       }
 
-      const currentStage = BOOKING_STAGE_CLASSES.find((name) => card.classList.contains(name)) || `booking-stage-${getBookingStage()}`;
-      card.style.setProperty('--booking-card-min-height', '0px');
+      const heroShell = card.closest('.hero-shell');
+      const cardRect = card.getBoundingClientRect();
+      const heroRect = heroShell ? heroShell.getBoundingClientRect() : null;
+      const viewportHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
+      const preferred = Math.floor(viewportHeight * 0.72);
+      let availableByHero = Math.floor(viewportHeight * 0.68);
 
-      let maxHeight = 0;
-      BOOKING_STAGE_CLASSES.forEach((stageName) => {
-        card.classList.remove(...BOOKING_STAGE_CLASSES);
-        card.classList.add(stageName);
-        maxHeight = Math.max(maxHeight, Math.ceil(card.scrollHeight));
-      });
-
-      card.classList.remove(...BOOKING_STAGE_CLASSES);
-      card.classList.add(currentStage);
-      if(maxHeight > 0){
-        card.style.setProperty('--booking-card-min-height', `${maxHeight}px`);
+      if(heroRect && Number.isFinite(heroRect.bottom) && Number.isFinite(cardRect.top)){
+        availableByHero = Math.floor(heroRect.bottom - cardRect.top + Math.max(8, viewportHeight * 0.025));
       }
+
+      const runtimeHeight = Math.max(450, Math.min(700, Math.min(preferred, availableByHero)));
+      const mobileOverlap = Math.max(16, Math.min(40, Math.round(runtimeHeight * 0.072)));
+      card.style.setProperty('--booking-card-fixed-height', `${runtimeHeight}px`);
+      card.style.setProperty('--booking-card-min-height', `${runtimeHeight}px`);
+      card.style.setProperty('--booking-card-mobile-overlap', `${mobileOverlap}px`);
     }
 
     function scheduleBookingCardMinHeightSync(){
@@ -14489,11 +14734,11 @@
       if(!shift) return '';
       const map = {
         'shift-1':'10 дней',
-        'shift-2':'7 дней',
-        'shift-3':'8 дней',
-        'shift-4':'14 дней',
-        'shift-5':'13 дней',
-        'shift-6':'10 дней'
+        'shift-2':'13 дней',
+        'shift-2-1':'7 дней',
+        'shift-2-2':'7 дней',
+        'shift-4':'13 дней',
+        'shift-5':'10 дней'
       };
       return map[shift.id] || '';
     }
@@ -15079,17 +15324,8 @@
       const grid = document.getElementById('shiftCardsGrid');
       if(!grid) return;
       const shortGrid = document.getElementById('shortShiftCards');
-      const shortShiftIds = new Set(['shift-2','shift-3']);
-      const mainShifts = shifts;
-      const shortShifts = shifts
-        .filter((s) => shortShiftIds.has(s.id))
-        .map((s) => ({
-          ...s,
-          id: `${s.id}-short`,
-          sourceId: s.id,
-          isShort:true,
-          title: s.id === 'shift-2' ? '2.1' : '2.2'
-        }));
+      const mainShifts = shifts.filter((s) => !s.isShort);
+      const shortShifts = shifts.filter((s) => !!s.isShort);
       const showExtendedDescription = hasSelectedAge();
 
       grid.innerHTML = mainShifts.map(s => `
@@ -15661,16 +15897,7 @@
       }
 
       if (programsTargets.length) {
-        const shortProgramShifts = shifts
-          .filter((s) => s.id === 'shift-2' || s.id === 'shift-3')
-          .map((s) => ({
-            ...s,
-            id: `${s.id}-short`,
-            title: s.id === 'shift-2' ? '2.1' : '2.2',
-            isShort:true,
-            sourceId:s.id
-          }));
-        const mainShifts = [...shifts.slice(), ...shortProgramShifts];
+        const mainShifts = shifts.slice();
         if(mainShifts.length){
           const activeShiftId = mainShifts.some((shift) => shift.id === state.mobileProgramShiftId)
             ? state.mobileProgramShiftId
@@ -17454,6 +17681,7 @@
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();
     }
+
 </script>
 <!-- AC_BUILD_SCRIPT_END -->
 </body>

@@ -318,7 +318,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.274 (mobile-stage1-age-cards-typography-fill)';
+    const BUILD_VERSION_LABEL = 'v0.0.279 (mobile-stage2-compact-chip-title-button-rhythm)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
@@ -2717,15 +2717,15 @@
       const cardRect = card.getBoundingClientRect();
       const heroRect = heroShell ? heroShell.getBoundingClientRect() : null;
       const viewportHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
-      const preferred = Math.floor(viewportHeight * 0.62);
-      let availableByHero = Math.floor(viewportHeight * 0.60);
+      const preferred = Math.floor(viewportHeight * 0.72);
+      let availableByHero = Math.floor(viewportHeight * 0.68);
 
       if(heroRect && Number.isFinite(heroRect.bottom) && Number.isFinite(cardRect.top)){
         availableByHero = Math.floor(heroRect.bottom - cardRect.top + Math.max(8, viewportHeight * 0.025));
       }
 
-      const runtimeHeight = Math.max(420, Math.min(620, Math.min(preferred, availableByHero)));
-      const mobileOverlap = Math.max(14, Math.min(34, Math.round(runtimeHeight * 0.065)));
+      const runtimeHeight = Math.max(450, Math.min(700, Math.min(preferred, availableByHero)));
+      const mobileOverlap = Math.max(16, Math.min(40, Math.round(runtimeHeight * 0.072)));
       card.style.setProperty('--booking-card-fixed-height', `${runtimeHeight}px`);
       card.style.setProperty('--booking-card-min-height', `${runtimeHeight}px`);
       card.style.setProperty('--booking-card-mobile-overlap', `${mobileOverlap}px`);
