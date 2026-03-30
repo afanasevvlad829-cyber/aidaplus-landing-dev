@@ -9,7 +9,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AiDaCamp — Prototype Full Logic</title>
   <link rel="icon" type="image/svg+xml" href="/assets/icons/robot.svg" />
-  <!-- AC_BUILD_STYLE_START -->
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- AC_BUILD_STYLE_START -->
 <style id="ac-build-main-css">
 :root{
       --bg:#eef1f6;
@@ -31,16 +85,18 @@
       --z-overlay:100;
       --z-debug:120;
       --hero-min-height-desktop:584px;
-      --hero-overlap-bottom:-48px;
+      --hero-overlap-bottom:-32px;
       --hero-overlap-y:0px;
       --hero-overlap-y-hover:0px;
       --desktop-booking-height:620px;
       --section-modal-compact-width:clamp(360px,42vw,620px);
       --section-modal-compact-max-height:min(58vh,560px);
       --booking-flow-modal-width:clamp(320px,92vw,420px);
-      --booking-flow-modal-height:clamp(360px,66vh,460px);
+      --booking-flow-modal-height:clamp(414px,76vh,529px);
       --booking-flow-modal-width-mobile:clamp(300px,94vw,380px);
-      --booking-flow-modal-height-mobile:clamp(340px,68vh,420px);
+      --booking-flow-modal-height-mobile:clamp(391px,78vh,483px);
+      --booking-cta-font-size:16px;
+      --booking-cta-min-height:44px;
       --video-card-gap:12px;
       --team-carousel-card-min:260px;
       --team-carousel-card-max:300px;
@@ -290,10 +346,8 @@
       padding:20px 22px 20px;
       min-height:var(--hero-min-height-desktop);
       background:
-        linear-gradient(180deg, rgba(11,16,24,.20) 0%, rgba(11,16,24,.74) 100%),
-        radial-gradient(circle at 18% 18%, rgba(255,138,0,.18), transparent 28%),
-        radial-gradient(circle at 88% 12%, rgba(113,166,255,.16), transparent 26%),
-        linear-gradient(180deg, rgba(19,28,41,.10) 0%, rgba(19,28,41,.32) 62%, rgba(19,28,41,.58) 100%);
+        radial-gradient(circle at 18% 18%, rgba(255,138,0,.12), transparent 28%),
+        radial-gradient(circle at 88% 12%, rgba(113,166,255,.10), transparent 26%);
       color:#fff;
       overflow:visible;
       z-index:3;
@@ -307,7 +361,7 @@
       inset:0;
       z-index:0;
       background-size:cover;
-      background-position:center;
+      background-position:58% center;
       transition:opacity 1.15s ease-in-out;
       transform:none;
       opacity:0;
@@ -361,6 +415,12 @@
       will-change:auto;
     }
 
+    #mobileView .hero-bg,
+    .mobile-hero .hero-bg,
+    #desktopView.mobile-preview-active .hero-bg{
+      background-position:82% center;
+    }
+
     .hero-shell::before{
       content:"";
       position:absolute;
@@ -378,7 +438,7 @@
     }
 
     .hero-shell::after{
-      content:"";
+      content:none;
       position:absolute;
       inset:0;
       background:
@@ -605,6 +665,18 @@
       gap:6px;
       align-items:start;
       min-width:0;
+      position:relative;
+      z-index:1;
+      padding:2px 6px 3px;
+      border-radius:12px;
+      isolation:isolate;
+      background:transparent !important;
+      box-shadow:none !important;
+      backdrop-filter:none !important;
+    }
+
+    .hero-brand-meta::before{
+      content:none;
     }
 
     .hero-brand-label{
@@ -612,12 +684,13 @@
       align-items:center;
       justify-content:center;
       text-align:center;
-      font-size:12px;
+      font-size:16px;
       font-weight:700;
       color:rgba(255,255,255,.86);
       line-height:1.3;
       letter-spacing:.01em;
-      text-shadow:0 1px 2px rgba(0,0,0,.24);
+      background:transparent !important;
+      text-shadow:0 1px 2px rgba(0,0,0,.55), 0 0 10px rgba(0,0,0,.37);
     }
 
     .hero-mode-inline{
@@ -682,12 +755,13 @@
       display:block;
       margin-top:2px;
       padding-left:6px;
-      font-size:12px;
+      font-size:20px;
       font-weight:700;
       letter-spacing:.01em;
       line-height:1.25;
-      color:rgba(255,193,128,.92);
-      text-shadow:0 1px 2px rgba(0,0,0,.3);
+      color:rgba(255,138,0,.98);
+      background:transparent !important;
+      text-shadow:0 1px 2px rgba(0,0,0,.34), 0 0 12px rgba(0,0,0,.24), 0 0 2px rgba(255,138,0,.18);
     }
 
     .brand{
@@ -705,8 +779,8 @@
     }
 
     .desktop-brand-mark{
-      width:90px;
-      height:90px;
+      width:68px;
+      height:68px;
       padding:0;
       justify-content:center;
       border-radius:0;
@@ -754,7 +828,26 @@
       align-self:flex-start;
     }
 
+    .hero-menu-wrap::before{
+      content:"";
+      position:absolute;
+      inset:-6px -8px;
+      border-radius:16px;
+      pointer-events:none;
+      z-index:0;
+      background:radial-gradient(ellipse at 70% 50%, rgba(8,12,18,.46) 0%, rgba(8,12,18,.24) 52%, rgba(8,12,18,0) 100%);
+      opacity:.52;
+    }
+
+    #desktopView:not(.mobile-preview-active) .hero-menu-wrap::before{
+      content:none;
+      background:none;
+      opacity:0;
+    }
+
     .hero-menu-toggle{
+      position:relative;
+      z-index:1;
       min-height:38px;
       min-width:108px;
       padding:0 12px;
@@ -771,6 +864,7 @@
       font-weight:700;
       box-shadow:0 8px 24px rgba(0,0,0,.18);
       backdrop-filter:blur(12px);
+      text-shadow:0 1px 2px rgba(0,0,0,.34);
       transition:background .18s ease, border-color .18s ease, transform .18s ease;
     }
 
@@ -795,6 +889,7 @@
       height:18px;
       flex:0 0 auto;
       object-fit:contain;
+      filter:drop-shadow(0 1px 2px rgba(0,0,0,.42));
     }
 
     .hero-menu-toggle-icon::before{
@@ -914,32 +1009,38 @@
     }
 
     #desktopView.mobile-preview-active #serviceMenu{
-      position:fixed;
-      top:10px;
-      left:12px;
-      right:12px;
-      width:auto;
-      min-width:0;
+      position:absolute;
+      top:calc(100% + 8px);
+      right:0;
+      left:auto;
+      width:min(420px, calc(100vw - 24px));
+      min-width:min(420px, calc(100vw - 24px));
       max-width:calc(100vw - 24px);
-      max-height:calc(100vh - 32px);
+      max-height:min(62vh, calc(100vh - 96px));
       overflow-y:auto;
       display:none !important;
-      grid-template-columns:1fr;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
       flex-wrap:nowrap;
       justify-content:start;
-      justify-items:stretch;
-      gap:6px;
-      padding:10px;
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:14px;
-      background:rgba(10,15,24,.92);
-      box-shadow:0 20px 42px rgba(2,8,20,.45);
-      backdrop-filter:blur(12px);
-      z-index:1200;
+      justify-items:start;
+      align-items:start;
+      gap:8px;
+      padding:0;
+      border:none;
+      border-radius:0;
+      background:transparent;
+      box-shadow:none;
+      backdrop-filter:none;
+      z-index:12050;
     }
 
     #desktopView.mobile-preview-active .hero-menu-wrap{
-      z-index:1201;
+      z-index:12051;
+    }
+
+    #desktopView.mobile-preview-active .hero-topbar{
+      z-index:12052;
+      position:relative;
     }
 
     #desktopView.mobile-preview-active #serviceMenu.is-open{
@@ -956,17 +1057,33 @@
 
     #desktopView.mobile-preview-active .menu-pill{
       width:100%;
+      justify-self:start;
       text-align:left;
       padding:10px 12px;
       border:none;
       border-radius:10px;
-      background:rgba(255,255,255,.92);
+      background:#fff;
       color:#111827;
-      font-size:12px;
+      font-size:16px;
       font-weight:600;
-      box-shadow:none;
-      white-space:nowrap;
+      box-shadow:0 8px 18px rgba(2,8,20,.14);
+      white-space:normal;
+      min-height:44px;
     }
+
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-programs"]{
+      display:none !important;
+    }
+
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-about"]{ grid-column:1; grid-row:1; }
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-journey"]{ grid-column:1; grid-row:2; }
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-photos"]{ grid-column:1; grid-row:3; }
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-videos"]{ grid-column:1; grid-row:4; }
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-reviews"]{ grid-column:2; grid-row:1; }
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-faq"]{ grid-column:2; grid-row:2; }
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-team"]{ grid-column:2; grid-row:3; }
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-stay"]{ grid-column:2; grid-row:4; }
+    #desktopView.mobile-preview-active #serviceMenu [data-nav="section-contacts"]{ grid-column:2; grid-row:5; }
 
     .hero-content{
       max-width:none;
@@ -1021,7 +1138,7 @@
       border-radius:999px;
       background:rgba(255,255,255,.18);
       border:1px solid rgba(255,255,255,.18);
-      font-size:12px;
+      font-size:36px;
       margin-bottom:18px;
       backdrop-filter:blur(8px);
       box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
@@ -1034,6 +1151,7 @@
       line-height:1.08;
       letter-spacing:-.03em;
       max-width:820px;
+      text-shadow:0 2px 12px rgba(8,12,18,.53);
     }
 
     .mobile-hero .hero-content h2{
@@ -1047,6 +1165,7 @@
       font-size:17px;
       line-height:1.5;
       margin-bottom:20px;
+      text-shadow:0 2px 10px rgba(8,12,18,.40);
     }
 
     .hero-mobile-age-cta{
@@ -1082,12 +1201,12 @@
     .hero-slogan{
       display:inline-block;
       margin-top:12px;
-      font-size:14px;
+      font-size:28px;
       font-weight:600;
       color:#fff;
       background:rgba(255,255,255,.12);
       border:1px solid rgba(255,255,255,.18);
-      padding:6px 10px;
+      padding:10px 16px;
       border-radius:999px;
       backdrop-filter:blur(6px);
     }
@@ -1120,6 +1239,7 @@
       font-size:12px;
       color:rgba(255,255,255,.9);
       backdrop-filter:blur(8px);
+      text-shadow:0 1px 2px rgba(8,12,18,.32);
     }
 
     .feature-row{
@@ -1467,11 +1587,16 @@
 
     #desktopView.mobile-preview-active .body-sections{
       gap:12px !important;
-      padding:14px !important;
+      padding:1px !important;
+      margin-top:36px !important;
       width:100%;
       max-width:100%;
       box-sizing:border-box;
       overflow-x:hidden;
+    }
+
+    .mobile-body-sections{
+      margin-top:36px;
     }
 
     #desktopView.mobile-preview-active .body-sections > .section-card{
@@ -1482,6 +1607,8 @@
       margin:0;
       box-sizing:border-box;
       overflow:hidden;
+      border:none;
+      box-shadow:0 10px 24px rgba(20,29,45,.10);
     }
 
     #desktopView.mobile-preview-active .body-sections > .section-card > h3{
@@ -1831,6 +1958,57 @@
       overflow:hidden;
     }
 
+    .mobile-program-actions{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .mobile-program-actions .shift-calendar-btn{
+      flex:1 1 0;
+      width:100%;
+      min-width:0;
+      justify-content:center;
+      color:#111827;
+      border-color:#d5dbe7;
+      background:#fff;
+      box-shadow:none;
+    }
+
+    .mobile-program-actions .shift-calendar-btn span,
+    .mobile-program-actions .shift-calendar-btn .shift-calendar-btn-label{
+      color:#111827;
+    }
+
+    .mobile-program-price-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:2px;
+    }
+
+    .mobile-program-inline-actions{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      flex:0 0 auto;
+    }
+
+    .mobile-program-inline-actions .shift-calendar-btn{
+      width:30px;
+      min-width:30px;
+      height:30px;
+      min-height:30px;
+      padding:0;
+      gap:0;
+      justify-content:center;
+      color:#111827;
+      border-color:#d5dbe7;
+      background:#fff;
+      box-shadow:none;
+    }
+
     .mobile-program-hint{
       color:#74839a;
       font-size:11px;
@@ -2153,6 +2331,7 @@
 
     .mobile-review-main{
       margin-top:10px;
+      min-height:0;
     }
 
     .mobile-review-top{
@@ -2238,6 +2417,8 @@
       padding:12px;
       display:grid;
       gap:8px;
+      min-height:196px;
+      grid-template-rows:auto minmax(0,1fr);
     }
 
     .mobile-review-head{
@@ -2245,6 +2426,7 @@
       grid-template-columns:44px 1fr;
       gap:10px;
       align-items:center;
+      min-height:52px;
     }
 
     .mobile-review-head img{
@@ -2278,6 +2460,7 @@
       -webkit-line-clamp:5;
       -webkit-box-orient:vertical;
       overflow:hidden;
+      min-height:98px;
     }
 
     .mobile-review-dots{
@@ -2708,15 +2891,21 @@
       align-items:center;
       gap:8px;
       margin:0 0 8px;
-      padding:10px 12px;
-      border-radius:14px;
+      padding:8px 10px;
+      border-radius:12px;
       background:rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.12);
       color:#fff;
       font-size:12px;
       font-weight:800;
+      line-height:1.1;
+      min-height:34px;
+      min-width:0;
       width:max-content;
       max-width:100%;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .selected-shift-chip.visible{
@@ -2725,15 +2914,22 @@
 
     .selected-shift-chip button{
       border:none;
-      width:22px;
-      height:22px;
-      border-radius:8px;
+      width:20px;
+      height:20px;
+      border-radius:7px;
       background:rgba(255,255,255,.12);
       color:#fff;
-      font-size:13px;
+      font-size:12px;
       font-weight:900;
       cursor:pointer;
       flex:0 0 auto;
+    }
+
+    .selected-shift-chip span:first-child{
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
 
     .shift-list.collapsed{
@@ -2766,6 +2962,12 @@
 
     #desktop-booking-card #desktopBookingLead:empty,
     .mobile-booking-card #mobileBookingLead:empty{
+      display:none;
+      margin:0;
+    }
+
+    #desktop-booking-card #desktopBookingTitle:empty,
+    .mobile-booking-card #mobileBookingTitle:empty{
       display:none;
       margin:0;
     }
@@ -2820,8 +3022,11 @@
       max-width:none;
       padding:8px 10px;
       border-radius:12px;
-      font-size:11px;
+      font-size:12px;
       line-height:1.1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     #desktop-booking-card.booking-stage-3 .booking-summary-chips .selected-age-chip span:first-child,
@@ -2849,15 +3054,36 @@
       width:20px;
       height:20px;
       border-radius:7px;
+      background:rgba(255,255,255,.12);
+      border:none;
+      padding:0;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
       margin-left:auto;
       flex:0 0 auto;
+    }
+
+    #desktop-booking-card.booking-stage-3 .booking-summary-chips .selected-age-chip button .ac-icon,
+    #desktop-booking-card.booking-stage-3 .booking-summary-chips .selected-shift-chip button .ac-icon,
+    #desktop-booking-card.booking-stage-4 .booking-summary-chips .selected-age-chip button .ac-icon,
+    #desktop-booking-card.booking-stage-4 .booking-summary-chips .selected-shift-chip button .ac-icon,
+    #mobileBookingCard.booking-stage-3 .booking-summary-chips .selected-age-chip button .ac-icon,
+    #mobileBookingCard.booking-stage-3 .booking-summary-chips .selected-shift-chip button .ac-icon,
+    #mobileBookingCard.booking-stage-4 .booking-summary-chips .selected-age-chip button .ac-icon,
+    #mobileBookingCard.booking-stage-4 .booking-summary-chips .selected-shift-chip button .ac-icon{
+      width:12px;
+      height:12px;
+      display:block;
+      filter:brightness(0) invert(1);
+      opacity:.9;
     }
 
     .booking-step{
       position:relative;
       padding:40px 2px 0;
       text-align:center;
-      font-size:11px;
+      font-size:16.5px;
       line-height:1.2;
       font-weight:800;
       background:transparent;
@@ -2960,7 +3186,7 @@
 
     .mobile-booking-card .booking-step{
       padding-top:34px;
-      font-size:11px;
+      font-size:16.5px;
     }
 
     .mobile-booking-card .booking-step::before{
@@ -3021,14 +3247,14 @@
     }
 
     #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab{
-      min-height:124px;
-      height:124px;
-      padding:18px 20px;
+      min-height:106px;
+      height:106px;
+      padding:15px 20px;
       border-radius:18px;
       border:1px solid var(--age-border, rgb(255 164 66 / 54%));
       display:grid;
       grid-template-columns:minmax(0, 1fr);
-      align-items:start;
+      align-items:center;
       gap:6px;
       text-align:initial;
       background:var(--age-bg, linear-gradient(135deg, rgb(255 255 255 / 10%), rgb(14 23 39 / 82%)));
@@ -3037,6 +3263,7 @@
       position:relative;
       overflow:hidden;
       box-sizing:border-box;
+      text-align:left;
     }
 
     #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab::before{
@@ -3054,6 +3281,10 @@
       letter-spacing:-.01em;
       line-height:1.2;
       color:rgb(255 255 255 / 88%);
+      display:block;
+      width:100%;
+      justify-self:start;
+      text-align:left !important;
     }
 
     #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-main{
@@ -3062,7 +3293,8 @@
       gap:7px;
       min-width:0;
       height:100%;
-      align-content:start;
+      align-content:center;
+      justify-items:start;
       padding:0;
     }
 
@@ -3070,6 +3302,8 @@
       display:grid;
       gap:5px;
       min-width:0;
+      justify-items:start;
+      text-align:left;
     }
 
     #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-track{
@@ -3086,6 +3320,9 @@
       text-overflow:ellipsis;
       min-width:0;
       overflow-wrap:anywhere;
+      width:100%;
+      justify-self:start;
+      text-align:left !important;
     }
 
     #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-anchor{
@@ -3097,6 +3334,10 @@
       padding-left:0;
       overflow-wrap:anywhere;
       min-width:0;
+      display:block;
+      width:100%;
+      justify-self:start;
+      text-align:left !important;
     }
 
     #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-bullets{
@@ -3271,9 +3512,9 @@
 
     @media (max-width: 1240px){
       #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab{
-        min-height:118px;
-        height:118px;
-        padding:16px 18px;
+        min-height:100px;
+        height:100px;
+        padding:14px 18px;
       }
 
       #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-track{
@@ -3376,17 +3617,23 @@
     .selected-age-chip{
       display:none;
       align-items:center;
-      gap:10px;
-      margin:0 0 12px;
-      padding:10px 12px;
-      border-radius:14px;
+      gap:8px;
+      margin:0 0 8px;
+      padding:8px 10px;
+      border-radius:12px;
       background:rgb(255 255 255 / 10%);
       border:1px solid rgb(255 255 255 / 12%);
       color:#fff;
       font-size:12px;
       font-weight:800;
+      line-height:1.1;
+      min-height:34px;
+      min-width:0;
       width:max-content;
       max-width:100%;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .selected-age-chip.visible{
@@ -3395,15 +3642,22 @@
 
     .selected-age-chip button{
       border:none;
-      width:24px;
-      height:24px;
-      border-radius:8px;
+      width:20px;
+      height:20px;
+      border-radius:7px;
       background:rgb(255 255 255 / 12%);
       color:#fff;
-      font-size:14px;
+      font-size:12px;
       font-weight:900;
       cursor:pointer;
       flex:0 0 auto;
+    }
+
+    .selected-age-chip span:first-child{
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
 
     .mobile-booking-card .booking-step-1{
@@ -3440,14 +3694,26 @@
       flex:1;
       border:none;
       border-radius:14px;
-      padding:13px 10px;
-      min-height:48px;
+      padding:11px 10px;
+      min-height:41px;
       background:rgb(255 255 255 / 10%);
       color:#fff;
       font-size:13px;
       font-weight:800;
+      text-align:left;
       cursor:pointer;
       transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+    }
+
+    .age-tab .age-tab-main,
+    .age-tab .age-tab-head,
+    .age-tab .age-tab-range,
+    .age-tab .age-tab-track,
+    .age-tab .age-tab-anchor{
+      text-align:left;
+      justify-items:start;
+      justify-self:start;
+      align-self:start;
     }
 
     .age-tab.active{
@@ -3480,6 +3746,11 @@
       gap:10px;
     }
 
+    .shift-option-head > strong{
+      margin:0;
+      min-width:0;
+    }
+
     .shift-option-head small{
       margin:0;
       text-align:right;
@@ -3497,6 +3768,21 @@
     .shift-option-head .shift-option-seats{
       display:block;
       white-space:nowrap;
+    }
+
+    .shift-option-head .shift-option-price-row{
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:6px;
+      width:100%;
+    }
+
+    .shift-option-inline-actions{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      flex:0 0 auto;
     }
 
     .shift-option-head .shift-option-price{
@@ -3521,6 +3807,12 @@
       display:flex;
       gap:8px;
       flex-wrap:wrap;
+    }
+
+    .shift-option-action-calendar{
+      padding-inline:10px;
+      min-width:40px;
+      justify-content:center;
     }
 
     .shift-option-select-indicator{
@@ -3589,6 +3881,23 @@
       display:block;
     }
 
+    .shift-option-action-info{
+      width:28px;
+      min-width:28px;
+      height:28px;
+      min-height:28px;
+      padding:0;
+      border-radius:999px;
+      justify-content:center;
+      background:#f7f9fc;
+    }
+
+    .shift-option-action-info .ac-icon{
+      width:14px;
+      height:14px;
+      filter:brightness(0) saturate(100%);
+    }
+
     #desktop-shift-options .shift-option-head small{
       font-size:13px;
       line-height:1.2;
@@ -3611,11 +3920,31 @@
       margin-top:0;
       max-height:none;
       overflow:visible;
+      flex-direction:column;
+      justify-content:flex-start;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options{
       display:grid;
-      grid-template-rows:repeat(2,minmax(0,1fr));
+      grid-template-rows:none;
+      grid-auto-rows:minmax(0,auto);
+      align-content:start;
+      gap:10px;
+      width:100%;
+      min-width:0;
+    }
+
+    #mobileBookingCard.booking-stage-2 .shift-list{
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+    }
+
+    #mobileBookingCard.booking-stage-2 #mobileShiftOptions{
+      display:grid;
+      grid-template-rows:none;
+      grid-auto-rows:minmax(0,auto);
+      align-content:start;
       gap:10px;
       width:100%;
       min-width:0;
@@ -3640,6 +3969,8 @@
       max-width:100%;
       min-height:0;
       padding:14px 14px 14px;
+      display:flex;
+      flex-direction:column;
       align-content:start;
       justify-self:stretch;
       box-sizing:border-box;
@@ -3672,6 +4003,7 @@
       display:flex;
       margin-top:6px;
       align-self:stretch;
+      font-size:16px;
     }
 
     #desktop-booking-card.booking-stage-3 .booking-all-shifts-link,
@@ -3682,64 +4014,90 @@
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head > strong{
       flex:1 1 auto;
       min-width:0;
-      font-size:26px;
+      display:grid;
+      grid-template-columns:1fr;
+      align-items:start;
+      gap:4px;
+      font-size:22px;
       font-weight:900;
-      white-space:normal;
       line-height:1.08;
       letter-spacing:-.01em;
-      overflow-wrap:anywhere;
-      word-break:break-word;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small{
-      margin-left:auto;
-      min-width:132px;
-      flex:0 0 132px;
-      gap:4px;
+      margin-left:0;
+      min-width:0;
+      flex:1 1 auto;
+      width:100%;
+      gap:2px;
+      text-align:left;
+      justify-items:start;
+      line-height:1.15;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head{
+      flex-direction:column;
+      align-items:stretch;
       justify-content:flex-start;
+      gap:4px;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-dates{
+      flex:1 1 auto;
+      min-width:0;
+      display:block;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price{
-      font-size:19px;
+      display:block;
+      flex:0 0 auto;
+      font-size:28px;
       font-weight:900;
       line-height:1.05;
       color:#111827;
       letter-spacing:-.02em;
+      white-space:nowrap;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-seats{
-      font-size:13px;
+      display:block;
+      font-size:18px;
       line-height:1.15;
       color:#4b5563;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-tagline{
-      font-size:12px;
-      line-height:1.38;
-      font-weight:700;
-      letter-spacing:.005em;
-      overflow-wrap:anywhere;
-      word-break:break-word;
+      display:none;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-actions{
       margin-top:auto;
+      padding-top:10px;
       align-items:center;
       flex-wrap:nowrap;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-action{
-      min-height:38px;
-      padding:0 14px;
-      font-size:14px;
+      min-height:42px;
+      padding:0 16px;
+      font-size:16px;
     }
 
     #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-select-indicator{
       width:38px;
       height:38px;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-action-calendar{
+      width:42px;
+      min-width:42px;
+      padding:0;
     }
 
     .shift-inline-panel{
@@ -3912,17 +4270,223 @@
       line-height:1.33;
     }
 
+    .mobile-booking-card.booking-stage-2 .booking-all-shifts-link{
+      font-size:16px;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-head{
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      gap:4px;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-head > strong{
+      display:grid;
+      grid-template-columns:1fr;
+      align-items:start;
+      gap:3px;
+      font-size:clamp(18px,5.2vw,24px);
+      line-height:1.04;
+      min-width:0;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-head .shift-option-dates{
+      display:block;
+      min-width:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-head .shift-option-price{
+      display:block;
+      white-space:nowrap;
+      font-size:clamp(18px,5.2vw,24px);
+      line-height:1.04;
+      color:#111827;
+      font-weight:900;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-head small{
+      max-width:none;
+      width:100%;
+      font-size:clamp(13px,3.8vw,16px);
+      justify-items:start;
+      text-align:left;
+      line-height:1.08;
+      gap:0;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-head .shift-option-seats{
+      display:block;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      font-size:clamp(11px,3.2vw,14px);
+      color:#4b5563;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-head .shift-option-price-row{
+      justify-content:flex-start;
+      gap:6px;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price-row,
+    .mobile-booking-card.booking-stage-2 .shift-option-head .shift-option-price-row{
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      flex-wrap:nowrap;
+      gap:8px;
+      width:100%;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price,
+    .mobile-booking-card.booking-stage-2 .shift-option-head .shift-option-price{
+      flex:0 0 auto;
+      margin:0;
+      text-align:left;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-inline-actions,
+    .mobile-booking-card.booking-stage-2 .shift-option-inline-actions{
+      display:inline-flex;
+      align-items:center;
+      flex-direction:row;
+      flex-wrap:nowrap;
+      gap:6px;
+      flex:0 0 auto;
+      margin-left:2px;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-inline-actions .shift-option-action-info,
+    .mobile-booking-card.booking-stage-2 .shift-option-inline-actions .shift-option-action-info{
+      width:26px;
+      min-width:26px;
+      height:26px;
+      min-height:26px;
+      padding:0;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-inline-actions .shift-option-action-calendar,
+    .mobile-booking-card.booking-stage-2 .shift-option-inline-actions .shift-option-action-calendar{
+      width:30px;
+      min-width:30px;
+      height:30px;
+      min-height:30px;
+      padding:0;
+      border-color:#cdd5e3;
+      background:#f3f5f8;
+      box-shadow:none;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-inline-actions .shift-option-select-indicator,
+    .mobile-booking-card.booking-stage-2 .shift-option-inline-actions .shift-option-select-indicator{
+      width:28px;
+      min-width:28px;
+      height:28px;
+      margin-left:0;
+      animation:shift-indicator-glow 1.9s ease-in-out infinite;
+    }
+
+    #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-actions,
+    .mobile-booking-card.booking-stage-2 .shift-option-actions{
+      display:none;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small,
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price-row{
+      justify-items:start;
+      justify-content:flex-start !important;
+      text-align:left !important;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-inline-actions{
+      display:inline-flex !important;
+      flex-direction:row !important;
+      flex-wrap:nowrap !important;
+      align-items:center !important;
+      justify-content:flex-start !important;
+      gap:4px !important;
+      margin-left:6px !important;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-inline-actions .shift-option-action-info{
+      width:24px !important;
+      min-width:24px !important;
+      height:24px !important;
+      min-height:24px !important;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-inline-actions .shift-option-action-calendar{
+      width:26px !important;
+      min-width:26px !important;
+      height:26px !important;
+      min-height:26px !important;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-inline-actions .shift-option-select-indicator{
+      width:24px !important;
+      min-width:24px !important;
+      height:24px !important;
+      min-height:24px !important;
+      margin-left:0 !important;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-actions{
+      display:none !important;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option .shift-option-tagline{
+      display:none;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option{
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+      height:auto;
+    }
+
     .mobile-booking-card .shift-option-actions{
       display:grid;
-      grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) auto;
+      grid-template-columns:auto auto;
       align-items:center;
       gap:6px;
+      margin-top:auto;
+      padding-top:10px;
+      justify-content:end;
     }
 
     .mobile-booking-card .shift-option-action{
       min-width:0;
       justify-content:center;
       padding:0 8px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-action{
+      min-height:34px;
+      font-size:13px;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-action-calendar{
+      width:34px;
+      min-width:34px;
+      padding:0;
+      border-color:#cdd5e3;
+      background:#f3f5f8;
+      color:#111827;
+      box-shadow:none;
+    }
+
+    .mobile-booking-card.booking-stage-2 .shift-option-action-calendar .ac-icon,
+    .mobile-booking-card .shift-option-action-calendar .ac-icon,
+    .mobile-program-actions .shift-calendar-btn .ac-icon{
+      filter:brightness(0) saturate(100%);
     }
 
     .mobile-booking-card .shift-option-select-indicator{
@@ -4142,7 +4706,7 @@
 
     .completed-followup-text{
       margin:0;
-      font-size:12px;
+      font-size:13px;
       line-height:1.24;
       color:rgba(255,255,255,.88);
       width:100%;
@@ -4152,11 +4716,21 @@
       word-break:break-word;
     }
 
+    .completed-followup-title{
+      margin:0;
+      font-size:clamp(16px,3.2vw,28px);
+      line-height:1.02;
+      font-weight:900;
+      letter-spacing:-.02em;
+      color:#fff;
+      width:100%;
+    }
+
     .completed-followup-image{
       width:100%;
-      height:100%;
-      min-height:188px;
-      max-height:none;
+      height:auto;
+      min-height:0;
+      max-height:312px;
       object-fit:cover;
       object-position:center top;
       border-radius:10px;
@@ -4170,7 +4744,7 @@
       padding:0;
       margin:0;
       width:100%;
-      flex:1 1 auto;
+      flex:0 0 auto;
       min-height:0;
       background:transparent;
       cursor:zoom-in;
@@ -4180,31 +4754,110 @@
 
     .completed-followup-note{
       margin:1px 0 0;
-      font-size:13px;
-      line-height:1.28;
+      font-size:12px;
+      line-height:1.24;
       color:rgba(255,255,255,.82);
       width:100%;
       max-width:100%;
       min-width:0;
+      display:block;
+      overflow:visible;
       overflow-wrap:anywhere;
       word-break:break-word;
     }
 
     .completed-followup-link{
-      margin:2px auto 0;
+      margin:0 auto 0;
       display:block;
       width:100%;
       text-align:center;
       color:#ffd5a5;
-      font-size:22px;
+      font-size:clamp(12px,3.2vw,16px);
       font-weight:700;
       text-decoration:underline;
       text-underline-offset:2px;
       cursor:pointer;
-      line-height:1.2;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      line-height:1.15;
+      white-space:normal;
+      overflow:visible;
+      text-overflow:clip;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .booking-completed-top{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:8px;
+    }
+
+    .booking-completed-summary{
+      display:grid;
+      gap:4px;
+      min-width:0;
+    }
+
+    .booking-completed-line{
+      font-size:16px;
+      line-height:1.25;
+      font-weight:800;
+      color:#fff;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .booking-completed-line--title{
+      font-size:34px;
+      line-height:1.02;
+      font-weight:900;
+      letter-spacing:-.03em;
+      margin-bottom:2px;
+    }
+
+    .booking-completed-reset{
+      width:32px;
+      height:32px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(255,255,255,.10);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      padding:0;
+    }
+
+    .booking-completed-reset .ac-icon{
+      width:16px;
+      height:16px;
+      filter:brightness(0) invert(1);
+    }
+
+    .booking-completed-next{
+      display:grid;
+      gap:4px;
+      text-align:left;
+      justify-items:start;
+      margin-top:0;
+    }
+
+    .booking-price-head--final{
+      margin-top:4px;
+    }
+
+    .booking-price-head--final small{
+      font-size:12px;
+    }
+
+    .booking-price-head--final .booking-price-main{
+      font-size:22px;
+      line-height:1.04;
+    }
+
+    .booking-price-head--final .booking-price-main.big{
+      font-size:30px;
+      line-height:1.02;
     }
 
     .booking-summary-mini--completed{
@@ -4212,14 +4865,19 @@
       max-width:100%;
       min-width:0;
       min-height:100%;
-      height:100%;
+      height:auto;
       display:flex;
       flex-direction:column;
       justify-content:flex-start;
-      gap:8px;
-      overflow:hidden;
+      gap:6px;
+      overflow-y:visible;
       overflow-x:clip;
       box-sizing:border-box;
+    }
+
+    #desktop-booking-card.booking-completed #desktop-booking-info,
+    #mobileBookingCard.booking-completed #mobile-booking-info{
+      padding-top:8px;
     }
 
     .booking-summary-mini--completed .booking-price-head{
@@ -4464,6 +5122,27 @@
       margin-top:0;
     }
 
+    #desktop-booking-card.booking-stage-3 .booking-step-3{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:stretch;
+    }
+
+    #desktop-booking-card.booking-stage-4 .booking-step-3{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:stretch;
+      min-height:0;
+      gap:10px;
+    }
+
+    #desktop-booking-card.booking-stage-3 #desktopBookingTitle{
+      text-align:center;
+      margin-bottom:8px;
+    }
+
     #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-wrap,
     #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-wrap{
       margin:0;
@@ -4477,6 +5156,8 @@
       min-height:0;
       min-width:0;
       margin:0 0 6px !important;
+      justify-content:center;
+      align-items:center;
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus{
@@ -4485,17 +5166,24 @@
       height:100%;
       min-width:0;
       padding:0;
-      gap:8px;
+      gap:10px;
       align-content:stretch;
       display:flex;
       flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
       border:none;
       border-radius:0;
       background:transparent;
     }
 
+    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary{
+      margin-top:0;
+    }
+
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__dates{
-      font-size:clamp(24px,1.9vw,30px);
+      font-size:clamp(24px,1.95vw,30px);
       line-height:1.06;
       letter-spacing:-.02em;
       white-space:normal;
@@ -4503,34 +5191,43 @@
       word-break:break-word;
     }
 
-    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__meta{
-      font-size:clamp(14px,1vw,16px);
-      line-height:1.3;
+    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__days{
+      font-size:clamp(19px,1.5vw,23px);
+      line-height:1.06;
+      font-weight:900;
+      letter-spacing:-.02em;
+      color:#fff;
     }
 
-    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__desc{
-      font-size:clamp(13px,.95vw,15px);
-      line-height:1.36;
-      color:rgba(255,255,255,.92);
-      flex:1 1 auto;
-      margin:0;
-      max-height:none;
-      overflow:auto;
+    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary{
+      display:grid;
+      gap:4px;
+      margin-top:2px;
     }
 
-    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__desc-title{
-      font-size:clamp(13px,.88vw,15px);
+    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary-label{
+      font-size:clamp(11px,.75vw,12px);
       line-height:1.25;
       font-weight:800;
-      color:rgba(255,255,255,.96);
-      margin:2px 0 0;
+      color:rgba(255,255,255,.82);
+      text-transform:none;
     }
 
-    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__context{
-      margin-top:auto;
-      font-size:clamp(12px,.82vw,14px);
-      line-height:1.32;
-      color:rgba(255,255,255,.84);
+    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary-value{
+      font-size:clamp(23px,1.8vw,28px);
+      line-height:1.02;
+      font-weight:900;
+      letter-spacing:-.02em;
+      color:#fff;
+    }
+
+    #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__seats{
+      margin-top:0;
+      font-size:clamp(14px,1.1vw,17px);
+      line-height:1.06;
+      font-weight:900;
+      letter-spacing:-.02em;
+      color:#ffd8a6;
     }
 
     #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-preliminary-chip{
@@ -4568,6 +5265,11 @@
       margin:0 0 4px !important;
     }
 
+    #desktop-booking-card.booking-stage-4 #desktopBookingTitle{
+      margin-top:6px;
+      margin-bottom:6px;
+    }
+
     /* Stage 4 compositing fix: prevent bottom-right backdrop-filter artifact */
     #desktop-booking-card.booking-stage-4{
       background:rgba(12,17,24,.90);
@@ -4577,20 +5279,50 @@
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-summary-mini{
       flex:1 1 auto;
-      min-height:100%;
-      height:100%;
+      min-height:0;
+      height:auto;
       min-width:0;
       display:flex;
       flex-direction:column;
-      justify-content:flex-start;
-      gap:6px;
+      justify-content:center;
+      gap:8px;
       padding:12px 12px 12px;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-box{
+      border:none;
+      background:transparent;
+      box-shadow:none;
+      padding:0;
+      margin:0;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-summary-stage4-head{
+      display:grid;
+      gap:3px;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-summary-stage4-title{
+      font-size:16px;
+      line-height:1.15;
+      font-weight:800;
+      color:rgba(255,255,255,.94);
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-summary-stage4-age{
+      font-size:14px;
+      line-height:1.2;
+      font-weight:700;
+      color:rgba(255,255,255,.84);
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-head{
       align-items:flex-start;
       gap:10px;
-      margin-bottom:1px;
+      margin-bottom:0;
+      border:none;
+      background:transparent;
+      box-shadow:none;
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-main{
@@ -4611,7 +5343,9 @@
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-col--fixed{
       display:flex;
       flex-direction:column;
-      align-items:flex-end;
+      align-items:flex-start;
+      width:100%;
+      min-width:0;
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-code-line{
@@ -4622,17 +5356,103 @@
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-timer-line{
-      margin-top:auto;
-      min-height:18px;
-      font-size:15px;
-      line-height:1.15;
+      margin:14px auto 0;
+      min-height:96px;
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:6px;
+      font-size:16px;
+      line-height:1.1;
       font-variant-numeric:tabular-nums;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-timer-line .booking-timer-label{
+      font-size:clamp(18px,1.25vw,24px);
+      line-height:1.1;
+      font-weight:800;
+      color:rgba(255,255,255,.78);
+      white-space:nowrap;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-timer-line .booking-timer-value{
+      font-size:clamp(34px,2.45vw,44px);
+      line-height:1.02;
+      font-weight:900;
+      color:#fff;
+      white-space:nowrap;
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-discount{
       margin-top:6px;
-      font-size:11px;
+      font-size:14px;
       opacity:.95;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:2px;
+      justify-content:flex-start;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-badge{
+      display:inline-flex;
+      align-items:center;
+      min-height:30px;
+      padding:0 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      color:rgba(255,255,255,.94);
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.22);
+      white-space:nowrap;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-badge--code{
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-photo{
+      display:grid;
+      gap:6px;
+      margin-top:2px;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-photo-image{
+      width:100%;
+      max-height:118px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-photo-note{
+      font-size:14px;
+      line-height:1.2;
+      font-weight:800;
+      color:#ffd8a6;
+      text-align:center;
+      text-shadow:0 1px 4px rgba(0,0,0,.34);
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-note{
+      font-size:14px;
+      line-height:1.2;
+      font-weight:800;
+      color:#ffd8a6;
+      text-align:center;
+      text-shadow:0 1px 4px rgba(0,0,0,.34);
+      margin:0;
     }
 
     #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-shift-description{
@@ -4643,10 +5463,16 @@
       border:none;
       background:transparent;
       color:rgba(255,255,255,.88);
-      font-size:12px;
+      font-size:14px;
       line-height:1.24;
       max-height:none;
       overflow:visible;
+    }
+
+    #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-col small{
+      font-size:14px;
+      line-height:1.2;
+      margin-bottom:4px;
     }
 
     #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-shift-description{
@@ -4686,6 +5512,28 @@
       align-items:flex-start;
     }
 
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-summary-stage4-head,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-summary-stage4-head{
+      display:none;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-summary-stage4-title,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-summary-stage4-title{
+      font-size:14px;
+      line-height:1.2;
+      font-weight:800;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-summary-stage4-age,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-summary-stage4-age{
+      font-size:14px;
+      line-height:1.2;
+      font-weight:700;
+      color:rgba(255,255,255,.84);
+      text-align:center;
+      justify-self:center;
+    }
+
     #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-price-main,
     #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-price-main{
       font-size:clamp(16px,4.8vw,24px);
@@ -4700,21 +5548,113 @@
 
     #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-code-line,
     #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-code-line{
-      font-size:12px;
+      font-size:14px;
       line-height:1.24;
       margin-top:4px;
     }
 
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-badges,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-stage4-badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      justify-content:center;
+      margin-top:2px;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-badge,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-stage4-badge{
+      min-height:28px;
+      padding:0 10px;
+      font-size:12px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      color:rgba(255,255,255,.94);
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(255,255,255,.12);
+      white-space:nowrap;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-badge--code,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-stage4-badge--code{
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      text-align:center;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-photo,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-stage4-photo{
+      display:grid;
+      gap:6px;
+      margin-top:2px;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-photo-image,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-stage4-photo-image{
+      width:100%;
+      max-height:96px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.14);
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-photo-note,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-stage4-photo-note{
+      font-size:13px;
+      line-height:1.15;
+      font-weight:800;
+      color:#ffd8a6;
+      text-align:center;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-timer-line,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-timer-line{
+      margin:8px auto 0;
+      min-height:72px;
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:6px;
+      font-size:16px;
+      line-height:1.1;
+      font-variant-numeric:tabular-nums;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-timer-line .booking-timer-label,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-timer-line .booking-timer-label{
+      font-size:clamp(17px,4.8vw,21px);
+      line-height:1.1;
+      font-weight:800;
+      color:rgba(255,255,255,.78);
+      white-space:nowrap;
+    }
+
+    #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-timer-line .booking-timer-value,
+    #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-timer-line .booking-timer-value{
+      font-size:clamp(32px,9.2vw,40px);
+      line-height:1.02;
+      font-weight:900;
+      color:#fff;
+      white-space:nowrap;
+    }
+
     #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-shift-description,
     #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-shift-description{
-      font-size:12px;
+      font-size:14px;
       line-height:1.3;
       margin-top:4px;
     }
 
     #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-wrap,
     #mobileBookingCard.booking-stage-4 .booking-step-3 .cta-wrap{
-      margin:0;
+      margin:6px 0 0;
       padding:0;
       flex:0 0 auto;
     }
@@ -4722,29 +5662,30 @@
     #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-main[data-cta-layout="stacked"],
     #mobileBookingCard.booking-stage-4 .booking-step-3 .cta-main[data-cta-layout="stacked"]{
       min-height:44px;
-      padding:6px 10px;
-      gap:1px;
+      padding:8px 11px;
+      gap:0;
     }
 
     #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-main[data-cta-layout="stacked"] .cta-main-line--primary,
     #mobileBookingCard.booking-stage-4 .booking-step-3 .cta-main[data-cta-layout="stacked"] .cta-main-line--primary{
-      font-size:13px;
+      font-size:15px;
     }
 
     #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-main[data-cta-layout="stacked"] .cta-main-line--accent,
     #mobileBookingCard.booking-stage-4 .booking-step-3 .cta-main[data-cta-layout="stacked"] .cta-main-line--accent{
-      font-size:34px;
-      line-height:.9;
+      font-size:15px;
+      line-height:1.1;
+      font-weight:900;
     }
 
     #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-main,
     #desktop-booking-card.booking-stage-4 .booking-step-3 .cta-main.cta-main-compact{
       width:100%;
-      min-height:54px;
+      min-height:48px;
       border-radius:14px;
       font-size:18px;
-      font-weight:800;
-      padding:9px 16px;
+      font-weight:900;
+      padding:11px 16px;
       letter-spacing:-.02em;
     }
 
@@ -4769,14 +5710,40 @@
     }
 
     #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus{
-      padding:10px 11px;
+      padding:0;
       gap:6px;
       min-height:100%;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+    }
+
+    #mobileBookingCard.booking-stage-3 #mobile-booking-info{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0;
     }
 
     #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__dates{
       font-size:clamp(18px,5vw,24px);
       line-height:1.05;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      text-align:center;
+    }
+
+    #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__days{
+      text-align:center;
+    }
+
+    #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__preliminary{
+      margin-top:0;
+      justify-items:center;
+      text-align:center;
     }
 
     #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__meta{
@@ -4804,8 +5771,15 @@
       line-height:1.34;
     }
 
+    #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__seats{
+      margin-top:0;
+      text-align:center;
+    }
+
     #desktop-booking-card.booking-completed .booking-steps,
+    #desktop-booking-card.booking-completed .booking-summary-chips,
     #desktop-booking-card.booking-completed .booking-step-block,
+    #mobileBookingCard.booking-completed .booking-summary-chips,
     #mobile-booking-card.booking-completed .booking-step-block,
     #mobileBookingCard.booking-completed .booking-steps{
       display:none !important;
@@ -4932,11 +5906,20 @@
 
     .inline-lead-card .cta-main.inline-lead-submit{
       margin:0;
-      min-height:44px;
-      font-size:15px;
+      min-height:var(--booking-cta-min-height);
+      font-size:var(--booking-cta-font-size);
       border-radius:14px;
       padding:12px 14px;
       box-shadow:0 12px 24px rgba(255,122,0,.30);
+    }
+
+    #offerApplyBtn,
+    #submitLeadBtn,
+    #inlineLeadSubmitDesktop,
+    #inlineLeadSubmitMobile,
+    #inlineLeadSubmitOffer{
+      font-size:var(--booking-cta-font-size);
+      min-height:var(--booking-cta-min-height);
     }
 
     .booking-hint.visible{
@@ -5279,8 +6262,9 @@
     }
 
     .short-shift-card .shift-calendar-btn{
-      border-color:rgba(47,167,104,.35);
-      background:#f4fcf7;
+      border-color:var(--line);
+      background:#fff;
+      color:#111827;
     }
 
     .mini-card p{
@@ -5314,6 +6298,21 @@
       text-align:right;
     }
 
+    .price-row-actions{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      flex:0 0 auto;
+    }
+
+    .price-row-meta{
+      margin:-2px 0 8px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+      text-align:left;
+    }
+
     .shift-calendar-btn{
       height:30px;
       border-radius:9px;
@@ -5332,10 +6331,26 @@
       transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
     }
 
+    .shift-about-btn{
+      border-color:#d9deea;
+      background:#f9fbff;
+    }
+
+    .price-row .shift-about-btn,
+    .price-row .shift-calendar-btn{
+      width:30px;
+      min-width:30px;
+      height:30px;
+      min-height:30px;
+      padding:0;
+      gap:0;
+    }
+
     .shift-calendar-btn .ac-icon{
       width:14px;
       height:14px;
       display:block;
+      filter:brightness(0) saturate(100%);
     }
 
     .shift-calendar-btn-label{
@@ -6751,8 +7766,8 @@
 
     .mobile-brand{
       padding:8px;
-      width:40px;
-      height:40px;
+      width:30px;
+      height:30px;
       justify-content:center;
       border-radius:12px;
     }
@@ -6772,15 +7787,20 @@
     }
 
     .mobile-brand-label{
-      font-size:11px;
+      font-size:16px;
       font-weight:700;
       line-height:1.2;
       color:rgba(255,255,255,.9);
-      text-shadow:0 1px 2px rgba(0,0,0,.3);
+      text-shadow:0 1px 2px rgba(0,0,0,.62);
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
       letter-spacing:.01em;
+    }
+
+    .hero-mode-inline,
+    .mobile-mode-switch{
+      display:none !important;
     }
 
     .mobile-mode-inline{
@@ -7737,8 +8757,8 @@
     .mobile-team-founder-card p{
       margin:2px 0 0;
       color:#4b5563;
-      font-size:12px;
-      line-height:1.4;
+      font-size:11.5px;
+      line-height:1.35;
       display:-webkit-box;
       -webkit-box-orient:vertical;
       -webkit-line-clamp:3;
@@ -7841,6 +8861,11 @@
       font-size:15px;
       line-height:1.3;
       color:#111827;
+      min-height:calc(1.3em * 2);
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:2;
+      overflow:hidden;
     }
 
     .mobile-stay-feature p{
@@ -7848,6 +8873,11 @@
       color:#5b6474;
       font-size:12px;
       line-height:1.42;
+      min-height:calc(1.42em * 3);
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:3;
+      overflow:hidden;
     }
 
     .mobile-stay-preview-strip{
@@ -7977,9 +9007,11 @@
     .offer-headline{
       display:flex;
       align-items:flex-start;
-      justify-content:space-between;
+      justify-content:center;
       gap:10px;
       margin-bottom:8px;
+      position:relative;
+      width:100%;
     }
 
     .offer-card-stable{
@@ -8001,6 +9033,18 @@
       gap:8px;
     }
 
+    .offer-state-shell--search{
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:14px;
+    }
+
+    .offer-state-shell--search .offer-headline{
+      justify-content:center;
+      width:100%;
+    }
+
     .offer-state-shell--result .overlay-actions{
       margin-top:auto;
     }
@@ -8019,8 +9063,23 @@
 
     .offer-headline h3{
       margin:0;
-      font-size:28px;
+      font-size:42px;
       line-height:1.06;
+      width:100%;
+      text-align:center;
+    }
+
+    .offer-state-shell--search #offerProgressLead,
+    .offer-legacy-status{
+      font-size:30px;
+      line-height:1.2;
+      font-weight:700;
+      min-height:3.2em;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      width:100%;
     }
 
     .offer-close-placeholder{
@@ -8042,6 +9101,9 @@
       justify-content:center;
       padding:0;
       line-height:0;
+      position:absolute;
+      top:0;
+      right:0;
     }
 
     .overlay-card.dark .offer-close-btn{
@@ -8077,7 +9139,7 @@
     }
 
     .offer-progress-track{
-      height:10px;
+      height:14px;
       border-radius:999px;
       background:#e8edf5;
       overflow:hidden;
@@ -8101,11 +9163,13 @@
       gap:8px;
       margin-top:6px;
       margin-bottom:2px;
+      justify-items:center;
+      text-align:center;
     }
 
     .offer-progress-step{
       color:#6b7280;
-      font-size:12px;
+      font-size:18px;
       line-height:1.45;
     }
 
@@ -8132,18 +9196,18 @@
       align-items:center;
       justify-content:center;
       text-align:center;
-      gap:14px;
+      gap:18px;
     }
 
     .offer-state-shell--search-legacy .offer-headline h3{
-      font-size:28px;
+      font-size:42px;
       line-height:1.06;
       letter-spacing:-.03em;
     }
 
     .offer-legacy-search-icon{
-      width:68px;
-      height:68px;
+      width:136px;
+      height:136px;
       border-radius:22px;
       display:flex;
       align-items:center;
@@ -8154,8 +9218,8 @@
     }
 
     .offer-legacy-search-icon__asset{
-      width:38px;
-      height:38px;
+      width:76px;
+      height:76px;
       display:block;
       object-fit:contain;
     }
@@ -8163,7 +9227,7 @@
     .offer-legacy-status{
       margin:0;
       color:#111827;
-      font-size:20px;
+      font-size:30px;
       line-height:1.2;
       font-weight:700;
       min-height:48px;
@@ -8174,14 +9238,14 @@
 
     .offer-progress-track--legacy{
       width:100%;
-      height:12px;
+      height:18px;
       margin:2px 0 4px;
     }
 
     .offer-legacy-note{
       margin:0;
       color:#6b7280;
-      font-size:14px;
+      font-size:21px;
       line-height:1.22;
       font-weight:600;
     }
@@ -8485,16 +9549,49 @@
       }
 
       .offer-state-shell--result{
-        gap:4px;
+        gap:10px;
+        justify-content:space-between;
       }
 
       .offer-headline{
         margin-bottom:2px;
+        justify-content:center;
       }
 
       .offer-headline h3{
-        font-size:17px;
-        line-height:1.1;
+        font-size:44px;
+        line-height:1.02;
+        letter-spacing:-.03em;
+      }
+
+      .offer-state-shell--search{
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+      }
+
+      .offer-state-shell--search #offerProgressLead,
+      .offer-legacy-status{
+        font-size:24px;
+        line-height:1.2;
+      }
+
+      .offer-progress-step{
+        font-size:16px;
+      }
+
+      .offer-legacy-search-icon{
+        width:120px;
+        height:120px;
+      }
+
+      .offer-legacy-search-icon__asset{
+        width:68px;
+        height:68px;
+      }
+
+      .offer-legacy-note{
+        font-size:18px;
       }
 
       .offer-legacy-result-banner{
@@ -8540,42 +9637,70 @@
       }
 
       .offer-price-compare{
-        gap:6px;
-        margin:1px 0 4px;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        flex:1 1 auto;
+        gap:10px;
+        margin:0;
+      }
+
+      .offer-price-compare__new small{
+        font-size:20px;
+        line-height:1.1;
       }
 
       .offer-price-compare__new strong{
-        font-size:22px;
+        font-size:clamp(48px,12vw,66px);
+        line-height:0.96;
+        letter-spacing:-.035em;
+      }
+
+      .offer-price-compare__old small{
+        font-size:18px;
         line-height:1.05;
+      }
+
+      .offer-price-compare__old span{
+        font-size:28px;
+        line-height:1;
       }
 
       .offer-benefit-chip{
-        min-height:24px;
-        padding:4px 7px;
-        font-size:9px;
+        min-height:36px;
+        padding:8px 12px;
+        font-size:18px;
+        line-height:1;
       }
 
       .offer-booking-block{
-        margin-top:2px;
-        padding:7px;
+        margin-top:0;
+        padding:12px;
         border-radius:12px;
-        gap:4px;
+        gap:8px;
       }
 
       .offer-booking-note{
-        font-size:10px;
-        line-height:1.2;
+        font-size:20px;
+        line-height:1.15;
       }
 
       .overlay-actions{
-        margin-top:4px;
+        margin-top:0;
       }
 
       .overlay-actions .cta-main{
-        min-height:40px;
-        padding:8px 12px;
-        font-size:16px;
-        line-height:1.05;
+        min-height:58px;
+        padding:10px 16px;
+        font-size:28px;
+        line-height:1;
+      }
+
+      .form-panel .cta-main{
+        min-height:58px;
+        padding:10px 16px;
+        font-size:28px;
+        line-height:1;
       }
 
       #offerOverlay,
@@ -8749,16 +9874,15 @@
     }
 
     .summary-bar.summary-bar--stage4 .summary-sub{
-      margin-top:0;
-      font-size:13px;
-      font-weight:700;
-      color:#334155;
+      display:none;
     }
 
     .summary-bar.summary-bar--stage4 .summary-right{
       margin-left:auto;
       gap:10px;
       align-items:center;
+      flex-wrap:nowrap;
+      padding-right:30px;
     }
 
     .summary-bar.summary-bar--stage4 .summary-price{
@@ -8767,9 +9891,10 @@
     }
 
     .summary-bar.summary-bar--stage4 .summary-timer{
-      font-size:13px;
+      font-size:12px;
       font-weight:800;
       white-space:nowrap;
+      line-height:1;
     }
 
     .summary-bar.summary-bar--stage4 [data-action="primary-cta"]{
@@ -8778,20 +9903,49 @@
       align-items:center;
       justify-content:center;
       gap:2px;
-      min-height:48px;
-      padding:10px 16px;
+      min-height:46px;
+      padding:8px 14px;
+      line-height:1;
+      white-space:normal;
+      transform:none;
+      max-width:calc(100vw - 92px);
+    }
+
+    .summary-bar.summary-bar--stage4 [data-action="primary-cta"] .cta-main-line--primary{
+      font-size:13px;
+      font-weight:700;
+      line-height:1.05;
+    }
+
+    .summary-bar.summary-bar--stage4 [data-action="primary-cta"] .cta-main-line--accent{
+      font-size:16px;
+      font-weight:900;
       line-height:1.05;
       white-space:nowrap;
     }
 
-    .summary-bar.summary-bar--stage4 [data-action="primary-cta"] .cta-main-line--primary{
-      font-size:14px;
-      font-weight:700;
+    .summary-bar.summary-bar--stage4 .summary-inner{
+      padding:8px 12px;
+      gap:8px;
     }
 
-    .summary-bar.summary-bar--stage4 [data-action="primary-cta"] .cta-main-line--accent{
-      font-size:18px;
-      font-weight:900;
+    .summary-bar.summary-bar--stage4 .summary-left{
+      min-width:0;
+      flex:1 1 auto;
+      gap:8px;
+      flex-wrap:nowrap;
+      align-items:center;
+    }
+
+    .summary-bar.summary-bar--stage4 .summary-price{
+      display:none;
+    }
+
+    .summary-bar.summary-bar--stage4 .summary-dismiss-btn{
+      left:auto;
+      right:8px;
+      top:8px;
+      display:inline-flex;
     }
 
     .form-drawer{
@@ -8896,12 +10050,61 @@
       line-height:1.35;
     }
 
+    #formDrawer .booking-summary-box{
+      border:0;
+      background:transparent;
+      padding:0;
+      border-radius:0;
+      gap:4px;
+    }
+
+    .booking-summary-line{
+      display:flex;
+      align-items:flex-end;
+      gap:10px;
+      min-width:0;
+      flex-wrap:wrap;
+    }
+
+    .booking-summary-line__segment{
+      display:inline-flex;
+      align-items:baseline;
+      gap:4px;
+      min-width:0;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+
+    .booking-summary-line__segment--date{
+      min-width:0;
+      flex:1 1 auto;
+    }
+
+    .booking-summary-sep{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      color:#6b7280;
+      font-size:18px;
+      line-height:1;
+      font-weight:900;
+      transform:translateY(-1px);
+      flex:0 0 auto;
+      user-select:none;
+    }
+
     .booking-summary-selection{
       font-size:15px;
       line-height:1.25;
       font-weight:800;
       letter-spacing:-.01em;
       color:#1f2937;
+      white-space:nowrap;
+    }
+
+    .booking-summary-selection--date{
+      display:inline-block;
+      max-width:100%;
     }
 
     .booking-summary-price{
@@ -8910,6 +10113,7 @@
       font-weight:900;
       letter-spacing:-.03em;
       color:#111827;
+      white-space:nowrap;
     }
 
     .booking-summary-timer{
@@ -8939,12 +10143,6 @@
       color:#d56e00;
       font-weight:900;
       text-align:center;
-    }
-
-    .booking-summary-guarantee{
-      font-size:13px;
-      line-height:1.35;
-      color:#4b5563;
     }
 
     .booking-summary-list{
@@ -9243,6 +10441,22 @@
       margin:6px 0 14px;
     }
 
+    .inline-lead-check{
+      align-items:center;
+    }
+
+    .inline-lead-check input[type="checkbox"]{
+      width:24px;
+      height:24px;
+      min-width:24px;
+      min-height:24px;
+      margin:0;
+      transform:translateX(20%);
+      accent-color:var(--accent);
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
     .muted-note{
       color:var(--muted);
       font-size:13px;
@@ -9406,7 +10620,48 @@
 
     @media (max-width: 820px){
       .page{
-        padding:20px 14px 120px;
+        padding:20px 1px 120px;
+      }
+
+      /* Global mobile readability bump: +2px for non-heading text inside content sections. */
+      #desktopView.mobile-preview-active .body-sections .section-card :where(
+        p, span, li, a, small, label, button, input, textarea, strong
+      ):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6){
+        font-size:calc(1em + 2px) !important;
+      }
+
+      /* Fine-tune typography by section (mobile): requested manual deltas over global +2. */
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-contacts .mobile-social-icon .social-badge-mark{
+        font-size:12px !important;
+      }
+
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-contacts .mobile-contact-card strong,
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-contacts .mobile-social-label{
+        font-size:14px !important;
+      }
+
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-team .team-card span,
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-team .mobile-team-card span{
+        font-size:14px !important;
+      }
+
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-team .mobile-team-founder-card p{
+        font-size:12.5px !important;
+      }
+
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-faq .faq-line span,
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-faq .mobile-faq-answer,
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-faq .mobile-faq-card span{
+        font-size:16.5px !important;
+      }
+
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-reviews .review-quote{
+        font-size:17.5px !important;
+      }
+
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-reviews .mobile-review-text,
+      #desktopView.mobile-preview-active .section-card.mobile-template#section-reviews .review-card span{
+        font-size:16.5px !important;
       }
 
       .summary-visible .page{
@@ -9430,6 +10685,17 @@
       .summary-right{
         justify-content:space-between;
         flex-wrap:wrap;
+      }
+
+      .summary-bar.summary-bar--stage4 .summary-inner{
+        flex-direction:row;
+        align-items:center;
+        justify-content:space-between;
+      }
+
+      .summary-bar.summary-bar--stage4 .summary-right{
+        justify-content:flex-end;
+        flex-wrap:nowrap;
       }
 
       .summary-price{
@@ -9457,21 +10723,22 @@
       }
 
       .completed-followup-image{
-        min-height:108px;
+        min-height:120px;
+        max-height:192px;
       }
 
       .completed-followup-text{
-        font-size:10px;
-        line-height:1.18;
+        font-size:13px;
+        line-height:1.24;
       }
 
       .completed-followup-note{
-        font-size:10.5px;
-        line-height:1.2;
+        font-size:12px;
+        line-height:1.22;
       }
 
       .completed-followup-link{
-        font-size:14px;
+        font-size:12px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-completed #desktop-booking-info{
@@ -9522,8 +10789,8 @@
         min-width:0;
         overflow-wrap:anywhere;
         word-break:break-word;
-        font-size:11px;
-        line-height:1.22;
+        font-size:13px;
+        line-height:1.24;
       }
 
       #mobileBookingCard.booking-completed #mobile-booking-info{
@@ -9583,8 +10850,8 @@
 
       #mobileBookingCard.booking-completed #mobile-booking-info .completed-followup-text,
       #mobileBookingCard.booking-completed #mobile-booking-info .completed-followup-note{
-        font-size:11px;
-        line-height:1.22;
+        font-size:13px;
+        line-height:1.24;
       }
 
       .hero-topbar{
@@ -9597,15 +10864,16 @@
         width:56px;
         height:56px;
         padding:0;
-        border:none;
-        background:transparent;
-        box-shadow:none;
-        backdrop-filter:none;
+        border:1px solid rgba(255,255,255,.18);
+        border-radius:14px;
+        background:rgba(8,12,18,.30);
+        box-shadow:0 8px 18px rgba(2,8,20,.24);
+        backdrop-filter:blur(8px);
       }
 
       #desktopView.mobile-preview-active .hero-menu-toggle:hover{
-        background:transparent;
-        border:none;
+        background:rgba(8,12,18,.38);
+        border-color:rgba(255,255,255,.24);
         transform:none;
       }
 
@@ -9621,7 +10889,7 @@
         display:block;
         width:36px;
         height:36px;
-        filter:brightness(0) invert(1);
+        filter:brightness(0) invert(1) drop-shadow(0 1px 2px rgba(0,0,0,.42));
       }
 
       #desktopView.mobile-preview-active .hero-menu-toggle-text{
@@ -9652,8 +10920,9 @@
       }
 
       #desktopView.mobile-preview-active .hero-brand-label{
-        font-size:11px;
+        font-size:16px;
         line-height:1.2;
+        text-shadow:0 1px 2px rgba(0,0,0,.62), 0 0 10px rgba(0,0,0,.41);
       }
 
       #desktopView.mobile-preview-active .hero-content.full{
@@ -9674,7 +10943,7 @@
 
       #desktopView.mobile-preview-active .hero-sub{
         margin:0 0 6px;
-        font-size:12px;
+        font-size:18px;
         line-height:1.28;
         max-width:100%;
       }
@@ -9706,12 +10975,12 @@
       }
 
       #desktopView.mobile-preview-active .hero-benefits-grid .hero-benefit-card:first-child strong{
-        font-size:13px;
+        font-size:16px;
         line-height:1.22;
       }
 
       #desktopView.mobile-preview-active .hero-benefits-grid .hero-benefit-card:first-child span{
-        font-size:11px;
+        font-size:16px;
         line-height:1.3;
       }
 
@@ -9832,43 +11101,55 @@
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option{
         padding:9px 10px;
         min-height:0;
-        height:100%;
-        display:grid;
-        grid-template-rows:auto auto auto;
+        height:auto;
+        display:flex;
+        flex-direction:column;
         gap:4px;
+        overflow:visible;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head > strong{
-        font-size:clamp(13px,4vw,16px);
+        font-size:clamp(18px,5.2vw,22px);
         line-height:1.04;
         letter-spacing:-.015em;
-        display:-webkit-box;
-        -webkit-box-orient:vertical;
-        -webkit-line-clamp:2;
-        overflow:hidden;
+        display:grid;
+        align-items:start;
+        justify-content:start;
+        gap:3px;
+        white-space:normal;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small{
         min-width:0;
         max-width:100%;
-        font-size:10px;
-        line-height:1.12;
+        width:100%;
+        font-size:clamp(13px,3.9vw,16px);
+        line-height:1.08;
         margin-top:1px;
         text-align:left;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:8px;
-        flex-wrap:nowrap;
+        display:grid;
+        justify-items:start;
+        gap:0;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-price{
-        font-size:clamp(12px,3.5vw,14px);
-        line-height:1.08;
+        display:block;
+        font-size:clamp(22px,6.4vw,28px);
+        line-height:1.04;
+        white-space:nowrap;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-dates{
+        min-width:0;
+        display:block;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head .shift-option-seats{
-        font-size:10px;
+        display:block;
+        font-size:clamp(12px,3.4vw,14px);
         line-height:1.08;
         white-space:nowrap;
         overflow:hidden;
@@ -9876,37 +11157,46 @@
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-tagline{
-        font-size:clamp(10px,2.95vw,11.5px);
-        line-height:1.18;
-        display:-webkit-box;
-        -webkit-box-orient:vertical;
-        -webkit-line-clamp:2;
-        overflow:hidden;
+        display:none;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head{
-        display:grid;
-        grid-template-columns:1fr;
+        display:flex;
+        flex-direction:column;
+        align-items:stretch;
         gap:2px;
-        align-items:start;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-actions{
         display:grid;
-        grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+        grid-template-columns:34px 30px;
         align-items:center;
-        gap:6px;
+        gap:4px;
+        margin-top:auto;
+        padding-top:4px;
+        justify-content:end;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-action{
-        min-height:28px;
-        padding:0 8px;
+        min-height:30px;
+        padding:0 6px;
         font-size:11px;
         border-radius:9px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-action-calendar{
+        width:34px;
+        min-width:34px;
+        padding:0;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-select-indicator{
-        display:none;
+        display:inline-flex;
+        width:30px;
+        height:30px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1{
@@ -9918,14 +11208,15 @@
         min-height:0;
         display:grid;
         grid-template-columns:1fr;
-        grid-template-rows:repeat(3,minmax(0,1fr));
+        grid-template-rows:repeat(3,auto);
+        align-content:center;
         gap:6px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab{
         min-height:0;
-        height:100%;
-        padding:8px 10px;
+        height:auto;
+        padding:7px 10px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-main{
@@ -9942,18 +11233,20 @@
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-range{
-        font-size:clamp(16px,4.5vw,19px);
+        font-size:20px;
         line-height:1.04;
         white-space:nowrap;
       }
 
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs .age-tab:nth-child(2) .age-tab-range{
-        margin-left:auto;
-        text-align:right;
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-range,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-track,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-anchor{
+        margin-left:0;
+        text-align:left;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-track{
-        font-size:clamp(12px,3.4vw,14px);
+        font-size:18px;
         line-height:1.14;
         display:-webkit-box;
         -webkit-box-orient:vertical;
@@ -9962,13 +11255,26 @@
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-anchor{
-        font-size:clamp(11.5px,3.15vw,13px);
+        font-size:16px;
         line-height:1.16;
         margin-top:0;
         display:-webkit-box;
         -webkit-box-orient:vertical;
         -webkit-line-clamp:2;
         overflow:hidden;
+      }
+
+      /* Targeted safety fix: keep 10-12 card text strictly left-aligned */
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs .age-tab[data-age="10-12"] .age-tab-range,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs .age-tab[data-age="10-12"] .age-tab-track,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tabs .age-tab[data-age="10-12"] .age-tab-anchor,
+      #mobileBookingCard.booking-stage-1 .booking-step-1 .age-tabs .age-tab[data-age="10-12"] .age-tab-range,
+      #mobileBookingCard.booking-stage-1 .booking-step-1 .age-tabs .age-tab[data-age="10-12"] .age-tab-track,
+      #mobileBookingCard.booking-stage-1 .booking-step-1 .age-tabs .age-tab[data-age="10-12"] .age-tab-anchor{
+        margin-left:0 !important;
+        align-self:start !important;
+        justify-self:start !important;
+        text-align:left !important;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-1 .booking-step-1 .age-tab .age-tab-bullets{
@@ -9985,16 +11291,19 @@
         min-height:0;
         display:grid;
         grid-template-columns:1fr;
-        grid-template-rows:repeat(2,minmax(0,1fr));
+        grid-template-rows:none;
+        grid-auto-rows:minmax(0,auto);
+        align-content:start;
         gap:6px;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .shift-list{
         flex:1 1 auto;
         min-height:0;
-        overflow:hidden;
+        overflow:auto;
         display:flex;
         flex-direction:column;
+        justify-content:flex-start;
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .booking-all-shifts-link{
@@ -10021,15 +11330,21 @@
       }
 
       #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktopBookingTitle{
-        font-size:clamp(16px,5.7vw,20px);
-        line-height:1.06;
+        font-size:clamp(16px,4.8vw,20px);
+        line-height:1.1;
         margin-bottom:3px;
       }
 
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-3,
-      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-3{
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-3{
         justify-content:flex-start;
         flex:0 0 auto;
+        height:auto;
+        min-height:0;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-3{
+        justify-content:center;
+        flex:1 1 auto;
         height:auto;
         min-height:0;
       }
@@ -10039,6 +11354,151 @@
         flex:1 1 auto;
         min-height:0;
         display:flex;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info{
+        overflow:hidden;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus{
+        min-height:0;
+        height:auto;
+        padding:8px 10px;
+        gap:8px;
+        overflow:hidden;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__dates{
+        font-size:clamp(20px,6vw,26px);
+        line-height:1.03;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        text-align:center;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__days{
+        font-size:clamp(22px,6.4vw,28px);
+        line-height:1.04;
+        font-weight:900;
+        text-align:center;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary{
+        display:grid;
+        gap:2px;
+        justify-items:center;
+        text-align:center;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary-label{
+        font-size:12px;
+        line-height:1.2;
+        color:rgba(255,255,255,.8);
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary-value{
+        font-size:clamp(30px,8.9vw,38px);
+        font-weight:900;
+        line-height:1.02;
+        text-align:center;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__seats{
+        margin-top:auto;
+        font-size:clamp(10px,2.8vw,13px);
+        line-height:1.04;
+        font-weight:900;
+        text-align:center;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-main,
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-3 .cta-main.cta-main-compact{
+        min-height:44px;
+        border-radius:12px;
+        padding:8px 11px;
+        font-size:15px;
+        line-height:1.1;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktopBookingTitle{
+        margin-top:6px;
+        margin-bottom:4px;
+        font-size:clamp(14px,4.4vw,17px);
+        line-height:1.08;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+
+      /* Stage-3 mobile safety override: works both in mobile-preview-active and direct mobile runtime */
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info{
+        overflow:hidden;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus{
+        min-height:0;
+        height:auto;
+        padding:8px 10px;
+        gap:8px;
+        overflow:hidden;
+        justify-content:center;
+        align-items:center;
+        text-align:center;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__dates{
+        font-size:clamp(20px,6vw,26px);
+        line-height:1.03;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        text-align:center;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__days{
+        font-size:clamp(22px,6.4vw,28px);
+        line-height:1.04;
+        font-weight:900;
+        text-align:center;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__preliminary{
+        display:grid;
+        gap:2px;
+        justify-items:center;
+        text-align:center;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary-label,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__preliminary-label{
+        font-size:12px;
+        line-height:1.2;
+        color:rgba(255,255,255,.8);
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__preliminary-value,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__preliminary-value{
+        font-size:clamp(30px,8.9vw,38px);
+        font-weight:900;
+        line-height:1.02;
+        text-align:center;
+      }
+
+      #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__seats,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__seats{
+        margin-top:8px;
+        font-size:clamp(10px,2.8vw,13px);
+        line-height:1.04;
+        font-weight:900;
+        text-align:center;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
       }
 
       .hero-tag{
@@ -10103,8 +11563,8 @@
       }
 
       .mobile-brand{
-        width:38px;
-        height:38px;
+        width:29px;
+        height:29px;
         padding:7px;
         border-radius:10px;
       }
@@ -10210,6 +11670,111 @@
         flex:0 0 min(82vw, 280px);
       }
 
+      /* Booking flow normalization (mobile runtime + desktop mobile preview) */
+      #desktopView.mobile-preview-active #desktop-booking-card .booking-step-block,
+      #mobileBookingCard .booking-step-block{
+        min-height:0;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .booking-step-2,
+      #mobileBookingCard.booking-stage-2 .booking-step-2{
+        display:flex;
+        flex-direction:column;
+        justify-content:flex-start;
+        gap:8px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 .shift-list,
+      #mobileBookingCard.booking-stage-2 .shift-list{
+        flex:1 1 auto;
+        min-height:0;
+        display:flex;
+        flex-direction:column;
+        justify-content:flex-start;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head,
+      #mobileBookingCard.booking-stage-2 .shift-option-head{
+        display:flex;
+        flex-direction:column;
+        align-items:stretch;
+        gap:4px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head > strong,
+      #mobileBookingCard.booking-stage-2 .shift-option-head > strong{
+        display:grid;
+        gap:3px;
+        justify-items:start;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-2 #desktop-shift-options .shift-option-head small,
+      #mobileBookingCard.booking-stage-2 .shift-option-head small{
+        display:grid;
+        gap:2px;
+        justify-items:start;
+        text-align:left;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 .booking-step-3,
+      #mobileBookingCard.booking-stage-3 .booking-step-3{
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        gap:8px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktopBookingTitle,
+      #mobileBookingCard.booking-stage-3 #mobileBookingTitle{
+        text-align:center;
+        margin-bottom:6px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus{
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        text-align:center;
+        gap:6px;
+        padding:0;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-3 #desktop-booking-info .booking-shift-focus__seats,
+      #mobileBookingCard.booking-stage-3 #mobile-booking-info .booking-shift-focus__seats{
+        margin-top:0;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 .booking-step-3,
+      #mobileBookingCard.booking-stage-4 .booking-step-3{
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        gap:8px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-summary-mini,
+      #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-summary-mini{
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        gap:8px;
+        min-height:0;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-timer-line,
+      #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-timer-line{
+        margin-top:8px;
+      }
+
+      #desktopView.mobile-preview-active #desktop-booking-card.booking-stage-4 #desktop-booking-info .booking-stage4-note,
+      #mobileBookingCard.booking-stage-4 #mobile-booking-info .booking-stage4-note{
+        font-size:13px;
+        line-height:1.15;
+        text-align:center;
+      }
+
       #version-badge{
         top:auto !important;
         right:12px !important;
@@ -10273,14 +11838,14 @@
                 </span>
               </div>
               <div class="hero-brand-meta">
-                <div class="hero-brand-label">IT-лагерь для детей 7–14 лет</div>
+                <div class="hero-brand-label">АйТи-лагерь для 7–14 лет</div>
                 <div class="mode-switch hero-mode-inline" id="desktopModeWrap">
                   <button class="mode-btn active" id="fullModeBtn">Подробно</button>
                   <button class="mode-btn mode-toggle" id="compactModeBtn" aria-label="Краткий режим">
                     <span class="mode-toggle-thumb" aria-hidden="true"></span>
                   </button>
                 </div>
-                <div class="hero-mode-hashtag">#АйДаКемп</div>
+                <div class="hero-mode-hashtag">АйДаКемп</div>
               </div>
             </div>
             <div class="hero-menu-wrap" id="heroMenuWrap">
@@ -10298,7 +11863,7 @@
               </button>
               <div class="hero-menu" id="serviceMenu" hidden>
                 <button class="menu-pill active" type="button" data-nav="section-about">О лагере</button>
-                <button class="menu-pill" type="button" data-nav="section-journey">Как проходит</button>
+                <button class="menu-pill" type="button" data-nav="section-journey">Как проходят смены</button>
                 <button class="menu-pill" type="button" data-nav="section-programs">Смены</button>
                 <button class="menu-pill" type="button" data-nav="section-photos">Фото</button>
                 <button class="menu-pill" type="button" data-nav="section-videos">Видео</button>
@@ -10711,7 +12276,7 @@
                   </span>
                 </div>
                 <div class="mobile-brand-meta">
-                  <div class="mobile-brand-label">IT-лагерь 7–14 лет</div>
+                  <div class="mobile-brand-label">АйТи-лагерь для 7–14 лет</div>
                 </div>
               </div>
               <div class="mobile-mode-switch mobile-mode-inline">
@@ -10940,7 +12505,6 @@
     <div class="form-panel">
       <div class="form-head">
         <div class="form-head-main">
-          <h3 id="formTitle">Оформление брони</h3>
           <p id="formLead" style="margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.55;"></p>
         </div>
         <button class="form-close" type="button" id="formCloseBtn" data-action="close-form" aria-label="Закрыть">
@@ -11092,11 +12656,66 @@
     };
   </script>
 
-  <!-- AC_BUILD_SCRIPT_START -->
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- AC_BUILD_SCRIPT_START -->
 <script id="ac-build-components" type="application/json">[{"name": "gallery.html", "size": 230}, {"name": "hero.html", "size": 232}, {"name": "reviews.html", "size": 224}, {"name": "shifts.html", "size": 276}, {"name": "team.html", "size": 163}]</script>
 <script id="ac-build-media-manifest" type="application/json">[]</script>
 <script id="ac-build-team-manifest" type="application/json">[]</script>
 <script id="ac-build-main-js">
+/* src/scripts/main.js */
 /* src/scripts/main.js */
     const OFFER_DISCOUNT_FACTOR = 0.95;
 
@@ -11144,8 +12763,8 @@
         badge:'',
         isShort:true,
         sourceId:'shift-2',
-        desc:'Короткая смена 7 дней: быстрый вход в программу и проектную работу.',
-        fullDesc:''
+        desc:'Короткая смена 7 дней: проекты, логика и быстрый вход в программу.',
+        fullDesc:'Короткая смена на 7 дней. Ускоренный формат с фокусом на практике: ребёнок делает проект, прокачивает логику и закрепляет базовые навыки программирования через понятные задачи. Для 7–9 лет — упор на Scratch и визуальную логику; для 10–12 лет — первые уверенные шаги в Python и структуре кода; для 13–14 лет — проектная сборка с элементами AI. Формат короткий, но результатный.'
       },
       {
         id:'shift-2-2',
@@ -11160,8 +12779,8 @@
         badge:'',
         isShort:true,
         sourceId:'shift-2',
-        desc:'Короткая смена 7 дней: интенсив по проектам и закрепление навыков.',
-        fullDesc:''
+        desc:'Короткая смена 8 дней: интенсив по проектам, логике и закреплению навыков.',
+        fullDesc:'Короткая смена на 8 дней. Интенсивное продолжение проектной работы: ребёнок усиливает логику, доводит задачи до результата и закрепляет навыки программирования в прикладном формате. Для 7–9 лет — развитие проектов в Scratch; для 10–12 лет — практический Python и алгоритмы; для 13–14 лет — более сложные задачи и работа с AI-инструментами. Короткий цикл с фокусом на конкретный прогресс.'
       },
       {
         id:'shift-4',
@@ -11409,6 +13028,8 @@
       basePrice:null,
       offerPrice:null,
       code:null,
+      previousCode:null,
+      nextCodePreview:null,
       expiresAt:null,
       offerStage:0,
       view:'desktop',
@@ -11417,7 +13038,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.279 (mobile-stage2-compact-chip-title-button-rhythm)';
+    const BUILD_VERSION_LABEL = 'v0.0.281 (mobile-age-cards-15pct-menu-overlay-shift-about-modal)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
@@ -11530,8 +13151,8 @@
     if(USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile'){
       state.view = 'desktop';
     }
-    state.desktopMode = state.desktopMode || 'compact';
-    state.mobileMode = state.mobileMode || 'compact';
+    state.desktopMode = 'full';
+    state.mobileMode = 'full';
     state.heroContrastMode = 'after-soft';
     state.heroMicroMode = 'off';
     state.offerModalTheme = 'light';
@@ -11584,6 +13205,8 @@
       }
     }
     state.photoFilter = state.photoFilter || 'camp';
+    state.previousCode = state.previousCode || null;
+    state.nextCodePreview = state.nextCodePreview || null;
     state.faqFilter = state.faqFilter || 'Медицина';
     state.mobileJourneyStep = Number.isFinite(Number(state.mobileJourneyStep)) ? Number(state.mobileJourneyStep) : 0;
     state.mobileProgramShiftId = state.mobileProgramShiftId || '';
@@ -12903,6 +14526,27 @@
       renderMediaViewer();
     }
 
+    function getPhotoTagsByFilter(filter){
+      const photoByFilter = {
+        all: ['all', 'camp', 'pool', 'sport', 'study', 'food'],
+        camp: ['all', 'camp'],
+        pool: ['pool'],
+        sport: ['sport'],
+        study: ['study'],
+        food: ['food']
+      };
+      return photoByFilter[String(filter || '').trim()] || ['all', 'camp'];
+    }
+
+    function getPhotosForActiveFilter(filter = state.photoFilter){
+      const tags = getPhotoTagsByFilter(filter);
+      let list = mediaContent.photos.filter((item) => tags.includes(item.cat));
+      if(!list.length){
+        list = mediaContent.photos.filter((item) => item.cat === 'all' || item.cat === 'camp');
+      }
+      return list.length ? list : mediaContent.photos.slice();
+    }
+
     function handleDataActionClick(target){
       const actionEl = target.closest('[data-action]');
       if(!actionEl) return false;
@@ -12911,8 +14555,14 @@
 
       if(action === 'open-photo'){
         const index = Number(actionEl.dataset.photoIndex || 0);
-        activePhotoList = photoGalleryList.length ? photoGalleryList.slice() : mediaContent.photos.slice();
-        openMedia('photo', index);
+        const clickedFromMobilePhoto = !!actionEl.closest('.mobile-photo-stage, .mobile-photo-preview-strip');
+        const source = clickedFromMobilePhoto
+          ? getPhotosForActiveFilter(state.photoFilter)
+          : (photoGalleryList.length ? photoGalleryList.slice() : mediaContent.photos.slice());
+        activePhotoList = source;
+        const safeIndex = Math.max(0, Math.min(index, Math.max(source.length - 1, 0)));
+        state.mobilePhotoIndex = safeIndex;
+        openMedia('photo', safeIndex);
         return true;
       }
 
@@ -12961,13 +14611,8 @@
 
       if(action === 'toggle-shift-about'){
         const shiftId = actionEl.dataset.shiftId || '';
-        const viewKey = actionEl.dataset.shiftView || 'desktop';
         if(shiftId){
-          if(viewKey === 'desktop'){
-            openShiftAboutModal(shiftId);
-          } else {
-            toggleShiftOptionPanel(viewKey, 'aboutId', shiftId);
-          }
+          openShiftAboutModal(shiftId);
         }
         return true;
       }
@@ -13195,6 +14840,21 @@
         return true;
       }
 
+      if(action === 'reset-booking-all'){
+        const confirmed = window.confirm(
+          'Это действие аннулирует ваше предварительное бронирование.\n\nВы точно хотите продолжить?'
+        );
+        if(!confirmed){
+          return true;
+        }
+        resetOfferState({preserveShift:false});
+        state.age = null;
+        state.ageSelected = false;
+        persist();
+        renderAll();
+        return true;
+      }
+
       if(action === 'close-offer'){
         offerRunId += 1;
         clearOfferTimeout();
@@ -13271,13 +14931,13 @@
       }
 
       if(action === 'copy-invite-link'){
-        const inviteUrl = `${window.location.origin}${window.location.pathname}?invite=${encodeURIComponent(state.code || 'aidacamp')}`;
+        const invitePayload = buildInviteClipboardText();
         if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(inviteUrl)
-            .then(() => openNoticeModal('Ссылка приглашения скопирована.'))
-            .catch(() => openNoticeModal('Не удалось скопировать автоматически. Скопируйте ссылку из адресной строки.'));
+          navigator.clipboard.writeText(invitePayload)
+            .then(() => openNoticeModal('Ссылка скопирована.'))
+            .catch(() => openNoticeModal('Не удалось скопировать автоматически. Скопируйте ссылку вручную.'));
         } else {
-          openNoticeModal('Скопируйте ссылку из адресной строки браузера.');
+          openNoticeModal('Скопируйте ссылку вручную.');
         }
         return true;
       }
@@ -13753,7 +15413,7 @@
       }
 
       return {
-        text:'Оформить заявку',
+        text:'Забронировать',
         disabled:false,
         hint:''
       };
@@ -13824,7 +15484,7 @@
       }
 
       const runtimeHeight = Math.max(450, Math.min(700, Math.min(preferred, availableByHero)));
-      const mobileOverlap = Math.max(16, Math.min(40, Math.round(runtimeHeight * 0.072)));
+      const mobileOverlap = Math.max(11, Math.min(27, Math.round(runtimeHeight * 0.048)));
       card.style.setProperty('--booking-card-fixed-height', `${runtimeHeight}px`);
       card.style.setProperty('--booking-card-min-height', `${runtimeHeight}px`);
       card.style.setProperty('--booking-card-mobile-overlap', `${mobileOverlap}px`);
@@ -13861,12 +15521,18 @@
       const root = document.getElementById(targetId);
       if(!root) return;
       const current = getStepState();
+      const isDesktopSteps = targetId === 'desktopBookingSteps';
       root.querySelectorAll('.booking-step').forEach((el, idx) => {
         const num = idx + 1;
-        el.classList.remove('active','done');
+        el.classList.remove('active','done','pulse');
         el.dataset.step = String(num);
         if(num < current) el.classList.add('done');
-        if(num === current) el.classList.add('active');
+        if(num === current){
+          el.classList.add('active');
+          if(isDesktopSteps){
+            el.classList.add('pulse');
+          }
+        }
       });
     }
 
@@ -14181,15 +15847,16 @@
 
       if(btn){
         btn.classList.remove('hidden');
-        const shouldUseStackedCta = isDesktopPanel && state.offerStage >= 1 && /^Оформить заявку · выгода /i.test(actionText);
+        const isStageFour = getBookingStage() === 4 && !state.bookingCompleted;
+        const shouldUseStackedCta = isStageFour && /^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText);
         if(shouldUseStackedCta){
-          const gainText = actionText.replace(/^Оформить заявку · выгода /i, '').trim();
+          const gainText = actionText.replace(/^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
           btn.innerHTML = `
             <span class="cta-main-line cta-main-line--primary">Оформить заявку</span>
             <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
           `;
           btn.dataset.ctaLayout = 'stacked';
-          btn.setAttribute('aria-label', actionText);
+          btn.setAttribute('aria-label', `Оформить заявку. Выгода ${gainText}`);
         } else {
           btn.textContent = actionText;
           btn.removeAttribute('data-cta-layout');
@@ -14204,7 +15871,7 @@
         hint.textContent = action.hint;
       }
       if(state.bookingCompleted){
-        if(title) title.textContent = 'Что дальше?';
+        if(title) title.textContent = '';
         if(lead) lead.textContent = '';
         if(btn){
           btn.classList.add('is-disabled');
@@ -14220,36 +15887,23 @@
           if(info) info.innerHTML = '';
           return;
         }
-        const visiblePriceWithFallback = formatPrice(getVisiblePrice());
         if(info){
           info.innerHTML = `
             <div class="booking-price-box booking-summary-mini booking-summary-mini--completed">
-              <div class="booking-price-head">
-                <div class="booking-price-col">
-                  <small>Ваша смена</small>
-                  <div class="booking-price-main">${shift.dates}</div>
-                </div>
-                <div class="booking-price-col booking-price-col--fixed" style="text-align:right;">
-                  <small>Возраст</small>
-                  <div class="booking-price-main">${ageLabel(state.age)}</div>
-                </div>
+              <div class="booking-completed-top">
+                <button class="booking-completed-reset" type="button" data-action="reset-booking-all" aria-label="Сбросить бронирование">
+                  <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
+                </button>
               </div>
-              <p class="completed-followup-text">Мы свяжемся с вами в ближайшее время.</p>
+              <div class="booking-completed-next">
+                <div class="completed-followup-title">Что дальше?</div>
+                <div class="completed-followup-text">Мы свяжемся с вами в ближайшее время.</div>
+              </div>
               <button class="completed-followup-image-trigger" type="button" data-action="open-referral-photo" aria-label="Открыть фото в полном размере">
                 <img class="completed-followup-image" src="/assets/images/referral-hoodie.jpeg" alt="Фирменная толстовка лагеря">
               </button>
               <p class="completed-followup-note">Обычно дети приезжают с друзьями, так им проще адаптироваться. Позовите друга, подарим вам обоим фирменную толстовку.</p>
-              <a class="completed-followup-link" href="#" data-action="copy-invite-link">Копировать ссылку приглашения</a>
-              <div class="booking-price-head">
-                <div class="booking-price-col">
-                  <small>Зафиксированная цена</small>
-                  <div class="booking-price-main big">${visiblePriceWithFallback}</div>
-                </div>
-                <div class="booking-price-col" style="text-align:right;">
-                  <small>Код бронирования</small>
-                  <div class="booking-price-main">${state.code || '—'}</div>
-                </div>
-              </div>
+              <a class="completed-followup-link" href="#" data-action="copy-invite-link">Копировать ссылку приглашение</a>
             </div>
           `;
         }
@@ -14274,18 +15928,16 @@
       const currentPrice = formatPrice(shift.price);
       const visiblePriceValue = getVisiblePrice();
       const visiblePrice = formatPrice(visiblePriceValue);
-      const shiftDescription = hasSelectedAge()
-        ? getShiftAgeFocusedDescription(shift, state.age || '7-9')
-        : (shift.desc || '');
       const timerText = isOfferActive() ? formatRemainingCompact(state.expiresAt - Date.now()) : '';
-      const deadlineText = formatOfferDeadline(state.expiresAt);
       const basePriceValue = Number(state.basePrice || shift.price || 0);
       const safeVisiblePrice = Number(visiblePriceValue || 0);
+      const savingsValue = Math.max(0, basePriceValue - safeVisiblePrice);
+      const savingsText = formatPrice(savingsValue);
       const discountPercent = basePriceValue > 0
         ? Math.max(0, Math.round(((basePriceValue - safeVisiblePrice) / basePriceValue) * 100))
         : 0;
       if(state.offerStage >= 1){
-        if(title) title.textContent = 'Оформление брони';
+        if(title) title.textContent = 'Ваши условия';
         if(lead) lead.textContent = '';
       } else {
         if(title) title.textContent = 'Проверим цену и условия';
@@ -14293,13 +15945,15 @@
       }
 
       if(isDesktopPanel && state.offerStage === 0){
-        const shiftLongDescription = getShiftDisplayDescription(shift);
         if(info) info.innerHTML = `
           <div class="booking-shift-focus">
             <div class="booking-shift-focus__dates">${shift.dates}</div>
-            <div class="booking-shift-focus__meta">${shiftDaysLabel(shift)} · ${formatPrice(shift.price)} · осталось ${shift.left} мест</div>
-            <div class="booking-shift-focus__desc-title">Описание смены</div>
-            <p class="booking-shift-focus__desc">${shiftLongDescription}</p>
+            <div class="booking-shift-focus__days">${shiftDaysLabel(shift)}</div>
+            <div class="booking-shift-focus__preliminary">
+              <span class="booking-shift-focus__preliminary-label">Предварительная цена</span>
+              <span class="booking-shift-focus__preliminary-value">${formatPrice(shift.price)}</span>
+            </div>
+            <div class="booking-shift-focus__seats">Осталось ${shift.left} мест</div>
           </div>
         `;
         return;
@@ -14308,21 +15962,22 @@
       const isSummaryStage = state.offerStage >= 1;
       if(info) info.innerHTML = isSummaryStage ? `
         <div class="booking-price-box booking-summary-mini">
+          <div class="booking-summary-stage4-head">
+            <div class="booking-summary-stage4-age">${ageLabel(state.age)} · ${shift.dates}</div>
+          </div>
           <div class="booking-price-head">
-            <div class="booking-price-col">
-              <small>Возраст</small>
-              <div class="booking-price-main">${ageLabel(state.age)}</div>
-            </div>
-            <div class="booking-price-col booking-price-col--fixed" style="text-align:right;">
+            <div class="booking-price-col booking-price-col--fixed" style="text-align:left;">
               <small>Зафиксированная цена</small>
               <div class="booking-price-main big">${visiblePrice}</div>
-              ${discountPercent > 0 ? `<div class="booking-price-discount">Скидка ${discountPercent}%</div>` : ''}
             </div>
           </div>
-          <div class="booking-code-line">Даты: <strong style="color:#fff;">${shift.dates}</strong></div>
-          ${state.code ? `<div class="booking-code-line">Код бронирования: <strong style="color:#fff;">${state.code}</strong></div>` : ''}
-          <div class="booking-shift-description">${shiftDescription}</div>
-          ${timerText ? `<div class="booking-timer-line" data-live-timer="true">${timerText}</div>` : ''}
+          <div class="booking-stage4-badges">
+            ${discountPercent > 0 ? `<span class="booking-stage4-badge">Скидка ${discountPercent}%</span>` : ''}
+            ${savingsValue > 0 ? `<span class="booking-stage4-badge">Выгода ${savingsText}</span>` : ''}
+            ${state.code ? `<span class="booking-stage4-badge booking-stage4-badge--code">Код бронирования: ${state.code}</span>` : ''}
+          </div>
+          <div class="booking-stage4-note">Мы вас ждём</div>
+          ${timerText ? `<div class="booking-timer-line" data-live-timer="true"><span class="booking-timer-label">Осталось</span><span class="booking-timer-value">${stripRemainingPrefix(timerText)}</span></div>` : ''}
         </div>
       ` : `
         <div class="booking-price-box">
@@ -14732,6 +16387,23 @@
 
     function shiftDaysLabel(shift){
       if(!shift) return '';
+      const dayWord = (days) => {
+        const n = Math.abs(Number(days) || 0);
+        const mod10 = n % 10;
+        const mod100 = n % 100;
+        if(mod10 === 1 && mod100 !== 11) return 'день';
+        if(mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'дня';
+        return 'дней';
+      };
+      if(shift.isShort){
+        const start = parseShiftDate(shift.start);
+        const end = parseShiftDate(shift.end);
+        if(start && end){
+          const msPerDay = 24 * 60 * 60 * 1000;
+          const days = Math.max(1, Math.round((end.getTime() - start.getTime()) / msPerDay) + 1);
+          return `${days} ${dayWord(days)}`;
+        }
+      }
       const map = {
         'shift-1':'10 дней',
         'shift-2':'13 дней',
@@ -14888,20 +16560,34 @@
       const shouldShowTimer = !!showTimer && isOfferActive();
       const timeLeft = shouldShowTimer ? stripRemainingPrefix(formatRemainingCompact(state.expiresAt - Date.now())) : '';
       return `
-        <div class="booking-summary-selection">${ageLabel(state.age)} · ${shift.dates}</div>
-        <div class="booking-summary-price">${formatPrice(state.offerPrice || state.basePrice || shift.price)}</div>
+        <div class="booking-summary-line">
+          <span class="booking-summary-line__segment booking-summary-line__segment--price"><span class="booking-summary-price">${formatPrice(state.offerPrice || state.basePrice || shift.price)}</span></span>
+          <span class="booking-summary-sep" aria-hidden="true">•</span>
+          <span class="booking-summary-line__segment">
+            <span class="booking-summary-selection">${ageLabel(state.age)}</span>
+          </span>
+          <span class="booking-summary-sep" aria-hidden="true">•</span>
+          <span class="booking-summary-line__segment booking-summary-line__segment--date">
+            <span class="booking-summary-selection booking-summary-selection--date">${shift.dates}</span>
+          </span>
+        </div>
         ${timeLeft ? `
         <div class="booking-summary-timer">
           <div class="booking-summary-timer-title">Цена закреплена за вами</div>
           <div class="booking-timer-line" data-live-timer="true">${timeLeft}</div>
         </div>
         ` : ''}
-        <div class="booking-summary-guarantee">Мы держим для вас место.<br>Никакой оплаты сейчас не требуется.</div>
       `;
     }
 
     function generateCode(){
       return 'AC-' + Math.random().toString(36).slice(2,6).toUpperCase();
+    }
+
+    function buildInviteClipboardText(){
+      const currentCode = String(state.code || 'aidacamp').trim();
+      const inviteUrl = `${window.location.origin}${window.location.pathname}?invite=${encodeURIComponent(currentCode)}`;
+      return `Ссылка: ${inviteUrl}`;
     }
 
     function bindAgeTabs(rootId){
@@ -15271,24 +16957,26 @@
         return `
         <div class="shift-option ${state.shiftId === s.id ? 'active' : ''}" data-id="${s.id}">
           <div class="shift-option-head">
-            <strong>${s.dates}</strong>
+            <strong>
+              <span class="shift-option-dates">${s.dates}</span>
+            </strong>
             <small>
-              <span class="shift-option-price">${formatPrice(s.price)}</span>
               <span class="shift-option-seats">осталось ${s.left} мест</span>
+              <span class="shift-option-price-row">
+                <span class="shift-option-price">${formatPrice(s.price)}</span>
+                <span class="shift-option-inline-actions">
+                  <button class="shift-option-action shift-option-action-info" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${viewKey}" aria-label="Описание смены ${s.dates}">
+                    <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                  </button>
+                  <button class="shift-option-action shift-option-action-calendar" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${viewKey}" aria-label="Календарь ${s.dates}">
+                    <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                  </button>
+                  <button class="shift-option-select-indicator" type="button" aria-label="Выбрать смену ${s.dates}">
+                    <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+                  </button>
+                </span>
+              </span>
             </small>
-          </div>
-          <div class="shift-option-tagline">${s.desc || ''}</div>
-          <div class="shift-option-actions">
-            <button class="shift-option-action" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${viewKey}">
-              О смене
-            </button>
-            <button class="shift-option-action" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${viewKey}">
-              <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
-              <span>Календарь</span>
-            </button>
-            <button class="shift-option-select-indicator" type="button" aria-label="Выбрать смену ${s.dates}">
-              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
-            </button>
           </div>
           <div class="shift-inline-panel ${showAbout ? 'visible' : ''}">
             <ul>
@@ -15327,20 +17015,30 @@
       const mainShifts = shifts.filter((s) => !s.isShort);
       const shortShifts = shifts.filter((s) => !!s.isShort);
       const showExtendedDescription = hasSelectedAge();
+      const cleanShiftCardTitle = (title) => {
+        const raw = String(title || '').trim();
+        const cleaned = raw
+          .replace(/^\s*\d+(?:[.,]\d+)?\s*[\])}.:\-–—,]?\s*/u, '')
+          .replace(/^(?:TT|ТТ)\s*[\d.]+[\s:.\-–—]*/iu, '')
+          .trim();
+        return cleaned || raw;
+      };
 
       grid.innerHTML = mainShifts.map(s => `
         <div class="mini-card">
-          <h4><span class="program-shift-index program-shift-index-main">${s.title}</span></h4>
+          <h4>${cleanShiftCardTitle(s.title)}</h4>
           <div class="price-row">
             <strong>${formatPrice(s.price)}</strong>
-            <span>
-              ${s.dates} · ${shiftDaysLabel(s)}
+            <span class="price-row-actions">
+              <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" aria-label="Описание смены ${s.title}">
+                <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+              </button>
               <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
                 <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
-                <span class="shift-calendar-btn-label">календарь</span>
               </button>
             </span>
           </div>
+          <div class="price-row-meta">${s.dates} · ${shiftDaysLabel(s)}</div>
           ${showExtendedDescription
             ? `
               <p><strong>Коротко:</strong> ${s.desc || ''}</p>
@@ -15355,19 +17053,21 @@
         shortGrid.innerHTML = shortShifts.map((s) => `
           <div class="mini-card short-shift-card">
             <div class="short-shift-head">
-              <h4><span class="program-shift-index">${s.title}</span></h4>
+              <h4>${cleanShiftCardTitle(s.title)}</h4>
               <span class="short-shift-tag">короткая смена</span>
             </div>
             <div class="price-row">
               <strong>${formatPrice(s.price)}</strong>
-              <span>
-                ${s.dates} · ${shiftDaysLabel(s)}
-                <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.sourceId || s.id}" aria-label="Календарь ${s.title}">
+              <span class="price-row-actions">
+                <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" aria-label="Описание смены ${s.title}">
+                  <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                </button>
+                <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
                   <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
-                  <span class="shift-calendar-btn-label">календарь</span>
                 </button>
               </span>
             </div>
+            <div class="price-row-meta">${s.dates}</div>
             ${showExtendedDescription
               ? `
                 <p><strong>Коротко:</strong> ${s.desc || ''}</p>
@@ -15650,32 +17350,7 @@
 
     function renderCompactInlineStayList(mobileInlineStayList){
       if(!mobileInlineStayList) return;
-      let stayCards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
-        return {
-          img: card.querySelector('img')?.getAttribute('src') || '',
-          title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
-          text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
-        };
-      }).filter((item) => item.title);
-      if(!stayCards.length){
-        stayCards = [
-          {
-            img:'/assets/images/cdn-cache/53d52bed_45b1eb46cf5961c2188d.jpg.webp',
-            title:'Комнаты и размещение',
-            text:'Спокойные светлые комнаты, удобное размещение и бытовая среда без ощущения «походного лагеря».'
-          },
-          {
-            img:'/assets/images/cdn-cache/62b758b3_63e9322f53ec8ca1b307.jpg.webp',
-            title:'Санузлы и бытовые зоны',
-            text:'Родителям важно понимать не только программу, но и бытовой комфорт ребёнка.'
-          },
-          {
-            img:'/assets/images/stay-common-lounge.webp',
-            title:'Общая гостиная и зона отдыха',
-            text:'Тёплое общее пространство для спокойного досуга, настольных игр и вечернего общения под присмотром вожатых.'
-          }
-        ];
-      }
+      const stayCards = getCompactStayCards();
       if(!stayCards.length){
         mobileInlineStayList.innerHTML = '';
         return;
@@ -15713,6 +17388,36 @@
           `).join('')}
         </div>
       `;
+    }
+
+    function getCompactStayCards(){
+      let cards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
+        return {
+          img: card.querySelector('img')?.getAttribute('src') || '',
+          title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
+          text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
+        };
+      }).filter((item) => item.title);
+      if(!cards.length){
+        cards = [
+          {
+            img:'/assets/images/cdn-cache/53d52bed_45b1eb46cf5961c2188d.jpg.webp',
+            title:'Комнаты и размещение',
+            text:'Спокойные светлые комнаты, удобное размещение и бытовая среда без ощущения «походного лагеря».'
+          },
+          {
+            img:'/assets/images/cdn-cache/62b758b3_63e9322f53ec8ca1b307.jpg.webp',
+            title:'Санузлы и бытовые зоны',
+            text:'Родителям важно понимать не только программу, но и бытовой комфорт ребёнка.'
+          },
+          {
+            img:'/assets/images/stay-common-lounge.webp',
+            title:'Общая гостиная и зона отдыха',
+            text:'Тёплое общее пространство для спокойного досуга, настольных игр и вечернего общения под присмотром вожатых.'
+          }
+        ];
+      }
+      return cards;
     }
 
     function renderCompactInlineTeamList(mobileInlineTeamList){
@@ -15921,28 +17626,39 @@
               `).join('')}
             </div>
             <article class="mobile-program-active-card">
-              <strong>${selectorLabel(activeShift)}</strong>
               <div class="mobile-program-dates">
                 ${activeShift.dates}
-                ${activeShift.isShort ? `<span class="mobile-program-dates-sub">${shiftDaysLabel(activeShift)}</span>` : ''}
               </div>
-              <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
+              <div class="mobile-program-price-row">
+                <div class="mobile-program-price">${formatPrice(activeShift.price)}</div>
+                <div class="mobile-program-inline-actions">
+                  <button
+                    class="shift-calendar-btn shift-about-btn"
+                    type="button"
+                    data-action="toggle-shift-about"
+                    data-shift-id="${activeShift.id}"
+                    aria-label="Описание смены ${activeShift.title}"
+                  >
+                    <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                  </button>
+                  <button
+                    class="shift-calendar-btn"
+                    type="button"
+                    data-action="open-calendar"
+                    data-shift-id="${activeShift.id}"
+                    aria-label="Календарь ${activeShift.title}"
+                  >
+                    <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                  </button>
+                </div>
+              </div>
               <div class="mobile-program-meta">
-                <span>${shiftDaysLabel(activeShift)}</span>
+                ${activeShift.isShort ? '' : `<span>${shiftDaysLabel(activeShift)}</span>`}
                 <span>Осталось ${activeShift.left} мест</span>
                 ${activeShift.isShort ? '<span class="mobile-program-short-badge">Короткая смена</span>' : ''}
               </div>
               <p>${activeShift.isShort ? (activeShift.desc || '') : getShiftDisplayDescription(activeShift)}</p>
               ${ageHint ? `<div class="mobile-program-hint">${ageHint}</div>` : ''}
-              <button
-                class="shift-calendar-btn"
-                type="button"
-                data-action="open-calendar"
-                data-shift-id="${activeShift.sourceId || activeShift.id}"
-                aria-label="Календарь ${activeShift.title}"
-              >
-                <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true"><span>Календарь</span>
-              </button>
             </article>
             <div class="mobile-program-dots">
               ${mainShifts.map((shift, idx) => `
@@ -15967,15 +17683,9 @@
       }
 
       if (photoGalleryTargets.length) {
-        const photoByFilter = {
-          camp: ['all'],
-          pool: ['pool'],
-          sport: ['sport'],
-          study: ['study'],
-          food: ['food']
-        };
-        const tags = photoByFilter[state.photoFilter] || ['all'];
-        const list = mediaContent.photos.filter((item) => tags.includes(item.cat));
+        const list = getPhotosForActiveFilter(state.photoFilter);
+        photoGalleryList = list.slice();
+        activePhotoList = list.slice();
         const activeIndex = Math.min(Math.max(state.mobilePhotoIndex || 0, 0), Math.max(list.length - 1, 0));
         state.mobilePhotoIndex = activeIndex;
         const active = list[activeIndex];
@@ -16521,7 +18231,11 @@
         }
       }
 
+      if(state.code){
+        state.previousCode = state.code;
+      }
       state.code = generateCode();
+      state.nextCodePreview = null;
       state.offerSearching = false;
       persist();
       track('offer_complete', selectedShiftPayload());
@@ -16569,7 +18283,7 @@
               <p class="offer-booking-note">Действует 72 часа. Вы можете спокойно подумать и вернуться.</p>
             </div>
             <div class="overlay-actions">
-              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Оформить заявку</button>
+              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Забронировать</button>
             </div>
             <div class="inline-lead-host hidden" id="offerInlineLeadHost"></div>
           </div>
@@ -16602,7 +18316,7 @@
             </div>
 
             <div class="overlay-actions">
-              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Оформить заявку</button>
+              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Забронировать</button>
             </div>
             <div class="inline-lead-host hidden" id="offerInlineLeadHost"></div>
           </div>
@@ -16645,7 +18359,12 @@
           if(offerTimer) offerTimer.textContent = '';
           if(summaryTimer) summaryTimer.textContent = '';
           bookingTimers.forEach((node) => {
-            node.textContent = '';
+            const timerValueNode = node.querySelector('.booking-timer-value');
+            if(timerValueNode){
+              timerValueNode.textContent = '';
+            } else {
+              node.textContent = '';
+            }
           });
           renderBookingPanels();
           return;
@@ -16657,7 +18376,12 @@
         if(offerTimer) offerTimer.textContent = fullText;
         if(summaryTimer) summaryTimer.textContent = compactText;
         bookingTimers.forEach((node) => {
-          node.textContent = compactText;
+          const timerValueNode = node.querySelector('.booking-timer-value');
+          if(timerValueNode){
+            timerValueNode.textContent = stripRemainingPrefix(compactText);
+          } else {
+            node.textContent = compactText;
+          }
         });
       };
 
@@ -16777,19 +18501,21 @@
       bar.classList.toggle('summary-bar--stage4', isStageFourSummary);
 
       document.getElementById('summaryMain').textContent = isStageFourSummary ? '' : `${labelAge(state.age)}`;
-      document.getElementById('summaryMeta').textContent = `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
+      document.getElementById('summaryMeta').textContent = isStageFourSummary
+        ? ''
+        : `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
       document.getElementById('summaryPrice').textContent = formatPrice(price);
       const summaryCtaBtn = bar.querySelector('[data-action="primary-cta"]');
       if(summaryCtaBtn){
         const action = getPrimaryActionState();
         const actionText = getResolvedPrimaryActionText(action, shift);
-        if(isStageFourSummary && /^Оформить заявку · выгода /i.test(actionText)){
-          const gainText = actionText.replace(/^Оформить заявку · выгода /i, '').trim();
+        if(isStageFourSummary && /^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText)){
+          const gainText = actionText.replace(/^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
           summaryCtaBtn.innerHTML = `
-            <span class="cta-main-line cta-main-line--primary">Оформить заявку</span>
+            <span class="cta-main-line cta-main-line--primary">Бронировать</span>
             <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
           `;
-          summaryCtaBtn.setAttribute('aria-label', actionText);
+          summaryCtaBtn.setAttribute('aria-label', `Бронировать · Выгода ${gainText}`);
         } else {
           summaryCtaBtn.textContent = actionText;
           summaryCtaBtn.removeAttribute('aria-label');
@@ -16879,7 +18605,7 @@
     }
 
     function getLeadSubmitDefaultText(scope = 'drawer'){
-      return 'Забронировать место';
+      return 'Забронировать';
     }
 
     function setLeadPhoneError(scope = 'drawer', show = false, message = ''){
@@ -17523,6 +19249,71 @@
         const total = 4;
         const current = Math.max(0, Number(state.mobileJourneyStep || 0));
         state.mobileJourneyStep = (current + (dx < 0 ? 1 : -1) + total) % total;
+        renderCompactTrustPanelContent();
+        persist();
+      }, {passive:true});
+    })();
+
+    (function bindMobileStaySwipe(){
+      let startX = 0;
+      let startY = 0;
+      let activeCard = null;
+
+      document.addEventListener('touchstart', (e) => {
+        const card = e.target.closest('.mobile-stay-feature, .mobile-stay-feature-photo');
+        if(!card) return;
+        const touch = e.touches && e.touches[0];
+        if(!touch) return;
+        activeCard = card;
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }, {passive:true});
+
+      document.addEventListener('touchend', (e) => {
+        if(!activeCard) return;
+        const touch = e.changedTouches && e.changedTouches[0];
+        activeCard = null;
+        if(!touch) return;
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if(Math.abs(dx) < 32 || Math.abs(dx) <= Math.abs(dy)) return;
+        const list = getCompactStayCards();
+        const total = Math.max(0, list.length || 0);
+        if(!total) return;
+        state.mobileStayIndex = (Math.max(0, state.mobileStayIndex || 0) + (dx < 0 ? 1 : -1) + total) % total;
+        renderCompactTrustPanelContent();
+        persist();
+      }, {passive:true});
+    })();
+
+    (function bindMobilePhotoSwipe(){
+      let startX = 0;
+      let startY = 0;
+      let activeNode = null;
+
+      document.addEventListener('touchstart', (e) => {
+        const node = e.target.closest('.mobile-photo-stage, .mobile-photo-preview-strip');
+        if(!node) return;
+        const touch = e.touches && e.touches[0];
+        if(!touch) return;
+        activeNode = node;
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }, {passive:true});
+
+      document.addEventListener('touchend', (e) => {
+        if(!activeNode) return;
+        const touch = e.changedTouches && e.changedTouches[0];
+        activeNode = null;
+        if(!touch) return;
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if(Math.abs(dx) < 34 || Math.abs(dx) <= Math.abs(dy)) return;
+        const list = getPhotosForActiveFilter(state.photoFilter);
+        const total = Math.max(0, list.length || 0);
+        if(!total) return;
+        const current = Math.max(0, Number(state.mobilePhotoIndex || 0));
+        state.mobilePhotoIndex = (current + (dx < 0 ? 1 : -1) + total) % total;
         renderCompactTrustPanelContent();
         persist();
       }, {passive:true});
