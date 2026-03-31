@@ -28,7 +28,7 @@ jobs:
           exit 1
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -44,10 +44,11 @@ jobs:
           chmod +x build.sh
           bash build.sh
           test -f cdn/app.bundle.js
+          test -f cdn/app.tilda.js
 
       - name: Commit bundle update (if changed)
         run: |
-          git add cdn/app.bundle.js
+          git add cdn/app.bundle.js cdn/app.tilda.js
           if git diff --cached --quiet; then
             echo "No bundle changes to commit."
           else
@@ -70,13 +71,17 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
         run: |
-          URL="https://purge.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.bundle.js"
-          echo "Purging: $URL"
-          curl -fsSL "$URL" >/dev/null
+          URL1="https://purge.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.bundle.js"
+          URL2="https://purge.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.tilda.js"
+          echo "Purging: $URL1"
+          curl -fsSL "$URL1" >/dev/null
+          echo "Purging: $URL2"
+          curl -fsSL "$URL2" >/dev/null
 
       - name: Release summary
         env:
           TAG: ${{ inputs.tag }}
         run: |
-          echo "Bundle URL:"
+          echo "Bundle URLs:"
           echo "https://cdn.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.bundle.js"
+          echo "https://cdn.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.tilda.js"
