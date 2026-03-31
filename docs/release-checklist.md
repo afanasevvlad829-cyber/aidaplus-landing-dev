@@ -13,3 +13,6 @@
 - Overlays: contact/shifts open+close.
 - Analytics smoke: page_loaded, mode_changed, step_changed, booking events.
 - Final pass: no console-breaking errors.
+- Architecture contract: no new legacy booking IDs/selectors (`#mobile-booking-card` etc.), only `#desktop-booking-card` and `#mobileBookingCard`.
+- Architecture contract: desktop/mobile keep single state/action pipeline; visual differences only via templates/classes/styles.
+- Architecture contract: `renderAll()` remains single full rerender entrypoint.
