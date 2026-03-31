@@ -470,7 +470,7 @@
     #mobileView .hero-bg,
     .mobile-hero .hero-bg,
     #desktopView.mobile-preview-active .hero-bg{
-      background-position:82% center;
+      background-position:62% center;
     }
 
     .hero-shell::before{

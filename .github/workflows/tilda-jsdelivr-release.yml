@@ -50,9 +50,9 @@ jobs:
         run: |
           git add cdn/app.bundle.js cdn/app.tilda.js
           if git diff --cached --quiet; then
-            echo "No bundle changes to commit."
+            echo "No CDN bundle changes to commit."
           else
-            git commit -m "release: update cdn bundle for ${{ inputs.tag }}"
+            git commit -m "release: update cdn bundles for ${{ inputs.tag }}"
             git push origin HEAD:main
           fi
 
@@ -71,17 +71,18 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
         run: |
-          URL1="https://purge.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.bundle.js"
-          URL2="https://purge.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.tilda.js"
-          echo "Purging: $URL1"
-          curl -fsSL "$URL1" >/dev/null
-          echo "Purging: $URL2"
-          curl -fsSL "$URL2" >/dev/null
+          URL_BUNDLE="https://purge.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.bundle.js"
+          URL_TILDA="https://purge.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.tilda.js"
+          echo "Purging: $URL_BUNDLE"
+          curl -fsSL "$URL_BUNDLE" >/dev/null
+          echo "Purging: $URL_TILDA"
+          curl -fsSL "$URL_TILDA" >/dev/null
 
       - name: Release summary
         env:
           TAG: ${{ inputs.tag }}
         run: |
-          echo "Bundle URLs:"
+          echo "Bundle URL:"
           echo "https://cdn.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.bundle.js"
+          echo "Tilda URL:"
           echo "https://cdn.jsdelivr.net/gh/${{ github.repository }}@$TAG/cdn/app.tilda.js"
