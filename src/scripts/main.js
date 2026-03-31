@@ -243,7 +243,7 @@
         }
       ],
       contacts: [
-        {label:'city_phone',href:'tel:+74951234567',text:'+7 (495) 123-45-67'},
+        {label:'city_phone',href:'tel:+74951284429',text:'+7 (495) 128-44-29'},
         {label:'mobile_phone',href:'tel:+79688086455',text:'+7 (968) 808-64-55'},
         {label:'whatsapp',href:'https://wa.me/79688086455',text:'WhatsApp'},
         {label:'telegram',href:'https://t.me/proga_school',text:'@proga_school'}
@@ -392,7 +392,7 @@
     });
     const HERO_VARIANT_DEFAULT_TIER = 'broad';
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.285 (hero-booking-tier-flow-and-info-icon-fix)';
+    const BUILD_VERSION_LABEL = 'v0.0.286 (city-phone-update)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
