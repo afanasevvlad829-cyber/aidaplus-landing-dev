@@ -316,7 +316,8 @@
       expiresAt:null,
       offerStage:0,
       view:'desktop',
-      phone:''
+      phone:'',
+      debugBookingBlocks:false
     };
 
     const METRIKA_ID = 96499295;
@@ -504,11 +505,13 @@
     state.mobileTeamIndex = Number.isFinite(Number(state.mobileTeamIndex)) ? Number(state.mobileTeamIndex) : 0;
     // Mobile docs block must stay compact by default: requisites visible, legal links collapsed.
     state.mobileDocsExpanded = false;
+    state.debugBookingBlocks = !!state.debugBookingBlocks;
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
     let offerTimeoutIds = [];
     let offerRunId = 0;
     let leadSubmitInProgress = false;
+    let noticeConfirmHandler = null;
     let lastRenderedBookingStage = 0;
     let bookingScarcityState = (() => {
       try {
@@ -546,16 +549,84 @@
       if(isProductionRuntime() && !isAdminDebugSession()){
         document.getElementById('debugControls')?.remove();
         document.getElementById('version-badge')?.remove();
+        document.body.classList.remove('booking-debug-blocks');
         return;
       }
       const badge = document.getElementById('version-badge');
       if(!badge) return;
+      const finalStepBtn = document.querySelector('[data-action="debug-booking-what-to-do"]');
+      if(finalStepBtn){
+        finalStepBtn.textContent = 'Шаг «Что дальше?»';
+      }
       const badgeLabel = document.getElementById('version-badge-label');
       const isHidden = localStorage.getItem(VERSION_BADGE_HIDDEN_KEY) === '1';
       const label = BUILD_VERSION_LABEL.trim();
       if(badgeLabel) badgeLabel.textContent = label;
       badge.title = label;
       badge.classList.toggle('hidden', isHidden);
+      applyBookingDebugBlocksUi();
+    }
+
+    function applyBookingDebugBlocksUi(){
+      document.body.classList.toggle('booking-debug-blocks', !!state.debugBookingBlocks);
+      const btn = document.getElementById('debugBookingBlocksBtn');
+      if(btn){
+        btn.classList.toggle('active', !!state.debugBookingBlocks);
+        btn.setAttribute('aria-pressed', state.debugBookingBlocks ? 'true' : 'false');
+      }
+    }
+
+    function setBookingDebugBlocks(enabled){
+      state.debugBookingBlocks = !!enabled;
+      applyBookingDebugBlocksUi();
+      persist();
+    }
+
+    function forceBookingDebugStage(mode){
+      const primaryShift = shifts.find((s) => !s.isShort) || shifts[0];
+      if(!primaryShift) return;
+
+      clearOfferTimeout();
+      clearShiftOptionPanels();
+      state.offerSearching = false;
+      state.bookingCompleted = false;
+
+      if(mode === 'what-to-do'){
+        state.age = state.age || '10-12';
+        state.ageSelected = true;
+        state.shiftId = primaryShift.id;
+        state.basePrice = primaryShift.price;
+        state.offerPrice = Math.max(0, Math.round(primaryShift.price * OFFER_DISCOUNT_FACTOR));
+        state.code = generateCode();
+        state.expiresAt = Date.now() + (72 * 60 * 60 * 1000);
+        state.offerStage = 1;
+        state.bookingCompleted = true;
+        renderAll();
+        persist();
+        return;
+      }
+
+      state.age = state.age || '10-12';
+      state.ageSelected = true;
+      state.shiftId = primaryShift.id;
+      state.basePrice = primaryShift.price;
+      state.previousCode = null;
+      state.nextCodePreview = null;
+
+      if(mode === 'stage-3'){
+        state.offerPrice = null;
+        state.code = null;
+        state.expiresAt = null;
+        state.offerStage = 0;
+      } else {
+        state.offerPrice = Math.max(0, Math.round(primaryShift.price * OFFER_DISCOUNT_FACTOR));
+        state.code = generateCode();
+        state.expiresAt = Date.now() + (72 * 60 * 60 * 1000);
+        state.offerStage = 1;
+      }
+
+      renderAll();
+      persist();
     }
 
     function trackOnce(event, params = {}){
@@ -1146,7 +1217,7 @@
     function initSectionViewTracking(){
       const targets = [
         {id:'section-stay', event:'stay_view'},
-        {id:'section-reviews', event:'reviews_view'},
+        {id:'section-reviews', event:'eviews_view'},
         {id:'section-team', event:'team_view'}
       ];
 
@@ -1162,6 +1233,10 @@
         const el = document.getElementById(t.id);
         if(el) io.observe(el);
       });
+    }
+
+    function trackFaqOpen(){
+      trackOnce('faq_open');
     }
 
     const HERO_IMAGES = [
@@ -1755,6 +1830,9 @@
       bodyEl.innerHTML = '';
       bodyEl.appendChild(clone);
       modal.classList.remove('hidden');
+      if(sectionId === 'section-faq'){
+        trackFaqOpen();
+      }
       document.documentElement.style.overflowX = 'hidden';
       document.body.style.overflowX = 'hidden';
       applyCompactSectionModalLayout();
@@ -2131,17 +2209,7 @@
       }
 
       if(action === 'reset-booking-all'){
-        const confirmed = window.confirm(
-          'Это действие аннулирует ваше предварительное бронирование.\n\nВы точно хотите продолжить?'
-        );
-        if(!confirmed){
-          return true;
-        }
-        resetOfferState({preserveShift:false});
-        state.age = null;
-        state.ageSelected = false;
-        persist();
-        renderAll();
+        openResetBookingConfirmModal();
         return true;
       }
 
@@ -2195,6 +2263,15 @@
         return true;
       }
 
+      if(action === 'confirm-notice'){
+        const confirmHandler = noticeConfirmHandler;
+        closeNoticeModal();
+        if(typeof confirmHandler === 'function'){
+          confirmHandler();
+        }
+        return true;
+      }
+
       if(action === 'close-calendar'){
         closeCalendar();
         return true;
@@ -2215,8 +2292,35 @@
         return true;
       }
 
+      if(action === 'debug-booking-blocks'){
+        setBookingDebugBlocks(!state.debugBookingBlocks);
+        return true;
+      }
+
+      if(action === 'debug-booking-stage-3'){
+        forceBookingDebugStage('stage-3');
+        return true;
+      }
+
+      if(action === 'debug-booking-stage-4'){
+        forceBookingDebugStage('stage-4');
+        return true;
+      }
+
+      if(action === 'debug-booking-what-to-do'){
+        forceBookingDebugStage('what-to-do');
+        return true;
+      }
+
       if(action === 'invite-friend'){
-        openNoticeModal('Ссылку-приглашение добавим в следующем шаге.');
+        const invitePayload = buildInviteClipboardText();
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(invitePayload)
+            .then(() => openNoticeModal('Ссылка скопирована в буфер обмена'))
+            .catch(() => openNoticeModal('Не удалось скопировать автоматически. Скопируйте ссылку вручную.'));
+        } else {
+          openNoticeModal('Скопируйте ссылку вручную.');
+        }
         return true;
       }
 
@@ -2224,7 +2328,7 @@
         const invitePayload = buildInviteClipboardText();
         if(navigator.clipboard && navigator.clipboard.writeText){
           navigator.clipboard.writeText(invitePayload)
-            .then(() => openNoticeModal('Ссылка скопирована.'))
+            .then(() => openNoticeModal('Ссылка скопирована в буфер обмена'))
             .catch(() => openNoticeModal('Не удалось скопировать автоматически. Скопируйте ссылку вручную.'));
         } else {
           openNoticeModal('Скопируйте ссылку вручную.');
@@ -2587,6 +2691,7 @@
       const keepMobileMode = state.mobileMode || 'full';
       const keepOfferModalTheme = state.offerModalTheme === 'dark' ? 'dark' : 'light';
       const keepOfferLayout = state.offerLayout || 'legacy';
+      const keepDebugBookingBlocks = !!state.debugBookingBlocks;
       state = {
         age: null,
         ageSelected: false,
@@ -2616,7 +2721,8 @@
         mobileFaqOpenKey: '',
         mobileTeamIndex: 0,
         mobileDocsExpanded: false,
-        offerSearching: false
+        offerSearching: false,
+        debugBookingBlocks: keepDebugBookingBlocks
       };
 
       ['parentName','parentPhone'].forEach((id) => {
@@ -2656,6 +2762,7 @@
       switchView(keepView);
       applyDesktopMode();
       applyMobileMode();
+      applyBookingDebugBlocksUi();
       persist();
       showHint('Сценарий бронирования сброшен. Начните с выбора возраста.');
     }
@@ -2730,8 +2837,8 @@
       const baseForGain = state.basePrice || shift.price || 0;
       const gainValue = Math.max(0, baseForGain - (state.offerPrice || baseForGain));
       return gainValue > 0
-        ? `Оформить заявку · выгода ${formatPrice(gainValue)}`
-        : 'Оформить заявку';
+        ? `Завершить бронирование · выгода ${formatPrice(gainValue)}`
+        : 'Завершить бронирование';
     }
 
     function getStepState(){
@@ -2762,6 +2869,18 @@
     }
 
     // SECTION 4: Booking module (view config, actions, render pipeline).
+    const BOOKING_STAGE2_VERTICAL_ALIGN = Object.freeze({
+      top: Object.freeze({flex: 'flex-start', grid: 'start'}),
+      center: Object.freeze({flex: 'center', grid: 'center'}),
+      bottom: Object.freeze({flex: 'flex-end', grid: 'end'})
+    });
+    const BOOKING_STAGE2_HORIZONTAL_ALIGN = Object.freeze({
+      left: Object.freeze({flex: 'flex-start', grid: 'start'}),
+      center: Object.freeze({flex: 'center', grid: 'center'}),
+      right: Object.freeze({flex: 'flex-end', grid: 'end'}),
+      stretch: Object.freeze({flex: 'stretch', grid: 'stretch'})
+    });
+
     const BOOKING_VIEWS = Object.freeze({
       desktop: Object.freeze({
         key: 'desktop',
@@ -2783,7 +2902,11 @@
         shiftChipId: 'desktopShiftChip',
         shiftChipTextId: 'desktopShiftChipText',
         guidedInlineHintId: 'desktopInlineHint',
-        inlineLeadScope: 'booking-desktop'
+        inlineLeadScope: 'booking-desktop',
+        stage2Align: Object.freeze({
+          vertical: 'center',
+          horizontal: 'stretch'
+        })
       }),
       mobile: Object.freeze({
         key: 'mobile',
@@ -2805,7 +2928,11 @@
         shiftChipId: 'mobileShiftChip',
         shiftChipTextId: 'mobileShiftChipText',
         guidedInlineHintId: 'mobileInlineHint',
-        inlineLeadScope: 'booking-mobile'
+        inlineLeadScope: 'booking-mobile',
+        stage2Align: Object.freeze({
+          vertical: 'center',
+          horizontal: 'stretch'
+        })
       })
     });
     let bookingCardMinHeightFrame = 0;
@@ -2889,8 +3016,197 @@
       }
       const stepThree = card.querySelector('.booking-step-3');
       if(stepThree){
-        stepThree.classList.toggle('is-force-hidden', stage < 3);
+        const hasStage2Transfer = stepThree.classList.contains('booking-stage2-transfer-enabled');
+        const shouldHideStepThree = stage === 2 && !hasStage2Transfer;
+        stepThree.classList.toggle('is-force-hidden', shouldHideStepThree);
       }
+    }
+
+    function resolveStage2VerticalAlign(value){
+      if(value === 'center') return BOOKING_STAGE2_VERTICAL_ALIGN.center;
+      if(value === 'bottom') return BOOKING_STAGE2_VERTICAL_ALIGN.bottom;
+      return BOOKING_STAGE2_VERTICAL_ALIGN.top;
+    }
+
+    function resolveStage2HorizontalAlign(value){
+      if(value === 'left') return BOOKING_STAGE2_HORIZONTAL_ALIGN.left;
+      if(value === 'center') return BOOKING_STAGE2_HORIZONTAL_ALIGN.center;
+      if(value === 'right') return BOOKING_STAGE2_HORIZONTAL_ALIGN.right;
+      return BOOKING_STAGE2_HORIZONTAL_ALIGN.stretch;
+    }
+
+    function applyBookingStage2Alignment(viewCfg){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const card = document.getElementById(cfg.cardId);
+      if(!card) return;
+      const stage2Align = cfg.stage2Align || {};
+      const vertical = resolveStage2VerticalAlign(stage2Align.vertical);
+      const horizontal = resolveStage2HorizontalAlign(stage2Align.horizontal);
+      card.style.setProperty('--booking-stage2-y-flex', vertical.flex);
+      card.style.setProperty('--booking-stage2-y-grid', vertical.grid);
+      card.style.setProperty('--booking-stage2-x-flex', horizontal.flex);
+      card.style.setProperty('--booking-stage2-x-grid', horizontal.grid);
+    }
+
+    function applyBookingStructureSchema(viewCfg){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const card = document.getElementById(cfg.cardId);
+      if(!card) return;
+      const stage = getBookingStage();
+
+      card.querySelectorAll('[data-booking-region]').forEach((node) => {
+        delete node.dataset.bookingRegion;
+        delete node.dataset.bookingRegionLabel;
+        delete node.dataset.bookingRegionZero;
+        delete node.dataset.bookingRegionLabelSide;
+      });
+
+      const mainSelector = (() => {
+        if(stage === 2) return '.booking-step-2';
+        if(stage >= 3) return `#${cfg.infoId}`;
+        return '.booking-step-1';
+      })();
+
+      const structureMap = Object.freeze({
+        top: `#${cfg.stepsId}`,
+        chips: `#${cfg.summaryChipsId}`,
+        header: `#${cfg.titleId}`,
+        main: mainSelector,
+        bottom: '.booking-step-3'
+      });
+      const regionLabelSideMap = Object.freeze({
+        top: 'right',
+        chips: 'right',
+        header: 'left',
+        main: 'right',
+        bottom: 'left'
+      });
+
+      const resolveRegionLabel = (regionName, node) => {
+        if(!node) return regionName;
+        const rect = node.getBoundingClientRect();
+        const style = window.getComputedStyle(node);
+        const isZeroHeight = style.display === 'none' || style.visibility === 'hidden' || node.offsetHeight === 0 || rect.height < 1;
+        return isZeroHeight ? `${regionName} 0` : regionName;
+      };
+
+      const isRegionZero = (node) => {
+        if(!node) return false;
+        const rect = node.getBoundingClientRect();
+        const style = window.getComputedStyle(node);
+        return style.display === 'none' || style.visibility === 'hidden' || node.offsetHeight === 0 || rect.height < 1;
+      };
+
+      Object.entries(structureMap).forEach(([regionName, selector]) => {
+        const node = card.querySelector(selector);
+        if(!node) return;
+        node.dataset.bookingRegion = regionName;
+        node.dataset.bookingRegionLabel = resolveRegionLabel(regionName, node);
+        node.dataset.bookingRegionZero = isRegionZero(node) ? '1' : '0';
+        node.dataset.bookingRegionLabelSide = regionLabelSideMap[regionName] || 'left';
+      });
+    }
+
+    function ensureStage2TransferHost(stepThree){
+      if(!stepThree) return null;
+      let host = stepThree.querySelector('.booking-stage2-transfer-host');
+      if(!host){
+        host = document.createElement('div');
+        host.className = 'booking-stage2-transfer-host';
+      }
+      return host;
+    }
+
+    function placeStage2ContentForView(cfg, stage, bookingCard){
+      if(!cfg || !bookingCard) return;
+      const stepTwo = bookingCard.querySelector('.booking-step-2');
+      const stepThree = bookingCard.querySelector('.booking-step-3');
+      if(!stepTwo || !stepThree) return;
+
+      const allShiftsBtn = bookingCard.querySelector('.booking-all-shifts-link');
+      const host = ensureStage2TransferHost(stepThree);
+      if(!host) return;
+
+      const toTransfer = [allShiftsBtn].filter(Boolean);
+      const insertBackToStepTwo = (node) => {
+        const anchor = stepTwo.querySelector('.guided-inline-hint');
+        if(anchor && anchor.parentElement === stepTwo){
+          if(anchor.nextSibling){
+            stepTwo.insertBefore(node, anchor.nextSibling);
+          } else {
+            stepTwo.appendChild(node);
+          }
+          return;
+        }
+        stepTwo.appendChild(node);
+      };
+
+      if(stage === 2){
+        if(host.parentElement !== stepThree){
+          stepThree.prepend(host);
+        }
+        toTransfer.forEach((node) => host.appendChild(node));
+        stepThree.classList.add('booking-stage2-transfer-enabled');
+        return;
+      }
+
+      if(host.parentElement){
+        toTransfer.forEach((node) => insertBackToStepTwo(node));
+        host.remove();
+      }
+      stepThree.classList.remove('booking-stage2-transfer-enabled');
+    }
+
+    function syncCompletedBookingScaffold(viewCfg, bookingCard){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const card = bookingCard || document.getElementById(cfg.cardId);
+      if(!card) return;
+      const stepsRoot = document.getElementById(cfg.stepsId);
+      const chipHost = document.getElementById(cfg.summaryChipsId);
+      const stepThree = card.querySelector('.booking-step-3');
+      if(!stepsRoot || !stepThree) return;
+
+      let topClose = stepsRoot.querySelector('.booking-completed-top-close');
+      let chipBar = chipHost?.querySelector('.booking-completed-chipbar');
+      let bottomWrap = stepThree.querySelector('.booking-completed-bottom');
+
+      if(state.bookingCompleted){
+        stepsRoot.classList.add('booking-steps-completed');
+        if(topClose){
+          topClose.remove();
+        }
+        if(chipHost){
+          chipHost.classList.add('visible', 'booking-summary-chips--completed');
+          if(!chipBar){
+            chipBar = document.createElement('div');
+            chipBar.className = 'booking-completed-chipbar';
+            chipHost.appendChild(chipBar);
+          }
+          chipBar.innerHTML = `
+            <span class="booking-completed-chipbar-title">Что дальше?</span>
+            <button type="button" class="booking-completed-top-close booking-completed-chipbar-close" data-action="reset-booking-all" aria-label="Сбросить бронирование">
+              <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
+            </button>
+          `;
+        }
+        if(!bottomWrap){
+          bottomWrap = document.createElement('div');
+          bottomWrap.className = 'booking-completed-bottom';
+          stepThree.appendChild(bottomWrap);
+        }
+        bottomWrap.innerHTML = '<a class="completed-followup-link completed-followup-link--bottom cta-main" href="#" data-action="copy-invite-link">Копировать ссылку приглашение</a>';
+        stepThree.classList.add('booking-completed-bottom-step');
+        return;
+      }
+
+      stepsRoot.classList.remove('booking-steps-completed');
+      if(topClose) topClose.remove();
+      if(chipBar) chipBar.remove();
+      if(chipHost){
+        chipHost.classList.remove('booking-summary-chips--completed');
+      }
+      if(bottomWrap) bottomWrap.remove();
+      stepThree.classList.remove('booking-completed-bottom-step');
     }
 
     function renderSteps(viewCfg){
@@ -2925,11 +3241,14 @@
       const ageChipText = document.getElementById(cfg.ageChipTextId);
       const shiftChip = document.getElementById(cfg.shiftChipId);
       const shiftChipText = document.getElementById(cfg.shiftChipTextId);
+      const baseHint = document.getElementById(cfg.hintId);
       const bookingCard = document.getElementById(cfg.cardId);
       const stepThree = bookingCard?.querySelector('.booking-step-3');
       const allShiftsBtn = bookingCard?.querySelector('.booking-all-shifts-link');
 
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
+      placeStage2ContentForView(cfg, stage, bookingCard);
+      syncCompletedBookingScaffold(cfg, bookingCard);
       const isMobile = cfg.key === 'mobile';
       if(state.bookingCompleted){
         shiftList.classList.add('disabled');
@@ -2938,16 +3257,20 @@
         ageChip.classList.remove('visible');
         shiftChip.classList.remove('visible');
         if(chipHost){
-          chipHost.classList.remove('visible');
+          chipHost.classList.add('visible', 'booking-summary-chips--completed');
         }
         if(stepThree){
-          stepThree.classList.add('is-force-hidden');
+          stepThree.classList.remove('is-force-hidden');
         }
         if(allShiftsBtn){
           allShiftsBtn.classList.add('hidden');
         }
         if(isMobile){
           document.getElementById(cfg.cardId)?.classList.remove('has-mobile-summary-chips');
+        }
+        if(baseHint){
+          baseHint.textContent = '';
+          baseHint.classList.remove('is-muted-hidden');
         }
         return;
       }
@@ -2976,15 +3299,29 @@
         chipHost.classList.remove('visible');
       }
       if(stepThree){
-        stepThree.classList.add('is-force-hidden');
+        const shouldShowStepThree = stage >= 1;
+        stepThree.classList.toggle('is-force-hidden', !shouldShowStepThree);
       }
       if(isMobile){
         document.getElementById(cfg.cardId)?.classList.remove('has-mobile-summary-chips');
       }
 
+      if(stage === 1 || stage === 2){
+        ctaWrap.classList.add('hidden');
+      }
+
       if(!hasSelectedAge()){
+        if(baseHint){
+          baseHint.textContent = 'Сначала выберите возраст, чтобы активировать список смен.';
+          baseHint.classList.remove('is-muted-hidden');
+        }
         shiftList.classList.add('disabled');
         return;
+      }
+
+      if(baseHint){
+        baseHint.textContent = '';
+        baseHint.classList.remove('is-muted-hidden');
       }
 
       ageChipText.textContent = ageLabel(state.age);
@@ -3064,6 +3401,7 @@
         const cfg = getBookingViewConfig(prefix);
         const el = document.getElementById(cfg.inlineHintId);
         const baseHint = document.getElementById(cfg.hintId);
+        const stage = getBookingStage();
         if(!el) return;
         window.clearTimeout(el.__hideTimer);
         el.textContent = message;
@@ -3078,7 +3416,13 @@
           }, 2400);
         }
         el.classList.add('visible');
-        if(baseHint) baseHint.classList.add('is-muted-hidden');
+        if(baseHint){
+          if(stage <= 1){
+            baseHint.classList.remove('is-muted-hidden');
+          } else {
+            baseHint.classList.add('is-muted-hidden');
+          }
+        }
       });
     }
 
@@ -3224,15 +3568,15 @@
       if(btn){
         btn.classList.remove('hidden');
         const isStageFour = getBookingStage() === 4 && !state.bookingCompleted;
-        const shouldUseStackedCta = isStageFour && /^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText);
+        const shouldUseStackedCta = isStageFour && /^(?:Завершить бронирование|Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText);
         if(shouldUseStackedCta){
-          const gainText = actionText.replace(/^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
+          const gainText = actionText.replace(/^(?:Завершить бронирование|Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
           btn.innerHTML = `
-            <span class="cta-main-line cta-main-line--primary">Оформить заявку</span>
+            <span class="cta-main-line cta-main-line--primary">Завершить бронирование</span>
             <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
           `;
           btn.dataset.ctaLayout = 'stacked';
-          btn.setAttribute('aria-label', `Оформить заявку. Выгода ${gainText}`);
+          btn.setAttribute('aria-label', `Завершить бронирование. Выгода ${gainText}`);
         } else {
           btn.textContent = actionText;
           btn.removeAttribute('data-cta-layout');
@@ -3247,7 +3591,7 @@
         hint.textContent = action.hint;
       }
       if(state.bookingCompleted){
-        if(title) title.textContent = '';
+        if(title) title.textContent = 'Мы свяжемся с вами в ближайшее время.';
         if(lead) lead.textContent = '';
         if(btn){
           btn.classList.add('is-disabled');
@@ -3265,21 +3609,11 @@
         }
         if(info){
           info.innerHTML = `
-            <div class="booking-price-box booking-summary-mini booking-summary-mini--completed">
-              <div class="booking-completed-top">
-                <button class="booking-completed-reset" type="button" data-action="reset-booking-all" aria-label="Сбросить бронирование">
-                  <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
-                </button>
-              </div>
-              <div class="booking-completed-next">
-                <div class="completed-followup-title">Что дальше?</div>
-                <div class="completed-followup-text">Мы свяжемся с вами в ближайшее время.</div>
-              </div>
+            <div class="booking-completed-main">
               <button class="completed-followup-image-trigger" type="button" data-action="open-referral-photo" aria-label="Открыть фото в полном размере">
                 <img class="completed-followup-image" src="/assets/images/referral-hoodie.jpeg" alt="Фирменная толстовка лагеря">
+                <span class="completed-followup-note-overlay">Обычно дети приезжают с друзьями, так им проще адаптироваться. Позовите друга, подарим вам обоим фирменную толстовку.</span>
               </button>
-              <p class="completed-followup-note">Обычно дети приезжают с друзьями, так им проще адаптироваться. Позовите друга, подарим вам обоим фирменную толстовку.</p>
-              <a class="completed-followup-link" href="#" data-action="copy-invite-link">Копировать ссылку приглашение</a>
             </div>
           `;
         }
@@ -3381,6 +3715,8 @@
           renderSteps(cfg);
           renderGuidedState(cfg);
           applyBookingStageClass(cfg);
+          applyBookingStage2Alignment(cfg);
+          applyBookingStructureSchema(cfg);
         } catch(err){
           console.warn('[booking] render failed for view:', cfg.key, err);
         }
@@ -3420,6 +3756,10 @@
           requestedView === 'mobile' && USE_DESKTOP_BASE_FOR_MOBILE
         );
       }
+      document.body.classList.toggle(
+        'mobile-preview-active',
+        requestedView === 'mobile' && USE_DESKTOP_BASE_FOR_MOBILE
+      );
       if(mobileView){
         const showLegacyMobile = requestedView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE;
         mobileView.classList.toggle('hidden', !showLegacyMobile);
@@ -3942,7 +4282,7 @@
         ${timeLeft ? `
         <div class="booking-summary-timer">
           <div class="booking-summary-timer-title">Цена закреплена за вами</div>
-          <div class="booking-timer-line" data-live-timer="true">${timeLeft}</div>
+          <div class="booking-timer-line booking-timer-line--summary" data-live-timer="true">${timeLeft}</div>
         </div>
         ` : ''}
       `;
@@ -5880,13 +6220,13 @@
       if(summaryCtaBtn){
         const action = getPrimaryActionState();
         const actionText = getResolvedPrimaryActionText(action, shift);
-        if(isStageFourSummary && /^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText)){
-          const gainText = actionText.replace(/^(?:Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
+        if(isStageFourSummary && /^(?:Завершить бронирование|Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText)){
+          const gainText = actionText.replace(/^(?:Завершить бронирование|Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
           summaryCtaBtn.innerHTML = `
-            <span class="cta-main-line cta-main-line--primary">Бронировать</span>
+            <span class="cta-main-line cta-main-line--primary">Завершить бронирование</span>
             <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
           `;
-          summaryCtaBtn.setAttribute('aria-label', `Бронировать · Выгода ${gainText}`);
+          summaryCtaBtn.setAttribute('aria-label', `Завершить бронирование · Выгода ${gainText}`);
         } else {
           summaryCtaBtn.textContent = actionText;
           summaryCtaBtn.removeAttribute('aria-label');
@@ -6144,13 +6484,64 @@
       if(!overlay) return;
       const titleEl = document.getElementById('noticeTitle');
       const messageEl = document.getElementById('noticeMessage');
+      const actionsEl = document.getElementById('noticeActions');
+      noticeConfirmHandler = null;
       if(titleEl) titleEl.textContent = title;
       if(messageEl) messageEl.textContent = message || '';
+      if(actionsEl){
+        actionsEl.classList.add('hidden');
+        actionsEl.classList.remove('notice-actions--reset-booking');
+      }
       overlay.classList.remove('hidden');
     }
 
     function closeNoticeModal(){
+      noticeConfirmHandler = null;
+      const actionsEl = document.getElementById('noticeActions');
+      if(actionsEl){
+        actionsEl.classList.add('hidden');
+        actionsEl.classList.remove('notice-actions--reset-booking');
+      }
       document.getElementById('noticeOverlay')?.classList.add('hidden');
+    }
+
+    function ensureNoticeActions(){
+      const overlay = document.getElementById('noticeOverlay');
+      const card = overlay?.querySelector('.notice-card');
+      if(!overlay || !card) return null;
+      let actionsEl = document.getElementById('noticeActions');
+      if(actionsEl) return actionsEl;
+      actionsEl = document.createElement('div');
+      actionsEl.id = 'noticeActions';
+      actionsEl.className = 'notice-actions hidden';
+      actionsEl.innerHTML = `
+        <button class="secondary-outline notice-cancel-btn" type="button" data-action="close-notice">Отмена</button>
+        <button class="cta-main notice-confirm-btn" type="button" data-action="confirm-notice">Подтвердить</button>
+      `;
+      card.appendChild(actionsEl);
+      return actionsEl;
+    }
+
+    function openResetBookingConfirmModal(){
+      openNoticeModal(
+        'Это действие аннулирует ваше предварительное бронирование. Вы точно хотите продолжить?',
+        'Сбросить бронирование?'
+      );
+      const actionsEl = ensureNoticeActions();
+      if(!actionsEl) return;
+      const cancelBtn = actionsEl.querySelector('.notice-cancel-btn');
+      const confirmBtn = actionsEl.querySelector('.notice-confirm-btn');
+      if(cancelBtn) cancelBtn.textContent = 'Отмена';
+      if(confirmBtn) confirmBtn.textContent = 'Сбросить';
+      actionsEl.classList.add('notice-actions--reset-booking');
+      noticeConfirmHandler = () => {
+        resetOfferState({preserveShift:false});
+        state.age = null;
+        state.ageSelected = false;
+        persist();
+        renderAll();
+      };
+      actionsEl.classList.remove('hidden');
     }
 
     async function submitLeadFromScope(scope = 'drawer'){
@@ -6260,6 +6651,9 @@
     function navigateToSection(id){
       const cleanId = String(id || '').replace(/^#/, '');
       if(!cleanId) return;
+      if(cleanId === 'section-faq'){
+        trackFaqOpen();
+      }
       const isMobilePreview = state.previewView === 'mobile';
 
       if(isMobilePreview && cleanId === 'section-programs' && !hasSelectedAge()){
