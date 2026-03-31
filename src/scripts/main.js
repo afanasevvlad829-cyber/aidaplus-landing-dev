@@ -392,7 +392,7 @@
     });
     const HERO_VARIANT_DEFAULT_TIER = 'broad';
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.286 (city-phone-update)';
+    const BUILD_VERSION_LABEL = 'v0.0.287 (mobile-hero-bg-68)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
