@@ -73,15 +73,22 @@ def load_css_bundle(path: Path, seen=None) -> str:
             out.append(line)
     return "\n".join(out) + "\n"
 
-css, js = extract_built_css_js(base)
+# Always rebuild from source files to avoid stale embedded bundles in dist/index.html.
+css = load_css_bundle(css_path) if css_path.exists() else ""
+script_chunks = []
+for script_path in script_paths:
+    if not script_path.exists():
+        continue
+    script_chunks.append(f"/* {script_path.as_posix()} */\n" + script_path.read_text(encoding="utf-8"))
+js = "\n\n".join(script_chunks)
+
+# Fallback only when source files are unavailable.
 if not css or not js:
-    css = load_css_bundle(css_path) if css_path.exists() else ""
-    script_chunks = []
-    for script_path in script_paths:
-        if not script_path.exists():
-            continue
-        script_chunks.append(f"/* {script_path.as_posix()} */\n" + script_path.read_text(encoding="utf-8"))
-    js = "\n\n".join(script_chunks)
+    embedded_css, embedded_js = extract_built_css_js(base)
+    if not css:
+        css = embedded_css
+    if not js:
+        js = embedded_js
 
 def detect_github_repo_slug() -> str:
     override = (os.getenv("AC_CDN_REPO") or "").strip()

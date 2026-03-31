@@ -1,4 +1,5 @@
 /* src/scripts/main.js */
+    // SECTION 1: Config and runtime constants.
     const OFFER_DISCOUNT_FACTOR = 0.95;
 
     const shifts = [
@@ -320,7 +321,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.282 (prod-hide-debug-and-version-badge)';
+    const BUILD_VERSION_LABEL = 'v0.0.283 (hero-brand-smoke-and-topbar-responsive)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
@@ -430,6 +431,7 @@
     let mediaType = 'photo';
     let activePhotoList = [];
     let photoGalleryList = [];
+    // SECTION 2: State normalization and hydration.
     state.previewView = state.previewView || state.view || 'desktop';
     if(USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile'){
       state.view = 'desktop';
@@ -2759,7 +2761,7 @@
       return Math.min(Math.max(getStepState(), 1), 4);
     }
 
-    const BOOKING_STAGE_CLASSES = ['booking-stage-1', 'booking-stage-2', 'booking-stage-3', 'booking-stage-4'];
+    // SECTION 4: Booking module (view config, actions, render pipeline).
     const BOOKING_VIEWS = Object.freeze({
       desktop: Object.freeze({
         key: 'desktop',
@@ -2874,8 +2876,8 @@
       });
     }
 
-    function applyBookingStageClass(prefix){
-      const cfg = getBookingViewConfig(prefix);
+    function applyBookingStageClass(viewCfg){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
       const card = document.getElementById(cfg.cardId);
       if(!card) return;
       const stage = getBookingStage();
@@ -2891,11 +2893,12 @@
       }
     }
 
-    function renderSteps(targetId){
-      const root = document.getElementById(targetId);
+    function renderSteps(viewCfg){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const root = document.getElementById(cfg.stepsId);
       if(!root) return;
       const current = getStepState();
-      const isDesktopSteps = targetId === 'desktopBookingSteps';
+      const isDesktopSteps = cfg.key === 'desktop';
       root.querySelectorAll('.booking-step').forEach((el, idx) => {
         const num = idx + 1;
         el.classList.remove('active','done','pulse');
@@ -2910,8 +2913,8 @@
       });
     }
 
-    function renderGuidedState(prefix){
-      const cfg = getBookingViewConfig(prefix);
+    function renderGuidedState(viewCfg){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
       syncGuidedState();
       const stage = getBookingStage();
       const shiftList = document.getElementById(cfg.shiftListId);
@@ -2927,7 +2930,7 @@
       const allShiftsBtn = bookingCard?.querySelector('.booking-all-shifts-link');
 
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
-      const isMobile = prefix === 'mobile';
+      const isMobile = cfg.key === 'mobile';
       if(state.bookingCompleted){
         shiftList.classList.add('disabled');
         ageTabs.classList.add('hidden');
@@ -3373,10 +3376,14 @@
       const renderableViews = getRenderableBookingViewKeys();
       renderableViews.forEach((viewKey) => {
         const cfg = getBookingViewConfig(viewKey);
-        renderBookingInfo(cfg);
-        renderSteps(cfg.stepsId);
-        renderGuidedState(cfg.key);
-        applyBookingStageClass(cfg.key);
+        try {
+          renderBookingInfo(cfg);
+          renderSteps(cfg);
+          renderGuidedState(cfg);
+          applyBookingStageClass(cfg);
+        } catch(err){
+          console.warn('[booking] render failed for view:', cfg.key, err);
+        }
       });
       syncBookingHints();
       updateBookingScarcityUi();
@@ -3596,6 +3603,8 @@
       updateSummaryBarVisibility();
       persist();
     }
+
+    // SECTION 6: View mode controls (desktop/mobile, full/compact).
     document.getElementById('fullModeBtn')?.addEventListener('click', () => switchDesktopMode('full'));
     document.getElementById('compactModeBtn')?.addEventListener('click', () => {
       const nextMode = state.desktopMode === 'compact' ? 'full' : 'compact';
@@ -3609,6 +3618,7 @@
       });
     }
 
+    // SECTION 7: Event bindings (single action pipeline, no direct business logic in handlers).
     document.addEventListener('click', (e) => {
       if(handleDataActionClick(e.target)){
         return;
@@ -3714,7 +3724,7 @@
     document.getElementById('socialsGrid')?.addEventListener('click', (e) => {
       const link = e.target.closest('.social-link');
       if(!link) return;
-      const network = (link.querySelector('span')?.textContent || '').trim();
+      const network = String(link.dataset.network || '').trim() || (link.querySelector('.social-label')?.textContent || '').trim();
       track('social_click', {network});
     });
 
@@ -3765,10 +3775,6 @@
       return map[shift.id] || '';
     }
 
-    function bookingViewKeyByTargetId(targetId){
-      return String(targetId || '').startsWith('mobile') ? 'mobile' : 'desktop';
-    }
-
     function resolveShiftOptionsTargetId(viewKey){
       const cfg = getBookingViewConfig(viewKey);
       return cfg.shiftOptionsId;
@@ -3776,7 +3782,11 @@
 
     function renderShiftOptionsForRenderableViews(){
       getRenderableBookingViewKeys().forEach((viewKey) => {
-        renderShiftOptions(resolveShiftOptionsTargetId(viewKey));
+        try {
+          renderShiftOptions(viewKey);
+        } catch(err){
+          console.warn('[booking] shift options render failed for view:', viewKey, err);
+        }
       });
     }
 
@@ -3784,7 +3794,7 @@
       const safeView = viewKey === 'mobile' ? 'mobile' : 'desktop';
       const current = shiftOptionPanels[safeView]?.[panelType] || null;
       shiftOptionPanels[safeView][panelType] = current === shiftId ? null : shiftId;
-      renderShiftOptions(resolveShiftOptionsTargetId(safeView));
+      renderShiftOptions(safeView);
     }
 
     function clearShiftOptionPanels(){
@@ -4295,18 +4305,19 @@
       return true;
     }
 
-    function renderShiftOptions(targetId){
+    function renderShiftOptions(viewKey){
+      const safeViewKey = viewKey === 'mobile' ? 'mobile' : 'desktop';
+      const targetId = resolveShiftOptionsTargetId(safeViewKey);
       const box = document.getElementById(targetId);
       if(!box) return;
-      const viewKey = bookingViewKeyByTargetId(targetId);
 
       const selectedAge = state.age || '7-9';
       const summaryLines = getShiftSummaryLines(selectedAge);
 
       box.innerHTML = shifts.slice(0,2).map(s => {
-        const isInlineView = viewKey === 'mobile';
-        const showAbout = isInlineView && shiftOptionPanels[viewKey]?.aboutId === s.id;
-        const showCalendar = isInlineView && shiftOptionPanels[viewKey]?.calendarId === s.id;
+        const isInlineView = safeViewKey === 'mobile';
+        const showAbout = isInlineView && shiftOptionPanels[safeViewKey]?.aboutId === s.id;
+        const showCalendar = isInlineView && shiftOptionPanels[safeViewKey]?.calendarId === s.id;
         const start = parseShiftDate(s.start);
         const end = parseShiftDate(s.end);
         const startText = start ? start.toLocaleDateString('ru-RU') : s.start;
@@ -4323,10 +4334,10 @@
               <span class="shift-option-price-row">
                 <span class="shift-option-price">${formatPrice(s.price)}</span>
                 <span class="shift-option-inline-actions">
-                  <button class="shift-option-action shift-option-action-info" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${viewKey}" aria-label="Описание смены ${s.dates}">
+                  <button class="shift-option-action shift-option-action-info" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${safeViewKey}" aria-label="Описание смены ${s.dates}">
                     <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
                   </button>
-                  <button class="shift-option-action shift-option-action-calendar" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${viewKey}" aria-label="Календарь ${s.dates}">
+                  <button class="shift-option-action shift-option-action-calendar" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${safeViewKey}" aria-label="Календарь ${s.dates}">
                     <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
                   </button>
                   <button class="shift-option-select-indicator" type="button" aria-label="Выбрать смену ${s.dates}">
@@ -4455,6 +4466,15 @@
       return allowed.has(mark) ? mark : '•';
     }
 
+    function socialDisplayName(item){
+      const key = String(item?.key || '').trim();
+      const badge = socialBadgeMark(item);
+      if(!key) return badge;
+      if(key.toUpperCase() !== badge) return key;
+      if(key === 'VK') return 'ВКонтакте';
+      return key;
+    }
+
     function faqGlyph(iconPath, groupName){
       if(iconPath && iconPath.includes('med')) return 'MED';
       if(iconPath && iconPath.includes('lock')) return 'SAFE';
@@ -4468,6 +4488,7 @@
       return '<div class="stars">★★★★★</div>';
     }
 
+    // SECTION 5: Content and media rendering.
     function renderMediaSections(){
       const photoGrid = document.getElementById('photoGrid');
       const videoList = document.getElementById('videoList');
@@ -4582,9 +4603,9 @@
 
       if (socialsGrid) {
         socialsGrid.innerHTML = mediaContent.socials.map(item => `
-          <a class="social-link" href="${item.href}" target="_blank" rel="noopener noreferrer">
+          <a class="social-link" href="${item.href}" target="_blank" rel="noopener noreferrer" data-network="${item.key}">
             <span class="social-badge-mark">${socialBadgeMark(item)}</span>
-            <span class="social-label">${item.key}</span>
+            <span class="social-label">${socialDisplayName(item)}</span>
           </a>
         `).join('');
       }
@@ -4866,9 +4887,9 @@
     function renderCompactInlineSocials(mobileInlineSocials){
       if(!mobileInlineSocials) return;
       mobileInlineSocials.innerHTML = mediaContent.socials.map((item) => `
-        <a class="mobile-social-link" href="${item.href}" target="_blank" rel="noopener noreferrer" aria-label="${item.key}">
+        <a class="mobile-social-link" href="${item.href}" target="_blank" rel="noopener noreferrer" aria-label="${socialDisplayName(item)}">
           <span class="mobile-social-icon"><span class="social-badge-mark">${socialBadgeMark(item)}</span></span>
-          <span class="mobile-social-label">${item.key}</span>
+          <span class="mobile-social-label">${socialDisplayName(item)}</span>
         </a>
       `).join('');
     }
@@ -5386,14 +5407,11 @@
       return;
     }
 
+    // SECTION 8: Global orchestrator.
     function renderAll(){
       applyMobileTemplatesToDesktopSections();
       renderShiftOptionsForRenderableViews();
       renderBookingPanels();
-      renderGuidedState('desktop');
-      if(!USE_DESKTOP_BASE_FOR_MOBILE){
-        renderGuidedState('mobile');
-      }
       syncDesktopAgeTapHintVisibility();
       scheduleDesktopAgeTapHint();
       renderMediaSections();
