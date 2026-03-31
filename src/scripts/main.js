@@ -321,8 +321,78 @@
     };
 
     const METRIKA_ID = 96499295;
+    const HERO_VARIANT_BANNER_TIER = Object.freeze({
+      '212861185':'tier1',
+      '212861186':'tier1',
+      '212861188':'tier1',
+      '212861189':'tier2',
+      '212861195':'tier2',
+      '212861200':'tier2',
+      '212861205':'tier3',
+      '212861206':'tier3',
+      '212861207':'tier3',
+      '212861210':'tier4',
+      '212861211':'tier4',
+      '212861212':'tier4',
+      '212861214':'broad',
+      '212861215':'broad',
+      '212861216':'broad'
+    });
+    const HERO_VARIANT_COPY = Object.freeze({
+      tier1: Object.freeze({
+        tier:'tier1',
+        variant:'v1',
+        title:'Выездной IT-лагерь в Подмосковье: гаджеты под контролем',
+        sub:'Ребёнок 10–12 лет сделает проект за смену, а вы будете спокойны за безопасность.',
+        cta:'Получить программу смен',
+        hintStage1:'Чтобы получить программу смен, выберите возраст.',
+        hintStage1Followup:'Нажмите на возраст — сразу откроем программу смен.',
+        hintStage2:'На втором шаге нажмите кнопку i у смены, чтобы получить программу смен.'
+      }),
+      tier2: Object.freeze({
+        tier:'tier2',
+        variant:'v1',
+        title:'IT-лагерь, где ребёнок возвращается из экрана в проект',
+        sub:'Сравните формат: проектная работа, команда, бассейн, природа Подмосковья.',
+        cta:'Сравнить смены и цены',
+        hintStage1:'Чтобы сравнить смены и цены, выберите возраст.',
+        hintStage1Followup:'Выберите возраст — и откроем все смены с ценами.',
+        hintStage2:'Нажмите «Все смены для {{age}}», чтобы сравнить смены и цены.'
+      }),
+      tier3: Object.freeze({
+        tier:'tier3',
+        variant:'v1',
+        title:'Не просто лагерь: IT-смена с результатом за 14 дней',
+        sub:'Проект, презентация, наставники-айтишники и режим гаджетов по правилам.',
+        cta:'Посмотреть программу',
+        hintStage1:'Чтобы посмотреть программу, выберите возраст.',
+        hintStage1Followup:'Выберите возраст — и покажем программу смен на шаге 2.',
+        hintStage2:'На втором шаге нажмите кнопку i у смены, чтобы посмотреть программу.'
+      }),
+      tier4: Object.freeze({
+        tier:'tier4',
+        variant:'v1',
+        title:'Если нужен форматный IT-лагерь, а не “просто отдых”',
+        sub:'Выездные смены в Подмосковье для 10–12 лет: IT + спорт + командная среда.',
+        cta:'Выбрать формат смены',
+        hintStage1:'Чтобы выбрать формат смены, выберите возраст.',
+        hintStage1Followup:'Выберите возраст — откроем форматы смен под ребёнка.',
+        hintStage2:'Нажмите «Все смены для {{age}}», чтобы выбрать формат смены.'
+      }),
+      broad: Object.freeze({
+        tier:'broad',
+        variant:'v1',
+        title:'Летние IT-смены в Подмосковье для детей 10–12 лет',
+        sub:'Программирование, проекты, бассейн, природа и меньше экранного времени.',
+        cta:'Узнать условия',
+        hintStage1:'Чтобы узнать условия, выберите возраст.',
+        hintStage1Followup:'Выберите возраст — подберём смену и условия.',
+        hintStage2:'Выберите подходящую смену.'
+      })
+    });
+    const HERO_VARIANT_DEFAULT_TIER = 'broad';
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.284 (hero-brand-smoke-and-topbar-responsive)';
+    const BUILD_VERSION_LABEL = 'v0.0.285 (hero-booking-tier-flow-and-info-icon-fix)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
@@ -533,7 +603,16 @@
     let desktopAgeTapHintPlayed = false;
     let desktopAgeTapHintToken = 0;
     const desktopAgeTapHintStartedAt = Date.now();
+    let bookingStage1TitleTypewriterDone = false;
+    let bookingStage1TitleTypewriterTimer = null;
+    let bookingStage1TitleTypewriterRunId = 0;
+    let variantFlowFingerTimer = null;
+    let variantFlowRunId = 0;
+    let variantFlowCompletedKey = '';
     let videoMetaRefreshTimer = null;
+    let heroVariantState = null;
+    let variantCoachDismissedKey = '';
+    let variantCoachReminderTimer = null;
 
     function track(event, params = {}){
       try {
@@ -543,6 +622,139 @@
       } catch (err){
         console.warn('Metrika track error:', event, err);
       }
+    }
+
+    function getCurrentSearchParams(){
+      try {
+        return new URLSearchParams(window.location.search || '');
+      } catch (error){
+        return new URLSearchParams('');
+      }
+    }
+
+    function normalizeBannerId(value){
+      return String(value || '').trim();
+    }
+
+    function buildHeroVariantMeta(extra = {}){
+      const variant = heroVariantState || resolveHeroVariantFromUtm();
+      return {
+        banner_id: variant.bannerId || '',
+        campaign_id: variant.campaignId || '',
+        tier: variant.tier || HERO_VARIANT_DEFAULT_TIER,
+        variant: variant.copy?.variant || 'v1',
+        ...extra
+      };
+    }
+
+    function resolveHeroVariantFromUtm(){
+      const search = getCurrentSearchParams();
+      const bannerId = normalizeBannerId(search.get('utm_content') || '');
+      const campaignId = String(search.get('utm_campaign') || '').trim();
+      const tierFromBanner = bannerId ? HERO_VARIANT_BANNER_TIER[bannerId] : '';
+      const isKnownBanner = !!tierFromBanner;
+      const tier = isKnownBanner ? tierFromBanner : HERO_VARIANT_DEFAULT_TIER;
+      const copy = HERO_VARIANT_COPY[tier] || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
+      const fallbackReason = !bannerId
+        ? 'unknown_banner_or_no_utm'
+        : (!isKnownBanner ? 'unknown_banner_or_no_utm' : '');
+      return {
+        bannerId,
+        campaignId,
+        tier,
+        copy,
+        fallbackReason
+      };
+    }
+
+    function applyHeroVariantCopy(){
+      const variant = heroVariantState || resolveHeroVariantFromUtm();
+      const copy = variant.copy || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
+      const sloganNodes = document.querySelectorAll('.hero-slogan');
+      sloganNodes.forEach((node) => {
+        if(node) node.textContent = copy.title;
+      });
+    }
+
+    function formatVariantHint(template){
+      const source = String(template || '').trim();
+      if(!source) return '';
+      return source.replace('{{age}}', ageLabel(state.age || '10-12'));
+    }
+
+    function clearVariantCoachReminderTimer(){
+      if(!variantCoachReminderTimer) return;
+      window.clearTimeout(variantCoachReminderTimer);
+      variantCoachReminderTimer = null;
+    }
+
+    function syncVariantBookingHint(viewCfg){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const hintNode = document.getElementById(cfg.guidedInlineHintId);
+      if(!hintNode) return;
+
+      const variant = heroVariantState || resolveHeroVariantFromUtm();
+      const copy = variant.copy || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
+      const stage = getBookingStage();
+      let message = '';
+
+      if(!state.bookingCompleted){
+        if(!hasSelectedAge()){
+          message = copy.hintStage1 || '';
+        } else if(!state.shiftId && stage === 2){
+          message = formatVariantHint(copy.hintStage2 || '');
+        }
+      }
+
+      if(!message){
+        hintNode.classList.remove('visible', 'variant-coach');
+        hintNode.textContent = '';
+        return;
+      }
+
+      hintNode.textContent = message;
+      hintNode.classList.add('visible', 'variant-coach');
+    }
+
+    function ensureVariantCoachBadge(viewCfg){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const card = document.getElementById(cfg.cardId);
+      if(!card) return null;
+      let badge = card.querySelector('.variant-coach-badge');
+      if(!badge){
+        badge = document.createElement('div');
+        badge.className = 'variant-coach-badge';
+      }
+      return badge;
+    }
+
+    function hideVariantCoachBadge(viewCfg, dismissKey = ''){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      clearVariantCoachReminderTimer();
+      const card = document.getElementById(cfg.cardId);
+      const badge = card?.querySelector('.variant-coach-badge');
+      if(!badge) return;
+      if(dismissKey){
+        variantCoachDismissedKey = dismissKey;
+      }
+      badge.classList.remove('visible', 'variant-coach-badge--stage1', 'variant-coach-badge--stage2');
+      badge.innerHTML = '';
+      badge.remove();
+    }
+
+    function syncVariantCoachBadge(viewCfg){
+      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      hideVariantCoachBadge(cfg);
+    }
+
+    function initHeroVariantPersonalization(){
+      heroVariantState = resolveHeroVariantFromUtm();
+      const fallbackReason = heroVariantState.fallbackReason || '';
+      trackOnce('hero_variant_shown_new', buildHeroVariantMeta());
+      if(fallbackReason){
+        trackOnce('hero_variant_fallback_new', buildHeroVariantMeta({reason:fallbackReason}));
+      }
+      applyHeroVariantCopy();
     }
 
     function applyDebugUiState(){
@@ -2263,6 +2475,12 @@
         return true;
       }
 
+      if(action === 'close-variant-coach'){
+        const dismissKey = String(actionEl.dataset.variantKey || '').trim();
+        hideVariantCoachBadge(getPrimaryBookingViewConfig(), dismissKey);
+        return true;
+      }
+
       if(action === 'confirm-notice'){
         const confirmHandler = noticeConfirmHandler;
         closeNoticeModal();
@@ -2790,9 +3008,11 @@
     function getPrimaryActionState(){
       syncGuidedState();
       const shift = getSelectedShift();
+      const variant = heroVariantState || resolveHeroVariantFromUtm();
+      const variantCta = variant.copy?.cta || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER].cta;
       if(!hasSelectedAge()){
         return {
-          text:'Показать подходящие смены',
+          text:variantCta,
           disabled:true,
           hint:''
         };
@@ -3242,15 +3462,18 @@
       const shiftChip = document.getElementById(cfg.shiftChipId);
       const shiftChipText = document.getElementById(cfg.shiftChipTextId);
       const baseHint = document.getElementById(cfg.hintId);
+      const guidedInlineHint = document.getElementById(cfg.guidedInlineHintId);
       const bookingCard = document.getElementById(cfg.cardId);
       const stepThree = bookingCard?.querySelector('.booking-step-3');
       const allShiftsBtn = bookingCard?.querySelector('.booking-all-shifts-link');
 
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
+
       placeStage2ContentForView(cfg, stage, bookingCard);
       syncCompletedBookingScaffold(cfg, bookingCard);
       const isMobile = cfg.key === 'mobile';
       if(state.bookingCompleted){
+        stopVariantFlowScenario();
         shiftList.classList.add('disabled');
         ageTabs.classList.add('hidden');
         ctaWrap.classList.add('hidden');
@@ -3271,6 +3494,10 @@
         if(baseHint){
           baseHint.textContent = '';
           baseHint.classList.remove('is-muted-hidden');
+        }
+        if(guidedInlineHint){
+          guidedInlineHint.textContent = '';
+          guidedInlineHint.classList.remove('visible', 'variant-coach');
         }
         return;
       }
@@ -3311,17 +3538,29 @@
       }
 
       if(!hasSelectedAge()){
+        const ageHintText = 'Выберите возраст, чтобы увидеть смены и цены.';
         if(baseHint){
-          baseHint.textContent = 'Сначала выберите возраст, чтобы активировать список смен.';
-          baseHint.classList.remove('is-muted-hidden');
+          baseHint.textContent = '';
+          baseHint.classList.add('is-muted-hidden');
         }
+        if(guidedInlineHint){
+          guidedInlineHint.textContent = '';
+          guidedInlineHint.classList.remove('visible');
+          guidedInlineHint.classList.remove('variant-coach');
+        }
+        stopVariantFlowScenario();
         shiftList.classList.add('disabled');
+        hideVariantCoachBadge(cfg);
         return;
       }
 
       if(baseHint){
         baseHint.textContent = '';
         baseHint.classList.remove('is-muted-hidden');
+      }
+      if(guidedInlineHint){
+        guidedInlineHint.textContent = '';
+        guidedInlineHint.classList.remove('visible', 'variant-coach');
       }
 
       ageChipText.textContent = ageLabel(state.age);
@@ -3334,6 +3573,8 @@
       if(hasSelectedAge() && !state.shiftId){
         shiftList.classList.remove('collapsed');
         shiftList.classList.add('highlight');
+        scheduleVariantFlowScenario();
+        hideVariantCoachBadge(cfg);
         return;
       }
 
@@ -3351,9 +3592,14 @@
       }
 
       if(state.shiftId && state.offerStage === 0){
+        stopVariantFlowScenario();
         ctaWrap.classList.add('highlight');
+        hideVariantCoachBadge(cfg);
         return;
       }
+
+      stopVariantFlowScenario();
+      hideVariantCoachBadge(cfg);
     }
 
     function pulseNode(node){
@@ -3552,6 +3798,126 @@
       });
     }
 
+    function stopBookingStage1TitleTypewriter(){
+      bookingStage1TitleTypewriterRunId += 1;
+      if(bookingStage1TitleTypewriterTimer){
+        window.clearTimeout(bookingStage1TitleTypewriterTimer);
+        bookingStage1TitleTypewriterTimer = null;
+      }
+    }
+
+    function runBookingStage1TitleTypewriter(target, text){
+      if(!target) return;
+      const phrase = String(text || '').trim();
+      if(!phrase){
+        target.textContent = '';
+        target.classList.remove('booking-title-typewriter', 'is-typing', 'is-typed');
+        return;
+      }
+      if(target.classList.contains('is-typing') && target.dataset.typewriterText === phrase){
+        return;
+      }
+      stopBookingStage1TitleTypewriter();
+      const runId = bookingStage1TitleTypewriterRunId;
+      const typeDelay = 156;
+      const moveDelay = 92;
+      target.dataset.typewriterText = phrase;
+      target.textContent = '';
+      target.classList.add('booking-title-typewriter', 'is-typing');
+      target.classList.remove('is-typed');
+      const wait = (ms) => new Promise((resolve) => {
+        bookingStage1TitleTypewriterTimer = window.setTimeout(() => {
+          bookingStage1TitleTypewriterTimer = null;
+          resolve();
+        }, ms);
+      });
+      const canContinue = () => runId === bookingStage1TitleTypewriterRunId;
+      const escapeHtml = (value) => String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      let value = '';
+      let caret = 0;
+      const render = (showCaret = true) => {
+        const left = escapeHtml(value.slice(0, caret));
+        const right = escapeHtml(value.slice(caret));
+        target.innerHTML = `${left}${showCaret ? '<span class="booking-title-typewriter__caret" aria-hidden="true"></span>' : ''}${right}`;
+      };
+      const moveCaretTo = async (targetPos) => {
+        const to = Math.max(0, Math.min(value.length, targetPos));
+        while(caret !== to){
+          if(!canContinue()) return false;
+          caret += caret < to ? 1 : -1;
+          render(true);
+          await wait(moveDelay);
+        }
+        return canContinue();
+      };
+      const insertAtCaret = async (chunk) => {
+        const source = String(chunk || '');
+        for(let i = 0; i < source.length; i += 1){
+          if(!canContinue()) return false;
+          value = value.slice(0, caret) + source[i] + value.slice(caret);
+          caret += 1;
+          render(true);
+          await wait(typeDelay);
+        }
+        return canContinue();
+      };
+      const deleteBackward = async (count = 1) => {
+        let remaining = Math.max(0, Number(count) || 0);
+        while(remaining > 0 && caret > 0){
+          if(!canContinue()) return false;
+          value = value.slice(0, caret - 1) + value.slice(caret);
+          caret -= 1;
+          remaining -= 1;
+          render(true);
+          await wait(typeDelay);
+        }
+        return canContinue();
+      };
+      const runScript = async () => {
+        if(!await insertAtCaret('Выберите возраст, чтобы увидеть цены и смены.')) return;
+        await wait(1200);
+
+        const seenWordStart = value.indexOf('увидеть');
+        if(seenWordStart >= 0){
+          const letterEPos = seenWordStart + 4;
+          if(!await moveCaretTo(letterEPos + 1)) return;
+          if(!await deleteBackward(1)) return;
+          if(!await insertAtCaret('И')) return;
+        }
+
+        await wait(900);
+        const pricesStart = value.indexOf('цены и смены');
+        if(pricesStart >= 0){
+          if(!await moveCaretTo(pricesStart + 'цены и смены'.length)) return;
+          if(!await deleteBackward('цены и смены'.length)) return;
+          if(!await insertAtCaret('смены и цены')) return;
+        }
+
+        await wait(1000);
+        const chooseStart = value.indexOf('Выберите');
+        if(chooseStart >= 0){
+          const itRusStart = chooseStart + 5;
+          if(!await moveCaretTo(itRusStart + 2)) return;
+          if(!await deleteBackward(2)) return;
+          if(!await insertAtCaret('IT')) return;
+        }
+
+        if(!canContinue()) return;
+        render(true);
+        target.classList.remove('is-typing');
+        target.classList.add('is-typed');
+        bookingStage1TitleTypewriterDone = true;
+      };
+      runScript().catch(() => {
+        bookingStage1TitleTypewriterDone = true;
+        target.classList.remove('is-typing');
+        target.classList.add('is-typed');
+      });
+    }
+
     function renderBookingInfo(viewCfg){
       if(!viewCfg) return;
       const info = document.getElementById(viewCfg.infoId);
@@ -3591,6 +3957,11 @@
         hint.textContent = action.hint;
       }
       if(state.bookingCompleted){
+        stopBookingStage1TitleTypewriter();
+        bookingStage1TitleTypewriterDone = false;
+        if(title){
+          title.classList.remove('booking-title-typewriter', 'is-typing', 'is-typed');
+        }
         if(title) title.textContent = 'Мы свяжемся с вами в ближайшее время.';
         if(lead) lead.textContent = '';
         if(btn){
@@ -3621,10 +3992,25 @@
       }
 
       if(!hasSelectedAge()){
-        if(title) title.textContent = 'Выберите возраст';
-        if(lead) lead.textContent = 'Покажем подходящие смены, программу и условия.';
+        const stage1TitleText = 'Выберите возраст, чтобы увидеть смены и цены.';
+        if(title){
+          if(!bookingStage1TitleTypewriterDone){
+            runBookingStage1TitleTypewriter(title, stage1TitleText);
+          } else {
+            title.textContent = 'ВыбериITе возраст, чтобы увидИть смены и цены.';
+            title.classList.add('booking-title-typewriter', 'is-typed');
+            title.classList.remove('is-typing');
+          }
+        }
+        if(lead) lead.textContent = '';
         if(info) info.innerHTML = '';
         return;
+      }
+
+      stopBookingStage1TitleTypewriter();
+      bookingStage1TitleTypewriterDone = false;
+      if(title){
+        title.classList.remove('booking-title-typewriter', 'is-typing', 'is-typed');
       }
 
       if(!shift){
@@ -4073,6 +4459,10 @@
         source:'success_modal',
         ...selectedShiftPayload()
       });
+      track('hero_variant_telegram_click_new', buildHeroVariantMeta({
+        source:'success_modal',
+        ...selectedShiftPayload()
+      }));
     });
 
     function formatPrice(v){
@@ -4423,11 +4813,11 @@
         ageRow.classList.add('is-hint-target');
         placeDesktopAgeTapHint(hintNode, ageRow);
         await waitDesktopAgeTapHint(rowIndex === 0 ? 320 : 1000);
-        for(let tapIndex = 0; tapIndex < 2; tapIndex += 1){
+        for(let tapIndex = 0; tapIndex < 3; tapIndex += 1){
           if(runToken !== desktopAgeTapHintToken || !canRunDesktopAgeTapHint()) break;
           pulseDesktopAgeTapHint(hintNode, ageRow);
           await waitDesktopAgeTapHint(680);
-          if(tapIndex === 0){
+          if(tapIndex < 2){
             await waitDesktopAgeTapHint(120);
           }
         }
@@ -4459,7 +4849,10 @@
         return;
       }
       const elapsedMs = Date.now() - desktopAgeTapHintStartedAt;
-      const delayMs = Math.max(0, 7000 - elapsedMs);
+      const isFirstRun = desktopAgeTapHintToken === 0;
+      const delayMs = isFirstRun
+        ? Math.max(0, 7000 - elapsedMs)
+        : 7000;
       desktopAgeTapHintTimer = setTimeout(() => {
         desktopAgeTapHintTimer = null;
         runDesktopAgeTapHint().catch(() => {
@@ -4467,6 +4860,156 @@
           hideDesktopAgeTapHint();
         });
       }, delayMs);
+    }
+
+    function clearVariantFlowFingerTimer(){
+      if(!variantFlowFingerTimer) return;
+      window.clearTimeout(variantFlowFingerTimer);
+      variantFlowFingerTimer = null;
+    }
+
+    function waitVariantFlow(ms, runId){
+      return new Promise((resolve) => {
+        variantFlowFingerTimer = window.setTimeout(() => {
+          variantFlowFingerTimer = null;
+          resolve(runId === variantFlowRunId);
+        }, ms);
+      });
+    }
+
+    function ensureVariantFlowFinger(){
+      let node = document.getElementById('variantFlowFinger');
+      if(!node){
+        node = document.createElement('div');
+        node.id = 'variantFlowFinger';
+        node.className = 'variant-flow-finger';
+        node.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(node);
+      }
+      if(!node.querySelector('.variant-flow-finger-glyph')){
+        node.innerHTML = `
+          <span class="variant-flow-finger-glyph" aria-hidden="true"></span>
+          <span class="variant-flow-finger-ripple" aria-hidden="true"></span>
+          <span class="variant-flow-finger-ripple delay" aria-hidden="true"></span>
+        `;
+      }
+      return node;
+    }
+
+    function hideVariantFlowFinger(){
+      const node = document.getElementById('variantFlowFinger');
+      if(node){
+        node.classList.remove('visible', 'is-tapping');
+      }
+      document.querySelectorAll('.variant-flow-target').forEach((el) => {
+        el.classList.remove('variant-flow-target');
+      });
+    }
+
+    function stopVariantFlowScenario(){
+      variantFlowRunId += 1;
+      clearVariantFlowFingerTimer();
+      hideVariantFlowFinger();
+    }
+
+    function placeVariantFlowFinger(finger, targetEl){
+      if(!finger || !targetEl) return;
+      const rect = targetEl.getBoundingClientRect();
+      const x = rect.left + (rect.width * 0.5);
+      const y = rect.top + (rect.height * 0.5);
+      finger.style.setProperty('--variant-flow-x', `${Math.round(x)}px`);
+      finger.style.setProperty('--variant-flow-y', `${Math.round(y)}px`);
+      finger.classList.add('visible');
+    }
+
+    async function runVariantFlowForTargets(targets, runId){
+      const finger = ensureVariantFlowFinger();
+      if(!finger || !targets.length) return;
+      for(const target of targets){
+        if(runId !== variantFlowRunId) return;
+        if(!target || !target.isConnected) continue;
+        document.querySelectorAll('.variant-flow-target').forEach((el) => el.classList.remove('variant-flow-target'));
+        target.classList.add('variant-flow-target');
+        placeVariantFlowFinger(finger, target);
+        const warmupOk = await waitVariantFlow(260, runId);
+        if(!warmupOk) return;
+        for(let tap = 0; tap < 3; tap += 1){
+          if(runId !== variantFlowRunId) return;
+          finger.classList.remove('is-tapping');
+          void finger.offsetWidth;
+          finger.classList.add('is-tapping');
+          const tapOk = await waitVariantFlow(360, runId);
+          if(!tapOk) return;
+          if(tap < 2){
+            const pauseOk = await waitVariantFlow(220, runId);
+            if(!pauseOk) return;
+          }
+        }
+        const settleOk = await waitVariantFlow(360, runId);
+        if(!settleOk) return;
+      }
+    }
+
+    function getVariantFlowKey(){
+      const variant = heroVariantState || resolveHeroVariantFromUtm();
+      const tier = variant.tier || HERO_VARIANT_DEFAULT_TIER;
+      const mode = (tier === 'tier2' || tier === 'tier4') ? 'menu' : 'info';
+      const view = state.previewView === 'mobile' ? 'mobile' : 'desktop';
+      return `${tier}:${mode}:${view}`;
+    }
+
+    async function runVariantFlowScenario(){
+      if(!hasSelectedAge() || !!state.shiftId || getBookingStage() !== 2 || state.bookingCompleted){
+        hideVariantFlowFinger();
+        return;
+      }
+      const variant = heroVariantState || resolveHeroVariantFromUtm();
+      const tier = variant.tier || HERO_VARIANT_DEFAULT_TIER;
+      const mode = (tier === 'tier2' || tier === 'tier4') ? 'menu' : 'info';
+      const runId = ++variantFlowRunId;
+      const flowKey = getVariantFlowKey();
+      if(variantFlowCompletedKey === flowKey){
+        return;
+      }
+      hideVariantFlowFinger();
+      const preWaitOk = await waitVariantFlow(320, runId);
+      if(!preWaitOk || runId !== variantFlowRunId) return;
+
+      if(mode === 'info'){
+        const cfg = getPrimaryBookingViewConfig();
+        const host = document.getElementById(cfg.shiftOptionsId || '');
+        const infoButtons = host ? [...host.querySelectorAll('[data-action="toggle-shift-about"]')].slice(0, 2) : [];
+        await runVariantFlowForTargets(infoButtons, runId);
+      } else if(state.previewView === 'mobile'){
+        setHeroMenuOpen(true);
+        const openOk = await waitVariantFlow(280, runId);
+        if(!openOk || runId !== variantFlowRunId) return;
+        const shiftsMenuBtn = document.querySelector('#serviceMenu [data-nav="section-programs"]');
+        await runVariantFlowForTargets(shiftsMenuBtn ? [shiftsMenuBtn] : [], runId);
+        if(runId === variantFlowRunId){
+          setHeroMenuOpen(false);
+        }
+      } else {
+        const cfg = getPrimaryBookingViewConfig();
+        const card = document.getElementById(cfg.cardId || '');
+        const allShiftsBtn = card?.querySelector('.booking-all-shifts-link');
+        await runVariantFlowForTargets(allShiftsBtn ? [allShiftsBtn] : [], runId);
+      }
+
+      if(runId === variantFlowRunId){
+        hideVariantFlowFinger();
+        variantFlowCompletedKey = flowKey;
+      }
+    }
+
+    function scheduleVariantFlowScenario(){
+      if(!hasSelectedAge() || !!state.shiftId || getBookingStage() !== 2 || state.bookingCompleted){
+        stopVariantFlowScenario();
+        return;
+      }
+      runVariantFlowScenario().catch(() => {
+        stopVariantFlowScenario();
+      });
     }
 
     function resetAgeSelection(){
@@ -5776,15 +6319,20 @@
     }
 
     function handlePrimaryCTA(){
+      const variant = heroVariantState || resolveHeroVariantFromUtm();
+      const copy = variant.copy || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
       if(!hasSelectedAge()){
-        showHint('Выберите возраст', 'age');
-        nudgeUserToNextStep('Сначала выберите возраст ребёнка');
+        track('hero_variant_click_new', buildHeroVariantMeta({cta: variant.copy?.cta || ''}));
+        const hintText = copy.hintStage1 || 'Чтобы продолжить, выберите возраст.';
+        showHint(hintText, 'age');
+        nudgeUserToNextStep(hintText);
         return;
       }
 
       if(!state.shiftId){
-        showHint('Выберите подходящую смену', 'shift');
-        nudgeUserToNextStep('Теперь выберите подходящую смену');
+        const hintText = formatVariantHint(copy.hintStage2 || 'Выберите подходящую смену.');
+        showHint(hintText, 'shift');
+        nudgeUserToNextStep(hintText);
         return;
       }
 
@@ -6418,6 +6966,10 @@
         ...selectedShiftPayload(),
         lead_scope: scope
       });
+      track('hero_variant_form_open_new', buildHeroVariantMeta({
+        ...selectedShiftPayload(),
+        lead_scope: scope
+      }));
     }
 
     function closeInlineLead(scope){
@@ -6449,6 +7001,10 @@
         startTimer();
       }
       track('form_open', selectedShiftPayload());
+      track('hero_variant_form_open_new', buildHeroVariantMeta({
+        ...selectedShiftPayload(),
+        lead_scope: 'drawer'
+      }));
       document.getElementById('formDrawer').classList.remove('hidden');
     }
 
@@ -6609,6 +7165,13 @@
         parent_name_present: !!name,
         phone_present: !!phone
       });
+      track('hero_variant_form_submit_new', buildHeroVariantMeta({
+        ...selectedShiftPayload(),
+        booking_code: state.code || '',
+        lead_scope: scope,
+        parent_name_present: !!name,
+        phone_present: !!phone
+      }));
       try {
         const deliveryResult = await notifyLead('booking_submitted', payload);
         state.bookingCompleted = true;
@@ -7199,6 +7762,7 @@
     }, {passive:true});
 
     initHero();
+    initHeroVariantPersonalization();
     loadVideoMetaCache();
 
     renderShiftOptionsForRenderableViews();
