@@ -322,7 +322,7 @@
 
     const METRIKA_ID = 96499295;
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.283 (hero-brand-smoke-and-topbar-responsive)';
+    const BUILD_VERSION_LABEL = 'v0.0.284 (hero-brand-smoke-and-topbar-responsive)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
