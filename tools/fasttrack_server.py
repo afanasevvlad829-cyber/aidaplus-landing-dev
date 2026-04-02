@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sqlite3
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -64,6 +65,111 @@ def send_to_telegram(event: str, payload: dict) -> dict:
         return {"ok": False, "delivered": False, "reason": "telegram_network_error"}
 
 
+def db_path() -> Path:
+    raw = (os.getenv("AIDAPLUS_AB_DB_PATH") or "").strip()
+    if raw:
+        return Path(raw).expanduser().resolve()
+    return Path(".runtime/ab_events.sqlite").resolve()
+
+
+def init_ab_db() -> None:
+    path = db_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(path)
+    try:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS ab_events (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              event_ts TEXT NOT NULL,
+              event_name TEXT NOT NULL,
+              test_id TEXT NOT NULL,
+              variant TEXT NOT NULL,
+              session_id TEXT,
+              visitor_id TEXT,
+              page_path TEXT,
+              page_url TEXT,
+              referrer TEXT,
+              utm_source TEXT,
+              utm_medium TEXT,
+              utm_campaign TEXT,
+              utm_content TEXT,
+              utm_term TEXT,
+              device_type TEXT,
+              payload_json TEXT NOT NULL
+            )
+            """
+        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_ab_events_ts ON ab_events(event_ts)")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_ab_events_variant ON ab_events(test_id, variant)")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_ab_events_name ON ab_events(event_name)")
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def insert_ab_event(event_name: str, payload: dict) -> int:
+    path = db_path()
+    conn = sqlite3.connect(path)
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO ab_events (
+              event_ts, event_name, test_id, variant, session_id, visitor_id,
+              page_path, page_url, referrer, utm_source, utm_medium, utm_campaign,
+              utm_content, utm_term, device_type, payload_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(payload.get("event_ts") or ""),
+                str(event_name or ""),
+                str(payload.get("ab_test_id") or ""),
+                str(payload.get("ab_variant") or ""),
+                str(payload.get("session_id") or ""),
+                str(payload.get("visitor_id") or ""),
+                str(payload.get("page_path") or ""),
+                str(payload.get("page_url") or ""),
+                str(payload.get("referrer") or ""),
+                str(payload.get("utm_source") or ""),
+                str(payload.get("utm_medium") or ""),
+                str(payload.get("utm_campaign") or ""),
+                str(payload.get("utm_content") or ""),
+                str(payload.get("utm_term") or ""),
+                str(payload.get("device_type") or ""),
+                json.dumps(payload, ensure_ascii=False),
+            ),
+        )
+        conn.commit()
+        return int(cur.lastrowid or 0)
+    finally:
+        conn.close()
+
+
+def query_ab_summary(limit: int = 20) -> list[dict]:
+    path = db_path()
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute(
+            """
+            SELECT
+              test_id,
+              variant,
+              event_name,
+              COUNT(*) AS events
+            FROM ab_events
+            GROUP BY test_id, variant, event_name
+            ORDER BY events DESC
+            LIMIT ?
+            """,
+            (max(1, min(int(limit), 200)),),
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
+
 class Handler(SimpleHTTPRequestHandler):
     server_version = "fasttrack_server/1.0"
 
@@ -83,7 +189,7 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(raw)
 
     def do_OPTIONS(self):
-        if self.path.startswith("/api/lead"):
+        if self.path.startswith("/api/lead") or self.path.startswith("/api/ab-event"):
             self.send_response(HTTPStatus.NO_CONTENT)
             self.send_header("Access-Control-Allow-Origin", "*")
             self.send_header("Access-Control-Allow-Headers", "Content-Type")
@@ -105,9 +211,46 @@ class Handler(SimpleHTTPRequestHandler):
                 },
             )
             return
+        if self.path.startswith("/api/ab-event/summary"):
+            try:
+                top = int((self.path.split("top=", 1)[1].split("&", 1)[0])) if "top=" in self.path else 20
+            except ValueError:
+                top = 20
+            self._write_json(
+                HTTPStatus.OK,
+                {
+                    "ok": True,
+                    "top": top,
+                    "rows": query_ab_summary(top),
+                },
+            )
+            return
         super().do_GET()
 
     def do_POST(self):
+        if self.path.startswith("/api/ab-event"):
+            length = int(self.headers.get("Content-Length") or "0")
+            raw = self.rfile.read(length) if length > 0 else b"{}"
+            try:
+                data = json.loads(raw.decode("utf-8") or "{}")
+            except json.JSONDecodeError:
+                self._write_json(HTTPStatus.BAD_REQUEST, {"ok": False, "error": "invalid_json"})
+                return
+            event = str(data.get("event") or "").strip()
+            payload = data.get("payload") if isinstance(data.get("payload"), dict) else {}
+            if not event:
+                self._write_json(HTTPStatus.BAD_REQUEST, {"ok": False, "error": "event_required"})
+                return
+            if not payload.get("event_ts"):
+                payload["event_ts"] = ""
+            try:
+                row_id = insert_ab_event(event, payload)
+                self._write_json(HTTPStatus.OK, {"ok": True, "stored": True, "id": row_id})
+                return
+            except sqlite3.Error as error:
+                self._write_json(HTTPStatus.SERVICE_UNAVAILABLE, {"ok": False, "error": "db_error", "detail": str(error)})
+                return
+
         if not self.path.startswith("/api/lead"):
             self._write_json(HTTPStatus.NOT_FOUND, {"ok": False, "error": "not_found"})
             return
@@ -135,6 +278,7 @@ def main() -> None:
     args = parser.parse_args()
 
     root = str(Path(args.root).resolve())
+    init_ab_db()
     httpd = ThreadingHTTPServer(
         (args.host, args.port),
         lambda *a, **k: Handler(*a, directory=root, **k),
@@ -157,4 +301,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
