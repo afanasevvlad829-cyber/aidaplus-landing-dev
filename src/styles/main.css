@@ -470,7 +470,8 @@
     #mobileView .hero-bg,
     .mobile-hero .hero-bg,
     #desktopView.mobile-preview-active .hero-bg{
-      background-position:62% center;
+      background-image:url('/assets/images/hero-camp-mobile-people.png') !important;
+      background-position:68% center;
     }
 
     .hero-shell::before{

@@ -243,10 +243,10 @@
         }
       ],
       contacts: [
-        {label:'city_phone',href:'tel:+74951234567',text:'+7 (495) 123-45-67'},
+        {label:'city_phone',href:'tel:+74951284429',text:'+7 (495) 128-44-29'},
         {label:'mobile_phone',href:'tel:+79688086455',text:'+7 (968) 808-64-55'},
         {label:'whatsapp',href:'https://wa.me/79688086455',text:'WhatsApp'},
-        {label:'telegram',href:'https://t.me/proga_school',text:'@proga_school'}
+        {label:'telegram',href:'https://t.me/Progaschool',text:'@Progaschool'}
       ],
       socials: [
         { key:'VK', label:'VK', href:'https://vk.com/aidacamp' },
@@ -321,6 +321,8 @@
     };
 
     const METRIKA_ID = 96499295;
+    const MAX_CONTACT_URL = 'https://web.max.ru/185807479';
+    const LEGAL_REPO_SLUG = 'afanasevvlad829-cyber/aidaplus-landing-dev';
     const HERO_VARIANT_BANNER_TIER = Object.freeze({
       '212861185':'tier1',
       '212861186':'tier1',
@@ -392,7 +394,7 @@
     });
     const HERO_VARIANT_DEFAULT_TIER = 'broad';
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.285 (hero-booking-tier-flow-and-info-icon-fix)';
+    const BUILD_VERSION_LABEL = 'v0.0.288 (ab-analytics-endpoint)';
     const ARCHITECTURE_POLICY = Object.freeze({
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
@@ -613,15 +615,110 @@
     let heroVariantState = null;
     let variantCoachDismissedKey = '';
     let variantCoachReminderTimer = null;
+    let abSessionSeq = 0;
+
+    function randomId(prefix){
+      try {
+        if(window.crypto && typeof window.crypto.randomUUID === 'function'){
+          return `${prefix}_${window.crypto.randomUUID()}`;
+        }
+      } catch (error){
+      }
+      return `${prefix}_${Math.random().toString(36).slice(2)}_${Date.now().toString(36)}`;
+    }
+
+    function getOrCreateStorageId(storage, key, prefix){
+      try {
+        const current = String(storage.getItem(key) || '').trim();
+        if(current) return current;
+        const created = randomId(prefix);
+        storage.setItem(key, created);
+        return created;
+      } catch (error){
+        return randomId(prefix);
+      }
+    }
+
+    function getAbVariantLabel(){
+      const current = String(heroAbVariant || '').toUpperCase();
+      if(current === 'A' || current === 'B') return current;
+      return 'A';
+    }
+
+    function buildAbMeta(extra = {}){
+      return {
+        ab_test_id: HERO_AB_TEST_ID,
+        ab_variant: getAbVariantLabel(),
+        ...extra
+      };
+    }
+
+    function shouldSendAbEvent(eventName){
+      const cfg = window.AC_NOTIFY_CONFIG || {};
+      if(cfg.abTrackAllEvents === true) return true;
+      return AB_TEST_EVENT_ALLOWLIST.has(String(eventName || ''));
+    }
+
+    function sendAbEvent(eventName, params = {}){
+      if(!shouldSendAbEvent(eventName)) return;
+      const cfg = window.AC_NOTIFY_CONFIG || {};
+      const endpoint = String(cfg.abEventEndpoint || AB_EVENT_ENDPOINT_DEFAULT).trim();
+      if(!endpoint) return;
+      const visitorId = getOrCreateStorageId(window.localStorage, AB_VISITOR_ID_KEY, 'abv');
+      const sessionId = getOrCreateStorageId(window.sessionStorage, AB_SESSION_ID_KEY, 'abs');
+      abSessionSeq += 1;
+      const search = getCurrentSearchParams();
+      const payload = {
+        event: String(eventName || ''),
+        payload: {
+          ...(params && typeof params === 'object' ? params : {}),
+          ...buildAbMeta(),
+          event_ts: new Date().toISOString(),
+          event_seq: abSessionSeq,
+          session_id: sessionId,
+          visitor_id: visitorId,
+          page_url: window.location.href,
+          page_path: window.location.pathname || '/',
+          referrer: document.referrer || '',
+          utm_source: String(search.get('utm_source') || ''),
+          utm_medium: String(search.get('utm_medium') || ''),
+          utm_campaign: String(search.get('utm_campaign') || ''),
+          utm_content: String(search.get('utm_content') || ''),
+          utm_term: String(search.get('utm_term') || ''),
+          screen: `${window.innerWidth || 0}x${window.innerHeight || 0}`,
+          device_type: window.innerWidth < 768 ? 'mobile' : 'desktop'
+        }
+      };
+      const raw = JSON.stringify(payload);
+      try {
+        if(navigator.sendBeacon){
+          const body = new Blob([raw], {type:'application/json'});
+          const sent = navigator.sendBeacon(endpoint, body);
+          if(sent) return;
+        }
+      } catch (error){
+      }
+      fetch(endpoint, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:raw,
+        keepalive:true
+      }).catch(() => {});
+    }
 
     function track(event, params = {}){
+      const trackedParams = {
+        ...(params && typeof params === 'object' ? params : {}),
+        ...buildAbMeta()
+      };
       try {
         if(typeof ym !== 'undefined'){
-          ym(METRIKA_ID, 'reachGoal', event, params);
+          ym(METRIKA_ID, 'reachGoal', event, trackedParams);
         }
       } catch (err){
         console.warn('Metrika track error:', event, err);
       }
+      sendAbEvent(event, trackedParams);
     }
 
     function getCurrentSearchParams(){
@@ -630,6 +727,54 @@
       } catch (error){
         return new URLSearchParams('');
       }
+    }
+
+    function getLoaderCommitRef(){
+      try {
+        const marker = document.querySelector('script[data-aida-loader-inline="1"]');
+        if(!marker || !marker.textContent) return '';
+        const parsed = JSON.parse(marker.textContent);
+        const raw = String(parsed?.commit || '').trim();
+        if(!raw) return '';
+        if(/^[a-zA-Z0-9._/-]{1,80}$/.test(raw)){
+          return raw;
+        }
+      } catch (error){
+        // ignore marker parse errors
+      }
+      return '';
+    }
+
+    function resolveLegalDocBaseUrl(){
+      const host = String(window.location.hostname || '').toLowerCase();
+      if(host === 'localhost' || host === '127.0.0.1'){
+        return 'legal.html';
+      }
+      const ref = getLoaderCommitRef() || 'dev';
+      return `https://cdn.jsdelivr.net/gh/${LEGAL_REPO_SLUG}@${ref}/legal.html`;
+    }
+
+    function buildLegalDocUrl(hash = ''){
+      const base = resolveLegalDocBaseUrl();
+      const safeHash = String(hash || '').trim();
+      if(!safeHash) return base;
+      if(safeHash.startsWith('#')) return `${base}${safeHash}`;
+      return `${base}#${safeHash}`;
+    }
+
+    function syncLegalDocLinks(scope = document){
+      const root = scope || document;
+      const links = root.querySelectorAll(
+        'a[href^="legal.html"],a[href^="/legal.html"],a[href*="legal.html#"]'
+      );
+      links.forEach((link) => {
+        const href = String(link.getAttribute('href') || '').trim();
+        if(!href) return;
+        if(/^https?:\/\//i.test(href) && !/legal\.html/i.test(href)) return;
+        const hashIndex = href.indexOf('#');
+        const hash = hashIndex >= 0 ? href.slice(hashIndex) : '';
+        link.setAttribute('href', buildLegalDocUrl(hash));
+      });
     }
 
     function normalizeBannerId(value){
@@ -673,6 +818,24 @@
       const sloganNodes = document.querySelectorAll('.hero-slogan');
       sloganNodes.forEach((node) => {
         if(node) node.textContent = copy.title;
+      });
+    }
+
+    function injectHeroSeasonOfferCta(){
+      const sloganNodes = document.querySelectorAll('.hero-slogan');
+      sloganNodes.forEach((sloganNode) => {
+        if(!sloganNode || !sloganNode.parentElement) return;
+        if(sloganNode.parentElement.querySelector('.hero-season-offer')) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'hero-season-offer';
+        wrap.innerHTML = `
+          <div class="hero-season-offer-price">От 48 000 рублей за смену 7 дней</div>
+          <button class="hero-season-calendar-btn" type="button" data-action="open-season-calendar" aria-label="Открыть календарь всех летних смен">
+            <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+            <span>Все смены лета в календаре</span>
+          </button>
+        `;
+        sloganNode.insertAdjacentElement('afterend', wrap);
       });
     }
 
@@ -758,7 +921,7 @@
     }
 
     function applyDebugUiState(){
-      if(isProductionRuntime() && !isAdminDebugSession()){
+      if(!isLocalRuntime()){
         document.getElementById('debugControls')?.remove();
         document.getElementById('version-badge')?.remove();
         document.body.classList.remove('booking-debug-blocks');
@@ -1457,9 +1620,65 @@
 
     const HERO_MOBILE =
       '/assets/images/hero-camp-sunset-20260328.png';
+    const HERO_IMAGES_B = [
+      '/assets/images/hero-ab-pool-20260401.jpeg'
+    ];
+    const HERO_MOBILE_B =
+      '/assets/images/hero-ab-pool-20260401.jpeg';
+    const HERO_AB_TEST_KEY = 'aidacamp_hero_ab_v1';
+    const HERO_AB_TEST_ID = 'hero_primary_block_v1';
+    const HERO_AB_VARIANT_LABELS = Object.freeze({
+      A: 'Control',
+      B: 'Pool Motion'
+    });
+    const HERO_AB_SHIFT_UP_MS = 7000;
+    const HERO_AB_BENEFIT_REVEAL_DELAY_MS = 7600;
+    const HERO_AB_BENEFIT_STEP_MS = 4000;
+    const HERO_AB_DESKTOP_SHIFT_UP_MS = 5000;
+    const HERO_AB_DESKTOP_BENEFIT_REVEAL_DELAY_MS = 5000;
+    const HERO_AB_DESKTOP_BG_ONLY = false;
+    const HERO_AB_MOBILE_EFFECTS_ENABLED = false;
+    const AB_EVENT_ENDPOINT_DEFAULT = 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event';
+    const AB_VISITOR_ID_KEY = 'aidacamp_ab_visitor_id_v1';
+    const AB_SESSION_ID_KEY = 'aidacamp_ab_session_id_v1';
+    const AB_TEST_EVENT_ALLOWLIST = new Set([
+      'page_view',
+      'hero_ab_assigned_v1',
+      'hero_variant_shown_new',
+      'hero_variant_fallback_new',
+      'form_submit',
+      'hero_variant_form_submit_new',
+      'telegram_click',
+      'hero_variant_telegram_click_new'
+    ]);
+    const HERO_BENEFITS_LAYOUT_EXPERIMENT = true;
+    const HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS = Object.freeze([
+      Object.freeze({
+        title:'AI-проект за смену',
+        icon:'/assets/icons/ai-svgrepo-com.svg',
+        iconClass:''
+      }),
+      Object.freeze({
+        title:'Без телефонов',
+        icon:'/assets/icons/mobile-off-svgrepo-com.svg',
+        iconClass:''
+      }),
+      Object.freeze({
+        title:'Бассейн и спорт',
+        icon:'/assets/icons/swim-svgrepo-com.svg',
+        iconClass:''
+      })
+    ]);
 
     let heroIndex = 0;
     let heroTimer = null;
+    let heroAbVariant = 'A';
+    let heroAbTimers = [];
+    let heroAbMobileScrollBound = false;
+    let heroAbMobileInteractionBound = false;
+    let heroAbMobileUserInteracted = false;
+    let heroAbMobileCollapsed = false;
+    let heroAbMobileAutoTimer = null;
     let heroResizeTimer = null;
     let summaryBarDismissUntilTs = 0;
     let summaryBarDismissTimer = null;
@@ -1486,10 +1705,13 @@
 
     function initHero(){
       const isMobile = window.innerWidth < 768;
+      const heroImages = heroAbVariant === 'B' ? HERO_IMAGES_B : HERO_IMAGES;
+      const heroMobile = heroAbVariant === 'B' ? HERO_MOBILE_B : HERO_MOBILE;
 
       const bg1 = document.getElementById('heroBg1');
       const bg2 = document.getElementById('heroBg2');
       const desktopView = document.getElementById('desktopView');
+      const mobileView = document.getElementById('mobileView');
       if(!bg1) return;
       if(heroTimer){
         clearInterval(heroTimer);
@@ -1497,41 +1719,75 @@
       }
       if(desktopView){
         desktopView.classList.toggle('hero-static-bg', HERO_IMAGES.length <= 1);
+        desktopView.classList.remove('hero-ready');
+        desktopView.classList.add('hero-loading');
       }
-
-      if(isMobile){
-        bg1.style.backgroundImage = `url(${HERO_MOBILE})`;
+      if(mobileView){
+        mobileView.classList.remove('hero-ready');
+        mobileView.classList.add('hero-loading');
+      }
+      const markHeroReady = () => {
+        if(desktopView){
+          desktopView.classList.remove('hero-loading');
+          desktopView.classList.add('hero-ready');
+        }
+        if(mobileView){
+          mobileView.classList.remove('hero-loading');
+          mobileView.classList.add('hero-ready');
+        }
+      };
+      const applySingleHeroFrame = (src) => {
+        bg1.style.backgroundImage = `url(${src})`;
         bg1.classList.add('active');
         bg1.classList.remove('hidden');
         if(bg2){
-          bg2.style.backgroundImage = `url(${HERO_MOBILE})`;
+          bg2.style.backgroundImage = `url(${src})`;
           bg2.classList.remove('active');
           bg2.classList.add('hidden');
         }
+      };
+      const preloadAndApplyFirstFrame = (src) => {
+        let done = false;
+        const finish = () => {
+          if(done) return;
+          done = true;
+          applySingleHeroFrame(src);
+          requestAnimationFrame(markHeroReady);
+        };
+        try{
+          const img = new Image();
+          img.decoding = 'async';
+          img.onload = finish;
+          img.onerror = finish;
+          img.src = src;
+          if(img.complete){
+            finish();
+          } else {
+            window.setTimeout(finish, 1200);
+          }
+        } catch (error){
+          finish();
+        }
+      };
+
+      if(isMobile){
+        preloadAndApplyFirstFrame(heroMobile);
         return;
       }
 
       heroIndex = 0;
-      bg1.style.backgroundImage = `url(${HERO_IMAGES[heroIndex]})`;
-      bg1.classList.add('active');
-      bg1.classList.remove('hidden');
+      preloadAndApplyFirstFrame(heroImages[heroIndex]);
       if(!bg2) return;
-      bg2.classList.remove('active');
-      bg2.classList.add('hidden');
 
-      if(HERO_IMAGES.length <= 1){
-        bg1.classList.add('active');
-        bg1.classList.remove('hidden');
+      if(heroImages.length <= 1){
         bg2.style.backgroundImage = 'none';
-        bg2.classList.remove('active');
-        bg2.classList.add('hidden');
         return;
       }
 
       heroTimer = setInterval(() => {
-        heroIndex = (heroIndex + 1) % HERO_IMAGES.length;
+        heroIndex = (heroIndex + 1) % heroImages.length;
 
-        const next = HERO_IMAGES[heroIndex];
+        const next = heroImages[heroIndex];
 
         if(bg1.classList.contains('active')){
           bg2.style.backgroundImage = `url(${next})`;
@@ -1547,6 +1803,304 @@
           bg2.classList.add('hidden');
         }
       }, 5500);
+    }
+
+    function preloadHeroAssets(){
+      const heroImages = heroAbVariant === 'B' ? HERO_IMAGES_B : HERO_IMAGES;
+      const heroMobile = heroAbVariant === 'B' ? HERO_MOBILE_B : HERO_MOBILE;
+      const preloadList = [...heroImages, heroMobile].filter(Boolean);
+      preloadList.forEach((src) => {
+        try{
+          const img = new Image();
+          img.decoding = 'async';
+          img.src = src;
+        } catch (error){
+          // ignore preload failures
+        }
+      });
+    }
+
+    function clearHeroAbTimers(){
+      heroAbTimers.forEach((timerId) => window.clearTimeout(timerId));
+      heroAbTimers = [];
+    }
+
+    function getForcedHeroAbVariant(){
+      const search = getCurrentSearchParams();
+      const forcedRaw = String(search.get('hero_ab') || search.get('hero_mode') || '').trim();
+      const normalized = forcedRaw.toUpperCase();
+      if(normalized === 'A' || normalized === 'CONTROL') return 'A';
+      if(normalized === 'B' || normalized === 'POOL' || normalized === 'POOL_MOTION') return 'B';
+      return '';
+    }
+
+    function resolveHeroAbVariant(){
+      const forced = getForcedHeroAbVariant();
+      if(forced){
+        localStorage.setItem(HERO_AB_TEST_KEY, forced);
+        return forced;
+      }
+      localStorage.setItem(HERO_AB_TEST_KEY, 'B');
+      return 'B';
+    }
+
+    function applyHeroAbAnimationForRoot(root){
+      if(!root) return;
+      const isDesktopRoot = root.id === 'desktopView' && !root.classList.contains('mobile-preview-active');
+      const isMobileRuntimeRoot = !isDesktopRoot;
+      const shouldAnimateForRoot = isDesktopRoot ? true : heroAbVariant === 'B';
+      root.classList.remove('hero-ab-b', 'hero-ab-b-shifted');
+      root.querySelectorAll('.hero-slogan').forEach((node) => {
+        const current = String(node.textContent || '').trim();
+        if(!node.dataset.heroSloganOriginal){
+          node.dataset.heroSloganOriginal = current;
+        }
+        node.textContent = node.dataset.heroSloganOriginal || current;
+      });
+      root.querySelectorAll('.hero-benefits-grid .hero-benefit-card').forEach((card) => {
+        card.classList.remove('hero-benefit-visible');
+      });
+      if(isDesktopRoot && HERO_AB_DESKTOP_BG_ONLY){
+        // Desktop A/B parity: keep visuals and animation identical for A and B.
+        // Only background image differs via initHero() image source selection.
+        return;
+      }
+      if(isMobileRuntimeRoot && !HERO_AB_MOBILE_EFFECTS_ENABLED){
+        // Mobile stability mode: disable experimental A/B visual effects.
+        return;
+      }
+      if(!shouldAnimateForRoot) return;
+
+      root.classList.add('hero-ab-b');
+      if(heroAbVariant === 'B'){
+        root.querySelectorAll('.hero-slogan').forEach((node) => {
+          node.textContent = 'Летние IT-смены в Подмосковье';
+        });
+      }
+      const cards = Array.from(root.querySelectorAll('.hero-benefits-grid .hero-benefit-card'));
+      if(!cards.length) return;
+      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(prefersReducedMotion){
+        root.classList.add('hero-ab-b-shifted');
+        cards.forEach((card) => card.classList.add('hero-benefit-visible'));
+        return;
+      }
+      const shiftUpMs = isDesktopRoot ? HERO_AB_DESKTOP_SHIFT_UP_MS : HERO_AB_SHIFT_UP_MS;
+      const revealDelayMs = isDesktopRoot ? HERO_AB_DESKTOP_BENEFIT_REVEAL_DELAY_MS : HERO_AB_BENEFIT_REVEAL_DELAY_MS;
+
+      const shiftUpTimer = window.setTimeout(() => {
+        root.classList.add('hero-ab-b-shifted');
+      }, shiftUpMs);
+      heroAbTimers.push(shiftUpTimer);
+
+      let revealIndex = 0;
+      const revealNext = () => {
+        const card = cards[revealIndex];
+        if(card){
+          card.classList.add('hero-benefit-visible');
+          revealIndex += 1;
+        }
+        if(revealIndex >= cards.length && revealInterval){
+          window.clearInterval(revealInterval);
+        }
+      };
+      let revealInterval = null;
+      const revealStartTimer = window.setTimeout(() => {
+        revealNext();
+        revealInterval = window.setInterval(revealNext, HERO_AB_BENEFIT_STEP_MS);
+        heroAbTimers.push(revealInterval);
+      }, revealDelayMs);
+      heroAbTimers.push(revealStartTimer);
+    }
+
+    function applyHeroBenefitsLayoutExperiment(root){
+      if(!root) return;
+      const grid = root.querySelector('.hero-benefits-grid');
+      if(!grid) return;
+
+      if(!grid.dataset.heroBenefitsOriginalHtml){
+        grid.dataset.heroBenefitsOriginalHtml = grid.innerHTML;
+      }
+
+      if(!HERO_BENEFITS_LAYOUT_EXPERIMENT){
+        root.classList.remove('hero-benefits-exp-3');
+        grid.classList.remove('hero-benefits-grid--compact3');
+        if(grid.dataset.heroBenefitsOriginalHtml){
+          grid.innerHTML = grid.dataset.heroBenefitsOriginalHtml;
+        }
+        return;
+      }
+
+      root.classList.add('hero-benefits-exp-3');
+      grid.classList.add('hero-benefits-grid--compact3');
+      grid.innerHTML = HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS.map((item) => `
+        <article class="hero-benefit-card hero-benefit-card--compact">
+          <span class="hero-benefit-icon-wrap ${item.iconClass || ''}">
+            <img class="ac-icon hero-benefit-icon" src="${item.icon}" alt="" aria-hidden="true">
+          </span>
+          <strong>${item.title}</strong>
+        </article>
+      `).join('');
+    }
+
+    function applyHeroAbVariant(){
+      clearHeroAbTimers();
+      if(heroAbMobileAutoTimer){
+        window.clearTimeout(heroAbMobileAutoTimer);
+        heroAbMobileAutoTimer = null;
+      }
+      const desktopView = document.getElementById('desktopView');
+      const mobileView = document.getElementById('mobileView');
+      const resolveMobileHeroRoot = () => {
+        if(desktopView && desktopView.classList.contains('mobile-preview-active')){
+          return desktopView;
+        }
+        if(mobileView && !mobileView.classList.contains('hidden')){
+          return mobileView;
+        }
+        if(USE_DESKTOP_BASE_FOR_MOBILE && desktopView){
+          return desktopView;
+        }
+        return mobileView || desktopView || null;
+      };
+      const isMobileHeroRuntime = () => {
+        if(desktopView && desktopView.classList.contains('mobile-preview-active')) return true;
+        if(mobileView && !mobileView.classList.contains('hidden')) return true;
+        return window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
+      };
+      const desktopIsMobilePreview = !!(desktopView && desktopView.classList.contains('mobile-preview-active'));
+      applyHeroBenefitsLayoutExperiment(desktopView, HERO_BENEFITS_LAYOUT_EXPERIMENT && !desktopIsMobilePreview);
+      applyHeroBenefitsLayoutExperiment(mobileView, false);
+      applyHeroAbAnimationForRoot(desktopView);
+      applyHeroAbAnimationForRoot(mobileView);
+      if(desktopView){
+        desktopView.classList.remove('hero-ab-b-mobile-precollapse');
+        desktopView.classList.remove('hero-ab-b-mobile-collapsed');
+      }
+      if(mobileView){
+        mobileView.classList.remove('hero-ab-b-mobile-precollapse');
+        mobileView.classList.remove('hero-ab-b-mobile-collapsed');
+      }
+      heroAbMobileCollapsed = false;
+      if(!HERO_AB_MOBILE_EFFECTS_ENABLED){
+        if(heroAbMobileAutoTimer){
+          window.clearTimeout(heroAbMobileAutoTimer);
+          heroAbMobileAutoTimer = null;
+        }
+        trackOnce('hero_ab_assigned_v1', {
+          test_id: HERO_AB_TEST_ID,
+          variant: heroAbVariant
+        });
+        return;
+      }
+      const collapseMobileHero = (reason = 'scroll') => {
+        if(heroAbVariant !== 'B') return;
+        if(heroAbMobileCollapsed) return;
+        const mobileRoot = resolveMobileHeroRoot();
+        if(!mobileRoot) return;
+        heroAbMobileCollapsed = true;
+        mobileRoot.classList.remove('hero-ab-b-mobile-precollapse');
+        mobileRoot.classList.add('hero-ab-b-mobile-collapsed');
+        if(heroAbMobileAutoTimer){
+          window.clearTimeout(heroAbMobileAutoTimer);
+          heroAbMobileAutoTimer = null;
+        }
+        trackOnce('hero_ab_mobile_scroll_collapse_v1', {
+          test_id: HERO_AB_TEST_ID,
+          variant: heroAbVariant,
+          reason
+        });
+      };
+      if(!heroAbMobileScrollBound){
+        window.addEventListener('scroll', () => {
+          if(!isMobileHeroRuntime()) return;
+          if(!heroAbMobileUserInteracted) return;
+          const y = window.scrollY || document.documentElement.scrollTop || 0;
+          if(y < 12) return;
+          collapseMobileHero('scroll');
+        }, {passive:true});
+        heroAbMobileScrollBound = true;
+      }
+      if(!heroAbMobileInteractionBound){
+        const markHeroAbInteracted = () => {
+          heroAbMobileUserInteracted = true;
+        };
+        window.addEventListener('touchstart', markHeroAbInteracted, {passive:true});
+        window.addEventListener('pointerdown', markHeroAbInteracted, {passive:true});
+        window.addEventListener('wheel', markHeroAbInteracted, {passive:true});
+        window.addEventListener('keydown', markHeroAbInteracted);
+        heroAbMobileInteractionBound = true;
+      }
+      if(heroAbVariant === 'B' && isMobileHeroRuntime()){
+        heroAbMobileUserInteracted = false;
+        const mobileRoot = resolveMobileHeroRoot();
+        if(mobileRoot){
+          mobileRoot.classList.add('hero-ab-b-mobile-precollapse');
+        }
+        heroAbMobileAutoTimer = window.setTimeout(() => {
+          collapseMobileHero('timeout_10s');
+        }, 10000);
+      }
+      trackOnce('hero_ab_assigned_v1', {
+        test_id: HERO_AB_TEST_ID,
+        variant: heroAbVariant
+      });
+    }
+
+    function initHeroAbDevPanel(){
+      const host = String(window.location.hostname || '').toLowerCase();
+      const isDevHost = (
+        host === 'localhost' ||
+        host === '127.0.0.1'
+      );
+      if(!isDevHost) return;
+      if(document.getElementById('heroAbDevPanel')) return;
+      const panel = document.createElement('div');
+      panel.id = 'heroAbDevPanel';
+      panel.className = 'hero-ab-dev-panel';
+      panel.innerHTML = `
+        <div class="hero-ab-dev-title">Hero A/B (Dev)</div>
+        <div class="hero-ab-dev-status">Current: <span data-hero-ab-current></span></div>
+        <div class="hero-ab-dev-modes">
+          <button type="button" class="hero-ab-dev-btn" data-hero-ab-set="A">A · ${HERO_AB_VARIANT_LABELS.A || 'A'}</button>
+          <button type="button" class="hero-ab-dev-btn" data-hero-ab-set="B">B · ${HERO_AB_VARIANT_LABELS.B || 'B'}</button>
+        </div>
+      `;
+      document.body.appendChild(panel);
+      const currentNode = panel.querySelector('[data-hero-ab-current]');
+      const syncPanelState = () => {
+        if(currentNode){
+          currentNode.textContent = HERO_AB_VARIANT_LABELS[heroAbVariant] || heroAbVariant;
+        }
+        panel.querySelectorAll('[data-hero-ab-set]').forEach((button) => {
+          const value = String(button.getAttribute('data-hero-ab-set') || '').toUpperCase();
+          button.classList.toggle('is-active', value === heroAbVariant);
+        });
+      };
+      syncPanelState();
+      panel.querySelectorAll('[data-hero-ab-set]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const next = String(btn.getAttribute('data-hero-ab-set') || '').toUpperCase();
+          if(next !== 'A' && next !== 'B') return;
+          if(next === heroAbVariant){
+            syncPanelState();
+            return;
+          }
+          heroAbVariant = next;
+          localStorage.setItem(HERO_AB_TEST_KEY, next);
+          const url = new URL(window.location.href);
+          url.searchParams.set('hero_ab', next);
+          window.history.replaceState({}, '', url.toString());
+          initHero();
+          applyHeroAbVariant();
+          syncPanelState();
+        });
+      });
+      trackOnce('hero_ab_dev_panel_shown_v1', {
+        test_id: HERO_AB_TEST_ID,
+        variant: heroAbVariant,
+        mode_label: HERO_AB_VARIANT_LABELS[heroAbVariant] || ''
+      });
     }
 
     function openMedia(type, index){
@@ -2405,6 +2959,11 @@
         return true;
       }
 
+      if(action === 'open-season-calendar'){
+        openSeasonCalendar();
+        return true;
+      }
+
       if(action === 'primary-cta'){
         handlePrimaryCTA();
         return true;
@@ -2575,7 +3134,11 @@
 
     async function notifyLead(eventName, payload){
       const cfg = window.AC_NOTIFY_CONFIG || {};
-      const body = {event: eventName, payload};
+      const enrichedPayload = {
+        ...(payload && typeof payload === 'object' ? payload : {}),
+        ...buildAbMeta()
+      };
+      const body = {event: eventName, payload: enrichedPayload};
       const endpoint = cfg.leadEndpoint || '/api/lead';
 
       try {
@@ -2589,7 +3152,7 @@
           return {ok: true, delivered: true, endpoint};
         }
 
-        const telegramResult = await sendLeadToTelegram(eventName, payload, cfg);
+        const telegramResult = await sendLeadToTelegram(eventName, enrichedPayload, cfg);
         if(telegramResult.ok){
           saveLeadFallbackMeta(eventName, endpoint, `http_${response.status}_telegram_ok`);
           return telegramResult;
@@ -2599,7 +3162,7 @@
         console.warn('[LEAD_MOCK_FALLBACK]', {endpoint, body});
         return {ok: false, delivered: false, fallback: true};
       } catch(error){
-        const telegramResult = await sendLeadToTelegram(eventName, payload, cfg);
+        const telegramResult = await sendLeadToTelegram(eventName, enrichedPayload, cfg);
         if(telegramResult.ok){
           saveLeadFallbackMeta(eventName, endpoint, 'network_telegram_ok');
           return telegramResult;
@@ -2636,6 +3199,8 @@
 
     function isAdminDebugSession(){
       try {
+        // Production must never expose debug controls via query/localStorage toggles.
+        if(isProductionRuntime()) return false;
         if(window.AC_DEBUG === true) return true;
         const search = new URLSearchParams(window.location.search || '');
         const adminFlag = (search.get('admin') || search.get('debug') || '').toLowerCase();
@@ -2652,6 +3217,15 @@
         const host = String(window.location.hostname || '').toLowerCase().replace(/^www\./, '');
         if(!host) return false;
         return PROD_DEBUGLESS_DOMAINS.some((domain) => host === domain || host.endsWith(`.${domain}`));
+      } catch(error){
+        return false;
+      }
+    }
+
+    function isLocalRuntime(){
+      try {
+        const host = String(window.location.hostname || '').toLowerCase();
+        return host === 'localhost' || host === '127.0.0.1';
       } catch(error){
         return false;
       }
@@ -3502,9 +4076,7 @@
         return;
       }
       if(allShiftsBtn){
-        allShiftsBtn.textContent = hasSelectedAge()
-          ? `Все смены для ${ageLabel(state.age)}`
-          : 'Все смены по возрастам';
+        allShiftsBtn.textContent = 'Все смены по возрастам';
         allShiftsBtn.classList.toggle('hidden', stage !== 2 || state.offerStage >= 1);
       }
       if(chipHost){
@@ -4119,7 +4691,7 @@
     }
 
     function getViewportPreviewView(){
-      return window.matchMedia('(max-width: 820px)').matches ? 'mobile' : 'desktop';
+      return window.matchMedia('(max-width: 900px)').matches ? 'mobile' : 'desktop';
     }
 
     function switchView(view){
@@ -4149,6 +4721,9 @@
       if(mobileView){
         const showLegacyMobile = requestedView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE;
         mobileView.classList.toggle('hidden', !showLegacyMobile);
+      }
+      if(typeof applyHeroAbVariant === 'function'){
+        applyHeroAbVariant();
       }
       const desktopModeWrap = document.getElementById('desktopModeWrap');
       if(desktopModeWrap){
@@ -4608,12 +5183,136 @@
       grid.innerHTML = html;
     }
 
+    function renderSeasonCalendar(){
+      const grid = document.getElementById('calendarGrid');
+      const title = document.getElementById('calendarTitle');
+      if(!grid || !title) return;
+      const seasonShifts = shifts
+        .map((shift, idx) => ({
+          ...shift,
+          startDate: parseShiftDate(shift.start),
+          endDate: parseShiftDate(shift.end),
+          colorIndex: idx % 6
+        }))
+        .filter((shift) => shift.startDate && shift.endDate)
+        .sort((a, b) => a.startDate - b.startDate);
+      if(!seasonShifts.length) return;
+      const seasonShiftById = new Map(seasonShifts.map((shift) => [shift.id, shift]));
+
+      const ruWeek = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+      const ruMonth = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+      const colorPalette = ['#ff8a00', '#38bdf8', '#a78bfa', '#22c55e', '#f43f5e', '#f59e0b'];
+      const minStart = seasonShifts[0].startDate;
+      const maxEnd = seasonShifts[seasonShifts.length - 1].endDate;
+      const firstMonth = new Date(minStart.getFullYear(), minStart.getMonth(), 1);
+      const lastMonth = new Date(maxEnd.getFullYear(), maxEnd.getMonth(), 1);
+      const cursor = new Date(firstMonth);
+
+      title.textContent = 'Смены лета 2026 · от 48 000 рублей за 7 дней';
+      let html = '';
+
+      while(cursor <= lastMonth){
+        const year = cursor.getFullYear();
+        const month = cursor.getMonth();
+        if(month === 6){
+          cursor.setMonth(cursor.getMonth() + 1);
+          continue;
+        }
+        const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysInMonth = totalDaysInMonth;
+        const leading = new Date(year, month, 1).getDay();
+
+        html += `
+          <div class="calendar-month">
+            <div class="calendar-month-title">${ruMonth[month]} ${year}</div>
+            <div class="calendar-month-grid">
+        `;
+        const cells = [];
+        for(let i = 0; i < leading; i += 1){
+          cells.push({ empty: true, hasShift: false, html: '<div class="calendar-day empty"></div>' });
+        }
+        for(let day = 1; day <= daysInMonth; day += 1){
+          const date = new Date(year, month, day);
+          const matched = seasonShifts.filter((shift) => date >= shift.startDate && date <= shift.endDate);
+          const parentOverlays = matched
+            .map((shift) => (shift.sourceId ? seasonShiftById.get(shift.sourceId) : null))
+            .filter((shift) => shift && date >= shift.startDate && date <= shift.endDate);
+          parentOverlays.forEach((parentShift) => {
+            if(!matched.some((shift) => shift.id === parentShift.id)){
+              matched.push(parentShift);
+            }
+          });
+          matched.sort((a, b) => {
+            if(a.id === 'shift-2' && b.id !== 'shift-2') return -1;
+            if(b.id === 'shift-2' && a.id !== 'shift-2') return 1;
+            const aChild = !!a.sourceId;
+            const bChild = !!b.sourceId;
+            if(aChild !== bChild) return aChild ? 1 : -1;
+            return (a.startDate - b.startDate) || String(a.id).localeCompare(String(b.id));
+          });
+          if(!matched.length){
+            cells.push({
+              empty: false,
+              hasShift: false,
+              html: `
+              <div class="calendar-day">
+                <span>${day}</span>
+                <small>${ruWeek[date.getDay()]}</small>
+              </div>
+            `
+            });
+            continue;
+          }
+          const primary = matched[0];
+          const multi = matched.length > 1;
+          const hasParentOverlay = matched.some((shift) => shift.id === 'shift-2') && matched.some((shift) => shift.sourceId === 'shift-2');
+          const parentShift = matched.find((shift) => shift.id === 'shift-2') || null;
+          const childShift = matched.find((shift) => shift.sourceId === 'shift-2') || matched[1] || matched[0];
+          const mixA = colorPalette[matched[0].colorIndex] || colorPalette[0];
+          const mixB = colorPalette[matched[1]?.colorIndex ?? matched[0].colorIndex] || colorPalette[1];
+          const mixC = colorPalette[matched[2]?.colorIndex ?? matched[0].colorIndex] || colorPalette[2];
+          const parentOverlayColor = colorPalette[parentShift?.colorIndex ?? matched[0].colorIndex] || colorPalette[0];
+          const childOverlayColor = colorPalette[childShift?.colorIndex ?? matched[1]?.colorIndex ?? matched[0].colorIndex] || colorPalette[1];
+          cells.push({
+            empty: false,
+            hasShift: true,
+            html: `
+            <div class="calendar-day active shift-color-${primary.colorIndex} ${multi ? `multi stack-${Math.min(matched.length, 4)}` : ''} ${hasParentOverlay ? 'has-parent-overlay' : ''}" style="--shift-mix-a:${mixA};--shift-mix-b:${mixB};--shift-mix-c:${mixC};--parent-overlay-color:${parentOverlayColor};--child-overlay-color:${childOverlayColor};" title="${matched.map((shift) => `${shift.label || shift.title}: ${shift.dates}`).join(' · ')}">
+              <span>${day}</span>
+              <small>${ruWeek[date.getDay()]}${multi ? ` · ${matched.length}` : ''}</small>
+            </div>
+          `
+          });
+        }
+        while(cells.length % 7 !== 0){
+          cells.push({ empty: true, hasShift: false, html: '<div class="calendar-day empty"></div>' });
+        }
+        for(let i = 0; i < cells.length; i += 7){
+          const week = cells.slice(i, i + 7);
+          const hasShiftWeek = week.some((cell) => cell.hasShift);
+          if(!hasShiftWeek) continue;
+          html += `<div class="calendar-week">${week.map((cell) => cell.html).join('')}</div>`;
+        }
+        html += '</div></div>';
+        cursor.setMonth(cursor.getMonth() + 1);
+      }
+
+      grid.innerHTML = html;
+    }
+
     function openCalendar(shiftId){
       const shift = shifts.find(s => s.id === shiftId);
       if(!shift) return;
       closeTransientModals('calendar');
       renderCalendar(shift);
       document.getElementById('calendarModal')?.classList.remove('hidden');
+    }
+
+    function openSeasonCalendar(){
+      closeTransientModals('calendar');
+      renderSeasonCalendar();
+      document.getElementById('calendarModal')?.classList.remove('hidden');
+      track('season_calendar_open');
     }
 
     function closeCalendar(){
@@ -5218,13 +5917,13 @@
                 <span class="shift-option-price">${formatPrice(s.price)}</span>
                 <span class="shift-option-inline-actions">
                   <button class="shift-option-action shift-option-action-info" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${safeViewKey}" aria-label="Описание смены ${s.dates}">
-                    <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                    <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" aria-hidden="true">
                   </button>
                   <button class="shift-option-action shift-option-action-calendar" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${safeViewKey}" aria-label="Календарь ${s.dates}">
-                    <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                    <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar3.svg" alt="" aria-hidden="true">
                   </button>
                   <button class="shift-option-select-indicator" type="button" aria-label="Выбрать смену ${s.dates}">
-                    <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+                    <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-right.svg" alt="" aria-hidden="true">
                   </button>
                 </span>
               </span>
@@ -5283,10 +5982,10 @@
             <strong>${formatPrice(s.price)}</strong>
             <span class="price-row-actions">
               <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" aria-label="Описание смены ${s.title}">
-                <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" aria-hidden="true">
               </button>
               <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
-                <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar3.svg" alt="" aria-hidden="true">
               </button>
             </span>
           </div>
@@ -5312,10 +6011,10 @@
               <strong>${formatPrice(s.price)}</strong>
               <span class="price-row-actions">
                 <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" aria-label="Описание смены ${s.title}">
-                  <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                  <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" aria-hidden="true">
                 </button>
                 <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
-                  <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                  <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar3.svg" alt="" aria-hidden="true">
                 </button>
               </span>
             </div>
@@ -5341,6 +6040,90 @@
       };
       const src = map[label];
       return src ? `<img class="ac-icon" src="${src}" alt="" aria-hidden="true">` : '•';
+    }
+
+    function resolveFloatingContactLinks(){
+      const contacts = Array.isArray(mediaContent.contacts) ? mediaContent.contacts : [];
+      const mobilePhone = contacts.find((item) => item.label === 'mobile_phone');
+      const cityPhone = contacts.find((item) => item.label === 'city_phone');
+      const whatsapp = contacts.find((item) => item.label === 'whatsapp');
+      const telegram = contacts.find((item) => item.label === 'telegram');
+      return {
+        cityPhoneHref: (cityPhone && cityPhone.href) || 'tel:+74951284429',
+        cityPhoneLabel: (cityPhone && cityPhone.text) || '+7 (495) 128-44-29',
+        mobilePhoneHref: (mobilePhone && mobilePhone.href) || 'tel:+79688086455',
+        mobilePhoneLabel: (mobilePhone && mobilePhone.text) || '+7 (968) 808-64-55',
+        whatsappHref: (whatsapp && whatsapp.href) || 'https://wa.me/79688086455',
+        telegramHref: (telegram && telegram.href) || 'https://t.me/Progaschool',
+      };
+    }
+
+    function initFloatingContactsWidget(){
+      if(document.getElementById('floatingContactsWidget')) return;
+      const links = resolveFloatingContactLinks();
+      const host = document.createElement('div');
+      host.id = 'floatingContactsWidget';
+      host.className = 'floating-contacts';
+      host.innerHTML = `
+        <div class="floating-contacts-panel" id="floatingContactsPanel" aria-label="Быстрые контакты">
+          <a class="floating-contacts-link" href="${links.cityPhoneHref}">
+            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/telephone.svg" alt="" aria-hidden="true">
+            <span class="floating-contacts-label">${links.cityPhoneLabel}</span>
+          </a>
+          <a class="floating-contacts-link" href="${links.mobilePhoneHref}">
+            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/telephone-fill.svg" alt="" aria-hidden="true">
+            <span class="floating-contacts-label">${links.mobilePhoneLabel}</span>
+          </a>
+          <a class="floating-contacts-link" href="${links.whatsappHref}" target="_blank" rel="noopener noreferrer">
+            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/whatsapp.svg" alt="" aria-hidden="true">
+            <span class="floating-contacts-label">WhatsApp</span>
+          </a>
+          <a class="floating-contacts-link" href="${links.telegramHref}" target="_blank" rel="noopener noreferrer">
+            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/telegram.svg" alt="" aria-hidden="true">
+            <span class="floating-contacts-label">Telegram</span>
+          </a>
+        </div>
+        <button type="button" class="floating-contacts-toggle" id="floatingContactsToggle" aria-expanded="false" aria-controls="floatingContactsPanel" aria-label="Открыть контакты">
+          <svg class="floating-contacts-glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <path class="floating-contacts-glyph-outline" d="M4.5 5.5h15a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4.5 3v-3H4.5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"></path>
+            <circle class="floating-contacts-dot floating-contacts-dot-left" cx="8" cy="11.5" r="1.35"></circle>
+            <circle class="floating-contacts-dot floating-contacts-dot-center" cx="12" cy="11.5" r="1.35"></circle>
+            <circle class="floating-contacts-dot floating-contacts-dot-right" cx="16" cy="11.5" r="1.35"></circle>
+          </svg>
+        </button>
+      `;
+      document.body.appendChild(host);
+
+      const toggle = host.querySelector('#floatingContactsToggle');
+      if(!toggle) return;
+      toggle.addEventListener('click', () => {
+        const isOpen = host.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        track('floating_contacts_toggle', {open:isOpen ? 1 : 0});
+      });
+
+      host.querySelectorAll('.floating-contacts-link').forEach((link) => {
+        link.addEventListener('click', () => {
+          host.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          const label = String(link.querySelector('.floating-contacts-label')?.textContent || '').toLowerCase();
+          track('floating_contacts_click', {channel: label});
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        if(!host.classList.contains('is-open')) return;
+        if(host.contains(event.target)) return;
+        host.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if(event.key !== 'Escape') return;
+        if(!host.classList.contains('is-open')) return;
+        host.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
     }
 
     function socialBadgeMark(item){
@@ -5591,7 +6374,7 @@
                 </button>
                 <div class="team-carousel" id="teamCarousel">${carouselCards}</div>
                 <button class="team-carousel-nav next" type="button" data-action="team-carousel-next" aria-label="Следующие преподаватели">
-                  <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+                  <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-right.svg" alt="" aria-hidden="true">
                 </button>
               </div>
             </div>
@@ -5901,7 +6684,7 @@
                     data-shift-id="${activeShift.id}"
                     aria-label="Описание смены ${activeShift.title}"
                   >
-                    <img class="ac-icon" src="/assets/icons/info.svg" alt="" aria-hidden="true">
+                    <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" aria-hidden="true">
                   </button>
                   <button
                     class="shift-calendar-btn"
@@ -5910,7 +6693,7 @@
                     data-shift-id="${activeShift.id}"
                     aria-label="Календарь ${activeShift.title}"
                   >
-                    <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
+                    <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar3.svg" alt="" aria-hidden="true">
                   </button>
                 </div>
               </div>
@@ -6105,7 +6888,7 @@
               data-faq-key="${item.key}"
             >
               <span>${item.q}</span>
-              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+              <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-right.svg" alt="" aria-hidden="true">
             </button>
             <div class="mobile-faq-answer">${item.a}</div>
           </article>
@@ -6132,7 +6915,7 @@
                 <span class="mobile-docs-toggle-main">ООО «ВОИП КОННЕКТ»</span>
                 <span class="mobile-docs-toggle-meta">ИНН 7729713637 · РТО 025773</span>
               </span>
-              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+              <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-right.svg" alt="" aria-hidden="true">
             </button>
             <div class="mobile-docs-links">
               <a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a>
@@ -6182,7 +6965,7 @@
                 <span class="mobile-docs-toggle-main">ООО «ВОИП КОННЕКТ»</span>
                 <span class="mobile-docs-toggle-meta">ИНН 7729713637 · РТО 025773</span>
               </span>
-              <img class="ac-icon" src="/assets/icons/chevron-right.svg" alt="" aria-hidden="true">
+              <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-right.svg" alt="" aria-hidden="true">
             </button>
             <div class="mobile-docs-links">
               <a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a>
@@ -6303,6 +7086,7 @@
       }
       renderDesktopMobileDocsBlock();
       renderSummary();
+      syncLegalDocLinks();
     }
 
     function selectShift(id){
@@ -7156,7 +7940,8 @@
         mode: state.previewView === 'mobile'
           ? `mobile:${state.mobileMode || 'full'}`
           : `desktop:${state.desktopMode || 'full'}`,
-        sent_at_local: new Date().toLocaleString('ru-RU')
+        sent_at_local: new Date().toLocaleString('ru-RU'),
+        ...buildAbMeta()
       };
       track('form_submit', {
         ...selectedShiftPayload(),
@@ -7247,13 +8032,13 @@
           return;
         }
         if(!scrollToSection(cleanId) && cleanId === 'section-legal'){
-          window.open('legal.html#legal-info', '_blank', 'noopener');
+          window.open(buildLegalDocUrl('#legal-info'), '_blank', 'noopener');
         }
         return;
       }
 
       if(!scrollToSection(cleanId) && cleanId === 'section-legal'){
-        window.open('legal.html#legal-info', '_blank', 'noopener');
+        window.open(buildLegalDocUrl('#legal-info'), '_blank', 'noopener');
       }
     }
 
@@ -7755,13 +8540,17 @@
           return;
         }
         initHero();
+        applyHeroAbVariant();
         applyCompactSectionModalLayout();
         updateSummaryBarVisibility();
         scheduleBookingCardMinHeightSync();
       }, 160);
     }, {passive:true});
 
+    heroAbVariant = resolveHeroAbVariant();
+    preloadHeroAssets();
     initHero();
+    applyHeroAbVariant();
     initHeroVariantPersonalization();
     loadVideoMetaCache();
 
@@ -7772,6 +8561,9 @@
     renderBookingPanels();
     resetOfferProgressUI();
     applyDebugUiState();
+    injectHeroSeasonOfferCta();
+    initFloatingContactsWidget();
+    initHeroAbDevPanel();
     track('page_view', {
       view: state.view || 'desktop',
       desktop_mode: state.desktopMode || '',
