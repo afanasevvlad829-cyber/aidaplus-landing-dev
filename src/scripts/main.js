@@ -613,97 +613,90 @@
     let variantFlowCompletedKey = '';
     let videoMetaRefreshTimer = null;
     let heroVariantState = null;
-    let variantCoachDismissedKey = '';
-    let variantCoachReminderTimer = null;
-    let abSessionSeq = 0;
+    let telemetryFlowApi = null;
+    let heroVariantFlowApi = null;
+    let bookingDebugFlowApi = null;
 
-    function randomId(prefix){
-      try {
-        if(window.crypto && typeof window.crypto.randomUUID === 'function'){
-          return `${prefix}_${window.crypto.randomUUID()}`;
-        }
-      } catch (error){
-      }
-      return `${prefix}_${Math.random().toString(36).slice(2)}_${Date.now().toString(36)}`;
+    function ensureTelemetryFlow(){
+      if(telemetryFlowApi) return telemetryFlowApi;
+      const create = window.AC_FEATURES?.telemetryFlow?.create;
+      if(typeof create !== 'function') return null;
+      telemetryFlowApi = create({
+        document,
+        metrikaId: METRIKA_ID,
+        abEventEndpointDefault: AB_EVENT_ENDPOINT_DEFAULT,
+        abVisitorKey: AB_VISITOR_ID_KEY,
+        abSessionKey: AB_SESSION_ID_KEY,
+        legalRepoSlug: LEGAL_REPO_SLUG,
+        getHeroAbVariant: () => heroAbVariant,
+        getHeroAbTestId: () => HERO_AB_TEST_ID,
+        isAllowedAbEvent: (eventName) => AB_TEST_EVENT_ALLOWLIST.has(String(eventName || ''))
+      });
+      return telemetryFlowApi;
     }
 
-    function getOrCreateStorageId(storage, key, prefix){
-      try {
-        const current = String(storage.getItem(key) || '').trim();
-        if(current) return current;
-        const created = randomId(prefix);
-        storage.setItem(key, created);
-        return created;
-      } catch (error){
-        return randomId(prefix);
-      }
+    function ensureHeroVariantFlow(){
+      if(heroVariantFlowApi) return heroVariantFlowApi;
+      const create = window.AC_FEATURES?.heroVariantFlow?.create;
+      if(typeof create !== 'function') return null;
+      heroVariantFlowApi = create({
+        document,
+        getCurrentSearchParams,
+        getHeroVariantState: () => heroVariantState,
+        setHeroVariantState: (next) => {
+          heroVariantState = next || null;
+        },
+        getVariantCopyMap: () => HERO_VARIANT_COPY,
+        getVariantBannerTierMap: () => HERO_VARIANT_BANNER_TIER,
+        getVariantDefaultTier: () => HERO_VARIANT_DEFAULT_TIER,
+        getUtmH1Rules: () => ({}),
+        bookingText,
+        getMediaContent: () => mediaContent,
+        ageLabel,
+        getState: () => state,
+        hasSelectedAge,
+        getBookingStage,
+        trackOnce,
+        getBookingViewConfig
+      });
+      return heroVariantFlowApi;
     }
 
-    function getAbVariantLabel(){
-      const current = String(heroAbVariant || '').toUpperCase();
-      if(current === 'A' || current === 'B') return current;
-      return 'A';
+    function ensureBookingDebugFlow(){
+      if(bookingDebugFlowApi) return bookingDebugFlowApi;
+      const create = window.AC_FEATURES?.bookingDebugFlow?.create;
+      if(typeof create !== 'function') return null;
+      bookingDebugFlowApi = create({
+        document,
+        isLocalRuntime,
+        bookingText,
+        getBuildVersionLabel: () => BUILD_VERSION_LABEL.trim(),
+        versionBadgeHiddenKey: VERSION_BADGE_HIDDEN_KEY,
+        getState: () => state,
+        getShifts: () => shifts,
+        offerDiscountFactor: OFFER_DISCOUNT_FACTOR,
+        generateCode,
+        clearOfferTimeout,
+        clearShiftOptionPanels,
+        applyStatePatch: (patch = {}, options = {}) => {
+          Object.assign(state, patch);
+          if(options.persistState){
+            persist();
+          }
+        },
+        renderAll,
+        persist
+      });
+      return bookingDebugFlowApi;
     }
 
     function buildAbMeta(extra = {}){
-      return {
+      const fallback = {
         ab_test_id: HERO_AB_TEST_ID,
-        ab_variant: getAbVariantLabel(),
-        ...extra
+        ab_variant: String(heroAbVariant || '').toUpperCase() === 'B' ? 'B' : 'A',
+        ...(extra && typeof extra === 'object' ? extra : {})
       };
-    }
-
-    function shouldSendAbEvent(eventName){
-      const cfg = window.AC_NOTIFY_CONFIG || {};
-      if(cfg.abTrackAllEvents === true) return true;
-      return AB_TEST_EVENT_ALLOWLIST.has(String(eventName || ''));
-    }
-
-    function sendAbEvent(eventName, params = {}){
-      if(!shouldSendAbEvent(eventName)) return;
-      const cfg = window.AC_NOTIFY_CONFIG || {};
-      const endpoint = String(cfg.abEventEndpoint || AB_EVENT_ENDPOINT_DEFAULT).trim();
-      if(!endpoint) return;
-      const visitorId = getOrCreateStorageId(window.localStorage, AB_VISITOR_ID_KEY, 'abv');
-      const sessionId = getOrCreateStorageId(window.sessionStorage, AB_SESSION_ID_KEY, 'abs');
-      abSessionSeq += 1;
-      const search = getCurrentSearchParams();
-      const payload = {
-        event: String(eventName || ''),
-        payload: {
-          ...(params && typeof params === 'object' ? params : {}),
-          ...buildAbMeta(),
-          event_ts: new Date().toISOString(),
-          event_seq: abSessionSeq,
-          session_id: sessionId,
-          visitor_id: visitorId,
-          page_url: window.location.href,
-          page_path: window.location.pathname || '/',
-          referrer: document.referrer || '',
-          utm_source: String(search.get('utm_source') || ''),
-          utm_medium: String(search.get('utm_medium') || ''),
-          utm_campaign: String(search.get('utm_campaign') || ''),
-          utm_content: String(search.get('utm_content') || ''),
-          utm_term: String(search.get('utm_term') || ''),
-          screen: `${window.innerWidth || 0}x${window.innerHeight || 0}`,
-          device_type: window.innerWidth < 768 ? 'mobile' : 'desktop'
-        }
-      };
-      const raw = JSON.stringify(payload);
-      try {
-        if(navigator.sendBeacon){
-          const body = new Blob([raw], {type:'application/json'});
-          const sent = navigator.sendBeacon(endpoint, body);
-          if(sent) return;
-        }
-      } catch (error){
-      }
-      fetch(endpoint, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:raw,
-        keepalive:true
-      }).catch(() => {});
+      return safeInvoke(ensureTelemetryFlow(), 'buildAbMeta', [extra], fallback);
     }
 
     function track(event, params = {}){
@@ -711,297 +704,136 @@
         ...(params && typeof params === 'object' ? params : {}),
         ...buildAbMeta()
       };
-      try {
-        if(typeof ym !== 'undefined'){
-          ym(METRIKA_ID, 'reachGoal', event, trackedParams);
+      return safeInvoke(ensureTelemetryFlow(), 'track', [event, trackedParams], () => {
+        try {
+          if(typeof ym !== 'undefined'){
+            ym(METRIKA_ID, 'reachGoal', event, trackedParams);
+          }
+        } catch (error){
+          console.warn('Metrika track error:', event, error);
         }
-      } catch (err){
-        console.warn('Metrika track error:', event, err);
-      }
-      sendAbEvent(event, trackedParams);
-    }
-
-    function getCurrentSearchParams(){
-      try {
-        return new URLSearchParams(window.location.search || '');
-      } catch (error){
-        return new URLSearchParams('');
-      }
-    }
-
-    function getLoaderCommitRef(){
-      try {
-        const marker = document.querySelector('script[data-aida-loader-inline="1"]');
-        if(!marker || !marker.textContent) return '';
-        const parsed = JSON.parse(marker.textContent);
-        const raw = String(parsed?.commit || '').trim();
-        if(!raw) return '';
-        if(/^[a-zA-Z0-9._/-]{1,80}$/.test(raw)){
-          return raw;
-        }
-      } catch (error){
-        // ignore marker parse errors
-      }
-      return '';
-    }
-
-    function resolveLegalDocBaseUrl(){
-      const host = String(window.location.hostname || '').toLowerCase();
-      if(host === 'localhost' || host === '127.0.0.1'){
-        return 'legal.html';
-      }
-      const ref = getLoaderCommitRef() || 'dev';
-      return `https://cdn.jsdelivr.net/gh/${LEGAL_REPO_SLUG}@${ref}/legal.html`;
-    }
-
-    function buildLegalDocUrl(hash = ''){
-      const base = resolveLegalDocBaseUrl();
-      const safeHash = String(hash || '').trim();
-      if(!safeHash) return base;
-      if(safeHash.startsWith('#')) return `${base}${safeHash}`;
-      return `${base}#${safeHash}`;
-    }
-
-    function syncLegalDocLinks(scope = document){
-      const root = scope || document;
-      const links = root.querySelectorAll(
-        'a[href^="legal.html"],a[href^="/legal.html"],a[href*="legal.html#"]'
-      );
-      links.forEach((link) => {
-        const href = String(link.getAttribute('href') || '').trim();
-        if(!href) return;
-        if(/^https?:\/\//i.test(href) && !/legal\.html/i.test(href)) return;
-        const hashIndex = href.indexOf('#');
-        const hash = hashIndex >= 0 ? href.slice(hashIndex) : '';
-        link.setAttribute('href', buildLegalDocUrl(hash));
       });
     }
 
-    function normalizeBannerId(value){
-      return String(value || '').trim();
+    function getCurrentSearchParams(){
+      return safeInvoke(ensureTelemetryFlow(), 'getCurrentSearchParams', [], () => {
+        try {
+          return new URLSearchParams(window.location.search || '');
+        } catch (error){
+          return new URLSearchParams('');
+        }
+      });
+    }
+
+    function buildLegalDocUrl(hash = ''){
+      return safeInvoke(ensureTelemetryFlow(), 'buildLegalDocUrl', [hash], 'legal.html');
+    }
+
+    function syncLegalDocLinks(scope = document){
+      return safeInvoke(ensureTelemetryFlow(), 'syncLegalDocLinks', [scope], null);
     }
 
     function buildHeroVariantMeta(extra = {}){
-      const variant = heroVariantState || resolveHeroVariantFromUtm();
-      return {
-        banner_id: variant.bannerId || '',
-        campaign_id: variant.campaignId || '',
-        tier: variant.tier || HERO_VARIANT_DEFAULT_TIER,
-        variant: variant.copy?.variant || 'v1',
-        ...extra
+      const fallbackVariant = heroVariantState || resolveHeroVariantFromUtm();
+      const fallback = {
+        banner_id: fallbackVariant.bannerId || '',
+        campaign_id: fallbackVariant.campaignId || '',
+        tier: fallbackVariant.tier || HERO_VARIANT_DEFAULT_TIER,
+        variant: fallbackVariant.copy?.variant || 'v1',
+        ...(extra && typeof extra === 'object' ? extra : {})
       };
+      return safeInvoke(ensureHeroVariantFlow(), 'buildHeroVariantMeta', [extra], fallback);
     }
 
     function resolveHeroVariantFromUtm(){
-      const search = getCurrentSearchParams();
-      const bannerId = normalizeBannerId(search.get('utm_content') || '');
-      const campaignId = String(search.get('utm_campaign') || '').trim();
-      const tierFromBanner = bannerId ? HERO_VARIANT_BANNER_TIER[bannerId] : '';
-      const isKnownBanner = !!tierFromBanner;
-      const tier = isKnownBanner ? tierFromBanner : HERO_VARIANT_DEFAULT_TIER;
-      const copy = HERO_VARIANT_COPY[tier] || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
-      const fallbackReason = !bannerId
-        ? 'unknown_banner_or_no_utm'
-        : (!isKnownBanner ? 'unknown_banner_or_no_utm' : '');
-      return {
-        bannerId,
-        campaignId,
-        tier,
-        copy,
-        fallbackReason
+      const fallback = () => {
+        const search = getCurrentSearchParams();
+        const bannerId = String(search.get('utm_content') || '').trim();
+        const campaignId = String(search.get('utm_campaign') || '').trim();
+        const tierFromBanner = bannerId ? HERO_VARIANT_BANNER_TIER[bannerId] : '';
+        const isKnownBanner = !!tierFromBanner;
+        const tier = isKnownBanner ? tierFromBanner : HERO_VARIANT_DEFAULT_TIER;
+        const copy = HERO_VARIANT_COPY[tier] || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
+        const fallbackReason = !bannerId
+          ? 'unknown_banner_or_no_utm'
+          : (!isKnownBanner ? 'unknown_banner_or_no_utm' : '');
+        return { bannerId, campaignId, tier, copy, fallbackReason };
       };
+      return safeInvoke(ensureHeroVariantFlow(), 'resolveHeroVariantFromUtm', [], fallback);
     }
 
     function applyHeroVariantCopy(){
-      const variant = heroVariantState || resolveHeroVariantFromUtm();
-      const copy = variant.copy || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
-      const sloganNodes = document.querySelectorAll('.hero-slogan');
-      sloganNodes.forEach((node) => {
-        if(node) node.textContent = copy.title;
+      return safeInvoke(ensureHeroVariantFlow(), 'applyHeroVariantCopy', [], () => {
+        const variant = heroVariantState || resolveHeroVariantFromUtm();
+        const copy = variant.copy || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
+        document.querySelectorAll('.hero-slogan').forEach((node) => {
+          if(node) node.textContent = copy.title;
+        });
       });
     }
 
     function injectHeroSeasonOfferCta(){
-      const sloganNodes = document.querySelectorAll('.hero-slogan');
-      sloganNodes.forEach((sloganNode) => {
-        if(!sloganNode || !sloganNode.parentElement) return;
-        if(sloganNode.parentElement.querySelector('.hero-season-offer')) return;
-        const wrap = document.createElement('div');
-        wrap.className = 'hero-season-offer';
-        wrap.innerHTML = `
-          <div class="hero-season-offer-price">От 48 000 рублей за смену 7 дней</div>
-          <button class="hero-season-calendar-btn" type="button" data-action="open-season-calendar" aria-label="Открыть календарь всех летних смен">
-            <img class="ac-icon" src="/assets/icons/calendar.svg" alt="" aria-hidden="true">
-            <span>Все смены лета в календаре</span>
-          </button>
-        `;
-        sloganNode.insertAdjacentElement('afterend', wrap);
-      });
+      return safeInvoke(ensureHeroVariantFlow(), 'injectHeroSeasonOfferCta');
     }
 
     function formatVariantHint(template){
-      const source = String(template || '').trim();
-      if(!source) return '';
-      return source.replace('{{age}}', ageLabel(state.age || '10-12'));
+      return safeInvoke(ensureHeroVariantFlow(), 'formatVariantHint', [template], () => {
+        const source = String(template || '').trim();
+        if(!source) return '';
+        return source.replace('{{age}}', ageLabel(state.age || '10-12'));
+      });
     }
 
     function clearVariantCoachReminderTimer(){
-      if(!variantCoachReminderTimer) return;
-      window.clearTimeout(variantCoachReminderTimer);
-      variantCoachReminderTimer = null;
+      return safeInvoke(ensureHeroVariantFlow(), 'clearVariantCoachReminderTimer');
     }
 
     function syncVariantBookingHint(viewCfg){
       const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
-      const hintNode = document.getElementById(cfg.guidedInlineHintId);
-      if(!hintNode) return;
-
-      const variant = heroVariantState || resolveHeroVariantFromUtm();
-      const copy = variant.copy || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
-      const stage = getBookingStage();
-      let message = '';
-
-      if(!state.bookingCompleted){
-        if(!hasSelectedAge()){
-          message = copy.hintStage1 || '';
-        } else if(!state.shiftId && stage === 2){
-          message = formatVariantHint(copy.hintStage2 || '');
-        }
-      }
-
-      if(!message){
-        hintNode.classList.remove('visible', 'variant-coach');
-        hintNode.textContent = '';
-        return;
-      }
-
-      hintNode.textContent = message;
-      hintNode.classList.add('visible', 'variant-coach');
+      return safeInvoke(ensureHeroVariantFlow(), 'syncVariantBookingHint', [cfg], null);
     }
 
     function ensureVariantCoachBadge(viewCfg){
       const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
-      const card = document.getElementById(cfg.cardId);
-      if(!card) return null;
-      let badge = card.querySelector('.variant-coach-badge');
-      if(!badge){
-        badge = document.createElement('div');
-        badge.className = 'variant-coach-badge';
-      }
-      return badge;
+      return safeInvoke(ensureHeroVariantFlow(), 'ensureVariantCoachBadge', [cfg], null);
     }
 
     function hideVariantCoachBadge(viewCfg, dismissKey = ''){
       const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
-      clearVariantCoachReminderTimer();
-      const card = document.getElementById(cfg.cardId);
-      const badge = card?.querySelector('.variant-coach-badge');
-      if(!badge) return;
-      if(dismissKey){
-        variantCoachDismissedKey = dismissKey;
-      }
-      badge.classList.remove('visible', 'variant-coach-badge--stage1', 'variant-coach-badge--stage2');
-      badge.innerHTML = '';
-      badge.remove();
+      return safeInvoke(ensureHeroVariantFlow(), 'hideVariantCoachBadge', [cfg, dismissKey], null);
     }
 
     function syncVariantCoachBadge(viewCfg){
       const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
-      hideVariantCoachBadge(cfg);
+      return safeInvoke(ensureHeroVariantFlow(), 'syncVariantCoachBadge', [cfg], null);
     }
 
     function initHeroVariantPersonalization(){
-      heroVariantState = resolveHeroVariantFromUtm();
-      const fallbackReason = heroVariantState.fallbackReason || '';
-      trackOnce('hero_variant_shown_new', buildHeroVariantMeta());
-      if(fallbackReason){
-        trackOnce('hero_variant_fallback_new', buildHeroVariantMeta({reason:fallbackReason}));
-      }
-      applyHeroVariantCopy();
+      return safeInvoke(ensureHeroVariantFlow(), 'initHeroVariantPersonalization', [], () => {
+        heroVariantState = resolveHeroVariantFromUtm();
+        const fallbackReason = heroVariantState.fallbackReason || '';
+        trackOnce('hero_variant_shown_new', buildHeroVariantMeta());
+        if(fallbackReason){
+          trackOnce('hero_variant_fallback_new', buildHeroVariantMeta({reason:fallbackReason}));
+        }
+        applyHeroVariantCopy();
+      });
     }
 
     function applyDebugUiState(){
-      if(!isLocalRuntime()){
-        document.getElementById('debugControls')?.remove();
-        document.getElementById('version-badge')?.remove();
-        document.body.classList.remove('booking-debug-blocks');
-        return;
-      }
-      const badge = document.getElementById('version-badge');
-      if(!badge) return;
-      const finalStepBtn = document.querySelector('[data-action="debug-booking-what-to-do"]');
-      if(finalStepBtn){
-        finalStepBtn.textContent = 'Шаг «Что дальше?»';
-      }
-      const badgeLabel = document.getElementById('version-badge-label');
-      const isHidden = localStorage.getItem(VERSION_BADGE_HIDDEN_KEY) === '1';
-      const label = BUILD_VERSION_LABEL.trim();
-      if(badgeLabel) badgeLabel.textContent = label;
-      badge.title = label;
-      badge.classList.toggle('hidden', isHidden);
-      applyBookingDebugBlocksUi();
+      return safeInvoke(ensureBookingDebugFlow(), 'applyDebugUiState', [], null);
     }
 
     function applyBookingDebugBlocksUi(){
-      document.body.classList.toggle('booking-debug-blocks', !!state.debugBookingBlocks);
-      const btn = document.getElementById('debugBookingBlocksBtn');
-      if(btn){
-        btn.classList.toggle('active', !!state.debugBookingBlocks);
-        btn.setAttribute('aria-pressed', state.debugBookingBlocks ? 'true' : 'false');
-      }
+      return safeInvoke(ensureBookingDebugFlow(), 'applyBookingDebugBlocksUi', [], null);
     }
 
     function setBookingDebugBlocks(enabled){
-      state.debugBookingBlocks = !!enabled;
-      applyBookingDebugBlocksUi();
-      persist();
+      return safeInvoke(ensureBookingDebugFlow(), 'setBookingDebugBlocks', [enabled], null);
     }
 
     function forceBookingDebugStage(mode){
-      const primaryShift = shifts.find((s) => !s.isShort) || shifts[0];
-      if(!primaryShift) return;
-
-      clearOfferTimeout();
-      clearShiftOptionPanels();
-      state.offerSearching = false;
-      state.bookingCompleted = false;
-
-      if(mode === 'what-to-do'){
-        state.age = state.age || '10-12';
-        state.ageSelected = true;
-        state.shiftId = primaryShift.id;
-        state.basePrice = primaryShift.price;
-        state.offerPrice = Math.max(0, Math.round(primaryShift.price * OFFER_DISCOUNT_FACTOR));
-        state.code = generateCode();
-        state.expiresAt = Date.now() + (72 * 60 * 60 * 1000);
-        state.offerStage = 1;
-        state.bookingCompleted = true;
-        renderAll();
-        persist();
-        return;
-      }
-
-      state.age = state.age || '10-12';
-      state.ageSelected = true;
-      state.shiftId = primaryShift.id;
-      state.basePrice = primaryShift.price;
-      state.previousCode = null;
-      state.nextCodePreview = null;
-
-      if(mode === 'stage-3'){
-        state.offerPrice = null;
-        state.code = null;
-        state.expiresAt = null;
-        state.offerStage = 0;
-      } else {
-        state.offerPrice = Math.max(0, Math.round(primaryShift.price * OFFER_DISCOUNT_FACTOR));
-        state.code = generateCode();
-        state.expiresAt = Date.now() + (72 * 60 * 60 * 1000);
-        state.offerStage = 1;
-      }
-
-      renderAll();
-      persist();
+      return safeInvoke(ensureBookingDebugFlow(), 'forceBookingDebugStage', [mode], null);
     }
 
     function trackOnce(event, params = {}){
