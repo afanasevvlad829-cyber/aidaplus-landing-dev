@@ -616,6 +616,9 @@
     let telemetryFlowApi = null;
     let heroVariantFlowApi = null;
     let bookingDebugFlowApi = null;
+    let calendarFlowApi = null;
+    let navigationFlowApi = null;
+    let videoMetaFlowApi = null;
 
     function ensureTelemetryFlow(){
       if(telemetryFlowApi) return telemetryFlowApi;
@@ -688,6 +691,78 @@
         persist
       });
       return bookingDebugFlowApi;
+    }
+
+    function ensureCalendarFlow(){
+      if(calendarFlowApi) return calendarFlowApi;
+      const create = window.AC_FEATURES?.calendarFlow?.create;
+      if(typeof create !== 'function') return null;
+      calendarFlowApi = create({
+        getShifts: () => shifts,
+        bookingText,
+        calendarWeekdaysShort: () => ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+        calendarMonthNames: () => ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'],
+        closeTransientModals,
+        emitModularEvent,
+        track,
+        getShiftOptionPanels: () => shiftOptionPanels,
+        setShiftOptionPanels: (nextPanels) => {
+          shiftOptionPanels = nextPanels;
+        },
+        renderShiftOptions
+      });
+      return calendarFlowApi;
+    }
+
+    function ensureNavigationFlow(){
+      if(navigationFlowApi) return navigationFlowApi;
+      const create = window.AC_FEATURES?.navigationFlow?.create;
+      if(typeof create !== 'function') return null;
+      navigationFlowApi = create({
+        trackFaqOpen,
+        isMobilePreviewView: () => state.previewView === 'mobile',
+        hasSelectedAge,
+        track,
+        getState: () => state,
+        showHint,
+        bookingText,
+        focusMobileAgeGate,
+        isCompactDesktopMode: () => state.desktopMode === 'compact',
+        isCompactMobileMode: () => (
+          state.previewView === 'mobile' && (
+            USE_DESKTOP_BASE_FOR_MOBILE
+              ? state.desktopMode === 'compact'
+              : state.mobileMode === 'compact'
+          )
+        ),
+        compactModalSections: COMPACT_MODAL_SECTIONS,
+        openSectionModal,
+        buildLegalDocUrl
+      });
+      return navigationFlowApi;
+    }
+
+    function ensureVideoMetaFlow(){
+      if(videoMetaFlowApi) return videoMetaFlowApi;
+      const create = window.AC_FEATURES?.videoMetaFlow?.create;
+      if(typeof create !== 'function') return null;
+      videoMetaFlowApi = create({
+        mediaText: (key) => {
+          if(key === 'genericSourceName') return 'источнике';
+          if(key === 'vkVideoSourceName') return 'VK Видео';
+          return '';
+        },
+        mediaContent,
+        videoMetaCacheKey: VIDEO_META_CACHE_KEY,
+        videoMetaCacheTtlMs: VIDEO_META_CACHE_TTL_MS,
+        videoMetaRefreshIntervalMs: VIDEO_META_REFRESH_INTERVAL_MS,
+        renderMediaSections,
+        getVideoMetaRefreshTimer: () => videoMetaRefreshTimer,
+        setVideoMetaRefreshTimer: (timerId) => {
+          videoMetaRefreshTimer = timerId;
+        }
+      });
+      return videoMetaFlowApi;
     }
 
     function buildAbMeta(extra = {}){
@@ -2041,253 +2116,53 @@
     }
 
     function resolveVideoSource(url){
-      const externalUrl = String(url || '').trim();
-      const fallback = {
+      return safeInvoke(ensureVideoMetaFlow(), 'resolveVideoSource', [url], {
         canEmbed: false,
         embedUrl: '',
-        externalUrl,
-        orientation: isVerticalVideoUrl(externalUrl) ? 'vertical' : 'horizontal',
+        externalUrl: String(url || '').trim(),
+        orientation: 'horizontal',
         sourceName: 'источнике'
-      };
-      if(!externalUrl) return fallback;
-      try {
-        const u = new URL(externalUrl, window.location.origin);
-        const host = (u.hostname || '').replace(/^www\./, '');
-        const parts = u.pathname.split('/').filter(Boolean);
-        if(host.includes('rutube.ru')) fallback.sourceName = 'Rutube';
-        if(host.includes('youtube.com') || host === 'youtu.be') fallback.sourceName = 'YouTube';
-        if(host.includes('vkvideo.ru') || host === 'vk.com' || host.endsWith('.vk.com')) fallback.sourceName = 'VK Видео';
-        if(host.includes('kinescope.io')) fallback.sourceName = 'Kinescope';
-
-        if(host.includes('kinescope.io')){
-          if(parts[0] === 'embed' && parts[1]){
-            return {
-              canEmbed: true,
-              embedUrl: externalUrl,
-              externalUrl,
-              orientation: 'vertical',
-              sourceName: 'Kinescope'
-            };
-          }
-        }
-
-        if(host.includes('rutube.ru')){
-          if(parts[0] === 'play' && parts[1] === 'embed' && parts[2]){
-            return {
-              canEmbed: true,
-              embedUrl: `https://rutube.ru/play/embed/${parts[2]}`,
-              externalUrl,
-              orientation: fallback.orientation,
-              sourceName: 'Rutube'
-            };
-          }
-          if(parts[0] === 'shorts' && parts[1]){
-            return {
-              canEmbed: true,
-              embedUrl: `https://rutube.ru/play/embed/${parts[1]}`,
-              externalUrl,
-              orientation: 'vertical',
-              sourceName: 'Rutube'
-            };
-          }
-          if(parts[0] === 'video' && parts[1]){
-            return {
-              canEmbed: true,
-              embedUrl: `https://rutube.ru/play/embed/${parts[1]}`,
-              externalUrl,
-              orientation: 'horizontal',
-              sourceName: 'Rutube'
-            };
-          }
-        }
-
-        if(host === 'youtu.be' && parts[0]){
-          return {
-            canEmbed: true,
-            embedUrl: `https://www.youtube.com/embed/${parts[0]}`,
-            externalUrl,
-            orientation: fallback.orientation,
-            sourceName: 'YouTube'
-          };
-        }
-
-        if(host.includes('youtube.com')){
-          if(parts[0] === 'watch' && u.searchParams.get('v')){
-            return {
-              canEmbed: true,
-              embedUrl: `https://www.youtube.com/embed/${u.searchParams.get('v')}`,
-              externalUrl,
-              orientation: 'horizontal',
-              sourceName: 'YouTube'
-            };
-          }
-          if(parts[0] === 'shorts' && parts[1]){
-            return {
-              canEmbed: true,
-              embedUrl: `https://www.youtube.com/embed/${parts[1]}`,
-              externalUrl,
-              orientation: 'vertical',
-              sourceName: 'YouTube'
-            };
-          }
-          if(parts[0] === 'embed' && parts[1]){
-            return {
-              canEmbed: true,
-              embedUrl: externalUrl,
-              externalUrl,
-              orientation: fallback.orientation,
-              sourceName: 'YouTube'
-            };
-          }
-        }
-
-        if(parts[0] === 'embed'){
-          return {
-            canEmbed: true,
-            embedUrl: externalUrl,
-            externalUrl,
-            orientation: fallback.orientation,
-            sourceName: fallback.sourceName
-          };
-        }
-      } catch(e){
-      }
-      return fallback;
+      });
     }
 
     function isVerticalVideoUrl(url){
-      const value = String(url || '').toLowerCase();
-      return (
-        value.includes('/shorts/') ||
-        value.includes('shortvideo') ||
-        value.includes('/reel') ||
-        value.includes('vertical') ||
-        value.includes('story')
-      );
+      return safeInvoke(ensureVideoMetaFlow(), 'isVerticalVideoUrl', [url], false);
     }
 
     function normalizeKinescopeShareUrl(url){
-      const raw = String(url || '').trim();
-      if(!raw) return '';
-      try{
-        const u = new URL(raw, window.location.origin);
-        const host = (u.hostname || '').replace(/^www\./, '');
-        if(!host.includes('kinescope.io')) return '';
-        const parts = u.pathname.split('/').filter(Boolean);
-        if(!parts.length) return '';
-        const id = parts[0] === 'embed' ? parts[1] : parts[0];
-        if(!id) return '';
-        return `https://kinescope.io/${id}`;
-      }catch(e){
-        return '';
-      }
+      return safeInvoke(ensureVideoMetaFlow(), 'normalizeKinescopeShareUrl', [url], '');
     }
 
     function applyVideoMetaMap(videoMetaMap = {}){
-      let changed = false;
-      mediaContent.videos = mediaContent.videos.map((item) => {
-        const meta = videoMetaMap[item.url];
-        if(!meta) return item;
-        const nextTitle = String(meta.title || '').trim() || item.title;
-        const nextCover = String(meta.cover || '').trim() || item.cover;
-        if(nextTitle === item.title && nextCover === item.cover) return item;
-        changed = true;
-        return {
-          ...item,
-          title: nextTitle,
-          cover: nextCover
-        };
-      });
-      return changed;
+      return safeInvoke(ensureVideoMetaFlow(), 'applyVideoMetaMap', [videoMetaMap], false);
     }
 
     function loadVideoMetaCache(){
-      try{
-        const raw = localStorage.getItem(VIDEO_META_CACHE_KEY);
-        if(!raw) return;
-        const cached = JSON.parse(raw);
-        const map = cached && typeof cached === 'object' ? cached.map : null;
-        if(!map || typeof map !== 'object') return;
-        applyVideoMetaMap(map);
-      }catch(e){
-      }
+      return safeInvoke(ensureVideoMetaFlow(), 'loadVideoMetaCache', [], null);
     }
 
     function getVideoMetaCacheAgeMs(){
-      try{
-        const raw = localStorage.getItem(VIDEO_META_CACHE_KEY);
-        if(!raw) return Number.POSITIVE_INFINITY;
-        const cached = JSON.parse(raw);
-        const ts = Number(cached?.ts || 0);
-        if(!ts) return Number.POSITIVE_INFINITY;
-        return Date.now() - ts;
-      }catch(e){
-        return Number.POSITIVE_INFINITY;
-      }
+      return safeInvoke(ensureVideoMetaFlow(), 'getVideoMetaCacheAgeMs', [], Number.POSITIVE_INFINITY);
     }
 
     function saveVideoMetaCache(videoMetaMap){
-      try{
-        let existingMap = {};
-        const raw = localStorage.getItem(VIDEO_META_CACHE_KEY);
-        if(raw){
-          const cached = JSON.parse(raw);
-          if(cached && typeof cached.map === 'object' && cached.map){
-            existingMap = cached.map;
-          }
-        }
-
-        localStorage.setItem(VIDEO_META_CACHE_KEY, JSON.stringify({
-          ts: Date.now(),
-          map: {...existingMap, ...videoMetaMap}
-        }));
-      }catch(e){
-      }
+      return safeInvoke(ensureVideoMetaFlow(), 'saveVideoMetaCache', [videoMetaMap], null);
     }
 
     async function fetchKinescopeMeta(videoUrl){
-      const shareUrl = normalizeKinescopeShareUrl(videoUrl);
-      if(!shareUrl) return null;
-      const endpoint = `https://kinescope.io/oembed?url=${encodeURIComponent(shareUrl)}&format=json`;
-      const response = await fetch(endpoint, {method:'GET', credentials:'omit'});
-      if(!response.ok) return null;
-      const data = await response.json();
-      const title = String(data?.title || '').trim();
-      const cover = String(data?.thumbnail_url || '').trim();
-      if(!title && !cover) return null;
-      return {title, cover};
+      const flow = ensureVideoMetaFlow();
+      if(!flow || typeof flow.fetchKinescopeMeta !== 'function') return null;
+      return flow.fetchKinescopeMeta(videoUrl);
     }
 
     async function refreshVideoMeta({force = false} = {}){
-      const age = getVideoMetaCacheAgeMs();
-      if(!force && age <= VIDEO_META_CACHE_TTL_MS) return;
-
-      const updates = {};
-      const tasks = mediaContent.videos.map(async (item) => {
-        try{
-          const meta = await fetchKinescopeMeta(item.url);
-          if(meta) updates[item.url] = meta;
-        }catch(e){
-        }
-      });
-
-      await Promise.all(tasks);
-      if(!Object.keys(updates).length) return;
-
-      const changed = applyVideoMetaMap(updates);
-      saveVideoMetaCache(updates);
-      if(changed){
-        renderMediaSections();
-      }
+      const flow = ensureVideoMetaFlow();
+      if(!flow || typeof flow.refreshVideoMeta !== 'function') return;
+      await flow.refreshVideoMeta({force});
     }
 
     function scheduleVideoMetaRefresh(){
-      if(videoMetaRefreshTimer){
-        clearInterval(videoMetaRefreshTimer);
-      }
-      videoMetaRefreshTimer = setInterval(() => {
-        refreshVideoMeta();
-      }, VIDEO_META_REFRESH_INTERVAL_MS);
+      return safeInvoke(ensureVideoMetaFlow(), 'scheduleVideoMetaRefresh', [], null);
     }
 
     function closeSectionModal(){
@@ -4931,226 +4806,48 @@
 
     function toggleShiftOptionPanel(viewKey, panelType, shiftId){
       const safeView = viewKey === 'mobile' ? 'mobile' : 'desktop';
-      const current = shiftOptionPanels[safeView]?.[panelType] || null;
-      shiftOptionPanels[safeView][panelType] = current === shiftId ? null : shiftId;
-      renderShiftOptions(safeView);
+      safeInvoke(ensureCalendarFlow(), 'toggleShiftOptionPanel', [safeView, panelType, shiftId], () => {
+        const current = shiftOptionPanels[safeView]?.[panelType] || null;
+        shiftOptionPanels[safeView][panelType] = current === shiftId ? null : shiftId;
+        renderShiftOptions(safeView);
+      });
     }
 
     function clearShiftOptionPanels(){
-      shiftOptionPanels = {
-        desktop:{aboutId:null, calendarId:null},
-        mobile:{aboutId:null, calendarId:null}
-      };
+      safeInvoke(ensureCalendarFlow(), 'clearShiftOptionPanels', [], () => {
+        shiftOptionPanels = {
+          desktop:{aboutId:null, calendarId:null},
+          mobile:{aboutId:null, calendarId:null}
+        };
+      });
     }
 
     function parseShiftDate(dateStr){
-      const m = String(dateStr || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if(!m) return null;
-      return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+      return safeInvoke(ensureCalendarFlow(), 'parseShiftDate', [dateStr], () => {
+        const m = String(dateStr || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if(!m) return null;
+        return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+      });
     }
 
     function renderCalendar(shift){
-      const grid = document.getElementById('calendarGrid');
-      const title = document.getElementById('calendarTitle');
-      if(!grid || !title || !shift) return;
-
-      const start = parseShiftDate(shift.start);
-      const end = parseShiftDate(shift.end);
-      if(!start || !end) return;
-
-      const ruWeek = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
-      const ruMonth = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
-
-      title.textContent = `${start.toLocaleDateString('ru-RU')} — ${end.toLocaleDateString('ru-RU')}`;
-
-      const firstMonth = new Date(start.getFullYear(), start.getMonth(), 1);
-      const lastMonth = new Date(end.getFullYear(), end.getMonth(), 1);
-      const cursor = new Date(firstMonth);
-      const isMultiMonthRange = firstMonth.getTime() !== lastMonth.getTime();
-      let html = '';
-
-      while(cursor <= lastMonth){
-        const year = cursor.getFullYear();
-        const month = cursor.getMonth();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        let displayFrom = 1;
-        let displayTo = daysInMonth;
-
-        if(isMultiMonthRange){
-          const isFirst = year === firstMonth.getFullYear() && month === firstMonth.getMonth();
-          const isLast = year === lastMonth.getFullYear() && month === lastMonth.getMonth();
-
-          if(isFirst){
-            displayFrom = Math.max(1, daysInMonth - 13);
-          }else if(isLast){
-            displayTo = Math.min(daysInMonth, 14);
-          }
-        }
-
-        const leading = new Date(year, month, displayFrom).getDay();
-
-        html += `
-          <div class="calendar-month">
-            <div class="calendar-month-title">${ruMonth[month]} ${year}</div>
-            <div class="calendar-month-grid">
-        `;
-
-        for(let i = 0; i < leading; i += 1){
-          html += '<div class="calendar-day empty"></div>';
-        }
-
-        for(let day = displayFrom; day <= displayTo; day += 1){
-          const d = new Date(year, month, day);
-          const isInRange = d >= start && d <= end;
-          html += `
-            <div class="calendar-day ${isInRange ? 'active' : ''}">
-              <span>${day}</span>
-              <small>${ruWeek[d.getDay()]}</small>
-            </div>
-          `;
-        }
-
-        html += '</div></div>';
-        cursor.setMonth(cursor.getMonth() + 1);
-      }
-
-      grid.innerHTML = html;
+      return safeInvoke(ensureCalendarFlow(), 'renderCalendar', [shift], null);
     }
 
     function renderSeasonCalendar(){
-      const grid = document.getElementById('calendarGrid');
-      const title = document.getElementById('calendarTitle');
-      if(!grid || !title) return;
-      const seasonShifts = shifts
-        .map((shift, idx) => ({
-          ...shift,
-          startDate: parseShiftDate(shift.start),
-          endDate: parseShiftDate(shift.end),
-          colorIndex: idx % 6
-        }))
-        .filter((shift) => shift.startDate && shift.endDate)
-        .sort((a, b) => a.startDate - b.startDate);
-      if(!seasonShifts.length) return;
-      const seasonShiftById = new Map(seasonShifts.map((shift) => [shift.id, shift]));
-
-      const ruWeek = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
-      const ruMonth = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
-      const colorPalette = ['#ff8a00', '#38bdf8', '#a78bfa', '#22c55e', '#f43f5e', '#f59e0b'];
-      const minStart = seasonShifts[0].startDate;
-      const maxEnd = seasonShifts[seasonShifts.length - 1].endDate;
-      const firstMonth = new Date(minStart.getFullYear(), minStart.getMonth(), 1);
-      const lastMonth = new Date(maxEnd.getFullYear(), maxEnd.getMonth(), 1);
-      const cursor = new Date(firstMonth);
-
-      title.textContent = 'Смены лета 2026 · от 48 000 рублей за 7 дней';
-      let html = '';
-
-      while(cursor <= lastMonth){
-        const year = cursor.getFullYear();
-        const month = cursor.getMonth();
-        if(month === 6){
-          cursor.setMonth(cursor.getMonth() + 1);
-          continue;
-        }
-        const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
-        const daysInMonth = totalDaysInMonth;
-        const leading = new Date(year, month, 1).getDay();
-
-        html += `
-          <div class="calendar-month">
-            <div class="calendar-month-title">${ruMonth[month]} ${year}</div>
-            <div class="calendar-month-grid">
-        `;
-        const cells = [];
-        for(let i = 0; i < leading; i += 1){
-          cells.push({ empty: true, hasShift: false, html: '<div class="calendar-day empty"></div>' });
-        }
-        for(let day = 1; day <= daysInMonth; day += 1){
-          const date = new Date(year, month, day);
-          const matched = seasonShifts.filter((shift) => date >= shift.startDate && date <= shift.endDate);
-          const parentOverlays = matched
-            .map((shift) => (shift.sourceId ? seasonShiftById.get(shift.sourceId) : null))
-            .filter((shift) => shift && date >= shift.startDate && date <= shift.endDate);
-          parentOverlays.forEach((parentShift) => {
-            if(!matched.some((shift) => shift.id === parentShift.id)){
-              matched.push(parentShift);
-            }
-          });
-          matched.sort((a, b) => {
-            if(a.id === 'shift-2' && b.id !== 'shift-2') return -1;
-            if(b.id === 'shift-2' && a.id !== 'shift-2') return 1;
-            const aChild = !!a.sourceId;
-            const bChild = !!b.sourceId;
-            if(aChild !== bChild) return aChild ? 1 : -1;
-            return (a.startDate - b.startDate) || String(a.id).localeCompare(String(b.id));
-          });
-          if(!matched.length){
-            cells.push({
-              empty: false,
-              hasShift: false,
-              html: `
-              <div class="calendar-day">
-                <span>${day}</span>
-                <small>${ruWeek[date.getDay()]}</small>
-              </div>
-            `
-            });
-            continue;
-          }
-          const primary = matched[0];
-          const multi = matched.length > 1;
-          const hasParentOverlay = matched.some((shift) => shift.id === 'shift-2') && matched.some((shift) => shift.sourceId === 'shift-2');
-          const parentShift = matched.find((shift) => shift.id === 'shift-2') || null;
-          const childShift = matched.find((shift) => shift.sourceId === 'shift-2') || matched[1] || matched[0];
-          const mixA = colorPalette[matched[0].colorIndex] || colorPalette[0];
-          const mixB = colorPalette[matched[1]?.colorIndex ?? matched[0].colorIndex] || colorPalette[1];
-          const mixC = colorPalette[matched[2]?.colorIndex ?? matched[0].colorIndex] || colorPalette[2];
-          const parentOverlayColor = colorPalette[parentShift?.colorIndex ?? matched[0].colorIndex] || colorPalette[0];
-          const childOverlayColor = colorPalette[childShift?.colorIndex ?? matched[1]?.colorIndex ?? matched[0].colorIndex] || colorPalette[1];
-          cells.push({
-            empty: false,
-            hasShift: true,
-            html: `
-            <div class="calendar-day active shift-color-${primary.colorIndex} ${multi ? `multi stack-${Math.min(matched.length, 4)}` : ''} ${hasParentOverlay ? 'has-parent-overlay' : ''}" style="--shift-mix-a:${mixA};--shift-mix-b:${mixB};--shift-mix-c:${mixC};--parent-overlay-color:${parentOverlayColor};--child-overlay-color:${childOverlayColor};" title="${matched.map((shift) => `${shift.label || shift.title}: ${shift.dates}`).join(' · ')}">
-              <span>${day}</span>
-              <small>${ruWeek[date.getDay()]}${multi ? ` · ${matched.length}` : ''}</small>
-            </div>
-          `
-          });
-        }
-        while(cells.length % 7 !== 0){
-          cells.push({ empty: true, hasShift: false, html: '<div class="calendar-day empty"></div>' });
-        }
-        for(let i = 0; i < cells.length; i += 7){
-          const week = cells.slice(i, i + 7);
-          const hasShiftWeek = week.some((cell) => cell.hasShift);
-          if(!hasShiftWeek) continue;
-          html += `<div class="calendar-week">${week.map((cell) => cell.html).join('')}</div>`;
-        }
-        html += '</div></div>';
-        cursor.setMonth(cursor.getMonth() + 1);
-      }
-
-      grid.innerHTML = html;
+      return safeInvoke(ensureCalendarFlow(), 'renderSeasonCalendar', [], null);
     }
 
     function openCalendar(shiftId){
-      const shift = shifts.find(s => s.id === shiftId);
-      if(!shift) return;
-      closeTransientModals('calendar');
-      renderCalendar(shift);
-      document.getElementById('calendarModal')?.classList.remove('hidden');
+      return safeInvoke(ensureCalendarFlow(), 'openCalendar', [shiftId], null);
     }
 
     function openSeasonCalendar(){
-      closeTransientModals('calendar');
-      renderSeasonCalendar();
-      document.getElementById('calendarModal')?.classList.remove('hidden');
-      track('season_calendar_open');
+      return safeInvoke(ensureCalendarFlow(), 'openSeasonCalendar', [], null);
     }
 
     function closeCalendar(){
-      document.getElementById('calendarModal')?.classList.add('hidden');
+      return safeInvoke(ensureCalendarFlow(), 'closeCalendar', [], null);
     }
 
     function selectedShiftPayload(){
@@ -7821,59 +7518,11 @@
     }
 
     function scrollToSection(id){
-      const cleanId = String(id || '').replace(/^#/, '');
-      if(!cleanId) return false;
-      const el = document.getElementById(cleanId);
-      if(!el) return false;
-
-      el.scrollIntoView({behavior:'smooth', block:'start'});
-      return true;
+      return safeInvoke(ensureNavigationFlow(), 'scrollToSection', [id], false);
     }
 
     function navigateToSection(id){
-      const cleanId = String(id || '').replace(/^#/, '');
-      if(!cleanId) return;
-      if(cleanId === 'section-faq'){
-        trackFaqOpen();
-      }
-      const isMobilePreview = state.previewView === 'mobile';
-
-      if(isMobilePreview && cleanId === 'section-programs' && !hasSelectedAge()){
-        track('mobile_shifts_click_without_age', {
-          mode: state.mobileMode || 'full'
-        });
-        showHint('Сначала выберите возраст ребёнка', 'age');
-        focusMobileAgeGate();
-        return;
-      }
-
-      if(isMobilePreview && cleanId === 'section-programs' && hasSelectedAge()){
-        track('mobile_shifts_opened_after_age', {
-          mode: state.mobileMode || 'full',
-          age: state.age || ''
-        });
-      }
-
-      const isDesktopCompact = !isMobilePreview && state.desktopMode === 'compact';
-      const isMobileCompact = isMobilePreview && (
-        USE_DESKTOP_BASE_FOR_MOBILE
-          ? state.desktopMode === 'compact'
-          : state.mobileMode === 'compact'
-      );
-
-      if(isDesktopCompact || isMobileCompact){
-        if(COMPACT_MODAL_SECTIONS.has(cleanId) && openSectionModal(cleanId)){
-          return;
-        }
-        if(!scrollToSection(cleanId) && cleanId === 'section-legal'){
-          window.open(buildLegalDocUrl('#legal-info'), '_blank', 'noopener');
-        }
-        return;
-      }
-
-      if(!scrollToSection(cleanId) && cleanId === 'section-legal'){
-        window.open(buildLegalDocUrl('#legal-info'), '_blank', 'noopener');
-      }
+      return safeInvoke(ensureNavigationFlow(), 'navigateToSection', [id], null);
     }
 
     document.addEventListener('click', (e) => {
