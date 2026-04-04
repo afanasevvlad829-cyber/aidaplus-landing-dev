@@ -1516,6 +1516,14 @@
 
     const CLOSE_ICON_HTML = '<img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">';
 
+    function safeInvoke(target, methodName, args = [], fallback = null){
+      const list = Array.isArray(args) ? args : [];
+      if(target && typeof target[methodName] === 'function'){
+        return target[methodName](...list);
+      }
+      return typeof fallback === 'function' ? fallback(...list) : fallback;
+    }
+
     function normalizeCloseIconButtons(scope = document){
       const root = scope || document;
       const nodes = root.querySelectorAll(
@@ -1569,17 +1577,13 @@
             track(`scroll_${p}`);
           }
         });
-        if(typeof updateSummaryBarVisibility === 'function'){
-          updateSummaryBarVisibility();
-        }
+        safeInvoke({updateSummaryBarVisibility}, 'updateSummaryBarVisibility');
       }, {passive:true});
     }
 
     function initSummaryBarViewportSync(){
       const sync = () => {
-        if(typeof updateSummaryBarVisibility === 'function'){
-          updateSummaryBarVisibility();
-        }
+        safeInvoke({updateSummaryBarVisibility}, 'updateSummaryBarVisibility');
       };
       window.addEventListener('scroll', sync, {passive:true});
       window.addEventListener('orientationchange', sync, {passive:true});
@@ -4722,9 +4726,7 @@
         const showLegacyMobile = requestedView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE;
         mobileView.classList.toggle('hidden', !showLegacyMobile);
       }
-      if(typeof applyHeroAbVariant === 'function'){
-        applyHeroAbVariant();
-      }
+      safeInvoke({applyHeroAbVariant}, 'applyHeroAbVariant');
       const desktopModeWrap = document.getElementById('desktopModeWrap');
       if(desktopModeWrap){
         desktopModeWrap.classList.toggle('hidden', effectiveView !== 'desktop');
@@ -4741,7 +4743,7 @@
       applyMobileTemplatesToDesktopSections();
       renderMediaSections();
       renderDesktopMobileDocsBlock();
-      updateSummaryBarVisibility();
+      safeInvoke({updateSummaryBarVisibility}, 'updateSummaryBarVisibility');
       persist();
       requestAnimationFrame(() => {
         window.dispatchEvent(new Event('resize'));
@@ -8540,9 +8542,9 @@
           return;
         }
         initHero();
-        applyHeroAbVariant();
+        safeInvoke({applyHeroAbVariant}, 'applyHeroAbVariant');
         applyCompactSectionModalLayout();
-        updateSummaryBarVisibility();
+        safeInvoke({updateSummaryBarVisibility}, 'updateSummaryBarVisibility');
         scheduleBookingCardMinHeightSync();
       }, 160);
     }, {passive:true});
@@ -8560,18 +8562,6 @@
     renderSummary();
     renderBookingPanels();
     resetOfferProgressUI();
-    applyDebugUiState();
-    injectHeroSeasonOfferCta();
-    initFloatingContactsWidget();
-    initHeroAbDevPanel();
-    track('page_view', {
-      view: state.view || 'desktop',
-      desktop_mode: state.desktopMode || '',
-      mobile_mode: state.mobileMode || ''
-    });
-    initScrollTracking();
-    initSummaryBarViewportSync();
-    initSectionViewTracking();
     switchView(getViewportPreviewView());
     applyHeroContrastMode();
     applyHeroMicroMode();
@@ -8582,10 +8572,25 @@
       applyMobileMode();
     }
     normalizeCloseIconButtons();
-    refreshVideoMeta({force:true});
-    scheduleVideoMetaRefresh();
-    scheduleDesktopAgeTapHint();
-    runQualityPipelineAll();
+    const deferredInit = () => {
+      applyDebugUiState();
+      injectHeroSeasonOfferCta();
+      initFloatingContactsWidget();
+      initHeroAbDevPanel();
+      track('page_view', {
+        view: state.view || 'desktop',
+        desktop_mode: state.desktopMode || '',
+        mobile_mode: state.mobileMode || ''
+      });
+      initScrollTracking();
+      initSummaryBarViewportSync();
+      initSectionViewTracking();
+      refreshVideoMeta({force:true});
+      scheduleVideoMetaRefresh();
+      scheduleDesktopAgeTapHint();
+      runQualityPipelineAll();
+    };
+    window.setTimeout(deferredInit, 0);
 
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();
