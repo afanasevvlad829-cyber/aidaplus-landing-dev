@@ -2715,9 +2715,7 @@
     }
 
     function labelAge(v){
-      if(v === '7-9') return '7–9 лет';
-      if(v === '10-12') return '10–12 лет';
-      return '13–14 лет';
+      return ageLabel(v);
     }
 
     function shiftDaysLabel(shift){
