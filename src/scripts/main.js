@@ -637,6 +637,7 @@
     let docsFlowApi = null;
     let uiInitFlowApi = null;
     let shiftOptionsFlowApi = null;
+    let mediaFlowApi = null;
     let runtimeQualityPipelineApi = null;
     let bookingRuntimeBridgeApi = null;
     let leadNotifyFlowApi = null;
@@ -1172,6 +1173,12 @@
       const api = window.AC_FEATURES?.globalUiBindings || null;
       globalUiBindingsApi = asFeatureApi(api);
       return globalUiBindingsApi;
+    }
+
+    function ensureMediaFlowApi(){
+      if(mediaFlowApi) return mediaFlowApi;
+      mediaFlowApi = asFeatureApi(window.AC_FEATURES?.mediaFlow || null);
+      return mediaFlowApi;
     }
 
     function ensureDocsFlow(){
@@ -2838,126 +2845,42 @@
     }
 
     function contactIconMarkup(label){
-      const map = {
-        city_phone:'/assets/icons/phone-city.svg',
-        mobile_phone:'/assets/icons/phone-mobile.svg',
-        whatsapp:'/assets/icons/whatsapp.svg',
-        telegram:'/assets/icons/telegram.svg'
-      };
-      const src = map[label];
-      return ((src && `<img class="ac-icon" src="${src}" alt="" aria-hidden="true">`) || '•');
+      return safeInvoke(ensureMediaFlowApi(), 'contactIconMarkup', [label], '•');
     }
 
     function resolveFloatingContactLinks(){
-      const contacts = (Array.isArray(mediaContent.contacts) && mediaContent.contacts) || [];
-      const mobilePhone = contacts.find((item) => item.label === 'mobile_phone');
-      const cityPhone = contacts.find((item) => item.label === 'city_phone');
-      const whatsapp = contacts.find((item) => item.label === 'whatsapp');
-      const telegram = contacts.find((item) => item.label === 'telegram');
-      return {
-        cityPhoneHref: (cityPhone && cityPhone.href) || 'tel:+74951284429',
-        cityPhoneLabel: (cityPhone && cityPhone.text) || '+7 (495) 128-44-29',
-        mobilePhoneHref: (mobilePhone && mobilePhone.href) || 'tel:+79688086455',
-        mobilePhoneLabel: (mobilePhone && mobilePhone.text) || '+7 (968) 808-64-55',
-        whatsappHref: (whatsapp && whatsapp.href) || 'https://wa.me/79688086455',
-        telegramHref: (telegram && telegram.href) || 'https://t.me/Progaschool',
-      };
+      return safeInvoke(ensureMediaFlowApi(), 'resolveFloatingContactLinks', [mediaContent], {
+        cityPhoneHref: 'tel:+74951284429',
+        cityPhoneLabel: '+7 (495) 128-44-29',
+        mobilePhoneHref: 'tel:+79688086455',
+        mobilePhoneLabel: '+7 (968) 808-64-55',
+        whatsappHref: 'https://wa.me/79688086455',
+        telegramHref: 'https://t.me/Progaschool'
+      });
     }
 
     function initFloatingContactsWidget(){
-      if(document.getElementById('floatingContactsWidget')) return;
-      const links = resolveFloatingContactLinks();
-      const host = document.createElement('div');
-      host.id = 'floatingContactsWidget';
-      host.className = 'floating-contacts';
-      host.innerHTML = `
-        <div class="floating-contacts-panel" id="floatingContactsPanel" aria-label="Быстрые контакты">
-          <a class="floating-contacts-link" href="${links.cityPhoneHref}">
-            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/telephone.svg" alt="" aria-hidden="true">
-            <span class="floating-contacts-label">${links.cityPhoneLabel}</span>
-          </a>
-          <a class="floating-contacts-link" href="${links.mobilePhoneHref}">
-            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/telephone-fill.svg" alt="" aria-hidden="true">
-            <span class="floating-contacts-label">${links.mobilePhoneLabel}</span>
-          </a>
-          <a class="floating-contacts-link" href="${links.whatsappHref}" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/whatsapp.svg" alt="" aria-hidden="true">
-            <span class="floating-contacts-label">WhatsApp</span>
-          </a>
-          <a class="floating-contacts-link" href="${links.telegramHref}" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/telegram.svg" alt="" aria-hidden="true">
-            <span class="floating-contacts-label">Telegram</span>
-          </a>
-        </div>
-        <button type="button" class="floating-contacts-toggle" id="floatingContactsToggle" aria-expanded="false" aria-controls="floatingContactsPanel" aria-label="Открыть контакты">
-          <svg class="floating-contacts-glyph" viewBox="0 0 24 24" aria-hidden="true">
-            <path class="floating-contacts-glyph-outline" d="M4.5 5.5h15a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4.5 3v-3H4.5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"></path>
-            <circle class="floating-contacts-dot floating-contacts-dot-left" cx="8" cy="11.5" r="1.35"></circle>
-            <circle class="floating-contacts-dot floating-contacts-dot-center" cx="12" cy="11.5" r="1.35"></circle>
-            <circle class="floating-contacts-dot floating-contacts-dot-right" cx="16" cy="11.5" r="1.35"></circle>
-          </svg>
-        </button>
-      `;
-      document.body.appendChild(host);
-
-      const toggle = host.querySelector('#floatingContactsToggle');
-      if(!toggle) return;
-      toggle.addEventListener('click', () => {
-        const isOpen = host.classList.toggle('is-open');
-        toggle.setAttribute('aria-expanded', String(!!isOpen));
-        track('floating_contacts_toggle', {open:Number(!!isOpen)});
-      });
-
-      host.querySelectorAll('.floating-contacts-link').forEach((link) => {
-        link.addEventListener('click', () => {
-          host.classList.remove('is-open');
-          toggle.setAttribute('aria-expanded', 'false');
-          const label = String(link.querySelector('.floating-contacts-label')?.textContent || '').toLowerCase();
-          track('floating_contacts_click', {channel: label});
-        });
-      });
-
-      document.addEventListener('click', (event) => {
-        if(!host.classList.contains('is-open')) return;
-        if(host.contains(event.target)) return;
-        host.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', 'false');
-      });
-
-      document.addEventListener('keydown', (event) => {
-        if(event.key !== 'Escape') return;
-        if(!host.classList.contains('is-open')) return;
-        host.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', 'false');
-      });
+      return safeInvoke(ensureMediaFlowApi(), 'initFloatingContactsWidget', [{
+        document,
+        mediaContent,
+        track
+      }], null);
     }
 
     function socialBadgeMark(item){
-      const mark = String(item?.label || '').trim().toUpperCase();
-      const allowed = new Set(['VK','RT','IG','OK','YT','LI','TT','PI','YA']);
-      return ((allowed.has(mark) && mark) || '•');
+      return safeInvoke(ensureMediaFlowApi(), 'socialBadgeMark', [item], '•');
     }
 
     function socialDisplayName(item){
-      const key = String(item?.key || '').trim();
-      const badge = socialBadgeMark(item);
-      if(!key) return badge;
-      if(key.toUpperCase() !== badge) return key;
-      if(key === 'VK') return 'ВКонтакте';
-      return key;
+      return safeInvoke(ensureMediaFlowApi(), 'socialDisplayName', [item], '');
     }
 
     function faqGlyph(iconPath, groupName){
-      if(iconPath && iconPath.includes('med')) return 'MED';
-      if(iconPath && iconPath.includes('lock')) return 'SAFE';
-      if(iconPath && iconPath.includes('food')) return 'FOOD';
-      if(iconPath && iconPath.includes('check')) return 'ROOM';
-      if(iconPath && iconPath.includes('phone')) return 'CALL';
-      return groupName.slice(0,3).toUpperCase();
+      return safeInvoke(ensureMediaFlowApi(), 'faqGlyph', [iconPath, groupName], String(groupName || '').slice(0,3).toUpperCase());
     }
 
     function renderStars(){
-      return '<div class="stars">★★★★★</div>';
+      return safeInvoke(ensureMediaFlowApi(), 'renderStars', [], '<div class="stars">★★★★★</div>');
     }
 
     // SECTION 5: Content and media rendering.
