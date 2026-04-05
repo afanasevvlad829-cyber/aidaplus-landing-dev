@@ -368,76 +368,10 @@
     const METRIKA_ID = 96499295;
     const MAX_CONTACT_URL = 'https://web.max.ru/185807479';
     const LEGAL_REPO_SLUG = 'afanasevvlad829-cyber/aidaplus-landing-dev';
-    const HERO_VARIANT_BANNER_TIER = Object.freeze({
-      '212861185':'tier1',
-      '212861186':'tier1',
-      '212861188':'tier1',
-      '212861189':'tier2',
-      '212861195':'tier2',
-      '212861200':'tier2',
-      '212861205':'tier3',
-      '212861206':'tier3',
-      '212861207':'tier3',
-      '212861210':'tier4',
-      '212861211':'tier4',
-      '212861212':'tier4',
-      '212861214':'broad',
-      '212861215':'broad',
-      '212861216':'broad'
-    });
-    const HERO_VARIANT_COPY = Object.freeze({
-      tier1: Object.freeze({
-        tier:'tier1',
-        variant:'v1',
-        title:'Выездной IT-лагерь в Подмосковье: гаджеты под контролем',
-        sub:'Ребёнок 10–12 лет сделает проект за смену, а вы будете спокойны за безопасность.',
-        cta:'Получить программу смен',
-        hintStage1:'Чтобы получить программу смен, выберите возраст.',
-        hintStage1Followup:'Нажмите на возраст — сразу откроем программу смен.',
-        hintStage2:'На втором шаге нажмите кнопку i у смены, чтобы получить программу смен.'
-      }),
-      tier2: Object.freeze({
-        tier:'tier2',
-        variant:'v1',
-        title:'IT-лагерь, где ребёнок возвращается из экрана в проект',
-        sub:'Сравните формат: проектная работа, команда, бассейн, природа Подмосковья.',
-        cta:'Сравнить смены и цены',
-        hintStage1:'Чтобы сравнить смены и цены, выберите возраст.',
-        hintStage1Followup:'Выберите возраст — и откроем все смены с ценами.',
-        hintStage2:'Нажмите «Все смены для {{age}}», чтобы сравнить смены и цены.'
-      }),
-      tier3: Object.freeze({
-        tier:'tier3',
-        variant:'v1',
-        title:'Не просто лагерь: IT-смена с результатом за 14 дней',
-        sub:'Проект, презентация, наставники-айтишники и режим гаджетов по правилам.',
-        cta:'Посмотреть программу',
-        hintStage1:'Чтобы посмотреть программу, выберите возраст.',
-        hintStage1Followup:'Выберите возраст — и покажем программу смен на шаге 2.',
-        hintStage2:'На втором шаге нажмите кнопку i у смены, чтобы посмотреть программу.'
-      }),
-      tier4: Object.freeze({
-        tier:'tier4',
-        variant:'v1',
-        title:'Если нужен форматный IT-лагерь, а не “просто отдых”',
-        sub:'Выездные смены в Подмосковье для 10–12 лет: IT + спорт + командная среда.',
-        cta:'Выбрать формат смены',
-        hintStage1:'Чтобы выбрать формат смены, выберите возраст.',
-        hintStage1Followup:'Выберите возраст — откроем форматы смен под ребёнка.',
-        hintStage2:'Нажмите «Все смены для {{age}}», чтобы выбрать формат смены.'
-      }),
-      broad: Object.freeze({
-        tier:'broad',
-        variant:'v1',
-        title:'Летние IT-смены в Подмосковье для детей 10–12 лет',
-        sub:'Программирование, проекты, бассейн, природа и меньше экранного времени.',
-        cta:'Узнать условия',
-        hintStage1:'Чтобы узнать условия, выберите возраст.',
-        hintStage1Followup:'Выберите возраст — подберём смену и условия.',
-        hintStage2:'Выберите подходящую смену.'
-      })
-    });
-    const HERO_VARIANT_DEFAULT_TIER = 'broad';
+    const HERO_VARIANT_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.heroVariant) || {};
+    const HERO_VARIANT_BANNER_TIER = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.bannerTier || {});
+    const HERO_VARIANT_COPY = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.copy || {});
+    const HERO_VARIANT_DEFAULT_TIER = String(HERO_VARIANT_RUNTIME_CONFIG.defaultTier || 'broad');
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
     const BUILD_VERSION_LABEL = 'v0.0.288 (ab-analytics-endpoint)';
     const ARCHITECTURE_POLICY = Object.freeze({

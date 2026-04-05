@@ -21,12 +21,25 @@ base_path = root / "dist" / "index.html"
 out_path = root / "dist" / "index.html"
 cdn_bundle_path = root / "dist" / "cdn" / "app.bundle.js"
 cdn_repo_bundle_path = root / "cdn" / "app.bundle.js"
+cdn_css_path = root / "dist" / "cdn" / "app.css"
+cdn_repo_css_path = root / "cdn" / "app.css"
 cdn_tilda_bundle_path = root / "dist" / "cdn" / "app.tilda.js"
 cdn_tilda_repo_bundle_path = root / "cdn" / "app.tilda.js"
 css_path = root / "src" / "styles" / "main.css"
 script_paths = [
-    root / "src" / "scripts" / "main.js",
+    root / "src" / "scripts" / "config" / "hero-variant-runtime.js",
+    root / "src" / "scripts" / "core" / "view-mode.js",
+    root / "src" / "scripts" / "core" / "block-factory.js",
+    root / "src" / "scripts" / "core" / "modular-runtime.js",
+    root / "src" / "scripts" / "core" / "content-adapter.js",
+    root / "src" / "scripts" / "core" / "runtime-content.js",
+    root / "src" / "scripts" / "core" / "bootstrap-deferred-queue.js",
+    root / "src" / "scripts" / "core" / "booking-runtime-bridge.js",
 ]
+features_dir = root / "src" / "scripts" / "features"
+if features_dir.exists():
+    script_paths.extend(sorted(features_dir.glob("*.js")))
+script_paths.append(root / "src" / "scripts" / "main.js")
 components_dir = root / "src" / "components"
 
 if not base_path.exists():
@@ -297,9 +310,7 @@ def replace_or_insert(src: str, start_marker: str, end_marker: str, payload: str
 
 style_block = (
     "<!-- AC_BUILD_STYLE_START -->\n"
-    "<style id=\"ac-build-main-css\">\n"
-    f"{css}\n"
-    "</style>\n"
+    "<link id=\"ac-build-main-css\" rel=\"stylesheet\" href=\"/cdn/app.css\">\n"
     "<!-- AC_BUILD_STYLE_END -->"
 )
 
@@ -308,9 +319,7 @@ script_block = (
     f"<script id=\"ac-build-components\" type=\"application/json\">{json.dumps(components, ensure_ascii=False)}</script>\n"
     f"<script id=\"ac-build-media-manifest\" type=\"application/json\">{json.dumps(media_manifest, ensure_ascii=False)}</script>\n"
     f"<script id=\"ac-build-team-manifest\" type=\"application/json\">{json.dumps(team_manifest, ensure_ascii=False)}</script>\n"
-    "<script id=\"ac-build-main-js\">\n"
-    f"{js}\n"
-    "</script>\n"
+    "<script id=\"ac-build-main-js\" src=\"/cdn/app.bundle.js\" defer></script>\n"
     "<!-- AC_BUILD_SCRIPT_END -->"
 )
 
@@ -320,34 +329,23 @@ out = re.sub(r'<link[^>]+href=["\']/src/styles/main\.css["\'][^>]*>\s*', "", out
 out = re.sub(r'<script[^>]+src=["\']/src/scripts/[^"\']+["\'][^>]*>\s*</script>\s*', "", out, flags=re.I)
 out = replace_or_insert(out, "<!-- AC_BUILD_STYLE_START -->", "<!-- AC_BUILD_STYLE_END -->", style_block, "</head>")
 out = replace_or_insert(out, "<!-- AC_BUILD_SCRIPT_START -->", "<!-- AC_BUILD_SCRIPT_END -->", script_block, "</body>")
-allow_dist_rewrite = (os.getenv("AC_ALLOW_DIST_REWRITE", "0") == "1")
+allow_dist_rewrite = (os.getenv("AC_ALLOW_DIST_REWRITE", "1") == "1")
 if allow_dist_rewrite:
     out_path.write_text(out, encoding="utf-8")
     print(f"Built: {out_path}")
 else:
     print(f"Skipped rewrite: {out_path} (set AC_ALLOW_DIST_REWRITE=1 to enable)")
 
-# Single-file CDN bundle for Tilda/jsDelivr:
-# injects CSS once, then executes app JS.
-bundle = (
-    "(function(){\n"
-    "  if (typeof document === 'undefined') return;\n"
-    "  var id = 'ac-cdn-main-css';\n"
-    "  if (!document.getElementById(id)) {\n"
-    "    var style = document.createElement('style');\n"
-    "    style.id = id;\n"
-    f"    style.textContent = {json.dumps(css_for_cdn, ensure_ascii=False)};\n"
-    "    document.head.appendChild(style);\n"
-    "  }\n"
-    "})();\n\n"
-    "/* src/scripts/main.js */\n"
-    + js_for_cdn
-    + "\n"
-)
+# Main runtime bundle for website/pages.
+bundle = js_for_cdn + "\n"
 cdn_bundle_path.write_text(bundle, encoding="utf-8")
 print(f"Built: {cdn_bundle_path}")
 cdn_repo_bundle_path.write_text(bundle, encoding="utf-8")
 print(f"Built: {cdn_repo_bundle_path}")
+cdn_css_path.write_text(css_for_cdn, encoding="utf-8")
+print(f"Built: {cdn_css_path}")
+cdn_repo_css_path.write_text(css_for_cdn, encoding="utf-8")
+print(f"Built: {cdn_repo_css_path}")
 
 body_match = re.search(r"<body[^>]*>(?P<body>.*)</body>", out, flags=re.I | re.S)
 body_html = body_match.group("body") if body_match else ""
@@ -406,6 +404,8 @@ PY
 echo "Canonical runtime source: dist/index.html (not rewritten unless AC_ALLOW_DIST_REWRITE=1)"
 echo "CDN artifact: dist/cdn/app.bundle.js"
 echo "CDN artifact for GitHub/jsDelivr: cdn/app.bundle.js"
+echo "CDN css artifact: dist/cdn/app.css"
+echo "CDN css artifact for GitHub/jsDelivr: cdn/app.css"
 echo "Tilda single-script artifact: dist/cdn/app.tilda.js"
 echo "Tilda single-script artifact for GitHub/jsDelivr: cdn/app.tilda.js"
 
