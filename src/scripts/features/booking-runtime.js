@@ -174,6 +174,79 @@
     return 1;
   }
 
+  function normalizeInitialState(options) {
+    var opts = options || {};
+    var state = opts.state || {};
+    var useDesktopBaseForMobile = !!opts.useDesktopBaseForMobile;
+    var changed = false;
+    var normalizedPreviewView = state.previewView || state.view || "desktop";
+    var normalizedView = (useDesktopBaseForMobile && normalizedPreviewView === "mobile")
+      ? "desktop"
+      : (state.view || normalizedPreviewView);
+    var normalized = {
+      previewView: normalizedPreviewView,
+      view: normalizedView,
+      desktopMode: "full",
+      mobileMode: "full",
+      heroContrastMode: "after-soft",
+      heroMicroMode: "off",
+      offerModalTheme: "light",
+      offerLayout: "current",
+      ageSelected: typeof state.ageSelected === "boolean" ? state.ageSelected : false,
+      bookingCompleted: !!state.bookingCompleted
+    };
+
+    Object.keys(normalized).forEach(function(key){
+      if(state[key] !== normalized[key]) changed = true;
+    });
+    Object.assign(state, normalized);
+
+    if(!state.age){
+      if(state.ageSelected || state.shiftId || state.basePrice || state.offerPrice || state.code || state.expiresAt || state.offerStage || state.bookingCompleted){
+        changed = true;
+      }
+      Object.assign(state, {
+        ageSelected: false,
+        shiftId: null,
+        basePrice: null,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerStage: 0,
+        bookingCompleted: false
+      });
+    } else {
+      if(!state.ageSelected){
+        changed = true;
+      }
+      Object.assign(state, { ageSelected: true });
+      if(!state.shiftId){
+        if(state.basePrice || state.offerPrice || state.code || state.expiresAt || state.offerStage || state.bookingCompleted){
+          changed = true;
+        }
+        Object.assign(state, {
+          basePrice: null,
+          offerPrice: null,
+          code: null,
+          expiresAt: null,
+          offerStage: 0,
+          bookingCompleted: false
+        });
+      }
+    }
+
+    var normalizedOfferStage = Number(state.offerStage);
+    if(!Number.isFinite(normalizedOfferStage) || normalizedOfferStage < 0){
+      Object.assign(state, { offerStage: 0 });
+      changed = true;
+    } else if(normalizedOfferStage > 4){
+      Object.assign(state, { offerStage: 4 });
+      changed = true;
+    }
+
+    return { changed: !!changed };
+  }
+
   function handlePrimaryCTA(options) {
     var opts = options || {};
     var state = opts.state || {};
@@ -353,6 +426,7 @@
     selectShift: selectShift,
     getPrimaryActionState: getPrimaryActionState,
     getStepState: getStepState,
+    normalizeInitialState: normalizeInitialState,
     handlePrimaryCTA: handlePrimaryCTA,
     runOfferSearch: runOfferSearch,
     openOfferCheck: openOfferCheck,

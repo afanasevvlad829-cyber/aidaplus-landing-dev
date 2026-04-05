@@ -547,62 +547,11 @@
     let activePhotoList = [];
     let photoGalleryList = [];
     // SECTION 2: State normalization and hydration.
-    const normalizedPreviewView = state.previewView || state.view || 'desktop';
-    Object.assign(state, {
-      previewView: normalizedPreviewView,
-      view: (USE_DESKTOP_BASE_FOR_MOBILE && normalizedPreviewView === 'mobile') ? 'desktop' : state.view,
-      desktopMode: 'full',
-      mobileMode: 'full',
-      heroContrastMode: 'after-soft',
-      heroMicroMode: 'off',
-      offerModalTheme: 'light',
-      offerLayout: 'current',
-      ageSelected: typeof state.ageSelected === 'boolean' ? state.ageSelected : false,
-      bookingCompleted: !!state.bookingCompleted
-    });
-    let stateWasNormalized = false;
-    if(!state.age){
-      if(state.ageSelected || state.shiftId || state.basePrice || state.offerPrice || state.code || state.expiresAt || state.offerStage || state.bookingCompleted){
-        stateWasNormalized = true;
-      }
-      Object.assign(state, {
-        ageSelected: false,
-        shiftId: null,
-        basePrice: null,
-        offerPrice: null,
-        code: null,
-        expiresAt: null,
-        offerStage: 0,
-        bookingCompleted: false
-      });
-    } else {
-      if(!state.ageSelected){
-        stateWasNormalized = true;
-      }
-      Object.assign(state, { ageSelected: true });
-      if(!state.shiftId){
-        if(state.basePrice || state.offerPrice || state.code || state.expiresAt || state.offerStage || state.bookingCompleted){
-          stateWasNormalized = true;
-        }
-        Object.assign(state, {
-          basePrice: null,
-          offerPrice: null,
-          code: null,
-          expiresAt: null,
-          offerStage: 0,
-          bookingCompleted: false
-        });
-      }
-    }
-    const normalizedOfferStage = Number(state.offerStage);
-    if(!Number.isFinite(normalizedOfferStage) || normalizedOfferStage < 0){
-      Object.assign(state, { offerStage: 0 });
-      stateWasNormalized = true;
-    } else if(normalizedOfferStage > 4){
-      Object.assign(state, { offerStage: 4 });
-      stateWasNormalized = true;
-    }
-    if(stateWasNormalized){
+    const stateNormalizeResult = safeInvoke(ensureBookingRuntimeBridge(), 'normalizeInitialState', [{
+      state,
+      useDesktopBaseForMobile: USE_DESKTOP_BASE_FOR_MOBILE
+    }], { changed: false });
+    if(stateNormalizeResult && stateNormalizeResult.changed){
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (error){
@@ -664,6 +613,7 @@
     let heroVariantState = null;
     let telemetryFlowApi = null;
     let heroVariantFlowApi = null;
+    let variantFlowApi = null;
     let calendarFlowApi = null;
     let navigationFlowApi = null;
     let videoMetaFlowApi = null;
@@ -675,6 +625,7 @@
     let summaryFlowApi = null;
     let viewModeFlowApi = null;
     let heroV3SimpleFlowApi = null;
+    let heroBackgroundFlowApi = null;
     let offerFlowApi = null;
     let actionDispatcherApi = null;
     let bookingInlineLeadApi = null;
@@ -726,6 +677,36 @@
         getBookingViewConfig
       });
       return heroVariantFlowApi;
+    }
+
+    function ensureVariantFlow(){
+      if(variantFlowApi) return variantFlowApi;
+      const create = window.AC_FEATURES?.variantFlow?.create;
+      if(typeof create !== 'function') return null;
+      variantFlowApi = create({
+        state,
+        getBookingStage,
+        hasSelectedAge,
+        resolveHeroVariantFromUtm,
+        getVariantFlowView: () => resolveViewKey(state.previewView),
+        getPrimaryBookingViewConfig,
+        setHeroMenuOpen,
+        getHeroVariantState: () => heroVariantState,
+        getDefaultTier: () => HERO_VARIANT_DEFAULT_TIER,
+        getFingerTimer: () => variantFlowFingerTimer,
+        setFingerTimer: (next) => {
+          variantFlowFingerTimer = next || null;
+        },
+        getRunId: () => variantFlowRunId,
+        setRunId: (next) => {
+          variantFlowRunId = Number(next) || 0;
+        },
+        getCompletedKey: () => variantFlowCompletedKey,
+        setCompletedKey: (next) => {
+          variantFlowCompletedKey = String(next || '');
+        }
+      });
+      return variantFlowApi;
     }
 
     function ensureCalendarFlow(){
@@ -1008,6 +989,18 @@
         setHeroPhoneDropdownOpen
       });
       return heroV3SimpleFlowApi;
+    }
+
+    function ensureHeroBackgroundFlow(){
+      if(heroBackgroundFlowApi) return heroBackgroundFlowApi;
+      const create = window.AC_FEATURES?.heroBackgroundFlow?.create;
+      if(typeof create !== 'function') return null;
+      heroBackgroundFlowApi = create({
+        getHeroAbVariant: () => heroAbVariant,
+        getHeroAbAssets,
+        getHeroImages: () => HERO_IMAGES
+      });
+      return heroBackgroundFlowApi;
     }
 
     function ensureOfferFlow(){
@@ -1598,8 +1591,6 @@
       })
     ]);
 
-    let heroIndex = 0;
-    let heroTimer = null;
     let heroAbVariant = 'A';
     let heroAbTimers = [];
     let heroAbMobileScrollBound = false;
@@ -1633,106 +1624,7 @@
     }
 
     function initHero(){
-      const isMobile = window.innerWidth < 768;
-      const heroAssets = getHeroAbAssets(heroAbVariant);
-      const heroImages = heroAssets.images;
-      const heroMobile = heroAssets.mobile;
-
-      const bg1 = document.getElementById('heroBg1');
-      const bg2 = document.getElementById('heroBg2');
-      const desktopView = document.getElementById('desktopView');
-      const mobileView = document.getElementById('mobileView');
-      if(!bg1) return;
-      if(heroTimer){
-        clearInterval(heroTimer);
-        heroTimer = null;
-      }
-      if(desktopView){
-        desktopView.classList.toggle('hero-static-bg', HERO_IMAGES.length <= 1);
-        desktopView.classList.remove('hero-ready');
-        desktopView.classList.add('hero-loading');
-      }
-      if(mobileView){
-        mobileView.classList.remove('hero-ready');
-        mobileView.classList.add('hero-loading');
-      }
-      const markHeroReady = () => {
-        if(desktopView){
-          desktopView.classList.remove('hero-loading');
-          desktopView.classList.add('hero-ready');
-        }
-        if(mobileView){
-          mobileView.classList.remove('hero-loading');
-          mobileView.classList.add('hero-ready');
-        }
-      };
-      const applySingleHeroFrame = (src) => {
-        bg1.style.backgroundImage = `url(${src})`;
-        bg1.classList.add('active');
-        bg1.classList.remove('hidden');
-        if(bg2){
-          bg2.style.backgroundImage = `url(${src})`;
-          bg2.classList.remove('active');
-          bg2.classList.add('hidden');
-        }
-      };
-      const preloadAndApplyFirstFrame = (src) => {
-        let done = false;
-        const finish = () => {
-          if(done) return;
-          done = true;
-          applySingleHeroFrame(src);
-          requestAnimationFrame(markHeroReady);
-        };
-        try{
-          const img = new Image();
-          img.decoding = 'async';
-          img.onload = finish;
-          img.onerror = finish;
-          img.src = src;
-          if(img.complete){
-            finish();
-          } else {
-            window.setTimeout(finish, 1200);
-          }
-        } catch (error){
-          finish();
-        }
-      };
-
-      if(isMobile){
-        preloadAndApplyFirstFrame(heroMobile);
-        return;
-      }
-
-      heroIndex = 0;
-      preloadAndApplyFirstFrame(heroImages[heroIndex]);
-      if(!bg2) return;
-
-      if(heroImages.length <= 1){
-        bg2.style.backgroundImage = 'none';
-        return;
-      }
-
-      heroTimer = setInterval(() => {
-        heroIndex = (heroIndex + 1) % heroImages.length;
-
-        const next = heroImages[heroIndex];
-
-        if(bg1.classList.contains('active')){
-          bg2.style.backgroundImage = `url(${next})`;
-          bg2.classList.remove('hidden');
-          bg2.classList.add('active');
-          bg1.classList.remove('active');
-          bg1.classList.add('hidden');
-        } else {
-          bg1.style.backgroundImage = `url(${next})`;
-          bg1.classList.remove('hidden');
-          bg1.classList.add('active');
-          bg2.classList.remove('active');
-          bg2.classList.add('hidden');
-        }
-      }, 5500);
+      safeInvoke(ensureHeroBackgroundFlow(), 'initHero', [], null);
     }
 
     function applyHeroV3SimpleMode(){
@@ -1740,19 +1632,7 @@
     }
 
     function preloadHeroAssets(){
-      const heroAssets = getHeroAbAssets(heroAbVariant);
-      const heroImages = heroAssets.images;
-      const heroMobile = heroAssets.mobile;
-      const preloadList = [...heroImages, heroMobile].filter(Boolean);
-      preloadList.forEach((src) => {
-        try{
-          const img = new Image();
-          img.decoding = 'async';
-          img.src = src;
-        } catch (error){
-          // ignore preload failures
-        }
-      });
+      safeInvoke(ensureHeroBackgroundFlow(), 'preloadHeroAssets', [], null);
     }
 
     function ensureHeroAbFlow(){
@@ -1805,7 +1685,15 @@
         },
         safeInvoke,
         getViewMode: () => window.AC_VIEW_MODE,
-        applyHeroBenefitsLayoutExperiment,
+        heroBenefitsLayoutExperiment: HERO_BENEFITS_LAYOUT_EXPERIMENT,
+        heroBenefitsLayoutExperimentItems: HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS,
+        heroAbVariantLabels: HERO_AB_VARIANT_LABELS,
+        onHeroVariantChange: () => {
+          initHero();
+          const url = new URL(window.location.href);
+          url.searchParams.set('hero_ab', heroAbVariant);
+          window.history.replaceState({}, '', url.toString());
+        },
         resolveDesktopView: () => document.getElementById('desktopView'),
         resolveMobileView: () => document.getElementById('mobileView')
       });
@@ -1819,118 +1707,14 @@
       heroAbTimers = [];
     }
 
-    function getForcedHeroAbVariant(){
-      const search = getCurrentSearchParams();
-      const forcedRaw = String(search.get('hero_ab') || search.get('hero_mode') || '').trim();
-      const normalized = forcedRaw.toUpperCase();
-      if(normalized === 'A' || normalized === 'CONTROL') return 'A';
-      if(normalized === 'B' || normalized === 'POOL' || normalized === 'POOL_MOTION') return 'B';
-      return '';
-    }
-
-    function resolveHeroAbVariant(){
-      const forced = getForcedHeroAbVariant();
-      if(forced){
-        localStorage.setItem(HERO_AB_TEST_KEY, forced);
-        return forced;
-      }
-      localStorage.setItem(HERO_AB_TEST_KEY, 'B');
-      return 'B';
-    }
-
     function applyHeroAbAnimationForRoot(root){
       safeInvoke(ensureHeroAbFlow(), 'applyHeroAbAnimationForRoot', [root], null);
-    }
-
-    function applyHeroBenefitsLayoutExperiment(root){
-      if(!root) return;
-      const grid = root.querySelector('.hero-benefits-grid');
-      if(!grid) return;
-
-      if(!grid.dataset.heroBenefitsOriginalHtml){
-        grid.dataset.heroBenefitsOriginalHtml = grid.innerHTML;
-      }
-
-      if(!HERO_BENEFITS_LAYOUT_EXPERIMENT){
-        root.classList.remove('hero-benefits-exp-3');
-        grid.classList.remove('hero-benefits-grid--compact3');
-        if(grid.dataset.heroBenefitsOriginalHtml){
-          grid.innerHTML = grid.dataset.heroBenefitsOriginalHtml;
-        }
-        return;
-      }
-
-      root.classList.add('hero-benefits-exp-3');
-      grid.classList.add('hero-benefits-grid--compact3');
-      grid.innerHTML = HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS.map((item) => `
-        <article class="hero-benefit-card hero-benefit-card--compact">
-          <span class="hero-benefit-icon-wrap ${item.iconClass || ''}">
-            <img class="ac-icon hero-benefit-icon" src="${item.icon}" alt="" aria-hidden="true">
-          </span>
-          <strong>${item.title}</strong>
-        </article>
-      `).join('');
     }
 
     function applyHeroAbVariant(){
       safeInvoke(ensureHeroAbFlow(), 'applyHeroAbVariant', [], null);
     }
 
-    function initHeroAbDevPanel(){
-      const host = String(window.location.hostname || '').toLowerCase();
-      const isDevHost = (
-        host === 'localhost' ||
-        host === '127.0.0.1'
-      );
-      if(!isDevHost) return;
-      if(document.getElementById('heroAbDevPanel')) return;
-      const panel = document.createElement('div');
-      panel.id = 'heroAbDevPanel';
-      panel.className = 'hero-ab-dev-panel';
-      panel.innerHTML = `
-        <div class="hero-ab-dev-title">Hero A/B (Dev)</div>
-        <div class="hero-ab-dev-status">Current: <span data-hero-ab-current></span></div>
-        <div class="hero-ab-dev-modes">
-          <button type="button" class="hero-ab-dev-btn" data-hero-ab-set="A">A · ${HERO_AB_VARIANT_LABELS.A || 'A'}</button>
-          <button type="button" class="hero-ab-dev-btn" data-hero-ab-set="B">B · ${HERO_AB_VARIANT_LABELS.B || 'B'}</button>
-        </div>
-      `;
-      document.body.appendChild(panel);
-      const currentNode = panel.querySelector('[data-hero-ab-current]');
-      const syncPanelState = () => {
-        if(currentNode){
-          currentNode.textContent = HERO_AB_VARIANT_LABELS[heroAbVariant] || heroAbVariant;
-        }
-        panel.querySelectorAll('[data-hero-ab-set]').forEach((button) => {
-          const value = String(button.getAttribute('data-hero-ab-set') || '').toUpperCase();
-          button.classList.toggle('is-active', value === heroAbVariant);
-        });
-      };
-      syncPanelState();
-      panel.querySelectorAll('[data-hero-ab-set]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const next = String(btn.getAttribute('data-hero-ab-set') || '').toUpperCase();
-          if(next !== 'A' && next !== 'B') return;
-          if(next === heroAbVariant){
-            syncPanelState();
-            return;
-          }
-          heroAbVariant = next;
-          localStorage.setItem(HERO_AB_TEST_KEY, next);
-          const url = new URL(window.location.href);
-          url.searchParams.set('hero_ab', next);
-          window.history.replaceState({}, '', url.toString());
-          initHero();
-          applyHeroAbVariant();
-          syncPanelState();
-        });
-      });
-      trackOnce('hero_ab_dev_panel_shown_v1', {
-        test_id: HERO_AB_TEST_ID,
-        variant: heroAbVariant,
-        mode_label: HERO_AB_VARIANT_LABELS[heroAbVariant] || ''
-      });
-    }
 
     function openMedia(type, index){
       return safeInvoke(ensureModalMediaFlow(), 'openMedia', [type, index], null);
@@ -3521,153 +3305,47 @@
     }
 
     function clearVariantFlowFingerTimer(){
-      if(!variantFlowFingerTimer) return;
-      window.clearTimeout(variantFlowFingerTimer);
-      variantFlowFingerTimer = null;
+      return safeInvoke(ensureVariantFlow(), 'clearVariantFlowFingerTimer', [], null);
     }
 
     function waitVariantFlow(ms, runId){
-      return new Promise((resolve) => {
-        variantFlowFingerTimer = window.setTimeout(() => {
-          variantFlowFingerTimer = null;
-          resolve(runId === variantFlowRunId);
-        }, ms);
-      });
+      return safeInvoke(ensureVariantFlow(), 'waitVariantFlow', [ms, runId], Promise.resolve(false));
     }
 
     function ensureVariantFlowFinger(){
-      let node = document.getElementById('variantFlowFinger');
-      if(!node){
-        node = document.createElement('div');
-        node.id = 'variantFlowFinger';
-        node.className = 'variant-flow-finger';
-        node.setAttribute('aria-hidden', 'true');
-        document.body.appendChild(node);
-      }
-      if(!node.querySelector('.variant-flow-finger-glyph')){
-        node.innerHTML = `
-          <span class="variant-flow-finger-glyph" aria-hidden="true"></span>
-          <span class="variant-flow-finger-ripple" aria-hidden="true"></span>
-          <span class="variant-flow-finger-ripple delay" aria-hidden="true"></span>
-        `;
-      }
-      return node;
+      return safeInvoke(ensureVariantFlow(), 'ensureVariantFlowFinger', [], null);
     }
 
     function hideVariantFlowFinger(){
-      const node = document.getElementById('variantFlowFinger');
-      if(node){
-        node.classList.remove('visible', 'is-tapping');
-      }
-      document.querySelectorAll('.variant-flow-target').forEach((el) => {
-        el.classList.remove('variant-flow-target');
-      });
+      return safeInvoke(ensureVariantFlow(), 'hideVariantFlowFinger', [], null);
     }
 
     function stopVariantFlowScenario(){
-      variantFlowRunId += 1;
-      clearVariantFlowFingerTimer();
-      hideVariantFlowFinger();
+      return safeInvoke(ensureVariantFlow(), 'stopVariantFlowScenario', [], null);
     }
 
     function placeVariantFlowFinger(finger, targetEl){
-      if(!finger || !targetEl) return;
-      const rect = targetEl.getBoundingClientRect();
-      const x = rect.left + (rect.width * 0.5);
-      const y = rect.top + (rect.height * 0.5);
-      finger.style.setProperty('--variant-flow-x', `${Math.round(x)}px`);
-      finger.style.setProperty('--variant-flow-y', `${Math.round(y)}px`);
-      finger.classList.add('visible');
+      return safeInvoke(ensureVariantFlow(), 'placeVariantFlowFinger', [finger, targetEl], null);
     }
 
     async function runVariantFlowForTargets(targets, runId){
-      const finger = ensureVariantFlowFinger();
-      if(!finger || !targets.length) return;
-      for(const target of targets){
-        if(runId !== variantFlowRunId) return;
-        if(!target || !target.isConnected) continue;
-        document.querySelectorAll('.variant-flow-target').forEach((el) => el.classList.remove('variant-flow-target'));
-        target.classList.add('variant-flow-target');
-        placeVariantFlowFinger(finger, target);
-        const warmupOk = await waitVariantFlow(260, runId);
-        if(!warmupOk) return;
-        for(let tap = 0; tap < 3; tap += 1){
-          if(runId !== variantFlowRunId) return;
-          finger.classList.remove('is-tapping');
-          void finger.offsetWidth;
-          finger.classList.add('is-tapping');
-          const tapOk = await waitVariantFlow(360, runId);
-          if(!tapOk) return;
-          if(tap < 2){
-            const pauseOk = await waitVariantFlow(220, runId);
-            if(!pauseOk) return;
-          }
-        }
-        const settleOk = await waitVariantFlow(360, runId);
-        if(!settleOk) return;
-      }
+      return safeInvoke(ensureVariantFlow(), 'runVariantFlowForTargets', [targets, runId], Promise.resolve());
     }
 
     function getVariantFlowKey(){
-      const variant = heroVariantState || resolveHeroVariantFromUtm();
-      const tier = variant.tier || HERO_VARIANT_DEFAULT_TIER;
-      const mode = resolveVariantCoachMode(tier);
-      const view = resolveViewKey(state.previewView);
-      return `${tier}:${mode}:${view}`;
+      return safeInvoke(ensureVariantFlow(), 'getVariantFlowKey', [], '');
     }
 
     async function runVariantFlowScenario(){
-      if(!hasSelectedAge() || !!state.shiftId || getBookingStage() !== 2 || state.bookingCompleted){
-        hideVariantFlowFinger();
-        return;
-      }
-      const variant = heroVariantState || resolveHeroVariantFromUtm();
-      const tier = variant.tier || HERO_VARIANT_DEFAULT_TIER;
-      const mode = resolveVariantCoachMode(tier);
-      const runId = ++variantFlowRunId;
-      const flowKey = getVariantFlowKey();
-      if(variantFlowCompletedKey === flowKey){
-        return;
-      }
-      hideVariantFlowFinger();
-      const preWaitOk = await waitVariantFlow(320, runId);
-      if(!preWaitOk || runId !== variantFlowRunId) return;
-
-      if(mode === 'info'){
-        const cfg = getPrimaryBookingViewConfig();
-        const host = document.getElementById(cfg.shiftOptionsId || '');
-        const infoButtons = (host && [...host.querySelectorAll('[data-action="toggle-shift-about"]')].slice(0, 2)) || [];
-        await runVariantFlowForTargets(infoButtons, runId);
-      } else if(state.previewView === 'mobile'){
-        setHeroMenuOpen(true);
-        const openOk = await waitVariantFlow(280, runId);
-        if(!openOk || runId !== variantFlowRunId) return;
-        const shiftsMenuBtn = document.querySelector('#serviceMenu [data-nav="section-programs"]');
-        await runVariantFlowForTargets([].concat(shiftsMenuBtn || []), runId);
-        if(runId === variantFlowRunId){
-          setHeroMenuOpen(false);
-        }
-      } else {
-        const cfg = getPrimaryBookingViewConfig();
-        const card = document.getElementById(cfg.cardId || '');
-        const allShiftsBtn = card?.querySelector('.booking-all-shifts-link');
-        await runVariantFlowForTargets([].concat(allShiftsBtn || []), runId);
-      }
-
-      if(runId === variantFlowRunId){
-        hideVariantFlowFinger();
-        variantFlowCompletedKey = flowKey;
-      }
+      return safeInvoke(ensureVariantFlow(), 'runVariantFlowScenario', [], Promise.resolve());
     }
 
     function scheduleVariantFlowScenario(){
-      if(HERO_V3_SIMPLE_ENABLED || !hasSelectedAge() || !!state.shiftId || getBookingStage() !== 2 || state.bookingCompleted){
+      if(HERO_V3_SIMPLE_ENABLED){
         stopVariantFlowScenario();
         return;
       }
-      runVariantFlowScenario().catch(() => {
-        stopVariantFlowScenario();
-      });
+      return safeInvoke(ensureVariantFlow(), 'scheduleVariantFlowScenario', [], null);
     }
 
     function resetAgeSelection(){
@@ -4787,7 +4465,7 @@
       bookingMobileIds: BOOKING_VIEWS.mobile
     }], null);
 
-    heroAbVariant = resolveHeroAbVariant();
+    heroAbVariant = safeInvoke(ensureHeroAbFlow(), 'resolveHeroAbVariant', [], heroAbVariant) || heroAbVariant;
     applyHeroV3SimpleMode();
     preloadHeroAssets();
     initHero();
@@ -4814,7 +4492,7 @@
     const deferredInit = () => {
       injectHeroSeasonOfferCta();
       initFloatingContactsWidget();
-      initHeroAbDevPanel();
+      safeInvoke(ensureHeroAbFlow(), 'initHeroAbDevPanel', [], null);
       track('page_view', {
         view: state.view || 'desktop',
         desktop_mode: state.desktopMode || '',

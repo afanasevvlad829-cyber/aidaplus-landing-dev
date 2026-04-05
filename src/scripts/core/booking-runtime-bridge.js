@@ -177,6 +177,15 @@
       }, function(){ return 1; });
     }
 
+    function normalizeInitialState(overrides){
+      var options = overrides || {};
+      var state = resolveState(options);
+      return invoke('normalizeInitialState', {
+        state,
+        useDesktopBaseForMobile: !!options.useDesktopBaseForMobile
+      }, function(){ return { changed: false }; });
+    }
+
 function runOfferSearch(overrides){
       var options = overrides || {};
       var state = resolveState(options);
@@ -288,6 +297,7 @@ function runOfferSearch(overrides){
       selectShift,
       getPrimaryActionState,
       getStepState,
+      normalizeInitialState,
       handlePrimaryCTA,
       runOfferSearch,
       openOfferCheck,
