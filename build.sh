@@ -29,7 +29,7 @@ css_path = root / "src" / "styles" / "main.css"
 script_paths = []
 config_dir = root / "src" / "scripts" / "config"
 if config_dir.exists():
-    script_paths.extend(sorted(config_dir.glob("*.js")))
+    script_paths.extend(sorted(config_dir.rglob("*.js")))
 
 script_paths.extend([
     root / "src" / "scripts" / "core" / "view-mode.js",
