@@ -70,6 +70,24 @@
       js: Object.freeze({ start: 10, penalties: Object.freeze({}) }),
       debt: Object.freeze({ start: 0, increments: Object.freeze({}) })
     });
+    const VIDEO_SOURCE_LABELS = Object.freeze({
+      genericSourceName: 'источнике',
+      vkVideoSourceName: 'VK Видео'
+    });
+    const AGE_LABELS = Object.freeze({
+      '7-9': '7–9 лет',
+      '10-12': '10–12 лет',
+      '13-14': '13–14 лет'
+    });
+    const PHOTO_CATEGORY_LABELS = Object.freeze({
+      pool: 'Бассейн',
+      sport: 'Спорт',
+      study: 'Учёба',
+      food: 'Питание',
+      all: 'Атмосфера',
+      camp: 'Атмосфера',
+      stay: 'Размещение'
+    });
     const AIDACAMP_RUNTIME = (window.__AIDACAMP_RUNTIME && typeof window.__AIDACAMP_RUNTIME === 'object')
       ? window.__AIDACAMP_RUNTIME
       : {};
@@ -354,11 +372,7 @@
       const create = window.AC_FEATURES?.videoMetaFlow?.create;
       if(typeof create !== 'function') return null;
       videoMetaFlowApi = create({
-        mediaText: (key) => {
-          if(key === 'genericSourceName') return 'источнике';
-          if(key === 'vkVideoSourceName') return 'VK Видео';
-          return '';
-        },
+        mediaText: (key) => VIDEO_SOURCE_LABELS[key] || '',
         mediaContent,
         videoMetaCacheKey: videoMetaCacheKeyCfg,
         videoMetaCacheTtlMs: VIDEO_META_CACHE_TTL_MS,
@@ -1562,21 +1576,11 @@
     }
 
     function ageLabel(value){
-      if(value === '7-9') return '7–9 лет';
-      if(value === '10-12') return '10–12 лет';
-      if(value === '13-14') return '13–14 лет';
-      return '—';
+      return AGE_LABELS[value] || '—';
     }
 
     function photoCatLabel(cat){
-      if(cat === 'pool') return 'Бассейн';
-      if(cat === 'sport') return 'Спорт';
-      if(cat === 'study') return 'Учёба';
-      if(cat === 'food') return 'Питание';
-      if(cat === 'all') return 'Атмосфера';
-      if(cat === 'camp') return 'Атмосфера';
-      if(cat === 'stay') return 'Размещение';
-      return cat;
+      return PHOTO_CATEGORY_LABELS[cat] || cat;
     }
 
     function getStayGallery(){
@@ -1718,22 +1722,15 @@
     let bookingCardMinHeightFrame = 0;
 
     function getBookingViewConfig(viewKey){
-      if(viewKey === 'mobile') return bookingViewsCfg.mobile;
-      return bookingViewsCfg.desktop;
+      return bookingViewsCfg[viewKey] || bookingViewsCfg.desktop;
     }
 
     function getRenderableBookingViewKeys(){
-      if(useDesktopBaseForMobileCfg){
-        return ['desktop'];
-      }
-      return ['desktop', 'mobile'];
+      return (useDesktopBaseForMobileCfg && ['desktop']) || ['desktop', 'mobile'];
     }
 
     function getActiveBookingViewKeys(){
-      if(state.previewView === 'mobile' && !useDesktopBaseForMobileCfg){
-        return ['mobile'];
-      }
-      return ['desktop'];
+      return ((state.previewView === 'mobile' && !useDesktopBaseForMobileCfg) && ['mobile']) || ['desktop'];
     }
 
     function getPrimaryBookingViewKey(){
@@ -1803,16 +1800,11 @@
     }
 
     function resolveStage2VerticalAlign(value){
-      if(value === 'center') return bookingStage2VerticalAlignCfg.center;
-      if(value === 'bottom') return bookingStage2VerticalAlignCfg.bottom;
-      return bookingStage2VerticalAlignCfg.top;
+      return bookingStage2VerticalAlignCfg[value] || bookingStage2VerticalAlignCfg.top;
     }
 
     function resolveStage2HorizontalAlign(value){
-      if(value === 'left') return bookingStage2HorizontalAlignCfg.left;
-      if(value === 'center') return bookingStage2HorizontalAlignCfg.center;
-      if(value === 'right') return bookingStage2HorizontalAlignCfg.right;
-      return bookingStage2HorizontalAlignCfg.stretch;
+      return bookingStage2HorizontalAlignCfg[value] || bookingStage2HorizontalAlignCfg.stretch;
     }
 
     function applyBookingStage2Alignment(viewCfg){

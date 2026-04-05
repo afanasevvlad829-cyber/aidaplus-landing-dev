@@ -1,6 +1,6 @@
 # CODE_READY Pre-Report (No Rollout)
 
-Generated: 2026-04-05 07:47 MSK
+Generated: 2026-04-05 07:51 MSK
 
 ## Status
 
@@ -12,11 +12,11 @@ Generated: 2026-04-05 07:47 MSK
 ## KPI Snapshot
 
 - `css_duplicate_selectors = 8`
-- `js_if_count = 154`
+- `js_if_count = 134`
 - `js_ternary_count = 13`
 - `js_state_mutations = 0`
 - `dist_bytes = 56263`
-- `main_js_lines = 2863`
+- `main_js_lines = 2855`
 
 ## Ideal Targets (Zero Legacy cycle)
 
