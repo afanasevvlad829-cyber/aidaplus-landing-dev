@@ -230,6 +230,7 @@
     let offerFlowApi = null;
     let actionDispatcherApi = null;
     let bookingInlineLeadApi = null;
+    let bookingInlineRuntimeFlowApi = null;
     let mediaGestureBindingsApi = null;
     let globalUiBindingsApi = null;
     let docsFlowApi = null;
@@ -240,6 +241,8 @@
     let runtimeQualityOrchestratorApi = null;
     let bookingRuntimeBridgeApi = null;
     let bookingCalendarRuntimeFlowApi = null;
+    let runtimeActionFlowApi = null;
+    let runtimeInitFlowApi = null;
     let leadNotifyFlowApi = null;
     let heroNavFlowApi = null;
     let mainHelpersApi = null;
@@ -301,7 +304,7 @@
         resolveHeroVariantFromUtm,
         getVariantFlowView: () => resolveViewKey(state.previewView),
         getPrimaryBookingViewConfig,
-        setHeroMenuOpen,
+        setHeroMenuOpen: runtimeInvoke.setHeroMenuOpen,
         getHeroVariantState: () => heroVariantState,
         getDefaultTier: () => HERO_VARIANT_DEFAULT_TIER,
         getFingerTimer: () => variantFlowFingerTimer,
@@ -326,14 +329,14 @@
         bookingText,
         calendarWeekdaysShort: () => CALENDAR_WEEKDAYS_SHORT,
         calendarMonthNames: () => CALENDAR_MONTH_NAMES,
-        closeTransientModals,
+        closeTransientModals: runtimeInvoke.closeTransientModals,
         emitModularEvent,
         track,
         getShiftOptionPanels: () => shiftOptionPanels,
         setShiftOptionPanels: (nextPanels) => {
           shiftOptionPanels = nextPanels;
         },
-        renderShiftOptions
+        renderShiftOptions: runtimeInvoke.renderShiftOptions
       }))) || null;
     }
 
@@ -357,8 +360,8 @@
           )
         ),
         compactModalSections: compactModalSectionsCfg,
-        openSectionModal,
-        buildLegalDocUrl
+        openSectionModal: runtimeInvoke.openSectionModal,
+        buildLegalDocUrl: runtimeInvoke.buildLegalDocUrl
       }))) || null;
     }
 
@@ -384,10 +387,10 @@
         getState: () => state,
         getMediaContent: () => mediaContent,
         photoCatLabel,
-        contactIconMarkup,
-        socialBadgeMark,
-        socialDisplayName,
-        faqGlyph,
+        contactIconMarkup: runtimeInvoke.contactIconMarkup,
+        socialBadgeMark: runtimeInvoke.socialBadgeMark,
+        socialDisplayName: runtimeInvoke.socialDisplayName,
+        faqGlyph: runtimeInvoke.faqGlyph,
         bookingText,
         setPhotoLists: (list = []) => {
           const next = cloneArrayOrEmpty(list);
@@ -482,7 +485,9 @@
         syncBookingHints,
         updateBookingScarcityUi,
         scheduleBookingCardMinHeightSync,
-        closeInlineLead
+        closeInlineLead: (scope) => {
+          return safeInvoke(ensureBookingInlineRuntimeFlow(), 'closeInlineLead', [scope], null);
+        }
       }))) || null;
     }
 
@@ -563,8 +568,8 @@
         heroMicroModes: heroMicroModesCfg,
         offerModalThemes: offerModalThemesCfg,
         offerLayoutModes: offerLayoutModesCfg,
-        setHeroMenuOpen,
-        closeSectionModal,
+        setHeroMenuOpen: runtimeInvoke.setHeroMenuOpen,
+        closeSectionModal: runtimeInvoke.closeSectionModal,
         applyHeroAbVariant,
         applyMobileTemplatesToDesktopSections,
         renderMediaSections,
@@ -582,8 +587,8 @@
       return heroV3SimpleFlowApi || (typeof create === 'function' && (heroV3SimpleFlowApi = create({
         document,
         getEnabled: () => HERO_V3_SIMPLE_ENABLED,
-        setHeroPhoneDropdownOpen,
-        navigateToSection
+        setHeroPhoneDropdownOpen: runtimeInvoke.setHeroPhoneDropdownOpen,
+        navigateToSection: runtimeInvoke.navigateToSection
       }))) || null;
     }
 
@@ -661,14 +666,7 @@
           offerTimeoutIds = (Array.isArray(next) && next) || [];
         },
         openInlineLead: (scope) => {
-          safeInvoke(ensureBookingInlineLeadApi(), 'openInlineLead', [{
-            scope,
-            state,
-            document,
-            track,
-            selectedShiftPayload,
-            buildHeroVariantMeta
-          }], null);
+          safeInvoke(ensureBookingInlineRuntimeFlow(), 'openInlineLead', [scope], null);
         },
         useDesktopBaseForMobile: useDesktopBaseForMobileCfg,
         simpleModeEnabled: HERO_V3_SIMPLE_ENABLED,
@@ -686,14 +684,14 @@
         setActivePhotoList: (next = []) => {
           activePhotoList = cloneArrayOrEmpty(next);
         },
-        openMedia,
+        openMedia: runtimeInvoke.openMedia,
         getStayGallery,
-        openVideo,
-        scrollVideoCarousel,
+        openVideo: runtimeInvoke.openVideo,
+        scrollVideoCarousel: runtimeInvoke.scrollVideoCarousel,
         openShiftAboutModal,
         openCalendar,
         toggleShiftOptionPanel,
-        navigateToSection,
+        navigateToSection: runtimeInvoke.navigateToSection,
         focusMobileAgeGate,
         dismissSummaryBarTemporarily,
         applyStatePatch: (patch = {}) => {
@@ -703,19 +701,19 @@
         persist,
         syncMobileDocsExpandedUi,
         renderDesktopMobileDocsBlock,
-        scrollTeamCarousel,
+        scrollTeamCarousel: runtimeInvoke.scrollTeamCarousel,
         openSeasonCalendar,
         handlePrimaryCTA,
         resetAgeSelection,
         resetShiftSelection,
-        openResetBookingConfirmModal,
+        openResetBookingConfirmModal: runtimeInvoke.openResetBookingConfirmModal,
         bumpOfferRunId: () => {
           offerRunId += 1;
         },
         clearOfferTimeout,
         resetOfferProgressUI,
         saveOfferAndClose,
-        openNoticeModal,
+        openNoticeModal: runtimeInvoke.openNoticeModal,
         renderAll,
         syncGuidedState,
         buildBookingSummaryHtml,
@@ -724,25 +722,59 @@
         track,
         selectedShiftPayload,
         buildHeroVariantMeta,
-        submitLead,
-        closeSuccessModal,
-        closeNoticeModal,
+        submitLead: (scope = 'drawer') => {
+          return safeInvoke(ensureBookingInlineRuntimeFlow(), 'submitLead', [scope], null);
+        },
+        closeSuccessModal: runtimeInvoke.closeSuccessModal,
+        closeNoticeModal: runtimeInvoke.closeNoticeModal,
         hideVariantCoachBadge,
         getPrimaryBookingViewConfig,
         getNoticeConfirmHandler: () => safeInvoke(ensureOverlayFlow(), 'getNoticeConfirmHandler', [], null),
         closeCalendar,
-        closeSectionModal,
-        closeVideo,
+        closeSectionModal: runtimeInvoke.closeSectionModal,
+        closeVideo: runtimeInvoke.closeVideo,
         buildInviteClipboardText,
-        setHeroMenuOpen,
-        isHeroMenuOpen,
-        setHeroPhoneDropdownOpen,
-        isHeroPhoneDropdownOpen
+        setHeroMenuOpen: runtimeInvoke.setHeroMenuOpen,
+        isHeroMenuOpen: runtimeInvoke.isHeroMenuOpen,
+        setHeroPhoneDropdownOpen: runtimeInvoke.setHeroPhoneDropdownOpen,
+        isHeroPhoneDropdownOpen: runtimeInvoke.isHeroPhoneDropdownOpen
       }))) || null;
     }
 
     function ensureBookingInlineLeadApi(){
       return bookingInlineLeadApi || (bookingInlineLeadApi = asFeatureApi(window.AC_FEATURES?.bookingInlineLead || null));
+    }
+
+    function ensureBookingInlineRuntimeFlow(){
+      const create = window.AC_FEATURES?.bookingInlineRuntimeFlow?.create;
+      return bookingInlineRuntimeFlowApi || (typeof create === 'function' && (bookingInlineRuntimeFlowApi = create({
+        safeInvoke,
+        state,
+        shifts,
+        document,
+        getBookingInlineLeadApi: ensureBookingInlineLeadApi,
+        getLeadSubmitInProgress: () => leadSubmitInProgress,
+        setLeadSubmitInProgress: (next) => {
+          leadSubmitInProgress = !!next;
+        },
+        syncGuidedState,
+        openNoticeModal: runtimeInvoke.openNoticeModal,
+        persist,
+        labelAge,
+        formatPrice,
+        buildAbMeta,
+        track,
+        selectedShiftPayload,
+        buildHeroVariantMeta,
+        notifyLead,
+        renderSummary,
+        renderBookingPanels,
+        updateSummaryBarVisibility,
+        isAdminDebugSession,
+        isOfferActive,
+        startTimer,
+        buildBookingSummaryHtml
+      }))) || null;
     }
 
     function ensureOverlayFlow(){
@@ -804,8 +836,8 @@
         showHint,
         nudgeUserToNextStep,
         selectShift,
-        closeTransientModals,
-        applyCompactSectionModalLayout,
+        closeTransientModals: runtimeInvoke.closeTransientModals,
+        applyCompactSectionModalLayout: runtimeInvoke.applyCompactSectionModalLayout,
         resolveViewKey,
         resolveShiftOptionsTargetId,
         getShiftOptionPanels: () => shiftOptionPanels
@@ -822,6 +854,37 @@
       }))) || null;
     }
 
+    function ensureRuntimeActionFlow(){
+      const create = window.AC_FEATURES?.runtimeActionFlow?.create;
+      return runtimeActionFlowApi || (typeof create === 'function' && (runtimeActionFlowApi = create({
+        document,
+        safeInvoke,
+        getActionDispatcher: ensureActionDispatcher
+      }))) || null;
+    }
+
+    function ensureRuntimeInitFlow(){
+      const create = window.AC_FEATURES?.runtimeInitFlow?.create;
+      return runtimeInitFlowApi || (typeof create === 'function' && (runtimeInitFlowApi = create({
+        setTimeoutFn: window.setTimeout.bind(window),
+        track,
+        getState: () => state,
+        runDeferredTasks: () => {
+          injectHeroSeasonOfferCta();
+          initFloatingContactsWidget();
+          safeInvoke(ensureHeroAbFlow(), 'initHeroAbDevPanel', [], null);
+          safeInvoke(ensureUiInitFlow(), 'initScrollTracking', [], null);
+          safeInvoke(ensureUiInitFlow(), 'initSummaryBarViewportSync', [], null);
+          safeInvoke(ensureUiInitFlow(), 'initSectionViewTracking', [], null);
+          refreshVideoMeta({force:true});
+          safeInvoke(ensureVideoMetaFlow(), 'scheduleVideoMetaRefresh', [], null);
+          safeInvoke(ensureBookingHintFlow(), 'scheduleDesktopAgeTapHint', [], null);
+          safeInvoke(ensureRuntimeQualityOrchestrator(), 'runAll', [], null)
+            || QUALITY_PIPELINE_NAMESPACE.runAll();
+        }
+      }))) || null;
+    }
+
     function ensureHeroNavFlow(){
       const create = window.AC_FEATURES?.heroNavFlow?.create;
       return heroNavFlowApi || (typeof create === 'function' && (heroNavFlowApi = create({
@@ -832,7 +895,7 @@
         setMediaIndex: (next) => {
           mediaIndex = Number(next) || 0;
         },
-        renderMediaViewer,
+        renderMediaViewer: runtimeInvoke.renderMediaViewer,
         resolveScopeRoot,
         openSectionModalBase: (sectionId) => safeInvoke(ensureModalMediaFlow(), 'openSectionModal', [sectionId], false),
         trackFaqOpen
@@ -898,23 +961,23 @@
       });
     }
 
-    function getCurrentSearchParams(){
-      return safeInvoke(ensureTelemetryFlow(), 'getCurrentSearchParams', [], () => {
+    const getCurrentSearchParams = () => (
+      safeInvoke(ensureTelemetryFlow(), 'getCurrentSearchParams', [], () => {
         try {
           return new URLSearchParams(window.location.search || '');
         } catch (error){
           return new URLSearchParams('');
         }
-      });
-    }
+      })
+    );
 
-    function buildLegalDocUrl(hash = ''){
-      return safeInvoke(ensureTelemetryFlow(), 'buildLegalDocUrl', [hash], 'legal.html');
-    }
+    const buildLegalDocUrl = (hash = '') => (
+      safeInvoke(ensureTelemetryFlow(), 'buildLegalDocUrl', [hash], 'legal.html')
+    );
 
-    function syncLegalDocLinks(scope = document){
-      return safeInvoke(ensureTelemetryFlow(), 'syncLegalDocLinks', [scope], null);
-    }
+    const syncLegalDocLinks = (scope = document) => (
+      safeInvoke(ensureTelemetryFlow(), 'syncLegalDocLinks', [scope], null)
+    );
 
     function buildHeroVariantMeta(extra = {}){
       const fallbackVariant = heroVariantState || resolveHeroVariantFromUtm();
@@ -943,31 +1006,31 @@
       return safeInvoke(ensureHeroVariantFlow(), 'resolveHeroVariantFromUtm', [], fallback);
     }
 
-    function applyHeroVariantCopy(){
-      return safeInvoke(ensureHeroVariantFlow(), 'applyHeroVariantCopy', [], () => {
+    const applyHeroVariantCopy = () => (
+      safeInvoke(ensureHeroVariantFlow(), 'applyHeroVariantCopy', [], () => {
         const variant = heroVariantState || resolveHeroVariantFromUtm();
         const copy = variant.copy || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
         document.querySelectorAll('.hero-slogan').forEach((node) => {
           if(node) node.textContent = copy.title;
         });
-      });
-    }
+      })
+    );
 
-    function injectHeroSeasonOfferCta(){
-      return safeInvoke(ensureHeroVariantFlow(), 'injectHeroSeasonOfferCta');
-    }
+    const injectHeroSeasonOfferCta = () => (
+      safeInvoke(ensureHeroVariantFlow(), 'injectHeroSeasonOfferCta')
+    );
 
-    function formatVariantHint(template){
-      return safeInvoke(ensureHeroVariantFlow(), 'formatVariantHint', [template], () => {
+    const formatVariantHint = (template) => (
+      safeInvoke(ensureHeroVariantFlow(), 'formatVariantHint', [template], () => {
         const source = String(template || '').trim();
         if(!source) return '';
         return source.replace('{{age}}', ageLabel(state.age || '10-12'));
-      });
-    }
+      })
+    );
 
-    function clearVariantCoachReminderTimer(){
-      return safeInvoke(ensureHeroVariantFlow(), 'clearVariantCoachReminderTimer');
-    }
+    const clearVariantCoachReminderTimer = () => (
+      safeInvoke(ensureHeroVariantFlow(), 'clearVariantCoachReminderTimer')
+    );
 
     function syncVariantBookingHint(viewCfg){
       const cfg = resolveBookingViewCfg(viewCfg);
@@ -989,8 +1052,8 @@
       return safeInvoke(ensureHeroVariantFlow(), 'syncVariantCoachBadge', [cfg], null);
     }
 
-    function initHeroVariantPersonalization(){
-      return safeInvoke(ensureHeroVariantFlow(), 'initHeroVariantPersonalization', [], () => {
+    const initHeroVariantPersonalization = () => (
+      safeInvoke(ensureHeroVariantFlow(), 'initHeroVariantPersonalization', [], () => {
         heroVariantState = resolveHeroVariantFromUtm();
         const fallbackReason = heroVariantState.fallbackReason || '';
         trackOnce('hero_variant_shown_new', buildHeroVariantMeta());
@@ -998,8 +1061,8 @@
           trackOnce('hero_variant_fallback_new', buildHeroVariantMeta({reason:fallbackReason}));
         }
         applyHeroVariantCopy();
-      });
-    }
+      })
+    );
 
     function trackOnce(event, params = {}){
       const key = `${event}:${JSON.stringify(params)}`;
@@ -1042,59 +1105,59 @@
       }))) || null;
     }
 
-    function runGuardrails(){
-      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'runGuardrails', [], {
+    const runGuardrails = () => (
+      safeInvoke(ensureRuntimeQualityOrchestrator(), 'runGuardrails', [], {
         ok: false,
         policy: ARCHITECTURE_POLICY.id
-      });
-    }
+      })
+    );
 
-    function runQualityBaselineAudit(){
-      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'runQualityBaselineAudit', [], null);
-    }
+    const runQualityBaselineAudit = () => (
+      safeInvoke(ensureRuntimeQualityOrchestrator(), 'runQualityBaselineAudit', [], null)
+    );
 
-    function evaluateSoftQualityGates(snapshot){
-      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'evaluateSoftQualityGates', [snapshot], {
+    const evaluateSoftQualityGates = (snapshot) => (
+      safeInvoke(ensureRuntimeQualityOrchestrator(), 'evaluateSoftQualityGates', [snapshot], {
         ok: false,
         warnings: ['pipeline_unavailable']
-      });
-    }
+      })
+    );
 
-    function buildDebtRegister(guardrails, baseline, gates){
-      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'buildDebtRegister', [guardrails, baseline, gates], {
+    const buildDebtRegister = (guardrails, baseline, gates) => (
+      safeInvoke(ensureRuntimeQualityOrchestrator(), 'buildDebtRegister', [guardrails, baseline, gates], {
         debtItems: [],
         pressureScore: 0,
         pressureLevel: 'low'
-      });
-    }
+      })
+    );
 
-    function buildRuntimeQualityScore(baseline, gates, debtRegister){
-      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'buildRuntimeQualityScore', [baseline, gates, debtRegister], {
+    const buildRuntimeQualityScore = (baseline, gates, debtRegister) => (
+      safeInvoke(ensureRuntimeQualityOrchestrator(), 'buildRuntimeQualityScore', [baseline, gates, debtRegister], {
         css: 0,
         js: 0,
         techDebt: 0,
         monolithness: 0
-      });
-    }
+      })
+    );
 
-    function buildQualityTrendSummary(delta){
-      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'buildQualityTrendSummary', [delta], {
+    const buildQualityTrendSummary = (delta) => (
+      safeInvoke(ensureRuntimeQualityOrchestrator(), 'buildQualityTrendSummary', [delta], {
         trend: 'flat',
         better: 0,
         worse: 0
-      });
-    }
+      })
+    );
 
-    function runReleaseIntegrityChecks(){
-      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'runReleaseIntegrityChecks', [], {
+    const runReleaseIntegrityChecks = () => (
+      safeInvoke(ensureRuntimeQualityOrchestrator(), 'runReleaseIntegrityChecks', [], {
         ok: false,
         missing: ['runtime_quality_pipeline']
-      });
-    }
+      })
+    );
 
-    function printRuntimeStatusReport(){
-      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'printRuntimeStatusReport', [], '');
-    }
+    const printRuntimeStatusReport = () => (
+      safeInvoke(ensureRuntimeQualityOrchestrator(), 'printRuntimeStatusReport', [], '')
+    );
 
     const QUALITY_PIPELINE_NAMESPACE = Object.freeze({
       runGuardrails,
@@ -1135,6 +1198,110 @@
       }
       return typeof fallback === 'function' ? fallback(...list) : fallback;
     }
+
+    const runtimeInvoke = Object.freeze({
+      openMedia: (type, index) => safeInvoke(ensureModalMediaFlow(), 'openMedia', [type, index], null),
+      closeMedia: () => safeInvoke(ensureModalMediaFlow(), 'closeMedia', [], null),
+      closeTransientModals: (except = '', options = {}) => safeInvoke(ensureModalMediaFlow(), 'closeTransientModals', [except, options], null),
+      openVideo: (url) => safeInvoke(ensureModalMediaFlow(), 'openVideo', [url], null),
+      closeVideo: () => safeInvoke(ensureModalMediaFlow(), 'closeVideo', [], null),
+      closeSectionModal: () => safeInvoke(ensureModalMediaFlow(), 'closeSectionModal', [], null),
+      setHeroMenuOpen: (isOpen) => safeInvoke(ensureHeroNavFlow(), 'setHeroMenuOpen', [isOpen], null),
+      isHeroMenuOpen: () => safeInvoke(ensureHeroNavFlow(), 'isHeroMenuOpen', [], false),
+      setHeroPhoneDropdownOpen: (isOpen) => safeInvoke(ensureHeroNavFlow(), 'setHeroPhoneDropdownOpen', [isOpen], false),
+      isHeroPhoneDropdownOpen: () => safeInvoke(ensureHeroNavFlow(), 'isHeroPhoneDropdownOpen', [], false),
+      scrollVideoCarousel: (direction = 1, scopeRoot = null) => safeInvoke(ensureHeroNavFlow(), 'scrollVideoCarousel', [direction, scopeRoot], null),
+      scrollTeamCarousel: (direction = 1, scopeRoot = null) => safeInvoke(ensureHeroNavFlow(), 'scrollTeamCarousel', [direction, scopeRoot], null),
+      applyCompactSectionModalLayout: () => safeInvoke(ensureModalMediaFlow(), 'applyCompactSectionModalLayout', [], null),
+      openSectionModal: (sectionId) => !!safeInvoke(ensureHeroNavFlow(), 'openSectionModal', [sectionId], false),
+      renderMediaViewer: () => safeInvoke(ensureModalMediaFlow(), 'renderMediaViewer', [], null),
+      getActiveMediaList: () => safeInvoke(ensureHeroNavFlow(), 'getActiveMediaList', [], []),
+      nextMedia: () => safeInvoke(ensureHeroNavFlow(), 'nextMedia', [], null),
+      prevMedia: () => safeInvoke(ensureHeroNavFlow(), 'prevMedia', [], null),
+      getPhotoTagsByFilter: (filter) => safeInvoke(ensureHeroNavFlow(), 'getPhotoTagsByFilter', [filter], ['all', 'camp']),
+      getPhotosForActiveFilter: (filter = state.photoFilter) => safeInvoke(ensureHeroNavFlow(), 'getPhotosForActiveFilter', [filter], mediaContent.photos.slice()),
+      openSuccessModal: (deliveryResult) => safeInvoke(ensureOverlayFlow(), 'openSuccessModal', [deliveryResult], null),
+      closeSuccessModal: () => safeInvoke(ensureOverlayFlow(), 'closeSuccessModal', [], null),
+      openNoticeModal: (message, title = 'Проверьте данные') => safeInvoke(ensureOverlayFlow(), 'openNoticeModal', [message, title], null),
+      closeNoticeModal: () => safeInvoke(ensureOverlayFlow(), 'closeNoticeModal', [], null),
+      openResetBookingConfirmModal: () => safeInvoke(ensureOverlayFlow(), 'openResetBookingConfirmModal', [], null),
+      scrollToSection: (id) => safeInvoke(ensureNavigationFlow(), 'scrollToSection', [id], false),
+      navigateToSection: (id) => safeInvoke(ensureNavigationFlow(), 'navigateToSection', [id], null),
+      getResolvedPrimaryActionText: (actionState, shift) => safeInvoke(ensureBookingRuntimeBridge(), 'getResolvedPrimaryActionText', [{
+        state,
+        actionState,
+        shift,
+        formatPrice
+      }], ''),
+      renderGuidedState: (viewCfg) => safeInvoke(ensureGuidedStateFlow(), 'renderGuidedState', [viewCfg], null),
+      pulseNode: (node) => safeInvoke(ensureBookingHintFlow(), 'pulseNode', [node], null),
+      nudgeUserToNextStep: (message = 'Сначала завершите предыдущий шаг.') => (
+        safeInvoke(ensureBookingHintFlow(), 'nudgeUserToNextStep', [message], null)
+      ),
+      showHint: (message, requiredStep = '') => safeInvoke(ensureBookingHintFlow(), 'showHint', [message, requiredStep], null),
+      syncBookingHints: () => safeInvoke(ensureBookingHintFlow(), 'syncBookingHints', [], null),
+      stopBookingStage1TitleTypewriter: () => safeInvoke(ensureBookingViewFlow(), 'stopBookingStage1TitleTypewriter', [], null),
+      runBookingStage1TitleTypewriter: (target, text) => safeInvoke(ensureBookingViewFlow(), 'runBookingStage1TitleTypewriter', [target, text], null),
+      renderBookingInfo: (viewCfg) => safeInvoke(ensureBookingViewFlow(), 'renderBookingInfo', [viewCfg], null),
+      renderBookingPanels: () => safeInvoke(ensureBookingViewFlow(), 'renderBookingPanels', [], null),
+      getViewportPreviewView: () => safeInvoke(ensureViewModeFlow(), 'getViewportPreviewView', [], () => {
+        return (window.matchMedia('(max-width: 900px)').matches && 'mobile') || 'desktop';
+      }),
+      switchView: (view) => safeInvoke(ensureViewModeFlow(), 'switchView', [view], null),
+      toggleShiftOptionPanel: (viewKey, panelType, shiftId) => (
+        safeInvoke(ensureBookingCalendarRuntimeFlow(), 'toggleShiftOptionPanel', [viewKey, panelType, shiftId], null)
+      ),
+      clearShiftOptionPanels: () => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'clearShiftOptionPanels', [], null),
+      parseShiftDate: (dateStr) => safeInvoke(ensureCalendarFlow(), 'parseShiftDate', [dateStr], () => {
+        const m = String(dateStr || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if(!m) return null;
+        return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+      }),
+      renderCalendar: (shift) => safeInvoke(ensureCalendarFlow(), 'renderCalendar', [shift], null),
+      renderSeasonCalendar: () => safeInvoke(ensureCalendarFlow(), 'renderSeasonCalendar', [], null),
+      openCalendar: (shiftId) => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openCalendar', [shiftId], null),
+      openSeasonCalendar: () => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openSeasonCalendar', [], null),
+      closeCalendar: () => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'closeCalendar', [], null),
+      selectedShiftPayload: () => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'selectedShiftPayload', [], () => ({})),
+      clearOfferTimeout: () => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'clearOfferTimeout', [], null),
+      resetOfferState: ({preserveShift = true} = {}) => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'resetOfferState', [{preserveShift}], null),
+      buildBookingSummaryHtml: ({showTimer = false} = {}) => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'buildBookingSummaryHtml', [{showTimer}], ''),
+      bindAgeTabs: (rootId) => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'bindAgeTabs', [rootId], null),
+      focusMobileAgeGate: () => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'focusMobileAgeGate', [], null),
+      resetAgeSelection: () => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'resetAgeSelection', [], null),
+      resetShiftSelection: () => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'resetShiftSelection', [], null),
+      getShiftDisplayDescription: (shift) => safeInvoke(ensureShiftOptionsFlow(), 'getShiftDisplayDescription', [shift], ''),
+      openShiftAboutModal: (shiftId) => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openShiftAboutModal', [shiftId], false),
+      renderShiftOptions: (viewKey) => safeInvoke(ensureShiftOptionsFlow(), 'renderShiftOptions', [viewKey], null),
+      renderShiftCards: () => safeInvoke(ensureShiftOptionsFlow(), 'renderShiftCards', [], null),
+      contactIconMarkup: (label) => safeInvoke(ensureMediaFlowApi(), 'contactIconMarkup', [label], '•'),
+      resolveFloatingContactLinks: () => safeInvoke(ensureMediaFlowApi(), 'resolveFloatingContactLinks', [mediaContent], {
+        cityPhoneHref: 'tel:+74951284429',
+        cityPhoneLabel: '+7 (495) 128-44-29',
+        mobilePhoneHref: 'tel:+79688086455',
+        mobilePhoneLabel: '+7 (968) 808-64-55',
+        whatsappHref: 'https://wa.me/79688086455',
+        telegramHref: 'https://t.me/Progaschool'
+      }),
+      initFloatingContactsWidget: () => safeInvoke(ensureMediaFlowApi(), 'initFloatingContactsWidget', [{
+        document,
+        mediaContent,
+        track
+      }], null),
+      socialBadgeMark: (item) => safeInvoke(ensureMediaFlowApi(), 'socialBadgeMark', [item], '•'),
+      socialDisplayName: (item) => safeInvoke(ensureMediaFlowApi(), 'socialDisplayName', [item], ''),
+      faqGlyph: (iconPath, groupName) => safeInvoke(ensureMediaFlowApi(), 'faqGlyph', [iconPath, groupName], String(groupName || '').slice(0,3).toUpperCase()),
+      renderStars: () => safeInvoke(ensureMediaFlowApi(), 'renderStars', [], '<div class="stars">★★★★★</div>'),
+      renderDesktopMobileDocsBlock: () => safeInvoke(ensureDocsFlow(), 'renderDesktopMobileDocsBlock', [], null),
+      syncMobileDocsExpandedUi: () => safeInvoke(ensureDocsFlow(), 'syncMobileDocsExpandedUi', [], null),
+      applyMobileTemplatesToDesktopSections: () => safeInvoke(ensureDocsFlow(), 'applyMobileTemplatesToDesktopSections', [], null),
+      startTimer: () => safeInvoke(ensureSummaryFlow(), 'startTimer', [], null),
+      updateSummaryBarVisibility: () => safeInvoke(ensureSummaryFlow(), 'updateSummaryBarVisibility', [], null),
+      dismissSummaryBarTemporarily: (ms = 30000) => safeInvoke(ensureSummaryFlow(), 'dismissSummaryBarTemporarily', [ms], null),
+      renderSummary: () => safeInvoke(ensureSummaryFlow(), 'renderSummary', [], null),
+      buildLegalDocUrl: (hash = '') => safeInvoke(ensureTelemetryFlow(), 'buildLegalDocUrl', [hash], 'legal.html'),
+      syncLegalDocLinks: (scope = document) => safeInvoke(ensureTelemetryFlow(), 'syncLegalDocLinks', [scope], null)
+    });
 
     function trackFaqOpen(){
       trackOnce('faq_open');
@@ -1206,17 +1373,17 @@
       return Math.min(BOOKING_SCARCITY_MAX, raw);
     }
 
-    function initHero(){
+    const initHero = () => {
       safeInvoke(ensureHeroBackgroundFlow(), 'initHero', [], null);
-    }
+    };
 
-    function applyHeroV3SimpleMode(){
-      return safeInvoke(ensureHeroV3SimpleFlow(), 'applyMode', [], null);
-    }
+    const applyHeroV3SimpleMode = () => (
+      safeInvoke(ensureHeroV3SimpleFlow(), 'applyMode', [], null)
+    );
 
-    function preloadHeroAssets(){
+    const preloadHeroAssets = () => {
       safeInvoke(ensureHeroBackgroundFlow(), 'preloadHeroAssets', [], null);
-    }
+    };
 
     function ensureHeroAbFlow(){
       const create = window.AC_FEATURES?.heroAbFlow?.create;
@@ -1287,68 +1454,47 @@
       heroAbTimers = [];
     }
 
-    function applyHeroAbAnimationForRoot(root){
+    const applyHeroAbAnimationForRoot = (root) => {
       safeInvoke(ensureHeroAbFlow(), 'applyHeroAbAnimationForRoot', [root], null);
-    }
+    };
 
-    function applyHeroAbVariant(){
+    const applyHeroAbVariant = () => {
       safeInvoke(ensureHeroAbFlow(), 'applyHeroAbVariant', [], null);
-    }
+    };
 
-
-    function openMedia(type, index){
-      return safeInvoke(ensureModalMediaFlow(), 'openMedia', [type, index], null);
-    }
-
-    function closeMedia(){
-      return safeInvoke(ensureModalMediaFlow(), 'closeMedia', [], null);
-    }
-
-    function closeTransientModals(except = '', options = {}){
-      return safeInvoke(ensureModalMediaFlow(), 'closeTransientModals', [except, options], null);
-    }
-
-    function openVideo(url){
-      return safeInvoke(ensureModalMediaFlow(), 'openVideo', [url], null);
-    }
-
-    function closeVideo(){
-      return safeInvoke(ensureModalMediaFlow(), 'closeVideo', [], null);
-    }
-
-    function resolveVideoSource(url){
-      return safeInvoke(ensureVideoMetaFlow(), 'resolveVideoSource', [url], {
+    const resolveVideoSource = (url) => (
+      safeInvoke(ensureVideoMetaFlow(), 'resolveVideoSource', [url], {
         canEmbed: false,
         embedUrl: '',
         externalUrl: String(url || '').trim(),
         orientation: 'horizontal',
         sourceName: 'источнике'
-      });
-    }
+      })
+    );
 
-    function isVerticalVideoUrl(url){
-      return safeInvoke(ensureVideoMetaFlow(), 'isVerticalVideoUrl', [url], false);
-    }
+    const isVerticalVideoUrl = (url) => (
+      safeInvoke(ensureVideoMetaFlow(), 'isVerticalVideoUrl', [url], false)
+    );
 
-    function normalizeKinescopeShareUrl(url){
-      return safeInvoke(ensureVideoMetaFlow(), 'normalizeKinescopeShareUrl', [url], '');
-    }
+    const normalizeKinescopeShareUrl = (url) => (
+      safeInvoke(ensureVideoMetaFlow(), 'normalizeKinescopeShareUrl', [url], '')
+    );
 
-    function applyVideoMetaMap(videoMetaMap = {}){
-      return safeInvoke(ensureVideoMetaFlow(), 'applyVideoMetaMap', [videoMetaMap], false);
-    }
+    const applyVideoMetaMap = (videoMetaMap = {}) => (
+      safeInvoke(ensureVideoMetaFlow(), 'applyVideoMetaMap', [videoMetaMap], false)
+    );
 
-    function loadVideoMetaCache(){
-      return safeInvoke(ensureVideoMetaFlow(), 'loadVideoMetaCache', [], null);
-    }
+    const loadVideoMetaCache = () => (
+      safeInvoke(ensureVideoMetaFlow(), 'loadVideoMetaCache', [], null)
+    );
 
-    function getVideoMetaCacheAgeMs(){
-      return safeInvoke(ensureVideoMetaFlow(), 'getVideoMetaCacheAgeMs', [], Number.POSITIVE_INFINITY);
-    }
+    const getVideoMetaCacheAgeMs = () => (
+      safeInvoke(ensureVideoMetaFlow(), 'getVideoMetaCacheAgeMs', [], Number.POSITIVE_INFINITY)
+    );
 
-    function saveVideoMetaCache(videoMetaMap){
-      return safeInvoke(ensureVideoMetaFlow(), 'saveVideoMetaCache', [videoMetaMap], null);
-    }
+    const saveVideoMetaCache = (videoMetaMap) => (
+      safeInvoke(ensureVideoMetaFlow(), 'saveVideoMetaCache', [videoMetaMap], null)
+    );
 
     async function fetchKinescopeMeta(videoUrl){
       const flow = ensureVideoMetaFlow();
@@ -1362,79 +1508,14 @@
       await flow.refreshVideoMeta({force});
     }
 
-    function closeSectionModal(){
-      return safeInvoke(ensureModalMediaFlow(), 'closeSectionModal', [], null);
-    }
-
-    function setHeroMenuOpen(isOpen){
-      return safeInvoke(ensureHeroNavFlow(), 'setHeroMenuOpen', [isOpen], null);
-    }
-
-    function isHeroMenuOpen(){
-      return safeInvoke(ensureHeroNavFlow(), 'isHeroMenuOpen', [], false);
-    }
-
-    function setHeroPhoneDropdownOpen(isOpen){
-      return safeInvoke(ensureHeroNavFlow(), 'setHeroPhoneDropdownOpen', [isOpen], false);
-    }
-
-    function isHeroPhoneDropdownOpen(){
-      return safeInvoke(ensureHeroNavFlow(), 'isHeroPhoneDropdownOpen', [], false);
-    }
-
-    function scrollVideoCarousel(direction = 1, scopeRoot = null){
-      return safeInvoke(ensureHeroNavFlow(), 'scrollVideoCarousel', [direction, scopeRoot], null);
-    }
-
-    function scrollTeamCarousel(direction = 1, scopeRoot = null){
-      return safeInvoke(ensureHeroNavFlow(), 'scrollTeamCarousel', [direction, scopeRoot], null);
-    }
-
-    function applyCompactSectionModalLayout(){
-      return safeInvoke(ensureModalMediaFlow(), 'applyCompactSectionModalLayout', [], null);
-    }
-
-    function openSectionModal(sectionId){
-      return !!safeInvoke(ensureHeroNavFlow(), 'openSectionModal', [sectionId], false);
-    }
-
-    function renderMediaViewer(){
-      return safeInvoke(ensureModalMediaFlow(), 'renderMediaViewer', [], null);
-    }
-
-    function getActiveMediaList(){
-      return safeInvoke(ensureHeroNavFlow(), 'getActiveMediaList', [], []);
-    }
-
-    function nextMedia(){
-      return safeInvoke(ensureHeroNavFlow(), 'nextMedia', [], null);
-    }
-
-    function prevMedia(){
-      return safeInvoke(ensureHeroNavFlow(), 'prevMedia', [], null);
-    }
-
-    function getPhotoTagsByFilter(filter){
-      return safeInvoke(ensureHeroNavFlow(), 'getPhotoTagsByFilter', [filter], ['all', 'camp']);
-    }
-
-    function getPhotosForActiveFilter(filter = state.photoFilter){
-      return safeInvoke(ensureHeroNavFlow(), 'getPhotosForActiveFilter', [filter], mediaContent.photos.slice());
-    }
-
-    function handleDataActionClick(target){
-      const dispatcher = ensureActionDispatcher();
-      return !!safeInvoke(dispatcher, 'handleAction', [target], false);
-    }
-
-    async function notifyLead(eventName, payload){
-      return safeInvoke(ensureLeadNotifyFlow(), 'notifyLead', [eventName, payload], Promise.resolve({
+    const notifyLead = async (eventName, payload) => (
+      safeInvoke(ensureLeadNotifyFlow(), 'notifyLead', [eventName, payload], Promise.resolve({
         ok: false,
         delivered: false,
         fallback: true,
         reason: 'lead_notify_flow_unavailable'
-      }));
-    }
+      }))
+    );
 
     function isAdminDebugSession(){
       try {
@@ -1600,14 +1681,7 @@
       }], { text:'', disabled:true, hint:'' });
     }
 
-    function getResolvedPrimaryActionText(actionState, shift){
-      return safeInvoke(ensureBookingRuntimeBridge(), 'getResolvedPrimaryActionText', [{
-        state,
-        actionState,
-        shift,
-        formatPrice
-      }], '');
-    }
+    const getResolvedPrimaryActionText = runtimeInvoke.getResolvedPrimaryActionText;
 
     function getStepState(){
       syncGuidedState();
@@ -1751,25 +1825,11 @@
       });
     }
 
-    function renderGuidedState(viewCfg){
-      return safeInvoke(ensureGuidedStateFlow(), 'renderGuidedState', [viewCfg], null);
-    }
-
-    function pulseNode(node){
-      return safeInvoke(ensureBookingHintFlow(), 'pulseNode', [node], null);
-    }
-
-    function nudgeUserToNextStep(message = 'Сначала завершите предыдущий шаг.'){
-      return safeInvoke(ensureBookingHintFlow(), 'nudgeUserToNextStep', [message], null);
-    }
-
-    function showHint(message, requiredStep = ''){
-      return safeInvoke(ensureBookingHintFlow(), 'showHint', [message, requiredStep], null);
-    }
-
-    function syncBookingHints(){
-      return safeInvoke(ensureBookingHintFlow(), 'syncBookingHints', [], null);
-    }
+    const renderGuidedState = runtimeInvoke.renderGuidedState;
+    const pulseNode = runtimeInvoke.pulseNode;
+    const nudgeUserToNextStep = runtimeInvoke.nudgeUserToNextStep;
+    const showHint = runtimeInvoke.showHint;
+    const syncBookingHints = runtimeInvoke.syncBookingHints;
 
     function formatRemainingClock(diff){
       if(diff <= 0) return '';
@@ -1883,31 +1943,12 @@
       });
     }
 
-    function stopBookingStage1TitleTypewriter(){
-      return safeInvoke(ensureBookingViewFlow(), 'stopBookingStage1TitleTypewriter', [], null);
-    }
-
-    function runBookingStage1TitleTypewriter(target, text){
-      return safeInvoke(ensureBookingViewFlow(), 'runBookingStage1TitleTypewriter', [target, text], null);
-    }
-
-    function renderBookingInfo(viewCfg){
-      return safeInvoke(ensureBookingViewFlow(), 'renderBookingInfo', [viewCfg], null);
-    }
-
-    function renderBookingPanels(){
-      return safeInvoke(ensureBookingViewFlow(), 'renderBookingPanels', [], null);
-    }
-
-    function getViewportPreviewView(){
-      return safeInvoke(ensureViewModeFlow(), 'getViewportPreviewView', [], () => {
-        return (window.matchMedia('(max-width: 900px)').matches && 'mobile') || 'desktop';
-      });
-    }
-
-    function switchView(view){
-      return safeInvoke(ensureViewModeFlow(), 'switchView', [view], null);
-    }
+    const stopBookingStage1TitleTypewriter = runtimeInvoke.stopBookingStage1TitleTypewriter;
+    const runBookingStage1TitleTypewriter = runtimeInvoke.runBookingStage1TitleTypewriter;
+    const renderBookingInfo = runtimeInvoke.renderBookingInfo;
+    const renderBookingPanels = runtimeInvoke.renderBookingPanels;
+    const getViewportPreviewView = runtimeInvoke.getViewportPreviewView;
+    const switchView = runtimeInvoke.switchView;
 
     function applyOfferLayoutMode(){
       const mode = normalizeMode(state[OFFER_LAYOUT_KEY], offerLayoutModesCfg, 'current');
@@ -1947,11 +1988,7 @@
     }
 
     // SECTION 7: Event bindings (single action pipeline, no direct business logic in handlers).
-    document.addEventListener('click', (e) => {
-      if(handleDataActionClick(e.target)){
-        return;
-      }
-    });
+    safeInvoke(ensureRuntimeActionFlow(), 'bindDocumentClick', [], null);
 
     function formatPrice(v){
       return new Intl.NumberFormat('ru-RU').format(v) + ' ₽';
@@ -2006,57 +2043,18 @@
       });
     }
 
-    function toggleShiftOptionPanel(viewKey, panelType, shiftId){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'toggleShiftOptionPanel', [viewKey, panelType, shiftId], null);
-    }
-
-    function clearShiftOptionPanels(){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'clearShiftOptionPanels', [], null);
-    }
-
-    function parseShiftDate(dateStr){
-      return safeInvoke(ensureCalendarFlow(), 'parseShiftDate', [dateStr], () => {
-        const m = String(dateStr || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        if(!m) return null;
-        return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-      });
-    }
-
-    function renderCalendar(shift){
-      return safeInvoke(ensureCalendarFlow(), 'renderCalendar', [shift], null);
-    }
-
-    function renderSeasonCalendar(){
-      return safeInvoke(ensureCalendarFlow(), 'renderSeasonCalendar', [], null);
-    }
-
-    function openCalendar(shiftId){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openCalendar', [shiftId], null);
-    }
-
-    function openSeasonCalendar(){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openSeasonCalendar', [], null);
-    }
-
-    function closeCalendar(){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'closeCalendar', [], null);
-    }
-
-    function selectedShiftPayload(){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'selectedShiftPayload', [], () => ({}));
-    }
-
-    function clearOfferTimeout(){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'clearOfferTimeout', [], null);
-    }
-
-    function resetOfferState({preserveShift = true} = {}){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'resetOfferState', [{preserveShift}], null);
-    }
-
-    function buildBookingSummaryHtml({showTimer = false} = {}){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'buildBookingSummaryHtml', [{showTimer}], '');
-    }
+    const toggleShiftOptionPanel = runtimeInvoke.toggleShiftOptionPanel;
+    const clearShiftOptionPanels = runtimeInvoke.clearShiftOptionPanels;
+    const parseShiftDate = runtimeInvoke.parseShiftDate;
+    const renderCalendar = runtimeInvoke.renderCalendar;
+    const renderSeasonCalendar = runtimeInvoke.renderSeasonCalendar;
+    const openCalendar = runtimeInvoke.openCalendar;
+    const openSeasonCalendar = runtimeInvoke.openSeasonCalendar;
+    const closeCalendar = runtimeInvoke.closeCalendar;
+    const selectedShiftPayload = runtimeInvoke.selectedShiftPayload;
+    const clearOfferTimeout = runtimeInvoke.clearOfferTimeout;
+    const resetOfferState = runtimeInvoke.resetOfferState;
+    const buildBookingSummaryHtml = runtimeInvoke.buildBookingSummaryHtml;
 
     function generateCode(){
       return 'AC-' + Math.random().toString(36).slice(2,6).toUpperCase();
@@ -2068,21 +2066,10 @@
       return `Ссылка: ${inviteUrl}`;
     }
 
-    function bindAgeTabs(rootId){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'bindAgeTabs', [rootId], null);
-    }
-
-    function focusMobileAgeGate(){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'focusMobileAgeGate', [], null);
-    }
-
-    function resetAgeSelection(){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'resetAgeSelection', [], null);
-    }
-
-    function resetShiftSelection(){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'resetShiftSelection', [], null);
-    }
+    const bindAgeTabs = runtimeInvoke.bindAgeTabs;
+    const focusMobileAgeGate = runtimeInvoke.focusMobileAgeGate;
+    const resetAgeSelection = runtimeInvoke.resetAgeSelection;
+    const resetShiftSelection = runtimeInvoke.resetShiftSelection;
 
     function setPhotoFilter(filter){
       Object.assign(state, { photoFilter: filter });
@@ -2102,60 +2089,17 @@
       bindAgeTabs('mobileAgeTabs');
     }
 
-    function getShiftDisplayDescription(shift){
-      return safeInvoke(ensureShiftOptionsFlow(), 'getShiftDisplayDescription', [shift], '');
-    }
-
-    function openShiftAboutModal(shiftId){
-      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openShiftAboutModal', [shiftId], false);
-    }
-
-    function renderShiftOptions(viewKey){
-      return safeInvoke(ensureShiftOptionsFlow(), 'renderShiftOptions', [viewKey], null);
-    }
-
-    function renderShiftCards(){
-      return safeInvoke(ensureShiftOptionsFlow(), 'renderShiftCards', [], null);
-    }
-
-    function contactIconMarkup(label){
-      return safeInvoke(ensureMediaFlowApi(), 'contactIconMarkup', [label], '•');
-    }
-
-    function resolveFloatingContactLinks(){
-      return safeInvoke(ensureMediaFlowApi(), 'resolveFloatingContactLinks', [mediaContent], {
-        cityPhoneHref: 'tel:+74951284429',
-        cityPhoneLabel: '+7 (495) 128-44-29',
-        mobilePhoneHref: 'tel:+79688086455',
-        mobilePhoneLabel: '+7 (968) 808-64-55',
-        whatsappHref: 'https://wa.me/79688086455',
-        telegramHref: 'https://t.me/Progaschool'
-      });
-    }
-
-    function initFloatingContactsWidget(){
-      return safeInvoke(ensureMediaFlowApi(), 'initFloatingContactsWidget', [{
-        document,
-        mediaContent,
-        track
-      }], null);
-    }
-
-    function socialBadgeMark(item){
-      return safeInvoke(ensureMediaFlowApi(), 'socialBadgeMark', [item], '•');
-    }
-
-    function socialDisplayName(item){
-      return safeInvoke(ensureMediaFlowApi(), 'socialDisplayName', [item], '');
-    }
-
-    function faqGlyph(iconPath, groupName){
-      return safeInvoke(ensureMediaFlowApi(), 'faqGlyph', [iconPath, groupName], String(groupName || '').slice(0,3).toUpperCase());
-    }
-
-    function renderStars(){
-      return safeInvoke(ensureMediaFlowApi(), 'renderStars', [], '<div class="stars">★★★★★</div>');
-    }
+    const getShiftDisplayDescription = runtimeInvoke.getShiftDisplayDescription;
+    const openShiftAboutModal = runtimeInvoke.openShiftAboutModal;
+    const renderShiftOptions = runtimeInvoke.renderShiftOptions;
+    const renderShiftCards = runtimeInvoke.renderShiftCards;
+    const contactIconMarkup = runtimeInvoke.contactIconMarkup;
+    const resolveFloatingContactLinks = runtimeInvoke.resolveFloatingContactLinks;
+    const initFloatingContactsWidget = runtimeInvoke.initFloatingContactsWidget;
+    const socialBadgeMark = runtimeInvoke.socialBadgeMark;
+    const socialDisplayName = runtimeInvoke.socialDisplayName;
+    const faqGlyph = runtimeInvoke.faqGlyph;
+    const renderStars = runtimeInvoke.renderStars;
 
     // SECTION 5: Content and media rendering.
     function renderMediaSections(){
@@ -2214,7 +2158,7 @@
         shiftDaysLabel,
         getShiftDisplayDescription,
         hasSelectedAge,
-        getPhotosForActiveFilter,
+        getPhotosForActiveFilter: runtimeInvoke.getPhotosForActiveFilter,
         socialBadgeMark,
         socialDisplayName,
         renderCompactInlineTeamList,
@@ -2231,17 +2175,9 @@
       syncLegalDocLinks();
     }
 
-    function renderDesktopMobileDocsBlock(){
-      return safeInvoke(ensureDocsFlow(), 'renderDesktopMobileDocsBlock', [], null);
-    }
-
-    function syncMobileDocsExpandedUi(){
-      return safeInvoke(ensureDocsFlow(), 'syncMobileDocsExpandedUi', [], null);
-    }
-
-    function applyMobileTemplatesToDesktopSections(){
-      return safeInvoke(ensureDocsFlow(), 'applyMobileTemplatesToDesktopSections', [], null);
-    }
+    const renderDesktopMobileDocsBlock = runtimeInvoke.renderDesktopMobileDocsBlock;
+    const syncMobileDocsExpandedUi = runtimeInvoke.syncMobileDocsExpandedUi;
+    const applyMobileTemplatesToDesktopSections = runtimeInvoke.applyMobileTemplatesToDesktopSections;
 
     function applyMobileSectionAccordion(){
       return;
@@ -2263,19 +2199,19 @@
       syncLegalDocLinks();
     }
 
-    function selectShift(id){
-      return safeInvoke(ensureBookingRuntimeBridge(), 'selectShift', [{
+    const selectShift = (id) => (
+      safeInvoke(ensureBookingRuntimeBridge(), 'selectShift', [{
         state,
         shiftId: id,
         getShifts: () => shifts,
         clearShiftOptionPanels,
         renderAll,
         persist
-      }], false);
-    }
+      }], false)
+    );
 
-    function handlePrimaryCTA(){
-      return safeInvoke(ensureBookingRuntimeBridge(), 'handlePrimaryCTA', [{
+    const handlePrimaryCTA = () => (
+      safeInvoke(ensureBookingRuntimeBridge(), 'handlePrimaryCTA', [{
         state,
         heroVariantState,
         resolveHeroVariantFromUtm,
@@ -2306,12 +2242,14 @@
             ? 'booking-mobile'
             : 'booking-desktop'
         ),
-        openInlineLead
-      }], null);
-    }
+        openInlineLead: (scope) => {
+          safeInvoke(ensureBookingInlineRuntimeFlow(), 'openInlineLead', [scope], null);
+        }
+      }], null)
+    );
 
-    function runOfferSearch(){
-      return safeInvoke(ensureOfferFlow(), 'runOfferSearch', [{
+    const runOfferSearch = () => (
+      safeInvoke(ensureOfferFlow(), 'runOfferSearch', [{
         state,
         document,
         getSelectedShift,
@@ -2337,17 +2275,17 @@
         showOffer,
         discountFactor: OFFER_DISCOUNT_FACTOR,
         ttlHours: 72
-      }], null);
-    }
+      }], null)
+    );
 
-    function openOfferCheck(){
-      return safeInvoke(ensureOfferFlow(), 'openOfferCheck', [{
+    const openOfferCheck = () => (
+      safeInvoke(ensureOfferFlow(), 'openOfferCheck', [{
         runOfferSearch
-      }], () => runOfferSearch());
-    }
+      }], () => runOfferSearch())
+    );
 
-    function showOffer(){
-      return safeInvoke(ensureOfferFlow(), 'showOffer', [{
+    const showOffer = () => (
+      safeInvoke(ensureOfferFlow(), 'showOffer', [{
         state,
         document,
         getSelectedShift,
@@ -2368,32 +2306,30 @@
         startTimer,
         renderSummary,
         renderBookingPanels
-      }], null);
-    }
+      }], null)
+    );
 
-    function saveOfferAndClose(){
-      return safeInvoke(ensureOfferFlow(), 'saveOfferAndClose', [{
+    const saveOfferAndClose = () => (
+      safeInvoke(ensureOfferFlow(), 'saveOfferAndClose', [{
         syncGuidedState,
         clearOfferTimeout,
         document,
         renderSummary,
         renderBookingPanels
-      }], null);
-    }
+      }], null)
+    );
 
-    function resetOfferProgressUI(){
-      return safeInvoke(ensureOfferFlow(), 'resetOfferProgressUI', [{
+    const resetOfferProgressUI = () => (
+      safeInvoke(ensureOfferFlow(), 'resetOfferProgressUI', [{
         clearOfferTimeout,
         state
       }], () => {
         clearOfferTimeout();
         Object.assign(state, { offerSearching: false });
-      });
-    }
+      })
+    );
 
-    function startTimer(){
-      return safeInvoke(ensureSummaryFlow(), 'startTimer', [], null);
-    }
+    const startTimer = runtimeInvoke.startTimer;
 
     function isSummaryCompactMode(){
       if(state.previewView === 'mobile' && !useDesktopBaseForMobileCfg){
@@ -2410,180 +2346,15 @@
       return !!safeInvoke(ensureSummaryFlow(), 'isBookingPrimaryCtaVisibleInViewport', [], false);
     }
 
-    function updateSummaryBarVisibility(){
-      return safeInvoke(ensureSummaryFlow(), 'updateSummaryBarVisibility', [], null);
-    }
-
-    function dismissSummaryBarTemporarily(ms = 30000){
-      return safeInvoke(ensureSummaryFlow(), 'dismissSummaryBarTemporarily', [ms], null);
-    }
-
-    function renderSummary(){
-      return safeInvoke(ensureSummaryFlow(), 'renderSummary', [], null);
-    }
-
-    function onlyDigits(value){
-      return safeInvoke(ensureBookingInlineLeadApi(), 'onlyDigits', [value], (value || '').replace(/\D/g, ''));
-    }
-
-    function formatPhoneInput(value){
-      return safeInvoke(ensureBookingInlineLeadApi(), 'formatPhoneInput', [value], () => String(value || ''));
-    }
-
-    function normalizePhone(value){
-      return safeInvoke(ensureBookingInlineLeadApi(), 'normalizePhone', [value], '');
-    }
-
-    function isValidPhone(value){
-      return !!safeInvoke(ensureBookingInlineLeadApi(), 'isValidPhone', [value], () => !!normalizePhone(value));
-    }
-
-    function getLeadScopeConfig(scope = 'drawer'){
-      return safeInvoke(ensureBookingInlineLeadApi(), 'getLeadScopeConfig', [scope], null);
-    }
-
-    function getLeadSubmitDefaultText(scope = 'drawer'){
-      return safeInvoke(ensureBookingInlineLeadApi(), 'getLeadSubmitDefaultText', [scope], 'Забронировать');
-    }
-
-    function setLeadPhoneError(scope = 'drawer', show = false, message = ''){
-      safeInvoke(ensureBookingInlineLeadApi(), 'setLeadPhoneError', [{
-        scope,
-        show,
-        message,
-        document
-      }], null);
-    }
-
-    function setPhoneError(show){
-      setLeadPhoneError('drawer', show);
-    }
-
-    function setLeadSubmitState(loading, scope = 'drawer'){
-      safeInvoke(ensureBookingInlineLeadApi(), 'setLeadSubmitState', [{
-        loading,
-        scope,
-        document
-      }], null);
-    }
-
-    function bindPhoneMaskForScope(scope = 'drawer'){
-      safeInvoke(ensureBookingInlineLeadApi(), 'bindPhoneMaskForScope', [{
-        scope,
-        document
-      }], null);
-    }
-
-    function buildInlineLeadFormHtml(scope){
-      return safeInvoke(ensureBookingInlineLeadApi(), 'buildInlineLeadFormHtml', [scope], '');
-    }
-
-    function openInlineLead(scope){
-      safeInvoke(ensureBookingInlineLeadApi(), 'openInlineLead', [{
-        scope,
-        state,
-        document,
-        track,
-        selectedShiftPayload,
-        buildHeroVariantMeta
-      }], null);
-    }
-
-    function closeInlineLead(scope){
-      safeInvoke(ensureBookingInlineLeadApi(), 'closeInlineLead', [{
-        scope,
-        document
-      }], null);
-    }
-
-    function openForm(){
-      safeInvoke(ensureBookingInlineLeadApi(), 'openForm', [{
-        state,
-        document,
-        syncGuidedState,
-        buildBookingSummaryHtml,
-        isOfferActive,
-        startTimer,
-        track,
-        selectedShiftPayload,
-        buildHeroVariantMeta
-      }], null);
-    }
-
-    function closeForm(){
-      safeInvoke(ensureBookingInlineLeadApi(), 'closeForm', [{ document }], null);
-    }
-
-    function openSuccessModal(deliveryResult){
-      safeInvoke(ensureOverlayFlow(), 'openSuccessModal', [deliveryResult], null);
-    }
-
-    function closeSuccessModal(){
-      safeInvoke(ensureOverlayFlow(), 'closeSuccessModal', [], null);
-    }
-
-    function openNoticeModal(message, title = 'Проверьте данные'){
-      safeInvoke(ensureOverlayFlow(), 'openNoticeModal', [message, title], null);
-    }
-
-    function closeNoticeModal(){
-      safeInvoke(ensureOverlayFlow(), 'closeNoticeModal', [], null);
-    }
-
-    function openResetBookingConfirmModal(){
-      safeInvoke(ensureOverlayFlow(), 'openResetBookingConfirmModal', [], null);
-    }
-
-    async function submitLeadFromScope(scope = 'drawer'){
-      await safeInvoke(ensureBookingInlineLeadApi(), 'submitLeadFromScope', [{
-        scope,
-        state,
-        shifts,
-        document,
-        getInProgress: () => leadSubmitInProgress,
-        setInProgress: (next) => {
-          leadSubmitInProgress = !!next;
-        },
-        syncGuidedState,
-        normalizePhone,
-        isValidPhone,
-        setLeadPhoneError,
-        setLeadSubmitState,
-        openNoticeModal,
-        persist,
-        labelAge,
-        formatPrice,
-        buildAbMeta,
-        track,
-        selectedShiftPayload,
-        buildHeroVariantMeta,
-        notifyLead,
-        closeForm,
-        closeInlineLead,
-        renderSummary,
-        renderBookingPanels,
-        updateSummaryBarVisibility,
-        isAdminDebugSession
-      }], null);
-    }
-
-    async function submitLead(){
-      return submitLeadFromScope('drawer');
-    }
-
-    function scrollToSection(id){
-      return safeInvoke(ensureNavigationFlow(), 'scrollToSection', [id], false);
-    }
-
-    function navigateToSection(id){
-      return safeInvoke(ensureNavigationFlow(), 'navigateToSection', [id], null);
-    }
+    const updateSummaryBarVisibility = runtimeInvoke.updateSummaryBarVisibility;
+    const dismissSummaryBarTemporarily = runtimeInvoke.dismissSummaryBarTemporarily;
+    const renderSummary = runtimeInvoke.renderSummary;
 
     safeInvoke(ensureMediaGestureBindingsApi(), 'init', [{
       document,
-      closeMedia,
-      nextMedia,
-      prevMedia,
+      closeMedia: runtimeInvoke.closeMedia,
+      nextMedia: runtimeInvoke.nextMedia,
+      prevMedia: runtimeInvoke.prevMedia,
       applyStatePatch: (patch = {}) => {
         Object.assign(state, patch);
       },
@@ -2591,35 +2362,35 @@
       persist,
       getMediaContent: () => mediaContent,
       getCompactStayCards,
-      getPhotosForActiveFilter,
+      getPhotosForActiveFilter: runtimeInvoke.getPhotosForActiveFilter,
       getState: () => state
     }], null);
 
     safeInvoke(ensureGlobalUiBindingsApi(), 'init', [{
       document,
-      navigateToSection,
-      isHeroMenuOpen,
-      setHeroMenuOpen,
-      isHeroPhoneDropdownOpen,
-      setHeroPhoneDropdownOpen,
-      closeSuccessModal,
-      closeNoticeModal,
+      navigateToSection: runtimeInvoke.navigateToSection,
+      isHeroMenuOpen: runtimeInvoke.isHeroMenuOpen,
+      setHeroMenuOpen: runtimeInvoke.setHeroMenuOpen,
+      isHeroPhoneDropdownOpen: runtimeInvoke.isHeroPhoneDropdownOpen,
+      setHeroPhoneDropdownOpen: runtimeInvoke.setHeroPhoneDropdownOpen,
+      closeSuccessModal: runtimeInvoke.closeSuccessModal,
+      closeNoticeModal: runtimeInvoke.closeNoticeModal,
       bumpOfferRunId: () => { offerRunId += 1; },
       clearOfferTimeout,
       resetOfferProgressUI,
-      closeMedia,
-      nextMedia,
-      prevMedia,
-      closeVideo,
+      closeMedia: runtimeInvoke.closeMedia,
+      nextMedia: runtimeInvoke.nextMedia,
+      prevMedia: runtimeInvoke.prevMedia,
+      closeVideo: runtimeInvoke.closeVideo,
       closeCalendar,
-      closeSectionModal,
-      openNoticeModal,
+      closeSectionModal: runtimeInvoke.closeSectionModal,
+      openNoticeModal: runtimeInvoke.openNoticeModal,
       bookingText,
       getViewportPreviewView,
       switchView,
       initHero,
       applyHeroAbVariant,
-      applyCompactSectionModalLayout,
+      applyCompactSectionModalLayout: runtimeInvoke.applyCompactSectionModalLayout,
       updateSummaryBarVisibility,
       scheduleBookingCardMinHeightSync,
       getState: () => state,
@@ -2628,13 +2399,13 @@
       ,
       setPhotoFilter,
       setFaqFilter,
-      openSectionModal,
+      openSectionModal: runtimeInvoke.openSectionModal,
       track,
       showHint,
       nudgeUserToNextStep,
       hasSelectedAge,
       getBookingState: () => state,
-      openVideo,
+      openVideo: runtimeInvoke.openVideo,
       selectedShiftPayload,
       buildHeroVariantMeta,
       bookingDesktopIds: bookingViewsCfg.desktop,
@@ -2665,25 +2436,7 @@
       safeInvoke(ensureViewModeFlow(), 'applyMobileMode', [], null);
     }
     safeInvoke(ensureUiInitFlow(), 'normalizeCloseIconButtons', [document], null);
-    const deferredInit = () => {
-      injectHeroSeasonOfferCta();
-      initFloatingContactsWidget();
-      safeInvoke(ensureHeroAbFlow(), 'initHeroAbDevPanel', [], null);
-      track('page_view', {
-        view: state.view || 'desktop',
-        desktop_mode: state.desktopMode || '',
-        mobile_mode: state.mobileMode || ''
-      });
-      safeInvoke(ensureUiInitFlow(), 'initScrollTracking', [], null);
-      safeInvoke(ensureUiInitFlow(), 'initSummaryBarViewportSync', [], null);
-      safeInvoke(ensureUiInitFlow(), 'initSectionViewTracking', [], null);
-      refreshVideoMeta({force:true});
-      safeInvoke(ensureVideoMetaFlow(), 'scheduleVideoMetaRefresh', [], null);
-      safeInvoke(ensureBookingHintFlow(), 'scheduleDesktopAgeTapHint', [], null);
-      safeInvoke(ensureRuntimeQualityOrchestrator(), 'runAll', [], null)
-        || QUALITY_PIPELINE_NAMESPACE.runAll();
-    };
-    window.setTimeout(deferredInit, 0);
+    safeInvoke(ensureRuntimeInitFlow(), 'scheduleDeferred', [], null);
 
     if(state.expiresAt && Date.now() < state.expiresAt){
       startTimer();
