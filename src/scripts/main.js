@@ -2660,30 +2660,6 @@
       return safeInvoke(ensureViewModeFlow(), 'switchView', [view], null);
     }
 
-    function applyHeroContrastMode(){
-      return safeInvoke(ensureViewModeFlow(), 'applyHeroContrastMode', [], null);
-    }
-
-    function switchHeroContrastMode(mode){
-      return safeInvoke(ensureViewModeFlow(), 'switchHeroContrastMode', [mode], null);
-    }
-
-    function applyHeroMicroMode(){
-      return safeInvoke(ensureViewModeFlow(), 'applyHeroMicroMode', [], null);
-    }
-
-    function switchHeroMicroMode(mode){
-      return safeInvoke(ensureViewModeFlow(), 'switchHeroMicroMode', [mode], null);
-    }
-
-    function applyOfferModalTheme(cardEl = null){
-      return safeInvoke(ensureViewModeFlow(), 'applyOfferModalTheme', [cardEl], null);
-    }
-
-    function switchOfferModalTheme(mode){
-      return safeInvoke(ensureViewModeFlow(), 'switchOfferModalTheme', [mode], null);
-    }
-
     function applyOfferLayoutMode(){
       const mode = normalizeMode(state[OFFER_LAYOUT_KEY], OFFER_LAYOUT_MODES, 'current');
       const currentBtn = document.getElementById('offerLayoutCurrentBtn');
@@ -2696,42 +2672,28 @@
       }
     }
 
-    function switchOfferLayout(mode){
-      return safeInvoke(ensureViewModeFlow(), 'switchOfferLayout', [mode], null);
-    }
-
-    function applyDesktopMode(){
-      return safeInvoke(ensureViewModeFlow(), 'applyDesktopMode', [], null);
-    }
-
-    function switchDesktopMode(mode){
-      return safeInvoke(ensureViewModeFlow(), 'switchDesktopMode', [mode], null);
-    }
-
-    function applyMobileMode(){
-      return safeInvoke(ensureViewModeFlow(), 'applyMobileMode', [], () => {
-        if(USE_DESKTOP_BASE_FOR_MOBILE){
-          return;
-        }
-        applyMobileSectionAccordion();
-      });
-    }
-
-    function switchMobileMode(mode){
-      return safeInvoke(ensureViewModeFlow(), 'switchMobileMode', [mode], null);
-    }
-
     // SECTION 6: View mode controls (desktop/mobile, full/compact).
-    document.getElementById('fullModeBtn')?.addEventListener('click', () => switchDesktopMode('full'));
+    document.getElementById('fullModeBtn')?.addEventListener('click', () => {
+      safeInvoke(ensureViewModeFlow(), 'switchDesktopMode', ['full'], null);
+    });
     document.getElementById('compactModeBtn')?.addEventListener('click', () => {
       const nextMode = (state.desktopMode === 'compact' && 'full') || 'compact';
-      switchDesktopMode(nextMode);
+      safeInvoke(ensureViewModeFlow(), 'switchDesktopMode', [nextMode], null);
     });
     if(!USE_DESKTOP_BASE_FOR_MOBILE){
-      document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => switchMobileMode('full'));
-      document.getElementById('mobileCompactModeBtn')?.addEventListener('click', () => switchMobileMode('compact'));
+      document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => {
+        safeInvoke(ensureViewModeFlow(), 'switchMobileMode', ['full'], null);
+      });
+      document.getElementById('mobileCompactModeBtn')?.addEventListener('click', () => {
+        safeInvoke(ensureViewModeFlow(), 'switchMobileMode', ['compact'], null);
+      });
       document.getElementById('mobileModeToggle')?.addEventListener('click', () => {
-        switchMobileMode((state.mobileMode === 'full' && 'compact') || 'full');
+        safeInvoke(
+          ensureViewModeFlow(),
+          'switchMobileMode',
+          [(state.mobileMode === 'full' && 'compact') || 'full'],
+          null
+        );
       });
     }
 
@@ -3648,7 +3610,9 @@
         },
         track,
         selectedShiftPayload,
-        applyOfferModalTheme,
+        applyOfferModalTheme: (cardEl = null) => {
+          return safeInvoke(ensureViewModeFlow(), 'applyOfferModalTheme', [cardEl], null);
+        },
         normalizeCloseIconButtons,
         showOffer,
         discountFactor: OFFER_DISCOUNT_FACTOR,
@@ -3674,7 +3638,9 @@
         persist,
         track,
         selectedShiftPayload,
-        applyOfferModalTheme,
+        applyOfferModalTheme: (cardEl = null) => {
+          return safeInvoke(ensureViewModeFlow(), 'applyOfferModalTheme', [cardEl], null);
+        },
         formatPrice,
         normalizeCloseIconButtons,
         startTimer,
@@ -4038,13 +4004,13 @@
     renderBookingPanels();
     resetOfferProgressUI();
     switchView(getViewportPreviewView());
-    applyHeroContrastMode();
-    applyHeroMicroMode();
-    applyOfferModalTheme();
+    safeInvoke(ensureViewModeFlow(), 'applyHeroContrastMode', [], null);
+    safeInvoke(ensureViewModeFlow(), 'applyHeroMicroMode', [], null);
+    safeInvoke(ensureViewModeFlow(), 'applyOfferModalTheme', [], null);
     applyOfferLayoutMode();
-    applyDesktopMode();
+    safeInvoke(ensureViewModeFlow(), 'applyDesktopMode', [], null);
     if(!USE_DESKTOP_BASE_FOR_MOBILE){
-      applyMobileMode();
+      safeInvoke(ensureViewModeFlow(), 'applyMobileMode', [], null);
     }
     normalizeCloseIconButtons();
     const deferredInit = () => {
