@@ -366,7 +366,8 @@
       debugBookingBlocks:false
     };
 
-    const METRIKA_ID = 96499295;
+    const OBSERVABILITY_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.observability) || {};
+    const METRIKA_ID = Number(OBSERVABILITY_RUNTIME_CONFIG.metrikaId || 96499295);
     const RUNTIME_POLICY_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.runtimePolicy) || {};
     const MAX_CONTACT_URL = String(RUNTIME_POLICY_CONFIG.maxContactUrl || 'https://web.max.ru/185807479');
     const LEGAL_REPO_SLUG = String(RUNTIME_POLICY_CONFIG.legalRepoSlug || 'afanasevvlad829-cyber/aidaplus-landing-dev');
@@ -374,7 +375,7 @@
     const HERO_VARIANT_BANNER_TIER = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.bannerTier || {});
     const HERO_VARIANT_COPY = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.copy || {});
     const HERO_VARIANT_DEFAULT_TIER = String(HERO_VARIANT_RUNTIME_CONFIG.defaultTier || 'broad');
-    const USE_DESKTOP_BASE_FOR_MOBILE = true;
+    const USE_DESKTOP_BASE_FOR_MOBILE = !!OBSERVABILITY_RUNTIME_CONFIG.useDesktopBaseForMobile;
     const BUILD_VERSION_LABEL = String(RUNTIME_POLICY_CONFIG.buildVersionLabel || 'v0.0.288 (ab-analytics-endpoint)');
     const ARCHITECTURE_POLICY = Object.freeze(RUNTIME_POLICY_CONFIG.architecturePolicy || {
       id: 'desktop-source-mobile-presentation',
@@ -398,12 +399,13 @@
     AIDACAMP_RUNTIME.quality = AIDACAMP_RUNTIME.quality || {};
     AIDACAMP_RUNTIME.quality.scoreModel = QUALITY_SCORE_MODEL;
     AIDACAMP_RUNTIME.architecture = ARCHITECTURE_POLICY;
+    const qualityScoreSnapshotDefaults = OBSERVABILITY_RUNTIME_CONFIG.qualityScoreSnapshotDefaults || {};
     AIDACAMP_RUNTIME.quality.scoreSnapshot = Object.freeze({
       version: BUILD_VERSION_LABEL,
-      css: 8.8,
-      js: 8.6,
-      techDebt: 1.5,
-      debtScale: '0 best .. 10 worst',
+      css: Number(qualityScoreSnapshotDefaults.css || 8.8),
+      js: Number(qualityScoreSnapshotDefaults.js || 8.6),
+      techDebt: Number(qualityScoreSnapshotDefaults.techDebt || 1.5),
+      debtScale: String(qualityScoreSnapshotDefaults.debtScale || '0 best .. 10 worst'),
       baselineVersion: QUALITY_SCORE_MODEL.baselineVersion
     });
     const UI_MODES_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.uiModes) || {};
@@ -425,7 +427,7 @@
       return Math.floor(parsed);
     };
     const VERSION_MONOTONIC_KEY = String(STORAGE_RUNTIME_CONFIG.versionMonotonicKey || 'aidacamp_build_version_last_v1');
-    const PROD_DEBUGLESS_DOMAINS = Object.freeze(['aidacamp.ru']);
+    const PROD_DEBUGLESS_DOMAINS = Object.freeze(OBSERVABILITY_RUNTIME_CONFIG.prodDebuglessDomains || ['aidacamp.ru']);
     const QUALITY_BASELINE_KEY = String(STORAGE_RUNTIME_CONFIG.qualityBaselineKey || 'aidacamp_quality_baseline_v1');
     const DEBT_REGISTER_KEY = String(STORAGE_RUNTIME_CONFIG.debtRegisterKey || 'aidacamp_debt_register_v1');
     const RUNTIME_QUALITY_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.runtimeQuality) || {};
