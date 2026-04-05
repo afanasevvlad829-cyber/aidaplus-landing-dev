@@ -636,6 +636,7 @@
     let globalUiBindingsApi = null;
     let docsFlowApi = null;
     let uiInitFlowApi = null;
+    let shiftOptionsFlowApi = null;
     let runtimeQualityPipelineApi = null;
     let bookingRuntimeBridgeApi = null;
     let leadNotifyFlowApi = null;
@@ -1201,6 +1202,29 @@
         updateSummaryBarVisibility
       });
       return uiInitFlowApi;
+    }
+
+    function ensureShiftOptionsFlow(){
+      if(shiftOptionsFlowApi) return shiftOptionsFlowApi;
+      const create = window.AC_FEATURES?.shiftOptionsFlow?.create;
+      if(typeof create !== 'function') return null;
+      shiftOptionsFlowApi = create({
+        getState: () => state,
+        getShifts: () => shifts,
+        parseShiftDate,
+        formatPrice,
+        shiftDaysLabel,
+        hasSelectedAge,
+        showHint,
+        nudgeUserToNextStep,
+        selectShift,
+        closeTransientModals,
+        applyCompactSectionModalLayout,
+        resolveViewKey,
+        resolveShiftOptionsTargetId,
+        getShiftOptionPanels: () => shiftOptionPanels
+      });
+      return shiftOptionsFlowApi;
     }
 
     function ensureLeadNotifyFlow(){
@@ -2892,195 +2916,16 @@
       bindAgeTabs('mobileAgeTabs');
     }
 
-    function getShiftSummaryLines(ageKey){
-      const summaryByAge = {
-        '7-9': [
-          'IT-проекты: Scratch / Python',
-          'Бассейн каждый день',
-          'Живая среда без гаджетного залипания',
-          'Подходит для 7–9 лет'
-        ],
-        '10-12': [
-          'Python и командные мини-спринты',
-          'Бассейн и спорт ежедневно',
-          'Командные роли и самостоятельность',
-          'Подходит для 10–12 лет'
-        ],
-        '13-14': [
-          'AI-практика и проектная защита',
-          'Спорт + живая лагерная среда',
-          'Меньше телефонов, больше результата',
-          'Подходит для 13–14 лет'
-        ]
-      };
-      return summaryByAge[ageKey] || summaryByAge['7-9'];
-    }
-
-    function getShiftCardTagline(shift){
-      if(!shift) return '';
-      return shift.desc || '';
-    }
-
     function getShiftDisplayDescription(shift){
-      if(!shift) return '';
-      if(!hasSelectedAge()) return shift.desc || '';
-      return getShiftAgeFocusedDescription(shift, state.age || '7-9');
-    }
-
-    function normalizeShiftText(value){
-      return String(value || '').replace(/\s+/g, ' ').trim();
-    }
-
-    function getShiftAgeFocusedDescription(shift, ageKey){
-      if(!shift) return '';
-      const full = String(shift.fullDesc || '').replace(/\r/g, '').trim();
-      if(!full) return shift.desc || '';
-      const compact = normalizeShiftText(full);
-      const firstPart = normalizeShiftText(
-        compact.split(/Для\s+(?:7[–-]9|10[–-]12|13[–-]14)\s+лет:/i)[0] || ''
-      );
-
-      const markerPatternByAge = {
-        '7-9': 'Для\\s+7[–-]9\\s+лет:',
-        '10-12': 'Для\\s+10[–-]12\\s+лет:',
-        '13-14': 'Для\\s+13[–-]14\\s+лет:'
-      };
-      const ageLabelByAge = {
-        '7-9': 'Для 7–9 лет:',
-        '10-12': 'Для 10–12 лет:',
-        '13-14': 'Для 13–14 лет:'
-      };
-      const markerPattern = markerPatternByAge[ageKey] || markerPatternByAge['7-9'];
-      const ageLabel = ageLabelByAge[ageKey] || ageLabelByAge['7-9'];
-      const agePartMatch = compact.match(
-        new RegExp(`${markerPattern}\\s*([\\s\\S]*?)(?=\\s*Для\\s+(?:7[–-]9|10[–-]12|13[–-]14)\\s+лет:|$)`, 'i')
-      );
-      const agePart = normalizeShiftText(agePartMatch?.[1] || '');
-
-      const sentences = compact.match(/[^.!?]+[.!?]?/g) || [];
-      const finalPart = normalizeShiftText((sentences.length && sentences[sentences.length - 1]) || '');
-
-      const result = [];
-      if(firstPart) result.push(firstPart);
-      if(agePart) result.push(`${ageLabel} ${agePart}`);
-      if(finalPart && !result.includes(finalPart)){
-        result.push(finalPart);
-      }
-      return result.join(' ').trim();
+      return safeInvoke(ensureShiftOptionsFlow(), 'getShiftDisplayDescription', [shift], '');
     }
 
     function openShiftAboutModal(shiftId){
-      const modal = document.getElementById('sectionModal');
-      const titleEl = document.getElementById('sectionModalTitle');
-      const bodyEl = document.getElementById('sectionModalBody');
-      const shift = shifts.find((item) => item.id === shiftId);
-      if(!modal || !titleEl || !bodyEl || !shift) return false;
-
-      closeTransientModals('section');
-      const isCompactDesktop = state.previewView === 'desktop' && state.desktopMode === 'compact';
-      const isMobilePanel = state.previewView === 'mobile';
-      modal.classList.toggle('section-modal-compact', isCompactDesktop);
-      modal.classList.toggle('section-modal-mobile', isMobilePanel);
-
-      const start = parseShiftDate(shift.start);
-      const end = parseShiftDate(shift.end);
-      const startText = (start && start.toLocaleDateString('ru-RU')) || shift.start;
-      const endText = (end && end.toLocaleDateString('ru-RU')) || shift.end;
-      const summaryLines = getShiftSummaryLines(state.age || '7-9');
-
-      titleEl.textContent = `${shift.label || `Смена ${shift.title}`}: программа`;
-      bodyEl.innerHTML = `
-        <article class="shift-modal-content">
-          <div class="shift-modal-content__meta">
-            <strong>${shift.dates}</strong>
-            <span>${formatPrice(shift.price)} · ${shiftDaysLabel(shift)} · осталось ${shift.left} мест</span>
-          </div>
-          <p class="shift-modal-content__desc"><strong>Коротко:</strong> ${shift.desc}</p>
-          <p class="shift-modal-content__desc"><strong>Подробно:</strong> ${getShiftDisplayDescription(shift)}</p>
-          <ul class="shift-modal-content__list">
-            ${summaryLines.map((line) => `<li>${line}</li>`).join('')}
-          </ul>
-          <div class="shift-modal-content__dates">
-            <div><strong>Заезд:</strong> ${startText}</div>
-            <div><strong>Выезд:</strong> ${endText}</div>
-          </div>
-        </article>
-      `;
-
-      modal.classList.remove('hidden');
-      applyCompactSectionModalLayout();
-      return true;
+      return safeInvoke(ensureShiftOptionsFlow(), 'openShiftAboutModal', [shiftId], false);
     }
 
     function renderShiftOptions(viewKey){
-      const safeViewKey = resolveViewKey(viewKey);
-      const targetId = resolveShiftOptionsTargetId(safeViewKey);
-      const box = document.getElementById(targetId);
-      if(!box) return;
-
-      const selectedAge = state.age || '7-9';
-      const summaryLines = getShiftSummaryLines(selectedAge);
-
-      box.innerHTML = shifts.slice(0,2).map(s => {
-        const isInlineView = safeViewKey === 'mobile';
-        const showAbout = isInlineView && shiftOptionPanels[safeViewKey]?.aboutId === s.id;
-        const showCalendar = isInlineView && shiftOptionPanels[safeViewKey]?.calendarId === s.id;
-        const start = parseShiftDate(s.start);
-        const end = parseShiftDate(s.end);
-        const startText = (start && start.toLocaleDateString('ru-RU')) || s.start;
-        const endText = (end && end.toLocaleDateString('ru-RU')) || s.end;
-
-        return `
-        <div class="shift-option ${state.shiftId === s.id ? 'active' : ''}" data-id="${s.id}">
-          <div class="shift-option-head">
-            <strong>
-              <span class="shift-option-dates">${s.dates}</span>
-            </strong>
-            <small>
-              <span class="shift-option-seats">осталось ${s.left} мест</span>
-              <span class="shift-option-price-row">
-                <span class="shift-option-price">${formatPrice(s.price)}</span>
-                <span class="shift-option-inline-actions">
-                  <button class="shift-option-action shift-option-action-info" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" data-shift-view="${safeViewKey}" aria-label="Описание смены ${s.dates}">
-                    <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" aria-hidden="true">
-                  </button>
-                  <button class="shift-option-action shift-option-action-calendar" type="button" data-action="toggle-shift-calendar-inline" data-shift-id="${s.id}" data-shift-view="${safeViewKey}" aria-label="Календарь ${s.dates}">
-                    <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar3.svg" alt="" aria-hidden="true">
-                  </button>
-                  <button class="shift-option-select-indicator" type="button" aria-label="Выбрать смену ${s.dates}">
-                    <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-right.svg" alt="" aria-hidden="true">
-                  </button>
-                </span>
-              </span>
-            </small>
-          </div>
-          <div class="shift-inline-panel ${showAbout ? 'visible' : ''}">
-            <ul>
-              ${summaryLines.map((line) => `<li>${line}</li>`).join('')}
-            </ul>
-          </div>
-          <div class="shift-inline-panel shift-inline-calendar ${showCalendar ? 'visible' : ''}">
-            <div><strong>Заезд:</strong> ${startText}</div>
-            <div><strong>Выезд:</strong> ${endText}</div>
-            <div><strong>Длительность:</strong> ${shiftDaysLabel(s)}</div>
-          </div>
-        </div>
-      `;
-      }).join('');
-
-      box.querySelectorAll('.shift-option').forEach(el => {
-        el.addEventListener('click', (event) => {
-          if(event.target.closest('.shift-option-action')){
-            return;
-          }
-          if(!hasSelectedAge()){
-            showHint('Сначала выберите возраст ребёнка', 'age');
-            nudgeUserToNextStep('Сначала выберите возраст ребёнка — тогда откроется список смен.');
-            return;
-          }
-          selectShift(el.dataset.id);
-        });
-      });
+      return safeInvoke(ensureShiftOptionsFlow(), 'renderShiftOptions', [viewKey], null);
     }
 
     function renderShiftCards(){
