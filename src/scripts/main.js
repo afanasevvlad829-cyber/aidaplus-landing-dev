@@ -504,6 +504,16 @@
     const normalizeMode = (value, allowedModes, fallbackMode) => (
       allowedModes.includes(value) ? value : fallbackMode
     );
+    const toFiniteNumberOrZero = (value) => {
+      const parsed = Number(value);
+      if(Number.isFinite(parsed)) return parsed;
+      return 0;
+    };
+    const toPositiveIntegerOrZero = (value) => {
+      const parsed = Number(value);
+      if(!Number.isFinite(parsed) || parsed <= 0) return 0;
+      return Math.floor(parsed);
+    };
     const VERSION_MONOTONIC_KEY = 'aidacamp_build_version_last_v1';
     const PROD_DEBUGLESS_DOMAINS = Object.freeze(['aidacamp.ru']);
     const QUALITY_BASELINE_KEY = 'aidacamp_quality_baseline_v1';
@@ -566,15 +576,15 @@
       previousCode: state.previousCode || null,
       nextCodePreview: state.nextCodePreview || null,
       faqFilter: state.faqFilter || 'Медицина',
-      mobileJourneyStep: Number.isFinite(Number(state.mobileJourneyStep)) ? Number(state.mobileJourneyStep) : 0,
+      mobileJourneyStep: toFiniteNumberOrZero(state.mobileJourneyStep),
       mobileProgramShiftId: state.mobileProgramShiftId || '',
-      mobilePhotoIndex: Number.isFinite(Number(state.mobilePhotoIndex)) ? Number(state.mobilePhotoIndex) : 0,
-      mobileVideoIndex: Number.isFinite(Number(state.mobileVideoIndex)) ? Number(state.mobileVideoIndex) : 0,
-      mobileReviewIndex: Number.isFinite(Number(state.mobileReviewIndex)) ? Number(state.mobileReviewIndex) : 0,
-      mobileStayIndex: Number.isFinite(Number(state.mobileStayIndex)) ? Number(state.mobileStayIndex) : 0,
+      mobilePhotoIndex: toFiniteNumberOrZero(state.mobilePhotoIndex),
+      mobileVideoIndex: toFiniteNumberOrZero(state.mobileVideoIndex),
+      mobileReviewIndex: toFiniteNumberOrZero(state.mobileReviewIndex),
+      mobileStayIndex: toFiniteNumberOrZero(state.mobileStayIndex),
       mobileFaqGroup: state.mobileFaqGroup || 'Медицина',
       mobileFaqOpenKey: state.mobileFaqOpenKey || '',
-      mobileTeamIndex: Number.isFinite(Number(state.mobileTeamIndex)) ? Number(state.mobileTeamIndex) : 0,
+      mobileTeamIndex: toFiniteNumberOrZero(state.mobileTeamIndex),
       // Mobile docs block must stay compact by default: requisites visible, legal links collapsed.
       mobileDocsExpanded: false,
       debugBookingBlocks: !!state.debugBookingBlocks
@@ -588,9 +598,8 @@
     let bookingScarcityState = (() => {
       try {
         const saved = JSON.parse(localStorage.getItem(BOOKING_SCARCITY_KEY) || 'null');
-        const visits = Number(saved && saved.visits);
         return {
-          visits: Number.isFinite(visits) && visits > 0 ? Math.floor(visits) : 0
+          visits: toPositiveIntegerOrZero(saved && saved.visits)
         };
       } catch (error){
         return { visits: 0 };
@@ -1901,18 +1910,20 @@
       return safeInvoke(ensureModalMediaFlow(), 'renderMediaViewer', [], null);
     }
 
+    function getActiveMediaList(){
+      if(mediaType !== 'photo') return mediaContent.videos;
+      if(activePhotoList.length) return activePhotoList;
+      return mediaContent.photos;
+    }
+
     function nextMedia(){
-      const list = mediaType === 'photo'
-        ? (activePhotoList.length ? activePhotoList : mediaContent.photos)
-        : mediaContent.videos;
+      const list = getActiveMediaList();
       mediaIndex = (mediaIndex + 1) % list.length;
       renderMediaViewer();
     }
 
     function prevMedia(){
-      const list = mediaType === 'photo'
-        ? (activePhotoList.length ? activePhotoList : mediaContent.photos)
-        : mediaContent.videos;
+      const list = getActiveMediaList();
       mediaIndex = (mediaIndex - 1 + list.length) % list.length;
       renderMediaViewer();
     }
@@ -2450,12 +2461,27 @@
       const percent = getBookingScarcityPercent();
       nodes.forEach((node) => {
         node.style.setProperty('--scarcity-fill', `${percent}%`);
-        node.innerHTML = `
-          <span class="booking-scarcity-progress" aria-hidden="true">
-            <span class="booking-scarcity-progress-fill"></span>
-          </span>
-          <span class="booking-scarcity-text"><strong>${percent}%</strong> мест уже занято</span>
-        `;
+        let progressNode = node.querySelector('.booking-scarcity-progress');
+        if(!progressNode){
+          progressNode = document.createElement('span');
+          progressNode.className = 'booking-scarcity-progress';
+          progressNode.setAttribute('aria-hidden', 'true');
+          const fillNode = document.createElement('span');
+          fillNode.className = 'booking-scarcity-progress-fill';
+          progressNode.appendChild(fillNode);
+          node.appendChild(progressNode);
+        }
+        let textNode = node.querySelector('.booking-scarcity-text');
+        if(!textNode){
+          textNode = document.createElement('span');
+          textNode.className = 'booking-scarcity-text';
+          node.appendChild(textNode);
+        }
+        textNode.textContent = '';
+        const strongNode = document.createElement('strong');
+        strongNode.textContent = `${percent}%`;
+        textNode.appendChild(strongNode);
+        textNode.appendChild(document.createTextNode(' мест уже занято'));
         if(enteredStageFour){
           node.classList.remove('is-animating');
           void node.offsetWidth;
@@ -2707,16 +2733,20 @@
           });
           renderAll();
           persist();
-          const scope = state.previewView === 'mobile' ? 'booking-mobile' : 'booking-desktop';
+          let scope = 'booking-desktop';
+          if(state.previewView === 'mobile') scope = 'booking-mobile';
           HERO_V3_SIMPLE_ENABLED && window.setTimeout(() => openInlineLead(scope), 0);
         });
       });
     }
 
     function focusMobileAgeGate(){
-      const gate = (USE_DESKTOP_BASE_FOR_MOBILE
-        ? document.getElementById('desktopAgeTabs')
-        : (document.getElementById('mobileAgeGateCard') || document.getElementById('mobileAgeTabs')));
+      let gate = null;
+      if(USE_DESKTOP_BASE_FOR_MOBILE){
+        gate = document.getElementById('desktopAgeTabs');
+      } else {
+        gate = document.getElementById('mobileAgeGateCard') || document.getElementById('mobileAgeTabs');
+      }
       if(!gate) return;
       gate.scrollIntoView({behavior:'smooth', block:'center'});
       gate.classList.add('guided-pulse');
