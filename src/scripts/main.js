@@ -636,6 +636,7 @@
     let globalUiBindingsApi = null;
     let runtimeQualityPipelineApi = null;
     let bookingRuntimeBridgeApi = null;
+    let leadNotifyFlowApi = null;
 
     function ensureTelemetryFlow(){
       if(telemetryFlowApi) return telemetryFlowApi;
@@ -1155,6 +1156,19 @@
       const api = window.AC_FEATURES?.globalUiBindings || null;
       globalUiBindingsApi = asFeatureApi(api);
       return globalUiBindingsApi;
+    }
+
+    function ensureLeadNotifyFlow(){
+      if(leadNotifyFlowApi) return leadNotifyFlowApi;
+      const create = window.AC_FEATURES?.leadNotifyFlow?.create;
+      if(typeof create !== 'function') return null;
+      leadNotifyFlowApi = create({
+        buildAbMeta,
+        saveLeadFallbackMeta,
+        telegramText: bookingText,
+        formatPrice
+      });
+      return leadNotifyFlowApi;
     }
 
     function asObject(value){
@@ -1929,68 +1943,12 @@
     }
 
     async function notifyLead(eventName, payload){
-      const cfg = window.AC_NOTIFY_CONFIG || {};
-      const enrichedPayload = {
-        ...asObject(payload),
-        ...buildAbMeta()
-      };
-      const body = {event: eventName, payload: enrichedPayload};
-      const endpoint = cfg.leadEndpoint || '/api/lead';
-
-      try {
-        const response = await fetch(endpoint, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(body),
-          keepalive:true
-        });
-        if(response.ok){
-          return {ok: true, delivered: true, endpoint};
-        }
-
-        const telegramResult = await sendLeadToTelegram(eventName, enrichedPayload, cfg);
-        if(telegramResult.ok){
-          saveLeadFallbackMeta(eventName, endpoint, `http_${response.status}_telegram_ok`);
-          return telegramResult;
-        }
-
-        saveLeadFallbackMeta(eventName, endpoint, `http_${response.status}`);
-        console.warn('[LEAD_MOCK_FALLBACK]', {endpoint, body});
-        return {ok: false, delivered: false, fallback: true};
-      } catch(error){
-        const telegramResult = await sendLeadToTelegram(eventName, enrichedPayload, cfg);
-        if(telegramResult.ok){
-          saveLeadFallbackMeta(eventName, endpoint, 'network_telegram_ok');
-          return telegramResult;
-        }
-        console.error('notifyLead error', error);
-        saveLeadFallbackMeta(eventName, endpoint, String(error));
-        return {ok: false, delivered: false, fallback: true, error: String(error)};
-      }
-    }
-
-    async function sendLeadToTelegram(eventName, payload, cfg){
-      const token = String(cfg?.telegramBotToken || '');
-      const chatId = String(cfg?.telegramChatId || '');
-      if(!token || !chatId){
-        return {ok:false, delivered:false, fallback:true, reason:'telegram_not_configured'};
-      }
-      try {
-        const formBody = new URLSearchParams();
-        formBody.set('chat_id', chatId);
-        formBody.set('text', formatTelegramMessage(eventName, payload));
-        formBody.set('disable_web_page_preview', 'true');
-        const tgResponse = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-          method:'POST',
-          body: formBody,
-          keepalive:true
-        });
-        if(tgResponse.ok){
-          return {ok:true, delivered:true, endpoint:'telegram_bot', fallback:true};
-        }
-      } catch(error){
-      }
-      return {ok:false, delivered:false, fallback:true};
+      return safeInvoke(ensureLeadNotifyFlow(), 'notifyLead', [eventName, payload], Promise.resolve({
+        ok: false,
+        delivered: false,
+        fallback: true,
+        reason: 'lead_notify_flow_unavailable'
+      }));
     }
 
     function isAdminDebugSession(){
@@ -2025,74 +1983,6 @@
       } catch(error){
         return false;
       }
-    }
-
-    function formatTelegramMessage(eventName, payload){
-      const lines = [];
-
-      if(eventName === 'promo_fixed'){
-        lines.push('AiDaCamp • Фиксация цены');
-        lines.push('');
-        lines.push(`Тип: ${payload.promo_status === 'improved_again' ? 'повторное улучшение' : 'первая фиксация'}`);
-        lines.push(`Телефон: ${payload.phone || 'не указан'}`);
-        lines.push(`Возраст: ${payload.age || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || '—'}`);
-        lines.push(`Даты: ${payload.shift_date || '—'}`);
-        lines.push(`Цена: ${payload.price_final ? formatPrice(payload.price_final) : '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push(`Действует до: ${payload.promo_expires_at_local || '—'}`);
-        lines.push('');
-        lines.push(`Режим: ${payload.mode || '—'}`);
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
-      }
-
-      if(eventName === 'booking_submitted'){
-        lines.push('AiDaCamp • Новая заявка');
-        lines.push('');
-        lines.push(`Имя: ${payload.name || '—'}`);
-        lines.push(`Телефон: ${payload.phone || '—'}`);
-        lines.push(`Возраст: ${payload.age || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || '—'}`);
-        lines.push(`Даты: ${payload.shift_date || '—'}`);
-        lines.push(`Цена: ${payload.price_text || '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push(`Статус промо: ${payload.promo_status || '—'}`);
-        lines.push('');
-        lines.push(`Режим: ${payload.mode || '—'}`);
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
-      }
-
-      if(eventName === 'booking_draft_saved'){
-        lines.push('AiDaCamp • Черновик заявки');
-        lines.push('');
-        lines.push(`Имя: ${payload.name || '—'}`);
-        lines.push(`Телефон: ${payload.phone || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || payload.shift_text || '—'}`);
-        lines.push(`Цена: ${payload.price_text || '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push('');
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
-      }
-
-      if(eventName === 'promo_cancelled'){
-        lines.push('AiDaCamp • Отмена промо / брони');
-        lines.push('');
-        lines.push(`Имя: ${payload.name || '—'}`);
-        lines.push(`Телефон: ${payload.phone || '—'}`);
-        lines.push(`Смена: ${payload.shift_name || '—'}`);
-        lines.push(`Код: ${payload.promo_code || '—'}`);
-        lines.push(`Цена: ${payload.price_final ? formatPrice(payload.price_final) : '—'}`);
-        lines.push('');
-        lines.push(`Отправлено: ${payload.sent_at_local || '—'}`);
-      }
-
-      if(lines.length === 0){
-        lines.push('AiDaCamp lead');
-        lines.push(`Event: ${eventName}`);
-        lines.push(JSON.stringify(payload, null, 2));
-      }
-
-      return lines.join('\n');
     }
 
     function getSelectedShift(){
