@@ -19,7 +19,40 @@
     var doc = ctx.document || windowObj.document;
     var getEnabled = ctx.getEnabled || function(){ return false; };
     var setHeroPhoneDropdownOpen = ctx.setHeroPhoneDropdownOpen || function(){};
+    var navigateToSection = typeof ctx.navigateToSection === 'function' ? ctx.navigateToSection : null;
     var copy = Object.freeze(Object.assign({}, DEFAULT_COPY, ctx.copy || {}));
+
+    function bindReviewsAnchorForSimpleMode(enabled){
+      var reviewsBtn = doc.getElementById('yandexReviewsBtn');
+      if(!reviewsBtn) return;
+      if(enabled){
+        reviewsBtn.setAttribute('href', '#section-reviews');
+        reviewsBtn.removeAttribute('target');
+        reviewsBtn.removeAttribute('rel');
+        if(!reviewsBtn.dataset.heroV3ReviewsBound){
+          reviewsBtn.addEventListener('click', function(event){
+            if(!getEnabled()) return;
+            event.preventDefault();
+            if(navigateToSection){
+              navigateToSection('section-reviews');
+              return;
+            }
+            var node = doc.getElementById('section-reviews');
+            if(node && typeof node.scrollIntoView === 'function'){
+              node.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
+          reviewsBtn.dataset.heroV3ReviewsBound = '1';
+        }
+        return;
+      }
+      if(reviewsBtn.dataset.heroV3ReviewsBound){
+        reviewsBtn.removeAttribute('data-hero-v3-reviews-bound');
+      }
+      reviewsBtn.setAttribute('href', 'https://yandex.ru/maps/org/aydakemp/35558479035/reviews/');
+      reviewsBtn.setAttribute('target', '_blank');
+      reviewsBtn.setAttribute('rel', 'noopener noreferrer');
+    }
 
     function applyMode(){
       var enabled = !!getEnabled();
@@ -34,6 +67,7 @@
         if(debugControls) debugControls.classList.add('hidden');
       }
       setHeroPhoneDropdownOpen(false);
+      bindReviewsAnchorForSimpleMode(enabled);
 
       var menuToggleText = doc.querySelector('.hero-menu-toggle-text');
       if(menuToggleText){

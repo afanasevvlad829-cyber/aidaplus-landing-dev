@@ -1025,7 +1025,8 @@
       heroV3SimpleFlowApi = create({
         document,
         getEnabled: () => HERO_V3_SIMPLE_ENABLED,
-        setHeroPhoneDropdownOpen
+        setHeroPhoneDropdownOpen,
+        navigateToSection
       });
       return heroV3SimpleFlowApi;
     }
