@@ -114,6 +114,14 @@
     const CALENDAR_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.calendar) || {};
     const CALENDAR_WEEKDAYS_SHORT = Object.freeze(CALENDAR_RUNTIME_CONFIG.weekdaysShort || []);
     const CALENDAR_MONTH_NAMES = Object.freeze(CALENDAR_RUNTIME_CONFIG.monthNames || []);
+    const DOCS_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.docsRuntime) || {};
+    const DOCS_MOBILE_COPY_FALLBACK = Object.freeze({
+      orgName: '',
+      orgMeta: '',
+      copyright: '',
+      links: Object.freeze([])
+    });
+    const DOCS_DESKTOP_SECTION_TEMPLATES_FALLBACK = Object.freeze({});
     const VERSION_BADGE_HIDDEN_KEY = String(STORAGE_RUNTIME_CONFIG.versionBadgeHiddenKey || 'aidacamp_version_badge_hidden_v1');
     const VIDEO_META_CACHE_KEY = String(STORAGE_RUNTIME_CONFIG.videoMetaCacheKey || 'aidacamp_video_meta_cache_v2');
     const VIDEO_META_CACHE_TTL_MS = Number(STORAGE_RUNTIME_CONFIG.videoMetaCacheTtlMs || (1000 * 60 * 60 * 4));
@@ -764,9 +772,9 @@
       if(typeof create !== 'function') return null;
       docsFlowApi = create({
         shouldUseMobileTemplatesForDesktopSource: () => USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile',
-        getMobileDocsCopy: () => MOBILE_DOCS_COPY,
+        getMobileDocsCopy: () => Object.freeze(DOCS_RUNTIME_CONFIG.mobileDocsCopy || DOCS_MOBILE_COPY_FALLBACK),
         getState: () => state,
-        getDesktopMobileSectionTemplates: () => DESKTOP_MOBILE_SECTION_TEMPLATES
+        getDesktopMobileSectionTemplates: () => Object.freeze(DOCS_RUNTIME_CONFIG.desktopMobileSectionTemplates || DOCS_DESKTOP_SECTION_TEMPLATES_FALLBACK)
       });
       return docsFlowApi;
     }
@@ -2408,15 +2416,6 @@
     function syncMobileDocsExpandedUi(){
       return safeInvoke(ensureDocsFlow(), 'syncMobileDocsExpandedUi', [], null);
     }
-
-    const DOCS_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.docsRuntime) || {};
-    const MOBILE_DOCS_COPY = Object.freeze(DOCS_RUNTIME_CONFIG.mobileDocsCopy || {
-      orgName: '',
-      orgMeta: '',
-      copyright: '',
-      links: Object.freeze([])
-    });
-    const DESKTOP_MOBILE_SECTION_TEMPLATES = Object.freeze(DOCS_RUNTIME_CONFIG.desktopMobileSectionTemplates || {});
 
     function applyMobileTemplatesToDesktopSections(){
       return safeInvoke(ensureDocsFlow(), 'applyMobileTemplatesToDesktopSections', [], null);
