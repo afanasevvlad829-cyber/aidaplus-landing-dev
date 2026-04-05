@@ -5,16 +5,7 @@
   windowObj.AC_FEATURES = windowObj.AC_FEATURES || {};
   windowObj.AC_FEATURES.heroV3SimpleFlow = windowObj.AC_FEATURES.heroV3SimpleFlow || {};
 
-  var DEFAULT_COPY = Object.freeze({
-    menuToggleText: '⋯',
-    heroTag: '66 км от Москвы · смены июнь–август',
-    heroTitleHtml: 'AI-лагерь 7–14:<br><span class="hero-title-accent">проект за смену</span>',
-    heroSub: 'Python · Minecraft · AI · Хакатон · Бассейн',
-    heroSlogan: '6 лет работы · 1200+ детей · ★ 5.0 Яндекс Карты',
-    bookingTitle: 'Подберём смену за 1 минуту',
-    bookingLead: 'Программу и даты — за 10 минут',
-    stepLabels: Object.freeze(['1. ВОЗРАСТ', '2. ВАШ ТЕЛЕФОН', '3. —', '4. —'])
-  });
+  var DEFAULT_COPY = Object.freeze({});
 
   function setTextIfPresent(root, selector, value){
     var node = root.querySelector(selector);
@@ -46,7 +37,11 @@
 
       var menuToggleText = doc.querySelector('.hero-menu-toggle-text');
       if(menuToggleText){
-        menuToggleText.textContent = enabled ? copy.menuToggleText : 'Меню';
+        if(enabled && typeof copy.menuToggleText === 'string' && copy.menuToggleText){
+          menuToggleText.textContent = copy.menuToggleText;
+        } else {
+          menuToggleText.textContent = 'Меню';
+        }
       }
       if(!enabled){
         return;
@@ -62,12 +57,13 @@
       if(heroTitle && copy.heroTitleHtml){
         heroTitle.innerHTML = copy.heroTitleHtml;
       }
-      var labels = Array.isArray(copy.stepLabels) ? copy.stepLabels : DEFAULT_COPY.stepLabels;
-      doc.querySelectorAll('#desktop-booking-card .booking-step').forEach(function(node, idx){
-        if(node && labels[idx]){
-          node.textContent = labels[idx];
-        }
-      });
+      if(Array.isArray(copy.stepLabels)){
+        doc.querySelectorAll('#desktop-booking-card .booking-step').forEach(function(node, idx){
+          if(node && typeof copy.stepLabels[idx] === 'string' && copy.stepLabels[idx]){
+            node.textContent = copy.stepLabels[idx];
+          }
+        });
+      }
     }
 
     return Object.freeze({
