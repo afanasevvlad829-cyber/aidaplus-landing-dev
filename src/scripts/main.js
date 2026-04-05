@@ -346,6 +346,8 @@
     const BOOKING_SCARCITY_BASE = 63;
     const BOOKING_SCARCITY_STEP = 7;
     const BOOKING_SCARCITY_MAX = 98;
+    const OFFER_STAGE_KEY = 'offerStage';
+    const OFFER_LAYOUT_KEY = 'offerLayout';
 
     let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
       age:null,
@@ -356,7 +358,7 @@
       previousCode:null,
       nextCodePreview:null,
       expiresAt:null,
-      offerStage:0,
+      [OFFER_STAGE_KEY]:0,
       view:'desktop',
       phone:'',
       debugBookingBlocks:false
@@ -2261,14 +2263,14 @@
         offerPrice: null,
         code: null,
         expiresAt: null,
-        offerStage: 0,
+        [OFFER_STAGE_KEY]: 0,
         view: keepView,
         previewView: keepView,
         phone: '',
         desktopMode: keepDesktopMode,
         mobileMode: keepMobileMode,
         offerModalTheme: keepOfferModalTheme,
-        offerLayout: keepOfferLayout,
+        [OFFER_LAYOUT_KEY]: keepOfferLayout,
         photoFilter: 'camp',
         faqFilter: 'Медицина',
         mobileJourneyStep: 0,
@@ -2911,7 +2913,7 @@
     }
 
     function applyOfferLayoutMode(){
-      const mode = normalizeMode(state.offerLayout, OFFER_LAYOUT_MODES, 'current');
+      const mode = normalizeMode(state[OFFER_LAYOUT_KEY], OFFER_LAYOUT_MODES, 'current');
       const currentBtn = document.getElementById('offerLayoutCurrentBtn');
       if(currentBtn){
         currentBtn.classList.toggle('active', mode === 'current');
@@ -3138,7 +3140,7 @@
             offerPrice: null,
             code: null,
             expiresAt: null,
-            offerStage: 0,
+            [OFFER_STAGE_KEY]: 0,
             bookingCompleted: false
           });
           renderAll();
@@ -3355,7 +3357,7 @@
         offerPrice: null,
         code: null,
         expiresAt: null,
-        offerStage: 0,
+        [OFFER_STAGE_KEY]: 0,
         bookingCompleted: false
       });
 
@@ -3378,7 +3380,7 @@
         offerPrice: null,
         code: null,
         expiresAt: null,
-        offerStage: 0,
+        [OFFER_STAGE_KEY]: 0,
         offerSearching: false,
         bookingCompleted: false
       });
@@ -4027,7 +4029,7 @@
         offerPrice: null,
         code: null,
         expiresAt: null,
-        offerStage: 0
+        [OFFER_STAGE_KEY]: 0
       });
       renderAll();
       persist();
