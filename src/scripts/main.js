@@ -839,14 +839,20 @@
         getBookingStage,
         placeStage2ContentForView,
         syncCompletedBookingScaffold,
-        stopVariantFlowScenario,
+        stopVariantFlowScenario: () => safeInvoke(ensureVariantFlow(), 'stopVariantFlowScenario', [], null),
         bookingText,
         hideVariantCoachBadge,
         hasSelectedAge,
         ageLabel,
         getState: () => state,
         getSelectedShift,
-        scheduleVariantFlowScenario
+        scheduleVariantFlowScenario: () => {
+          if(HERO_V3_SIMPLE_ENABLED){
+            safeInvoke(ensureVariantFlow(), 'stopVariantFlowScenario', [], null);
+            return;
+          }
+          safeInvoke(ensureVariantFlow(), 'scheduleVariantFlowScenario', [], null);
+        }
       });
       return guidedStateFlowApi;
     }
@@ -3180,90 +3186,6 @@
       setTimeout(() => gate.classList.remove('guided-pulse'), 1100);
     }
 
-    function waitDesktopAgeTapHint(ms){
-      return safeInvoke(ensureBookingHintFlow(), 'waitDesktopAgeTapHint', [ms], Promise.resolve());
-    }
-
-    function canRunDesktopAgeTapHint(){
-      return safeInvoke(ensureBookingHintFlow(), 'canRunDesktopAgeTapHint', [], false);
-    }
-
-    function ensureDesktopAgeTapHintNode(){
-      return safeInvoke(ensureBookingHintFlow(), 'ensureDesktopAgeTapHintNode', [], null);
-    }
-
-    function placeDesktopAgeTapHint(hintNode, ageRow){
-      return safeInvoke(ensureBookingHintFlow(), 'placeDesktopAgeTapHint', [hintNode, ageRow], null);
-    }
-
-    function clearDesktopAgeTapHintRows(){
-      return safeInvoke(ensureBookingHintFlow(), 'clearDesktopAgeTapHintRows', [], null);
-    }
-
-    function pulseDesktopAgeTapHint(hintNode, ageRow){
-      return safeInvoke(ensureBookingHintFlow(), 'pulseDesktopAgeTapHint', [hintNode, ageRow], null);
-    }
-
-    function hideDesktopAgeTapHint(){
-      return safeInvoke(ensureBookingHintFlow(), 'hideDesktopAgeTapHint', [], null);
-    }
-
-    async function runDesktopAgeTapHint(){
-      return safeInvoke(ensureBookingHintFlow(), 'runDesktopAgeTapHint', [], Promise.resolve());
-    }
-
-    function syncDesktopAgeTapHintVisibility(){
-      return safeInvoke(ensureBookingHintFlow(), 'syncDesktopAgeTapHintVisibility', [], null);
-    }
-
-    function scheduleDesktopAgeTapHint(){
-      return safeInvoke(ensureBookingHintFlow(), 'scheduleDesktopAgeTapHint', [], null);
-    }
-
-    function clearVariantFlowFingerTimer(){
-      return safeInvoke(ensureVariantFlow(), 'clearVariantFlowFingerTimer', [], null);
-    }
-
-    function waitVariantFlow(ms, runId){
-      return safeInvoke(ensureVariantFlow(), 'waitVariantFlow', [ms, runId], Promise.resolve(false));
-    }
-
-    function ensureVariantFlowFinger(){
-      return safeInvoke(ensureVariantFlow(), 'ensureVariantFlowFinger', [], null);
-    }
-
-    function hideVariantFlowFinger(){
-      return safeInvoke(ensureVariantFlow(), 'hideVariantFlowFinger', [], null);
-    }
-
-    function stopVariantFlowScenario(){
-      return safeInvoke(ensureVariantFlow(), 'stopVariantFlowScenario', [], null);
-    }
-
-    function placeVariantFlowFinger(finger, targetEl){
-      return safeInvoke(ensureVariantFlow(), 'placeVariantFlowFinger', [finger, targetEl], null);
-    }
-
-    async function runVariantFlowForTargets(targets, runId){
-      return safeInvoke(ensureVariantFlow(), 'runVariantFlowForTargets', [targets, runId], Promise.resolve());
-    }
-
-    function getVariantFlowKey(){
-      return safeInvoke(ensureVariantFlow(), 'getVariantFlowKey', [], '');
-    }
-
-    async function runVariantFlowScenario(){
-      return safeInvoke(ensureVariantFlow(), 'runVariantFlowScenario', [], Promise.resolve());
-    }
-
-    function scheduleVariantFlowScenario(){
-      if(HERO_V3_SIMPLE_ENABLED){
-        stopVariantFlowScenario();
-        return;
-      }
-      return safeInvoke(ensureVariantFlow(), 'scheduleVariantFlowScenario', [], null);
-    }
-
     function resetAgeSelection(){
       clearShiftOptionPanels();
       Object.assign(state, {
@@ -3926,8 +3848,8 @@
       applyMobileTemplatesToDesktopSections();
       renderShiftOptionsForRenderableViews();
       renderBookingPanels();
-      syncDesktopAgeTapHintVisibility();
-      scheduleDesktopAgeTapHint();
+      safeInvoke(ensureBookingHintFlow(), 'syncDesktopAgeTapHintVisibility', [], null);
+      safeInvoke(ensureBookingHintFlow(), 'scheduleDesktopAgeTapHint', [], null);
       renderMediaSections();
       if(!USE_DESKTOP_BASE_FOR_MOBILE){
         applyMobileSectionAccordion();
@@ -4419,7 +4341,7 @@
       initSectionViewTracking();
       refreshVideoMeta({force:true});
       scheduleVideoMetaRefresh();
-      scheduleDesktopAgeTapHint();
+      safeInvoke(ensureBookingHintFlow(), 'scheduleDesktopAgeTapHint', [], null);
       runQualityPipelineAll();
     };
     window.setTimeout(deferredInit, 0);
