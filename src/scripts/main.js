@@ -16,7 +16,13 @@
         badge:'HIT',
         isShort:false,
         desc:'Стартовая смена с мягким входом в программирование и знакомством с ИИ.',
-        fullDesc:'Мягкий вход в программирование через понятные и быстрые результаты. Для 7–9 лет: ребёнок работает в Scratch и Minecraft, делает первые проекты и понимает базовую логику через игру. Для 10–12 лет: начинает писать код на Python, создаёт простые программы и видит, как работает логика внутри. Для 13–14 лет: пробует первые проекты с элементами AI, знакомится с нейросетями и делает первые осмысленные шаги в сторону современных технологий. Главное — ребёнок не слушает, а делает и получает результат уже в первые дни.'
+        fullDesc:[
+          'Мягкий вход в программирование через понятные и быстрые результаты.',
+          'Для 7–9 лет: ребёнок работает в Scratch и Minecraft, делает первые проекты и понимает базовую логику через игру.',
+          'Для 10–12 лет: начинает писать код на Python, создаёт простые программы и видит, как работает логика внутри.',
+          'Для 13–14 лет: пробует первые проекты с элементами AI, знакомится с нейросетями и делает первые осмысленные шаги в сторону современных технологий.',
+          'Главное — ребёнок не слушает, а делает и получает результат уже в первые дни.'
+        ].join(' ')
       },
       {
         id:'shift-2',
@@ -31,7 +37,13 @@
         badge:'',
         isShort:false,
         desc:'Полная смена на 13 дней: проекты, логика и первые шаги в нейросетях.',
-        fullDesc:'Смена, где ребёнок начинает реально понимать, как всё устроено. Для 7–9 лет: усложняются проекты, появляется больше самостоятельности, ребёнок начинает осознанно собирать логику. Для 10–12 лет: работает с Python, делает игры и ботов, начинает понимать структуру кода и алгоритмы. Для 13–14 лет: разбирается с более сложными задачами, пробует нейросети и делает проекты с логикой «как в реальных IT-продуктах». Результат — не просто интерес, а ощущение «я могу и понимаю».'
+        fullDesc:[
+          'Смена, где ребёнок начинает реально понимать, как всё устроено.',
+          'Для 7–9 лет: усложняются проекты, появляется больше самостоятельности, ребёнок начинает осознанно собирать логику.',
+          'Для 10–12 лет: работает с Python, делает игры и ботов, начинает понимать структуру кода и алгоритмы.',
+          'Для 13–14 лет: разбирается с более сложными задачами, пробует нейросети и делает проекты с логикой «как в реальных IT-продуктах».',
+          'Результат — не просто интерес, а ощущение «я могу и понимаю».'
+        ].join(' ')
       },
       {
         id:'shift-2-1',
@@ -47,7 +59,13 @@
         isShort:true,
         sourceId:'shift-2',
         desc:'Короткая смена 7 дней: проекты, логика и быстрый вход в программу.',
-        fullDesc:'Короткая смена на 7 дней. Ускоренный формат с фокусом на практике: ребёнок делает проект, прокачивает логику и закрепляет базовые навыки программирования через понятные задачи. Для 7–9 лет — упор на Scratch и визуальную логику; для 10–12 лет — первые уверенные шаги в Python и структуре кода; для 13–14 лет — проектная сборка с элементами AI. Формат короткий, но результатный.'
+        fullDesc:[
+          'Короткая смена на 7 дней.',
+          'Ускоренный формат с фокусом на практике: ребёнок делает проект, прокачивает логику и закрепляет базовые навыки программирования через понятные задачи.',
+          'Для 7–9 лет — упор на Scratch и визуальную логику; для 10–12 лет — первые уверенные шаги в Python и структуре кода;',
+          'для 13–14 лет — проектная сборка с элементами AI.',
+          'Формат короткий, но результатный.'
+        ].join(' ')
       },
       {
         id:'shift-2-2',
@@ -63,7 +81,13 @@
         isShort:true,
         sourceId:'shift-2',
         desc:'Короткая смена 8 дней: интенсив по проектам, логике и закреплению навыков.',
-        fullDesc:'Короткая смена на 8 дней. Интенсивное продолжение проектной работы: ребёнок усиливает логику, доводит задачи до результата и закрепляет навыки программирования в прикладном формате. Для 7–9 лет — развитие проектов в Scratch; для 10–12 лет — практический Python и алгоритмы; для 13–14 лет — более сложные задачи и работа с AI-инструментами. Короткий цикл с фокусом на конкретный прогресс.'
+        fullDesc:[
+          'Короткая смена на 8 дней.',
+          'Интенсивное продолжение проектной работы: ребёнок усиливает логику, доводит задачи до результата и закрепляет навыки программирования в прикладном формате.',
+          'Для 7–9 лет — развитие проектов в Scratch; для 10–12 лет — практический Python и алгоритмы;',
+          'для 13–14 лет — более сложные задачи и работа с AI-инструментами.',
+          'Короткий цикл с фокусом на конкретный прогресс.'
+        ].join(' ')
       },
       {
         id:'shift-4',
@@ -78,7 +102,13 @@
         badge:'',
         isShort:false,
         desc:'Летняя смена с акцентом на проекты, командную работу и уверенность.',
-        fullDesc:'Баланс между программированием, командной работой и лагерной жизнью. Для 7–9 лет: ребёнок продолжает делать проекты, но больше взаимодействует с другими, учится работать в команде. Для 10–12 лет: объединяет навыки кода и общения, участвует в командных задачах и учится доводить идеи до результата. Для 13–14 лет: работает над более цельными проектами, распределяет роли в команде и понимает, как создаются продукты. Смена даёт уверенность: ребёнок не просто учится, а начинает действовать.'
+        fullDesc:[
+          'Баланс между программированием, командной работой и лагерной жизнью.',
+          'Для 7–9 лет: ребёнок продолжает делать проекты, но больше взаимодействует с другими, учится работать в команде.',
+          'Для 10–12 лет: объединяет навыки кода и общения, участвует в командных задачах и учится доводить идеи до результата.',
+          'Для 13–14 лет: работает над более цельными проектами, распределяет роли в команде и понимает, как создаются продукты.',
+          'Смена даёт уверенность: ребёнок не просто учится, а начинает действовать.'
+        ].join(' ')
       },
       {
         id:'shift-5',
@@ -93,7 +123,13 @@
         badge:'',
         isShort:false,
         desc:'Финальная смена: закрепление навыков и защита мини-проектов.',
-        fullDesc:'Смена, где ребёнок собирает всё, чему научился, в понятный результат. Для 7–9 лет: заканчивает проекты и начинает объяснять, как они работают. Для 10–12 лет: делает законченные программы и может показать, что именно он сделал и как. Для 13–14 лет: создаёт более сложные проекты, оформляет их и презентует как готовый продукт. Итог — ребёнок уезжает не с эмоциями, а с реальным результатом и пониманием своего прогресса.'
+        fullDesc:[
+          'Смена, где ребёнок собирает всё, чему научился, в понятный результат.',
+          'Для 7–9 лет: заканчивает проекты и начинает объяснять, как они работают.',
+          'Для 10–12 лет: делает законченные программы и может показать, что именно он сделал и как.',
+          'Для 13–14 лет: создаёт более сложные проекты, оформляет их и презентует как готовый продукт.',
+          'Итог — ребёнок уезжает не с эмоциями, а с реальным результатом и пониманием своего прогресса.'
+        ].join(' ')
       }
     ];
 
@@ -142,7 +178,13 @@
           group:'Связь',
           icon:'/assets/icons/phone-mobile.svg',
           items:[
-            {q:'Будет ли телефон у ребёнка?',a:'Лагерь «без телефонов». Телефон сдаётся на хранение: звонки родителям — раз в день или по запросу в любое время. В любое время можно связаться с вожатым, вожатые и старшие смены на связи 24/7.'},
+            {
+              q:'Будет ли телефон у ребёнка?',
+              a:[
+                'Лагерь «без телефонов». Телефон сдаётся на хранение: звонки родителям — раз в день или по запросу в любое время.',
+                'В любое время можно связаться с вожатым, вожатые и старшие смены на связи 24/7.'
+              ].join(' ')
+            },
             {q:'Как следить что происходит?',a:'Родительский Telegram-чат, фото каждый день.'}
           ]
         }
@@ -505,54 +547,59 @@
     let activePhotoList = [];
     let photoGalleryList = [];
     // SECTION 2: State normalization and hydration.
-    state.previewView = state.previewView || state.view || 'desktop';
-    if(USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile'){
-      state.view = 'desktop';
-    }
-    state.desktopMode = 'full';
-    state.mobileMode = 'full';
-    state.heroContrastMode = 'after-soft';
-    state.heroMicroMode = 'off';
-    state.offerModalTheme = 'light';
-    state.offerLayout = state.offerLayout || 'legacy';
-    state.ageSelected = typeof state.ageSelected === 'boolean' ? state.ageSelected : false;
-    state.bookingCompleted = !!state.bookingCompleted;
+    const normalizedPreviewView = state.previewView || state.view || 'desktop';
+    Object.assign(state, {
+      previewView: normalizedPreviewView,
+      view: (USE_DESKTOP_BASE_FOR_MOBILE && normalizedPreviewView === 'mobile') ? 'desktop' : state.view,
+      desktopMode: 'full',
+      mobileMode: 'full',
+      heroContrastMode: 'after-soft',
+      heroMicroMode: 'off',
+      offerModalTheme: 'light',
+      offerLayout: state.offerLayout || 'legacy',
+      ageSelected: typeof state.ageSelected === 'boolean' ? state.ageSelected : false,
+      bookingCompleted: !!state.bookingCompleted
+    });
     let stateWasNormalized = false;
     if(!state.age){
       if(state.ageSelected || state.shiftId || state.basePrice || state.offerPrice || state.code || state.expiresAt || state.offerStage || state.bookingCompleted){
         stateWasNormalized = true;
       }
-      state.ageSelected = false;
-      state.shiftId = null;
-      state.basePrice = null;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerStage = 0;
-      state.bookingCompleted = false;
+      Object.assign(state, {
+        ageSelected: false,
+        shiftId: null,
+        basePrice: null,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerStage: 0,
+        bookingCompleted: false
+      });
     } else {
       if(!state.ageSelected){
         stateWasNormalized = true;
       }
-      state.ageSelected = true;
+      Object.assign(state, { ageSelected: true });
       if(!state.shiftId){
         if(state.basePrice || state.offerPrice || state.code || state.expiresAt || state.offerStage || state.bookingCompleted){
           stateWasNormalized = true;
         }
-        state.basePrice = null;
-        state.offerPrice = null;
-        state.code = null;
-        state.expiresAt = null;
-        state.offerStage = 0;
-        state.bookingCompleted = false;
+        Object.assign(state, {
+          basePrice: null,
+          offerPrice: null,
+          code: null,
+          expiresAt: null,
+          offerStage: 0,
+          bookingCompleted: false
+        });
       }
     }
     const normalizedOfferStage = Number(state.offerStage);
     if(!Number.isFinite(normalizedOfferStage) || normalizedOfferStage < 0){
-      state.offerStage = 0;
+      Object.assign(state, { offerStage: 0 });
       stateWasNormalized = true;
     } else if(normalizedOfferStage > 4){
-      state.offerStage = 4;
+      Object.assign(state, { offerStage: 4 });
       stateWasNormalized = true;
     }
     if(stateWasNormalized){
@@ -562,22 +609,24 @@
         console.warn('[STATE] normalize persist failed', error);
       }
     }
-    state.photoFilter = state.photoFilter || 'camp';
-    state.previousCode = state.previousCode || null;
-    state.nextCodePreview = state.nextCodePreview || null;
-    state.faqFilter = state.faqFilter || 'Медицина';
-    state.mobileJourneyStep = Number.isFinite(Number(state.mobileJourneyStep)) ? Number(state.mobileJourneyStep) : 0;
-    state.mobileProgramShiftId = state.mobileProgramShiftId || '';
-    state.mobilePhotoIndex = Number.isFinite(Number(state.mobilePhotoIndex)) ? Number(state.mobilePhotoIndex) : 0;
-    state.mobileVideoIndex = Number.isFinite(Number(state.mobileVideoIndex)) ? Number(state.mobileVideoIndex) : 0;
-    state.mobileReviewIndex = Number.isFinite(Number(state.mobileReviewIndex)) ? Number(state.mobileReviewIndex) : 0;
-    state.mobileStayIndex = Number.isFinite(Number(state.mobileStayIndex)) ? Number(state.mobileStayIndex) : 0;
-    state.mobileFaqGroup = state.mobileFaqGroup || 'Медицина';
-    state.mobileFaqOpenKey = state.mobileFaqOpenKey || '';
-    state.mobileTeamIndex = Number.isFinite(Number(state.mobileTeamIndex)) ? Number(state.mobileTeamIndex) : 0;
-    // Mobile docs block must stay compact by default: requisites visible, legal links collapsed.
-    state.mobileDocsExpanded = false;
-    state.debugBookingBlocks = !!state.debugBookingBlocks;
+    Object.assign(state, {
+      photoFilter: state.photoFilter || 'camp',
+      previousCode: state.previousCode || null,
+      nextCodePreview: state.nextCodePreview || null,
+      faqFilter: state.faqFilter || 'Медицина',
+      mobileJourneyStep: Number.isFinite(Number(state.mobileJourneyStep)) ? Number(state.mobileJourneyStep) : 0,
+      mobileProgramShiftId: state.mobileProgramShiftId || '',
+      mobilePhotoIndex: Number.isFinite(Number(state.mobilePhotoIndex)) ? Number(state.mobilePhotoIndex) : 0,
+      mobileVideoIndex: Number.isFinite(Number(state.mobileVideoIndex)) ? Number(state.mobileVideoIndex) : 0,
+      mobileReviewIndex: Number.isFinite(Number(state.mobileReviewIndex)) ? Number(state.mobileReviewIndex) : 0,
+      mobileStayIndex: Number.isFinite(Number(state.mobileStayIndex)) ? Number(state.mobileStayIndex) : 0,
+      mobileFaqGroup: state.mobileFaqGroup || 'Медицина',
+      mobileFaqOpenKey: state.mobileFaqOpenKey || '',
+      mobileTeamIndex: Number.isFinite(Number(state.mobileTeamIndex)) ? Number(state.mobileTeamIndex) : 0,
+      // Mobile docs block must stay compact by default: requisites visible, legal links collapsed.
+      mobileDocsExpanded: false,
+      debugBookingBlocks: !!state.debugBookingBlocks
+    });
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
     let offerTimeoutIds = [];
@@ -620,6 +669,16 @@
     let navigationFlowApi = null;
     let videoMetaFlowApi = null;
     let mediaSectionsFlowApi = null;
+    let modalMediaFlowApi = null;
+    let guidedStateFlowApi = null;
+    let bookingViewFlowApi = null;
+    let bookingHintFlowApi = null;
+    let viewModeFlowApi = null;
+    let actionDispatcherApi = null;
+    let bookingInlineLeadApi = null;
+    let mediaGestureBindingsApi = null;
+    let globalUiBindingsApi = null;
+    let runtimeQualityPipelineApi = null;
 
     function ensureTelemetryFlow(){
       if(telemetryFlowApi) return telemetryFlowApi;
@@ -780,7 +839,7 @@
         faqGlyph,
         bookingText,
         setPhotoLists: (list = []) => {
-          const next = Array.isArray(list) ? list.slice() : [];
+          const next = cloneArrayOrEmpty(list);
           photoGalleryList = next.slice();
           activePhotoList = next.slice();
         },
@@ -790,18 +849,274 @@
       return mediaSectionsFlowApi;
     }
 
+    function ensureModalMediaFlow(){
+      if(modalMediaFlowApi) return modalMediaFlowApi;
+      const create = window.AC_FEATURES?.modalMediaFlow?.create;
+      if(typeof create !== 'function') return null;
+      modalMediaFlowApi = create({
+        getState: () => state,
+        getMediaContent: () => mediaContent,
+        getActivePhotoList: () => activePhotoList,
+        setMediaContext: (next = {}) => {
+          mediaType = next.mediaType || mediaType;
+          mediaIndex = Number(next.mediaIndex);
+          if(!Number.isFinite(mediaIndex)) mediaIndex = 0;
+        },
+        getMediaContext: () => ({ mediaType, mediaIndex }),
+        track,
+        photoCatLabel,
+        resolveVideoSource
+      });
+      return modalMediaFlowApi;
+    }
+
+    function ensureGuidedStateFlow(){
+      if(guidedStateFlowApi) return guidedStateFlowApi;
+      const create = window.AC_FEATURES?.guidedStateFlow?.create;
+      if(typeof create !== 'function') return null;
+      guidedStateFlowApi = create({
+        getBookingViewConfig,
+        syncGuidedState,
+        getBookingStage,
+        placeStage2ContentForView,
+        syncCompletedBookingScaffold,
+        stopVariantFlowScenario,
+        bookingText,
+        hideVariantCoachBadge,
+        hasSelectedAge,
+        ageLabel,
+        getState: () => state,
+        getSelectedShift,
+        scheduleVariantFlowScenario
+      });
+      return guidedStateFlowApi;
+    }
+
+    function ensureBookingViewFlow(){
+      if(bookingViewFlowApi) return bookingViewFlowApi;
+      const create = window.AC_FEATURES?.bookingViewFlow?.create;
+      if(typeof create !== 'function') return null;
+      bookingViewFlowApi = create({
+        bookingText,
+        getBookingStage,
+        splitPrimaryActionText,
+        getSelectedShift,
+        getPrimaryActionState,
+        getResolvedPrimaryActionText,
+        getState: () => state,
+        hasSelectedAge,
+        formatPrice,
+        getVisiblePrice,
+        isOfferActive,
+        formatRemainingCompact,
+        stripRemainingPrefix,
+        ageLabel,
+        shiftDaysLabel,
+        uiBookingHintTemplate,
+        getTypewriterRunId: () => bookingStage1TitleTypewriterRunId,
+        setTypewriterRunId: (value) => {
+          bookingStage1TitleTypewriterRunId = Number(value) || 0;
+        },
+        getTypewriterTimer: () => bookingStage1TitleTypewriterTimer,
+        setTypewriterTimer: (timerId) => {
+          bookingStage1TitleTypewriterTimer = timerId || null;
+        },
+        getTypewriterDone: () => bookingStage1TitleTypewriterDone,
+        setTypewriterDone: (flag) => {
+          bookingStage1TitleTypewriterDone = !!flag;
+        }
+      });
+      return bookingViewFlowApi;
+    }
+
+    function ensureBookingHintFlow(){
+      if(bookingHintFlowApi) return bookingHintFlowApi;
+      const create = window.AC_FEATURES?.bookingHintFlow?.create;
+      if(typeof create !== 'function') return null;
+      bookingHintFlowApi = create({
+        getActiveBookingViewKeys,
+        getRenderableBookingViewKeys,
+        getBookingViewConfig,
+        getBookingStage,
+        hasSelectedAge,
+        getState: () => state
+      });
+      return bookingHintFlowApi;
+    }
+
+    function ensureViewModeFlow(){
+      if(viewModeFlowApi) return viewModeFlowApi;
+      const create = window.AC_FEATURES?.viewModeFlow?.create;
+      if(typeof create !== 'function') return null;
+      viewModeFlowApi = create({
+        getState: () => state,
+        useDesktopBaseForMobile: USE_DESKTOP_BASE_FOR_MOBILE,
+        normalizeMode,
+        heroContrastModes: HERO_CONTRAST_MODES,
+        heroMicroModes: HERO_MICRO_MODES,
+        offerModalThemes: OFFER_MODAL_THEMES,
+        offerLayoutModes: OFFER_LAYOUT_MODES,
+        setHeroMenuOpen,
+        closeSectionModal,
+        applyHeroAbVariant,
+        applyMobileTemplatesToDesktopSections,
+        renderMediaSections,
+        renderDesktopMobileDocsBlock,
+        updateSummaryBarVisibility,
+        persist,
+        applyOfferLayoutMode,
+        showOffer,
+        applyMobileSectionAccordion
+      });
+      return viewModeFlowApi;
+    }
+
+    function ensureActionDispatcher(){
+      if(actionDispatcherApi) return actionDispatcherApi;
+      const create = window.AC_FEATURES?.actionDispatcher?.createActionDispatcher;
+      if(typeof create !== 'function') return null;
+      actionDispatcherApi = create({
+        bookingText,
+        getState: () => state,
+        getMediaContent: () => mediaContent,
+        getPhotoGalleryList: () => photoGalleryList.slice(),
+        setActivePhotoList: (next = []) => {
+          activePhotoList = cloneArrayOrEmpty(next);
+        },
+        openMedia,
+        getStayGallery,
+        openVideo,
+        scrollVideoCarousel,
+        openShiftAboutModal,
+        openCalendar,
+        toggleShiftOptionPanel,
+        navigateToSection,
+        focusMobileAgeGate,
+        dismissSummaryBarTemporarily,
+        applyStatePatch: (patch = {}) => {
+          Object.assign(state, patch);
+        },
+        renderCompactTrustPanelContent,
+        persist,
+        syncMobileDocsExpandedUi,
+        renderDesktopMobileDocsBlock,
+        scrollTeamCarousel,
+        openSeasonCalendar,
+        handlePrimaryCTA,
+        resetAgeSelection,
+        resetShiftSelection,
+        openResetBookingConfirmModal,
+        bumpOfferRunId: () => {
+          offerRunId += 1;
+        },
+        clearOfferTimeout,
+        resetOfferProgressUI,
+        saveOfferAndClose,
+        openNoticeModal,
+        renderAll,
+        syncGuidedState,
+        buildBookingSummaryHtml,
+        isOfferActive,
+        startTimer,
+        track,
+        selectedShiftPayload,
+        buildHeroVariantMeta,
+        submitLead,
+        closeSuccessModal,
+        closeNoticeModal,
+        hideVariantCoachBadge,
+        getPrimaryBookingViewConfig,
+        getNoticeConfirmHandler: () => noticeConfirmHandler,
+        closeCalendar,
+        closeSectionModal,
+        closeVideo,
+        buildInviteClipboardText,
+        setHeroMenuOpen,
+        isHeroMenuOpen,
+        setHeroPhoneDropdownOpen,
+        isHeroPhoneDropdownOpen
+      });
+      return actionDispatcherApi;
+    }
+
+    function ensureBookingInlineLeadApi(){
+      if(bookingInlineLeadApi) return bookingInlineLeadApi;
+      const api = window.AC_FEATURES?.bookingInlineLead || null;
+      bookingInlineLeadApi = asFeatureApi(api);
+      return bookingInlineLeadApi;
+    }
+
+    function ensureMediaGestureBindingsApi(){
+      if(mediaGestureBindingsApi) return mediaGestureBindingsApi;
+      const api = window.AC_FEATURES?.mediaGestureBindings || null;
+      mediaGestureBindingsApi = asFeatureApi(api);
+      return mediaGestureBindingsApi;
+    }
+
+    function ensureGlobalUiBindingsApi(){
+      if(globalUiBindingsApi) return globalUiBindingsApi;
+      const api = window.AC_FEATURES?.globalUiBindings || null;
+      globalUiBindingsApi = asFeatureApi(api);
+      return globalUiBindingsApi;
+    }
+
+    function asObject(value){
+      return (value && typeof value === 'object' && value) || {};
+    }
+
+    function asFeatureApi(value){
+      return (value && typeof value === 'object' && value) || null;
+    }
+
+    function cloneArrayOrEmpty(value){
+      return (Array.isArray(value) && value.slice()) || [];
+    }
+
+    function resolveBookingViewCfg(viewCfg){
+      return (viewCfg && viewCfg.key && viewCfg) || getBookingViewConfig('desktop');
+    }
+
+    function resolveScopeRoot(scopeRoot){
+      return (scopeRoot && scopeRoot.nodeType === 1 && scopeRoot) || document;
+    }
+
+    function resolveViewKey(viewKey){
+      return (viewKey === 'mobile' && 'mobile') || 'desktop';
+    }
+
+    function resolveVariantCoachMode(tier){
+      return ((tier === 'tier2' || tier === 'tier4') && 'menu') || 'info';
+    }
+
+    function toHeroAbVariant(value){
+      return ((String(value || 'A').toUpperCase() === 'B') && 'B') || 'A';
+    }
+
+    function hasQueryFlag(name){
+      try{
+        const params = new URLSearchParams(window.location.search || '');
+        return params.get(name) === '1';
+      } catch (error){
+        return false;
+      }
+    }
+
+    function getHeroAbAssets(value){
+      return HERO_AB_ASSETS[toHeroAbVariant(value)] || HERO_AB_ASSETS.A;
+    }
+
     function buildAbMeta(extra = {}){
       const fallback = {
         ab_test_id: HERO_AB_TEST_ID,
-        ab_variant: String(heroAbVariant || '').toUpperCase() === 'B' ? 'B' : 'A',
-        ...(extra && typeof extra === 'object' ? extra : {})
+        ab_variant: toHeroAbVariant(heroAbVariant),
+        ...asObject(extra)
       };
       return safeInvoke(ensureTelemetryFlow(), 'buildAbMeta', [extra], fallback);
     }
 
     function track(event, params = {}){
       const trackedParams = {
-        ...(params && typeof params === 'object' ? params : {}),
+        ...asObject(params),
         ...buildAbMeta()
       };
       return safeInvoke(ensureTelemetryFlow(), 'track', [event, trackedParams], () => {
@@ -840,7 +1155,7 @@
         campaign_id: fallbackVariant.campaignId || '',
         tier: fallbackVariant.tier || HERO_VARIANT_DEFAULT_TIER,
         variant: fallbackVariant.copy?.variant || 'v1',
-        ...(extra && typeof extra === 'object' ? extra : {})
+        ...asObject(extra)
       };
       return safeInvoke(ensureHeroVariantFlow(), 'buildHeroVariantMeta', [extra], fallback);
     }
@@ -850,13 +1165,11 @@
         const search = getCurrentSearchParams();
         const bannerId = String(search.get('utm_content') || '').trim();
         const campaignId = String(search.get('utm_campaign') || '').trim();
-        const tierFromBanner = bannerId ? HERO_VARIANT_BANNER_TIER[bannerId] : '';
+        const tierFromBanner = (bannerId && HERO_VARIANT_BANNER_TIER[bannerId]) || '';
         const isKnownBanner = !!tierFromBanner;
-        const tier = isKnownBanner ? tierFromBanner : HERO_VARIANT_DEFAULT_TIER;
+        const tier = (isKnownBanner && tierFromBanner) || HERO_VARIANT_DEFAULT_TIER;
         const copy = HERO_VARIANT_COPY[tier] || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
-        const fallbackReason = !bannerId
-          ? 'unknown_banner_or_no_utm'
-          : (!isKnownBanner ? 'unknown_banner_or_no_utm' : '');
+        const fallbackReason = ((!bannerId || !isKnownBanner) && 'unknown_banner_or_no_utm') || '';
         return { bannerId, campaignId, tier, copy, fallbackReason };
       };
       return safeInvoke(ensureHeroVariantFlow(), 'resolveHeroVariantFromUtm', [], fallback);
@@ -889,22 +1202,22 @@
     }
 
     function syncVariantBookingHint(viewCfg){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const cfg = resolveBookingViewCfg(viewCfg);
       return safeInvoke(ensureHeroVariantFlow(), 'syncVariantBookingHint', [cfg], null);
     }
 
     function ensureVariantCoachBadge(viewCfg){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const cfg = resolveBookingViewCfg(viewCfg);
       return safeInvoke(ensureHeroVariantFlow(), 'ensureVariantCoachBadge', [cfg], null);
     }
 
     function hideVariantCoachBadge(viewCfg, dismissKey = ''){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const cfg = resolveBookingViewCfg(viewCfg);
       return safeInvoke(ensureHeroVariantFlow(), 'hideVariantCoachBadge', [cfg, dismissKey], null);
     }
 
     function syncVariantCoachBadge(viewCfg){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const cfg = resolveBookingViewCfg(viewCfg);
       return safeInvoke(ensureHeroVariantFlow(), 'syncVariantCoachBadge', [cfg], null);
     }
 
@@ -943,480 +1256,93 @@
       track(event, params);
     }
 
-    function parseBuildVersionNumber(label){
-      const match = String(label || '').trim().match(/^v(\d+)\.(\d+)\.(\d+)/i);
-      if(!match) return null;
-      const major = Number(match[1]);
-      const minor = Number(match[2]);
-      const patch = Number(match[3]);
-      if(!Number.isFinite(major) || !Number.isFinite(minor) || !Number.isFinite(patch)) return null;
-      return (major * 1000000) + (minor * 1000) + patch;
-    }
-
-    function runBuildVersionGuardrail(){
-      const currentLabel = BUILD_VERSION_LABEL.trim();
-      const currentValue = parseBuildVersionNumber(currentLabel);
-      const previousLabel = String(localStorage.getItem(VERSION_MONOTONIC_KEY) || '').trim();
-      const previousValue = parseBuildVersionNumber(previousLabel);
-      let monotonic = true;
-
-      if(previousValue !== null && currentValue !== null && currentValue < previousValue){
-        monotonic = false;
-        console.error('[GUARDRAIL] Version regression detected', {
-          previous: previousLabel,
-          current: currentLabel
-        });
-        trackOnce('guardrail_version_regression', {
-          previous: previousLabel,
-          current: currentLabel
-        });
-      } else if(currentValue !== null){
-        localStorage.setItem(VERSION_MONOTONIC_KEY, currentLabel);
-      }
-
-      return {
-        ok: monotonic,
-        previous: previousLabel || null,
-        current: currentLabel,
-        previousValue,
-        currentValue
-      };
-    }
-
-    function runRuntimeSmokeGuardrail(){
-      const missing = [];
-      GUARDRAIL_REQUIRED_SELECTORS.forEach((selector) => {
-        if(!document.querySelector(selector)){
-          missing.push(selector);
-        }
+    function ensureRuntimeQualityPipeline(){
+      if(runtimeQualityPipelineApi) return runtimeQualityPipelineApi;
+      const create = window.AC_FEATURES?.runtimeQualityPipeline?.create;
+      if(typeof create !== 'function') return null;
+      runtimeQualityPipelineApi = create({
+        document,
+        runtimeStore: AIDACAMP_RUNTIME,
+        buildVersionLabel: BUILD_VERSION_LABEL,
+        versionMonotonicKey: VERSION_MONOTONIC_KEY,
+        qualityBaselineKey: QUALITY_BASELINE_KEY,
+        debtRegisterKey: DEBT_REGISTER_KEY,
+        requiredSelectors: GUARDRAIL_REQUIRED_SELECTORS,
+        qualitySoftGates: QUALITY_SOFT_GATES,
+        architecturePolicy: ARCHITECTURE_POLICY,
+        useDesktopBaseForMobile: USE_DESKTOP_BASE_FOR_MOBILE,
+        shouldUseLegacyMobile: () => state.previewView === 'mobile',
+        trackOnce,
+        isPipelineEnabled: () => isFeatureEnabled('runtimeQualityPipeline')
       });
-      const ok = missing.length === 0;
-      if(!ok){
-        console.error('[GUARDRAIL] Smoke check failed', { missing });
-        trackOnce('guardrail_smoke_failed', {
-          missing: missing.slice(0, 6).join(',')
-        });
+      if(runtimeQualityPipelineApi?.namespace){
+        AIDACAMP_RUNTIME.quality.pipeline = runtimeQualityPipelineApi.namespace;
       }
-      return {
-        ok,
-        checked: GUARDRAIL_REQUIRED_SELECTORS.length,
-        missing
-      };
+      return runtimeQualityPipelineApi;
     }
 
-    function runUnifiedArchitectureGuardrail(){
-      const issues = [];
-      if(!USE_DESKTOP_BASE_FOR_MOBILE){
-        issues.push('USE_DESKTOP_BASE_FOR_MOBILE=false');
-      }
-      const desktopView = document.getElementById('desktopView');
-      if(!desktopView){
-        issues.push('desktopView_missing');
-      }
-      const mobileView = document.getElementById('mobileView');
-      if(mobileView && state.previewView === 'mobile'){
-        const styles = window.getComputedStyle(mobileView);
-        const legacyVisible = styles.display !== 'none' && styles.visibility !== 'hidden' && !mobileView.hidden;
-        if(legacyVisible){
-          issues.push('legacy_mobile_view_visible');
-        }
-      }
-      const ok = issues.length === 0;
-      if(!ok){
-        console.error('[GUARDRAIL] Unified architecture check failed', { issues });
-        trackOnce('guardrail_architecture_failed', {
-          issues: issues.slice(0, 4).join(',')
-        });
-      }
-      return {
-        ok,
-        policy: ARCHITECTURE_POLICY.id,
-        policyVersion: ARCHITECTURE_POLICY.version,
-        issues
-      };
+    function getRuntimeQualityNamespace(){
+      const pipeline = ensureRuntimeQualityPipeline();
+      return pipeline?.namespace || null;
     }
 
     function runGuardrails(){
-      const version = runBuildVersionGuardrail();
-      const smoke = runRuntimeSmokeGuardrail();
-      const architecture = runUnifiedArchitectureGuardrail();
-      const summary = {
-        timestamp: new Date().toISOString(),
-        build: BUILD_VERSION_LABEL,
-        version,
-        smoke,
-        architecture,
-        ok: !!(version.ok && smoke.ok && architecture.ok)
-      };
-      AIDACAMP_RUNTIME.quality.guardrails = summary;
-      return summary;
-    }
-
-    function pickMainScriptText(){
-      const scripts = Array.from(document.querySelectorAll('script:not([type="application/json"])'));
-      let candidate = '';
-      scripts.forEach((node) => {
-        const text = String(node.textContent || '');
-        if(text.length > candidate.length){
-          candidate = text;
-        }
+      return safeInvoke(getRuntimeQualityNamespace(), 'runGuardrails', [], {
+        ok: false,
+        policy: ARCHITECTURE_POLICY.id
       });
-      return candidate;
-    }
-
-    function collectDuplicateSelectors(cssText){
-      const map = new Map();
-      const cleaned = String(cssText || '')
-        .replace(/\/\*[\s\S]*?\*\//g, '');
-      const blocks = cleaned.split('{');
-      blocks.forEach((left) => {
-        const selectorRaw = String(left || '').trim();
-        if(!selectorRaw || selectorRaw.startsWith('@')) return;
-        selectorRaw
-          .split(',')
-          .map((item) => item.trim().replace(/\s+/g, ' '))
-          .filter(Boolean)
-          .forEach((selector) => {
-            const current = map.get(selector) || 0;
-            map.set(selector, current + 1);
-          });
-      });
-      let duplicates = 0;
-      map.forEach((count) => {
-        if(count > 1) duplicates += 1;
-      });
-      return {
-        uniqueSelectors: map.size,
-        duplicateSelectors: duplicates
-      };
     }
 
     function runQualityBaselineAudit(){
-      let previousBaseline = null;
-      try {
-        previousBaseline = JSON.parse(localStorage.getItem(QUALITY_BASELINE_KEY) || 'null');
-      } catch (error){
-        previousBaseline = null;
-      }
-
-      const cssNode = document.querySelector('style');
-      const cssText = String(cssNode?.textContent || '');
-      const jsText = pickMainScriptText();
-      const cssRules = (cssText.match(/{/g) || []).length;
-      const jsFunctions = (jsText.match(/\bfunction\s+[a-zA-Z0-9_$]+\s*\(/g) || []).length;
-      const jsBranches = (jsText.match(/\bif\s*\(|\bswitch\s*\(/g) || []).length;
-      const jsListeners = (jsText.match(/addEventListener\s*\(/g) || []).length;
-      const selectorStats = collectDuplicateSelectors(cssText);
-      const makeDelta = (current, previous) => {
-        if(!Number.isFinite(Number(current)) || !Number.isFinite(Number(previous))) return null;
-        return Number(current) - Number(previous);
-      };
-
-      const delta = Object.freeze({
-        versionFrom: previousBaseline?.version || null,
-        css: Object.freeze({
-          bytes: makeDelta(cssText.length, previousBaseline?.css?.bytes),
-          rules: makeDelta(cssRules, previousBaseline?.css?.rules),
-          uniqueSelectors: makeDelta(selectorStats.uniqueSelectors, previousBaseline?.css?.uniqueSelectors),
-          duplicateSelectors: makeDelta(selectorStats.duplicateSelectors, previousBaseline?.css?.duplicateSelectors)
-        }),
-        js: Object.freeze({
-          bytes: makeDelta(jsText.length, previousBaseline?.js?.bytes),
-          functions: makeDelta(jsFunctions, previousBaseline?.js?.functions),
-          branchPoints: makeDelta(jsBranches, previousBaseline?.js?.branchPoints),
-          listeners: makeDelta(jsListeners, previousBaseline?.js?.listeners)
-        })
-      });
-
-      const snapshot = Object.freeze({
-        version: BUILD_VERSION_LABEL,
-        timestamp: new Date().toISOString(),
-        delta,
-        css: Object.freeze({
-          bytes: cssText.length,
-          rules: cssRules,
-          uniqueSelectors: selectorStats.uniqueSelectors,
-          duplicateSelectors: selectorStats.duplicateSelectors
-        }),
-        js: Object.freeze({
-          bytes: jsText.length,
-          functions: jsFunctions,
-          branchPoints: jsBranches,
-          listeners: jsListeners
-        })
-      });
-
-      AIDACAMP_RUNTIME.quality.baseline = snapshot;
-      AIDACAMP_RUNTIME.quality.baselineDelta = delta;
-      try {
-        localStorage.setItem(QUALITY_BASELINE_KEY, JSON.stringify(snapshot));
-      } catch (error){
-        console.warn('[QUALITY] baseline persist failed', error);
-      }
-      return snapshot;
+      return safeInvoke(getRuntimeQualityNamespace(), 'runQualityBaselineAudit', [], null);
     }
 
     function evaluateSoftQualityGates(snapshot){
-      const data = snapshot || AIDACAMP_RUNTIME.quality.baseline;
-      if(!data) return { ok:false, warnings:['baseline_missing'], thresholds: QUALITY_SOFT_GATES };
-
-      const warnings = [];
-      const pushWarn = (key, value, max) => {
-        warnings.push(`${key}:${value}>${max}`);
-      };
-
-      if((data.css?.duplicateSelectors || 0) > QUALITY_SOFT_GATES.cssDuplicateSelectorsMax){
-        pushWarn('css.duplicateSelectors', data.css.duplicateSelectors, QUALITY_SOFT_GATES.cssDuplicateSelectorsMax);
-      }
-      if((data.css?.bytes || 0) > QUALITY_SOFT_GATES.cssBytesMax){
-        pushWarn('css.bytes', data.css.bytes, QUALITY_SOFT_GATES.cssBytesMax);
-      }
-      if((data.js?.branchPoints || 0) > QUALITY_SOFT_GATES.jsBranchPointsMax){
-        pushWarn('js.branchPoints', data.js.branchPoints, QUALITY_SOFT_GATES.jsBranchPointsMax);
-      }
-      if((data.js?.listeners || 0) > QUALITY_SOFT_GATES.jsListenersMax){
-        pushWarn('js.listeners', data.js.listeners, QUALITY_SOFT_GATES.jsListenersMax);
-      }
-      if((data.js?.bytes || 0) > QUALITY_SOFT_GATES.jsBytesMax){
-        pushWarn('js.bytes', data.js.bytes, QUALITY_SOFT_GATES.jsBytesMax);
-      }
-
-      const result = {
-        ok: warnings.length === 0,
-        warnings,
-        thresholds: QUALITY_SOFT_GATES,
-        version: BUILD_VERSION_LABEL
-      };
-      AIDACAMP_RUNTIME.quality.softGates = result;
-
-      if(!result.ok){
-        console.warn('[QUALITY] soft gates warnings', result);
-        trackOnce('quality_soft_gates_warn', {
-          count: warnings.length,
-          top: warnings[0] || ''
-        });
-      }
-      return result;
+      return safeInvoke(getRuntimeQualityNamespace(), 'evaluateSoftQualityGates', [snapshot], {
+        ok: false,
+        warnings: ['pipeline_unavailable']
+      });
     }
 
     function buildDebtRegister(guardrails, baseline, gates){
-      const items = [];
-      const addItem = (id, severity, source, detail) => {
-        items.push({
-          id,
-          severity,
-          source,
-          detail
-        });
-      };
-
-      if(!guardrails?.version?.ok){
-        addItem(
-          'version-regression',
-          'critical',
-          'guardrails.version',
-          `Версия откатилась: ${guardrails?.version?.previous || 'n/a'} -> ${guardrails?.version?.current || 'n/a'}`
-        );
-      }
-
-      if(!guardrails?.smoke?.ok){
-        addItem(
-          'runtime-smoke-missing-selectors',
-          'high',
-          'guardrails.smoke',
-          `Отсутствуют критические селекторы: ${(guardrails?.smoke?.missing || []).slice(0, 6).join(', ')}`
-        );
-      }
-
-      const warnings = gates?.warnings || [];
-      warnings.forEach((warning) => {
-        const key = String(warning || '').split(':')[0];
-        const severity = key.includes('bytes') ? 'medium' : 'high';
-        addItem(
-          `quality-gate-${key || 'unknown'}`,
-          severity,
-          'quality.soft-gates',
-          warning
-        );
+      return safeInvoke(getRuntimeQualityNamespace(), 'buildDebtRegister', [guardrails, baseline, gates], {
+        debtItems: [],
+        pressureScore: 0,
+        pressureLevel: 'low'
       });
-
-      if((baseline?.css?.duplicateSelectors || 0) > 280){
-        addItem(
-          'css-duplicate-selector-pressure',
-          'medium',
-          'quality.baseline.css',
-          `Дубли селекторов=${baseline.css.duplicateSelectors}, желательно < 280`
-        );
-      }
-
-      const scoreMap = { low: 1, medium: 2, high: 3, critical: 4 };
-      const pressure = items.reduce((sum, item) => sum + (scoreMap[item.severity] || 0), 0);
-      const summary = {
-        version: BUILD_VERSION_LABEL,
-        timestamp: new Date().toISOString(),
-        debtItems: items,
-        pressureScore: pressure,
-        pressureLevel: pressure >= 9 ? 'high' : (pressure >= 4 ? 'medium' : 'low')
-      };
-
-      AIDACAMP_RUNTIME.quality.debtRegister = summary;
-      try {
-        localStorage.setItem(DEBT_REGISTER_KEY, JSON.stringify(summary));
-      } catch (error){
-        console.warn('[DEBT] register persist failed', error);
-      }
-      return summary;
     }
 
     function buildRuntimeQualityScore(baseline, gates, debtRegister){
-      const globalAidacampExports = Object.keys(window).filter((key) => key.startsWith('__AIDACAMP_')).length;
-      const cssDupPenalty = Math.min(2.2, Math.max(0, ((baseline?.css?.duplicateSelectors || 0) - 220) / 120));
-      const cssSizePenalty = Math.min(1.8, Math.max(0, ((baseline?.css?.bytes || 0) - 180000) / 80000));
-      const cssRulePenalty = Math.min(1.4, Math.max(0, ((baseline?.css?.rules || 0) - 1100) / 400));
-      const jsBranchPenalty = Math.min(2.2, Math.max(0, ((baseline?.js?.branchPoints || 0) - 620) / 220));
-      const jsFunctionPenalty = Math.min(1.6, Math.max(0, ((baseline?.js?.functions || 0) - 180) / 80));
-      const jsListenerPenalty = Math.min(1.6, Math.max(0, ((baseline?.js?.listeners || 0) - 170) / 90));
-      const jsSizePenalty = Math.min(1.8, Math.max(0, ((baseline?.js?.bytes || 0) - 280000) / 120000));
-      const gatesPenalty = Math.min(1.5, (gates?.warnings?.length || 0) * 0.3);
-      const globalFootprintPenalty = Math.min(1.1, Math.max(0, ((globalAidacampExports - 2) / 6) * 0.9));
-      const architectureSignals = Object.freeze({
-        runtimeStore: !!AIDACAMP_RUNTIME,
-        qualityStore: !!AIDACAMP_RUNTIME?.quality,
-        pipelineNamespace: !!AIDACAMP_RUNTIME?.quality?.pipeline,
-        runAllOrchestrator: typeof AIDACAMP_RUNTIME?.quality?.pipeline?.runAll === 'function',
-        lowGlobalExports: globalAidacampExports <= 2
+      return safeInvoke(getRuntimeQualityNamespace(), 'buildRuntimeQualityScore', [baseline, gates, debtRegister], {
+        css: 0,
+        js: 0,
+        techDebt: 0,
+        monolithness: 0
       });
-      const architectureSignalCount = Object.values(architectureSignals).filter(Boolean).length;
-      const architectureBonus = Math.min(1.2, architectureSignalCount * 0.24);
-
-      const cssScore = Math.max(0, Math.min(10, Number((10 - cssDupPenalty - cssSizePenalty - gatesPenalty * 0.35).toFixed(1))));
-      const jsScore = Math.max(0, Math.min(10, Number((10 - jsBranchPenalty - jsListenerPenalty - jsSizePenalty - gatesPenalty * 0.4).toFixed(1))));
-      const debtScore = Math.max(
-        0,
-        Math.min(
-          10,
-          Number((((debtRegister?.pressureScore || 0) * 0.55) + (gates?.warnings?.length || 0) * 0.35).toFixed(1))
-        )
-      );
-      const pipelineBonus = AIDACAMP_RUNTIME.quality.pipeline ? 0.6 : 0;
-      const monolithScore = Math.max(
-        0,
-        Math.min(
-          10,
-          Number((
-            10
-            - cssRulePenalty * 0.8
-            - cssSizePenalty * 0.4
-            - jsFunctionPenalty * 0.9
-            - jsBranchPenalty * 0.8
-            - jsSizePenalty * 0.5
-            - globalFootprintPenalty
-            + architectureBonus
-          ).toFixed(1))
-        )
-      );
-
-      const runtimeScore = Object.freeze({
-        version: BUILD_VERSION_LABEL,
-        timestamp: new Date().toISOString(),
-        css: cssScore,
-        js: jsScore,
-        techDebt: debtScore,
-        debtScale: '0 best .. 10 worst',
-        monolithness: monolithScore,
-        monolithScale: '0 monolith .. 10 modular',
-        globalExports: globalAidacampExports,
-        architectureSignals: architectureSignals
-      });
-      AIDACAMP_RUNTIME.quality.runtimeScore = runtimeScore;
-      return runtimeScore;
     }
 
     function buildQualityTrendSummary(delta){
-      const d = delta || AIDACAMP_RUNTIME.quality.baselineDelta || {};
-      const probes = [
-        { key:'css.bytes', value:d?.css?.bytes },
-        { key:'css.duplicateSelectors', value:d?.css?.duplicateSelectors },
-        { key:'js.bytes', value:d?.js?.bytes },
-        { key:'js.branchPoints', value:d?.js?.branchPoints },
-        { key:'js.listeners', value:d?.js?.listeners }
-      ];
-      let better = 0;
-      let worse = 0;
-      const details = [];
-      probes.forEach((probe) => {
-        const value = Number(probe.value);
-        if(!Number.isFinite(value) || value === 0) return;
-        if(value < 0){
-          better += 1;
-          details.push(`${probe.key}: ${value}`);
-        } else {
-          worse += 1;
-          details.push(`${probe.key}: +${value}`);
-        }
+      return safeInvoke(getRuntimeQualityNamespace(), 'buildQualityTrendSummary', [delta], {
+        trend: 'flat',
+        better: 0,
+        worse: 0
       });
-      const trend = worse > better ? 'worse' : (better > worse ? 'better' : 'flat');
-      const summary = Object.freeze({
-        version: BUILD_VERSION_LABEL,
-        fromVersion: d?.versionFrom || null,
-        trend,
-        better,
-        worse,
-        details
-      });
-      AIDACAMP_RUNTIME.quality.trend = summary;
-      return summary;
     }
 
     function runReleaseIntegrityChecks(){
-      const required = Object.freeze([
-        'guardrails',
-        'baseline',
-        'softGates',
-        'debtRegister',
-        'runtimeScore'
-      ]);
-      const missing = required.filter((key) => (
-        typeof AIDACAMP_RUNTIME.quality[key] === 'undefined' || AIDACAMP_RUNTIME.quality[key] === null
-      ));
-      const result = Object.freeze({
-        version: BUILD_VERSION_LABEL,
-        timestamp: new Date().toISOString(),
-        ok: missing.length === 0,
-        required,
-        missing
+      return safeInvoke(getRuntimeQualityNamespace(), 'runReleaseIntegrityChecks', [], {
+        ok: false,
+        missing: ['runtime_quality_pipeline']
       });
-      AIDACAMP_RUNTIME.quality.releaseIntegrity = result;
-
-      if(!result.ok){
-        console.error('[RELEASE] integrity failed', result);
-        trackOnce('release_integrity_failed', {
-          count: missing.length,
-          first: missing[0] || ''
-        });
-      }
-      return result;
     }
 
     function printRuntimeStatusReport(){
-      const runtime = AIDACAMP_RUNTIME.quality.runtimeScore || {};
-      const integrity = AIDACAMP_RUNTIME.quality.releaseIntegrity || {};
-      const gates = AIDACAMP_RUNTIME.quality.softGates || {};
-      const trend = AIDACAMP_RUNTIME.quality.trend || {};
-      const reportLine =
-        `[AIDACAMP][STATUS] ${BUILD_VERSION_LABEL} | css=${runtime.css ?? 'n/a'}` +
-        ` | js=${runtime.js ?? 'n/a'}` +
-        ` | debt=${runtime.techDebt ?? 'n/a'}(0 best)` +
-        ` | monolith=${runtime.monolithness ?? 'n/a'}(10 best)` +
-        ` | integrity=${integrity.ok ? 'ok' : 'fail'}` +
-        ` | softWarnings=${Array.isArray(gates.warnings) ? gates.warnings.length : 'n/a'}` +
-        ` | trend=${trend.trend || 'n/a'}`;
-      console.info(reportLine);
-      AIDACAMP_RUNTIME.quality.statusLine = reportLine;
-      return reportLine;
+      return safeInvoke(getRuntimeQualityNamespace(), 'printRuntimeStatusReport', [], '');
     }
 
     function runQualityPipelineAll(){
+      const qualityResult = safeInvoke(getRuntimeQualityNamespace(), 'runAll', [], null);
+      if(qualityResult) return qualityResult;
       const guardrailReport = runGuardrails();
       const qualityBaseline = runQualityBaselineAudit();
       const qualityGates = evaluateSoftQualityGates(qualityBaseline);
@@ -1465,7 +1391,6 @@
           '.video-close',
           '.form-close',
           "[data-action='close-version-badge']",
-          "[data-action='close-debug-controls']",
           "[data-action='close-form']",
           "[data-action='close-success']",
           "[data-action='close-section-modal']",
@@ -1561,6 +1486,10 @@
     ];
     const HERO_MOBILE_B =
       '/assets/images/hero-ab-pool-20260401.jpeg';
+    const HERO_AB_ASSETS = Object.freeze({
+      A: Object.freeze({images:HERO_IMAGES, mobile:HERO_MOBILE}),
+      B: Object.freeze({images:HERO_IMAGES_B, mobile:HERO_MOBILE_B})
+    });
     const HERO_AB_TEST_KEY = 'aidacamp_hero_ab_v1';
     const HERO_AB_TEST_ID = 'hero_primary_block_v1';
     const HERO_AB_VARIANT_LABELS = Object.freeze({
@@ -1574,6 +1503,8 @@
     const HERO_AB_DESKTOP_BENEFIT_REVEAL_DELAY_MS = 5000;
     const HERO_AB_DESKTOP_BG_ONLY = false;
     const HERO_AB_MOBILE_EFFECTS_ENABLED = false;
+    const HERO_V3_SIMPLE_QUERY_KEY = 'hero_v3_simple';
+    const HERO_V3_SIMPLE_ENABLED = hasQueryFlag(HERO_V3_SIMPLE_QUERY_KEY);
     const AB_EVENT_ENDPOINT_DEFAULT = 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event';
     const AB_VISITOR_ID_KEY = 'aidacamp_ab_visitor_id_v1';
     const AB_SESSION_ID_KEY = 'aidacamp_ab_session_id_v1';
@@ -1615,6 +1546,7 @@
     let heroAbMobileUserInteracted = false;
     let heroAbMobileCollapsed = false;
     let heroAbMobileAutoTimer = null;
+    let heroAbFlowApi = null;
     let heroResizeTimer = null;
     let summaryBarDismissUntilTs = 0;
     let summaryBarDismissTimer = null;
@@ -1641,8 +1573,9 @@
 
     function initHero(){
       const isMobile = window.innerWidth < 768;
-      const heroImages = heroAbVariant === 'B' ? HERO_IMAGES_B : HERO_IMAGES;
-      const heroMobile = heroAbVariant === 'B' ? HERO_MOBILE_B : HERO_MOBILE;
+      const heroAssets = getHeroAbAssets(heroAbVariant);
+      const heroImages = heroAssets.images;
+      const heroMobile = heroAssets.mobile;
 
       const bg1 = document.getElementById('heroBg1');
       const bg2 = document.getElementById('heroBg2');
@@ -1741,9 +1674,40 @@
       }, 5500);
     }
 
+    function applyHeroV3SimpleMode(){
+      const desktopView = document.getElementById('desktopView');
+      const mobileView = document.getElementById('mobileView');
+      const enabled = HERO_V3_SIMPLE_ENABLED;
+      document.documentElement.classList.toggle('hero-v3-simple-enabled', enabled);
+      document.body.classList.toggle('hero-v3-simple-enabled', enabled);
+      desktopView?.classList.toggle('hero-v3-simple', enabled);
+      mobileView?.classList.toggle('hero-v3-simple', enabled);
+      enabled && document.getElementById('debugControls')?.classList.add('hidden');
+      setHeroPhoneDropdownOpen(false);
+      const menuToggleText = document.querySelector('.hero-menu-toggle-text');
+      menuToggleText && (menuToggleText.textContent = enabled ? '⋯' : 'Меню');
+      const heroTag = document.querySelector('#desktopView .hero-tag');
+      heroTag && enabled && (heroTag.textContent = '66 км от Москвы · смены июнь–август');
+      const heroTitle = document.querySelector('#desktopView .hero-title');
+      heroTitle && enabled && (heroTitle.innerHTML = 'AI-лагерь 7–14:<br><span class=\"hero-title-accent\">проект за смену</span>');
+      const heroSub = document.querySelector('#desktopView .hero-sub');
+      heroSub && enabled && (heroSub.textContent = 'Python · Minecraft · AI · Хакатон · Бассейн');
+      const heroSlogan = document.querySelector('#desktopView .hero-slogan');
+      heroSlogan && enabled && (heroSlogan.textContent = '6 лет работы · 1200+ детей · ★ 5.0 Яндекс Карты');
+      const stepLabels = ['1. ВОЗРАСТ', '2. ВАШ ТЕЛЕФОН', '3. —', '4. —'];
+      document.querySelectorAll('#desktop-booking-card .booking-step').forEach((node, idx) => {
+        enabled && (node.textContent = stepLabels[idx] || node.textContent);
+      });
+      const bookingTitle = document.getElementById('desktopBookingTitle');
+      bookingTitle && enabled && (bookingTitle.textContent = 'Подберём смену за 1 минуту');
+      const bookingLead = document.getElementById('desktopBookingLead');
+      bookingLead && enabled && (bookingLead.textContent = 'Программу и даты — за 10 минут');
+    }
+
     function preloadHeroAssets(){
-      const heroImages = heroAbVariant === 'B' ? HERO_IMAGES_B : HERO_IMAGES;
-      const heroMobile = heroAbVariant === 'B' ? HERO_MOBILE_B : HERO_MOBILE;
+      const heroAssets = getHeroAbAssets(heroAbVariant);
+      const heroImages = heroAssets.images;
+      const heroMobile = heroAssets.mobile;
       const preloadList = [...heroImages, heroMobile].filter(Boolean);
       preloadList.forEach((src) => {
         try{
@@ -1756,7 +1720,66 @@
       });
     }
 
+    function ensureHeroAbFlow(){
+      if(heroAbFlowApi) return heroAbFlowApi;
+      const create = window.AC_FEATURES?.heroAbFlow?.create;
+      if(typeof create !== 'function') return null;
+      heroAbFlowApi = create({
+        heroAbTestKey: HERO_AB_TEST_KEY,
+        heroAbTestId: HERO_AB_TEST_ID,
+        heroAbDesktopBgOnly: HERO_AB_DESKTOP_BG_ONLY,
+        heroAbMobileEffectsEnabled: HERO_AB_MOBILE_EFFECTS_ENABLED,
+        heroAbBenefitStepMs: HERO_AB_BENEFIT_STEP_MS,
+        heroAbShiftUpMs: HERO_AB_SHIFT_UP_MS,
+        heroAbBenefitRevealDelayMs: HERO_AB_BENEFIT_REVEAL_DELAY_MS,
+        heroAbDesktopShiftUpMs: HERO_AB_DESKTOP_SHIFT_UP_MS,
+        heroAbDesktopBenefitRevealDelayMs: HERO_AB_DESKTOP_BENEFIT_REVEAL_DELAY_MS,
+        useDesktopBaseForMobile: USE_DESKTOP_BASE_FOR_MOBILE,
+        getCurrentSearchParams,
+        bookingText,
+        trackOnce,
+        syncModularState,
+        emitModularEvent,
+        getHeroAbVariant: () => heroAbVariant,
+        setHeroAbVariant: (next) => {
+          heroAbVariant = toHeroAbVariant(next);
+        },
+        getHeroAbTimers: () => heroAbTimers,
+        setHeroAbTimers: (next) => {
+          heroAbTimers = cloneArrayOrEmpty(next);
+        },
+        getMobileAutoTimer: () => heroAbMobileAutoTimer,
+        setMobileAutoTimer: (next) => {
+          heroAbMobileAutoTimer = next || null;
+        },
+        getMobileCollapsed: () => heroAbMobileCollapsed,
+        setMobileCollapsed: (next) => {
+          heroAbMobileCollapsed = !!next;
+        },
+        getMobileScrollBound: () => heroAbMobileScrollBound,
+        setMobileScrollBound: (next) => {
+          heroAbMobileScrollBound = !!next;
+        },
+        getMobileInteractionBound: () => heroAbMobileInteractionBound,
+        setMobileInteractionBound: (next) => {
+          heroAbMobileInteractionBound = !!next;
+        },
+        getMobileUserInteracted: () => heroAbMobileUserInteracted,
+        setMobileUserInteracted: (next) => {
+          heroAbMobileUserInteracted = !!next;
+        },
+        safeInvoke,
+        getViewMode: () => window.AC_VIEW_MODE,
+        applyHeroBenefitsLayoutExperiment,
+        resolveDesktopView: () => document.getElementById('desktopView'),
+        resolveMobileView: () => document.getElementById('mobileView')
+      });
+      return heroAbFlowApi;
+    }
+
     function clearHeroAbTimers(){
+      const cleared = safeInvoke(ensureHeroAbFlow(), 'clearHeroAbTimers', [], null);
+      if(cleared !== null) return;
       heroAbTimers.forEach((timerId) => window.clearTimeout(timerId));
       heroAbTimers = [];
     }
@@ -1781,72 +1804,7 @@
     }
 
     function applyHeroAbAnimationForRoot(root){
-      if(!root) return;
-      const isDesktopRoot = root.id === 'desktopView' && !root.classList.contains('mobile-preview-active');
-      const isMobileRuntimeRoot = !isDesktopRoot;
-      const shouldAnimateForRoot = isDesktopRoot ? true : heroAbVariant === 'B';
-      root.classList.remove('hero-ab-b', 'hero-ab-b-shifted');
-      root.querySelectorAll('.hero-slogan').forEach((node) => {
-        const current = String(node.textContent || '').trim();
-        if(!node.dataset.heroSloganOriginal){
-          node.dataset.heroSloganOriginal = current;
-        }
-        node.textContent = node.dataset.heroSloganOriginal || current;
-      });
-      root.querySelectorAll('.hero-benefits-grid .hero-benefit-card').forEach((card) => {
-        card.classList.remove('hero-benefit-visible');
-      });
-      if(isDesktopRoot && HERO_AB_DESKTOP_BG_ONLY){
-        // Desktop A/B parity: keep visuals and animation identical for A and B.
-        // Only background image differs via initHero() image source selection.
-        return;
-      }
-      if(isMobileRuntimeRoot && !HERO_AB_MOBILE_EFFECTS_ENABLED){
-        // Mobile stability mode: disable experimental A/B visual effects.
-        return;
-      }
-      if(!shouldAnimateForRoot) return;
-
-      root.classList.add('hero-ab-b');
-      if(heroAbVariant === 'B'){
-        root.querySelectorAll('.hero-slogan').forEach((node) => {
-          node.textContent = 'Летние IT-смены в Подмосковье';
-        });
-      }
-      const cards = Array.from(root.querySelectorAll('.hero-benefits-grid .hero-benefit-card'));
-      if(!cards.length) return;
-      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if(prefersReducedMotion){
-        root.classList.add('hero-ab-b-shifted');
-        cards.forEach((card) => card.classList.add('hero-benefit-visible'));
-        return;
-      }
-      const shiftUpMs = isDesktopRoot ? HERO_AB_DESKTOP_SHIFT_UP_MS : HERO_AB_SHIFT_UP_MS;
-      const revealDelayMs = isDesktopRoot ? HERO_AB_DESKTOP_BENEFIT_REVEAL_DELAY_MS : HERO_AB_BENEFIT_REVEAL_DELAY_MS;
-
-      const shiftUpTimer = window.setTimeout(() => {
-        root.classList.add('hero-ab-b-shifted');
-      }, shiftUpMs);
-      heroAbTimers.push(shiftUpTimer);
-
-      let revealIndex = 0;
-      const revealNext = () => {
-        const card = cards[revealIndex];
-        if(card){
-          card.classList.add('hero-benefit-visible');
-          revealIndex += 1;
-        }
-        if(revealIndex >= cards.length && revealInterval){
-          window.clearInterval(revealInterval);
-        }
-      };
-      let revealInterval = null;
-      const revealStartTimer = window.setTimeout(() => {
-        revealNext();
-        revealInterval = window.setInterval(revealNext, HERO_AB_BENEFIT_STEP_MS);
-        heroAbTimers.push(revealInterval);
-      }, revealDelayMs);
-      heroAbTimers.push(revealStartTimer);
+      safeInvoke(ensureHeroAbFlow(), 'applyHeroAbAnimationForRoot', [root], null);
     }
 
     function applyHeroBenefitsLayoutExperiment(root){
@@ -1880,107 +1838,7 @@
     }
 
     function applyHeroAbVariant(){
-      clearHeroAbTimers();
-      if(heroAbMobileAutoTimer){
-        window.clearTimeout(heroAbMobileAutoTimer);
-        heroAbMobileAutoTimer = null;
-      }
-      const desktopView = document.getElementById('desktopView');
-      const mobileView = document.getElementById('mobileView');
-      const resolveMobileHeroRoot = () => {
-        if(desktopView && desktopView.classList.contains('mobile-preview-active')){
-          return desktopView;
-        }
-        if(mobileView && !mobileView.classList.contains('hidden')){
-          return mobileView;
-        }
-        if(USE_DESKTOP_BASE_FOR_MOBILE && desktopView){
-          return desktopView;
-        }
-        return mobileView || desktopView || null;
-      };
-      const isMobileHeroRuntime = () => {
-        if(desktopView && desktopView.classList.contains('mobile-preview-active')) return true;
-        if(mobileView && !mobileView.classList.contains('hidden')) return true;
-        return window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
-      };
-      const desktopIsMobilePreview = !!(desktopView && desktopView.classList.contains('mobile-preview-active'));
-      applyHeroBenefitsLayoutExperiment(desktopView, HERO_BENEFITS_LAYOUT_EXPERIMENT && !desktopIsMobilePreview);
-      applyHeroBenefitsLayoutExperiment(mobileView, false);
-      applyHeroAbAnimationForRoot(desktopView);
-      applyHeroAbAnimationForRoot(mobileView);
-      if(desktopView){
-        desktopView.classList.remove('hero-ab-b-mobile-precollapse');
-        desktopView.classList.remove('hero-ab-b-mobile-collapsed');
-      }
-      if(mobileView){
-        mobileView.classList.remove('hero-ab-b-mobile-precollapse');
-        mobileView.classList.remove('hero-ab-b-mobile-collapsed');
-      }
-      heroAbMobileCollapsed = false;
-      if(!HERO_AB_MOBILE_EFFECTS_ENABLED){
-        if(heroAbMobileAutoTimer){
-          window.clearTimeout(heroAbMobileAutoTimer);
-          heroAbMobileAutoTimer = null;
-        }
-        trackOnce('hero_ab_assigned_v1', {
-          test_id: HERO_AB_TEST_ID,
-          variant: heroAbVariant
-        });
-        return;
-      }
-      const collapseMobileHero = (reason = 'scroll') => {
-        if(heroAbVariant !== 'B') return;
-        if(heroAbMobileCollapsed) return;
-        const mobileRoot = resolveMobileHeroRoot();
-        if(!mobileRoot) return;
-        heroAbMobileCollapsed = true;
-        mobileRoot.classList.remove('hero-ab-b-mobile-precollapse');
-        mobileRoot.classList.add('hero-ab-b-mobile-collapsed');
-        if(heroAbMobileAutoTimer){
-          window.clearTimeout(heroAbMobileAutoTimer);
-          heroAbMobileAutoTimer = null;
-        }
-        trackOnce('hero_ab_mobile_scroll_collapse_v1', {
-          test_id: HERO_AB_TEST_ID,
-          variant: heroAbVariant,
-          reason
-        });
-      };
-      if(!heroAbMobileScrollBound){
-        window.addEventListener('scroll', () => {
-          if(!isMobileHeroRuntime()) return;
-          if(!heroAbMobileUserInteracted) return;
-          const y = window.scrollY || document.documentElement.scrollTop || 0;
-          if(y < 12) return;
-          collapseMobileHero('scroll');
-        }, {passive:true});
-        heroAbMobileScrollBound = true;
-      }
-      if(!heroAbMobileInteractionBound){
-        const markHeroAbInteracted = () => {
-          heroAbMobileUserInteracted = true;
-        };
-        window.addEventListener('touchstart', markHeroAbInteracted, {passive:true});
-        window.addEventListener('pointerdown', markHeroAbInteracted, {passive:true});
-        window.addEventListener('wheel', markHeroAbInteracted, {passive:true});
-        window.addEventListener('keydown', markHeroAbInteracted);
-        heroAbMobileInteractionBound = true;
-      }
-      if(heroAbVariant === 'B' && isMobileHeroRuntime()){
-        heroAbMobileUserInteracted = false;
-        const mobileRoot = resolveMobileHeroRoot();
-        if(mobileRoot){
-          mobileRoot.classList.add('hero-ab-b-mobile-precollapse');
-        }
-        heroAbMobileAutoTimer = window.setTimeout(() => {
-          collapseMobileHero('timeout_10s');
-        }, 10000);
-      }
-      trackOnce('hero_ab_assigned_v1', {
-        test_id: HERO_AB_TEST_ID,
-        variant: heroAbVariant
-      });
+      safeInvoke(ensureHeroAbFlow(), 'applyHeroAbVariant', [], null);
     }
 
     function initHeroAbDevPanel(){
@@ -2040,104 +1898,23 @@
     }
 
     function openMedia(type, index){
-      closeTransientModals('media', {keepSection: true});
-      mediaType = type;
-      mediaIndex = index;
-      if(type === 'photo'){
-        const source = activePhotoList.length ? activePhotoList : mediaContent.photos;
-        const item = source[index];
-        track('photo_open', {
-          category: item?.cat || '',
-          index: index + 1
-        });
-      }
-      if(type === 'video'){
-        const item = mediaContent.videos[index];
-        track('video_open', {
-          title: item?.title || '',
-          index: index + 1
-        });
-      }
-      renderMediaViewer();
-      document.getElementById('mediaLightbox').classList.remove('hidden');
+      return safeInvoke(ensureModalMediaFlow(), 'openMedia', [type, index], null);
     }
 
     function closeMedia(){
-      document.getElementById('mediaLightbox').classList.add('hidden');
-      document.getElementById('mediaContent').innerHTML = '';
+      return safeInvoke(ensureModalMediaFlow(), 'closeMedia', [], null);
     }
 
     function closeTransientModals(except = '', options = {}){
-      const keepSection = !!options.keepSection;
-      if(except !== 'section' && !keepSection){
-        document.getElementById('sectionModal')?.classList.add('hidden');
-      }
-      if(except !== 'media'){
-        document.getElementById('mediaLightbox')?.classList.add('hidden');
-      }
-      if(except !== 'video'){
-        const iframe = document.getElementById('videoFrame');
-        const inner = document.getElementById('videoInner');
-        const fallback = document.getElementById('videoFallback');
-        if(iframe){
-          iframe.src = '';
-          iframe.classList.remove('vertical');
-          iframe.classList.remove('hidden');
-        }
-        if(inner){
-          inner.classList.remove('vertical');
-        }
-        if(fallback){
-          fallback.classList.add('hidden');
-        }
-        document.getElementById('videoModal')?.classList.add('hidden');
-      }
-      if(except !== 'calendar'){
-        document.getElementById('calendarModal')?.classList.add('hidden');
-      }
+      return safeInvoke(ensureModalMediaFlow(), 'closeTransientModals', [except, options], null);
     }
 
     function openVideo(url){
-      const modal = document.getElementById('videoModal');
-      const iframe = document.getElementById('videoFrame');
-      const inner = document.getElementById('videoInner');
-      const fallback = document.getElementById('videoFallback');
-      const fallbackLink = document.getElementById('videoFallbackLink');
-      if(!modal || !iframe || !inner || !fallback || !fallbackLink || !url) return;
-
-      closeTransientModals('video', {keepSection: true});
-      const source = resolveVideoSource(url);
-      const isVertical = source.orientation === 'vertical';
-      inner.classList.toggle('vertical', isVertical);
-      iframe.classList.toggle('vertical', isVertical);
-
-      if(source.canEmbed){
-        iframe.classList.remove('hidden');
-        fallback.classList.add('hidden');
-        iframe.src = source.embedUrl;
-      } else {
-        iframe.src = '';
-        iframe.classList.add('hidden');
-        fallback.classList.remove('hidden');
-        fallbackLink.href = source.externalUrl;
-        fallbackLink.textContent = `Смотреть на ${source.sourceName}`;
-      }
-      modal.classList.remove('hidden');
+      return safeInvoke(ensureModalMediaFlow(), 'openVideo', [url], null);
     }
 
     function closeVideo(){
-      const modal = document.getElementById('videoModal');
-      const iframe = document.getElementById('videoFrame');
-      const inner = document.getElementById('videoInner');
-      const fallback = document.getElementById('videoFallback');
-      if(!modal || !iframe || !inner || !fallback) return;
-
-      iframe.src = '';
-      inner.classList.remove('vertical');
-      iframe.classList.remove('vertical');
-      iframe.classList.remove('hidden');
-      fallback.classList.add('hidden');
-      modal.classList.add('hidden');
+      return safeInvoke(ensureModalMediaFlow(), 'closeVideo', [], null);
     }
 
     function resolveVideoSource(url){
@@ -2191,21 +1968,7 @@
     }
 
     function closeSectionModal(){
-      const modal = document.getElementById('sectionModal');
-      if(!modal) return;
-      const card = modal.querySelector('.section-modal-card');
-      modal.classList.add('hidden');
-      modal.classList.remove('section-modal-compact');
-      modal.classList.remove('section-modal-mobile');
-      document.documentElement.style.overflowX = '';
-      document.body.style.overflowX = '';
-      if(card){
-        card.style.left = '';
-        card.style.top = '';
-        card.style.right = '';
-        card.style.width = '';
-        card.style.height = '';
-      }
+      return safeInvoke(ensureModalMediaFlow(), 'closeSectionModal', [], null);
     }
 
     function setHeroMenuOpen(isOpen){
@@ -2214,8 +1977,8 @@
       const menu = document.getElementById('serviceMenu');
       if(!wrap || !toggle || !menu) return;
       const next = !!isOpen;
-      wrap.dataset.open = next ? '1' : '0';
-      toggle.setAttribute('aria-expanded', next ? 'true' : 'false');
+      wrap.dataset.open = String(Number(!!next));
+      toggle.setAttribute('aria-expanded', String(!!next));
       menu.classList.toggle('is-open', next);
       menu.hidden = !next;
     }
@@ -2224,160 +1987,57 @@
       return document.getElementById('heroMenuWrap')?.dataset.open === '1';
     }
 
+    function setHeroPhoneDropdownOpen(isOpen){
+      const trigger = document.getElementById('heroPhoneTrigger');
+      const dropdown = document.getElementById('heroPhoneDropdown');
+      return (trigger && dropdown && (() => {
+        const next = !!isOpen;
+        trigger.dataset.open = String(Number(next));
+        trigger.setAttribute('aria-expanded', String(next));
+        dropdown.classList.toggle('is-open', next);
+        dropdown.hidden = !next;
+        return next;
+      })()) || false;
+    }
+
+    function isHeroPhoneDropdownOpen(){
+      return document.getElementById('heroPhoneTrigger')?.dataset.open === '1';
+    }
+
     function scrollVideoCarousel(direction = 1, scopeRoot = null){
-      const scope = scopeRoot && scopeRoot.nodeType === 1 ? scopeRoot : document;
+      const scope = resolveScopeRoot(scopeRoot);
       const list = scope.querySelector('#videoList, .video-list');
       if(!list) return;
       const card = list.querySelector('.video-card');
       const gap = 12;
-      const step = card ? (card.getBoundingClientRect().width + gap) : 260;
+      const step = (card && (card.getBoundingClientRect().width + gap)) || 260;
       list.scrollBy({left: step * direction, behavior:'smooth'});
     }
 
     function scrollTeamCarousel(direction = 1, scopeRoot = null){
-      const scope = scopeRoot && scopeRoot.nodeType === 1 ? scopeRoot : document;
+      const scope = resolveScopeRoot(scopeRoot);
       const list = scope.querySelector('#teamCarousel, .team-carousel');
       if(!list) return;
       const card = list.querySelector('.team-card');
       const gap = 12;
-      const step = card ? (card.getBoundingClientRect().width + gap) : 320;
+      const step = (card && (card.getBoundingClientRect().width + gap)) || 320;
       list.scrollBy({left: step * direction, behavior:'smooth'});
     }
 
     function applyCompactSectionModalLayout(){
-      const modal = document.getElementById('sectionModal');
-      const hero = document.getElementById('hero') || document.querySelector('#desktopView .hero-shell');
-      const booking = document.getElementById('desktop-booking-card');
-      const topbar = hero?.querySelector('.hero-topbar');
-      const card = modal?.querySelector('.section-modal-card');
-      if(!modal || !hero || !card || !modal.classList.contains('section-modal-compact')) return;
-      const isNarrowViewport = window.innerWidth <= 900;
-      if(isNarrowViewport){
-        modal.style.removeProperty('--section-modal-compact-runtime-left');
-        modal.style.removeProperty('--section-modal-compact-runtime-top');
-        modal.style.removeProperty('--section-modal-compact-runtime-right');
-        modal.style.removeProperty('--section-modal-compact-runtime-width');
-        modal.style.removeProperty('--section-modal-compact-runtime-height');
-        card.style.left = '';
-        card.style.top = '';
-        card.style.right = '';
-        card.style.width = '';
-        card.style.height = '';
-        return;
-      }
-
-      const heroRect = hero.getBoundingClientRect();
-      const bookingRoot = booking?.closest('.hero-booking-card') || booking;
-      const bookingRect = bookingRoot ? bookingRoot.getBoundingClientRect() : null;
-      const topbarRect = topbar ? topbar.getBoundingClientRect() : null;
-      const inset = 14;
-      const bookingGap = 14;
-      const maxCompactWidth = 980;
-      const minCompactWidth = 460;
-
-      const left = Math.max(inset, Math.floor(heroRect.left + inset));
-      const topAnchor = Math.floor(topbarRect ? (topbarRect.bottom + 8) : (heroRect.top + 10));
-      const top = Math.max(inset, topAnchor);
-
-      const heroRight = Math.floor(heroRect.right - inset);
-      let slotRight = heroRight;
-      if(bookingRect && bookingRect.width > 140 && bookingRect.left > left){
-        slotRight = Math.min(slotRight, Math.floor(bookingRect.left - bookingGap));
-      }
-
-      const slotWidth = Math.floor(slotRight - left);
-      if(slotWidth <= 0) return;
-
-      const width = Math.max(Math.min(maxCompactWidth, slotWidth), Math.min(minCompactWidth, slotWidth));
-      const rightEdge = left + width;
-      const runtimeRight = Math.max(inset, Math.floor(window.innerWidth - rightEdge));
-      const availableHeight = Math.floor((heroRect.bottom - inset) - top);
-      if(availableHeight <= 0) return;
-
-      modal.style.setProperty('--section-modal-compact-runtime-left', `${left}px`);
-      modal.style.setProperty('--section-modal-compact-runtime-top', `${top}px`);
-      modal.style.setProperty('--section-modal-compact-runtime-right', `${runtimeRight}px`);
-      modal.style.setProperty('--section-modal-compact-runtime-width', `${width}px`);
-      modal.style.setProperty('--section-modal-compact-runtime-height', `${availableHeight}px`);
-      card.style.left = `${left}px`;
-      card.style.top = `${top}px`;
-      card.style.right = 'auto';
-      card.style.width = `${width}px`;
-      card.style.height = `${availableHeight}px`;
+      return safeInvoke(ensureModalMediaFlow(), 'applyCompactSectionModalLayout', [], null);
     }
 
     function openSectionModal(sectionId){
-      const modal = document.getElementById('sectionModal');
-      const titleEl = document.getElementById('sectionModalTitle');
-      const bodyEl = document.getElementById('sectionModalBody');
-      const sourceSection = document.getElementById(sectionId);
-      if(!modal || !titleEl || !bodyEl || !sourceSection) return false;
-      closeTransientModals('section');
-      const isCompactDesktop = state.previewView === 'desktop' && state.desktopMode === 'compact';
-      const isMobilePanel = state.previewView === 'mobile';
-      modal.classList.toggle('section-modal-compact', isCompactDesktop);
-      modal.classList.toggle('section-modal-mobile', isMobilePanel);
-
-      const sourceTitle = sourceSection.querySelector('h3')?.textContent?.trim() || 'Раздел';
-      titleEl.textContent = sourceTitle;
-
-      const clone = sourceSection.cloneNode(true);
-      clone.removeAttribute('id');
-      clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
-      clone.classList.remove('section-modal-contacts');
-      if(sectionId === 'section-contacts'){
-        clone.classList.add('section-modal-contacts');
-      }
-
-      bodyEl.innerHTML = '';
-      bodyEl.appendChild(clone);
-      modal.classList.remove('hidden');
-      if(sectionId === 'section-faq'){
+      const opened = safeInvoke(ensureModalMediaFlow(), 'openSectionModal', [sectionId], false);
+      if(opened && sectionId === 'section-faq'){
         trackFaqOpen();
       }
-      document.documentElement.style.overflowX = 'hidden';
-      document.body.style.overflowX = 'hidden';
-      applyCompactSectionModalLayout();
-      return true;
+      return !!opened;
     }
 
     function renderMediaViewer(){
-      const content = document.getElementById('mediaContent');
-      const caption = document.getElementById('mediaCaption');
-
-      if(mediaType === 'photo'){
-        const source = activePhotoList.length ? activePhotoList : mediaContent.photos;
-        const item = source[mediaIndex];
-        if(!item) return;
-        content.innerHTML = `<img class="media-image" src="${item.src}" />`;
-        caption.textContent = `${photoCatLabel(item.cat)} · ${mediaIndex + 1}/${source.length}`;
-      }
-
-      if(mediaType === 'video'){
-        const item = mediaContent.videos[mediaIndex];
-        const source = resolveVideoSource(item.url);
-        if(!source.canEmbed){
-          content.innerHTML = `
-            <div class="video-fallback">
-              <strong>Видео доступно во внешнем источнике</strong>
-              <p>Откройте ролик в отдельной вкладке, если встраивание недоступно.</p>
-              <a class="inline-link-btn primary" href="${source.externalUrl}" target="_blank" rel="noopener noreferrer">Смотреть на ${source.sourceName}</a>
-            </div>
-          `;
-          caption.textContent = `${mediaIndex + 1}/${mediaContent.videos.length}`;
-          return;
-        }
-        content.innerHTML = `
-          <iframe
-            class="media-video"
-            src="${source.embedUrl}"
-            frameborder="0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-          ></iframe>`;
-        caption.textContent = `${mediaIndex + 1}/${mediaContent.videos.length}`;
-      }
+      return safeInvoke(ensureModalMediaFlow(), 'renderMediaViewer', [], null);
     }
 
     function nextMedia(){
@@ -2418,460 +2078,14 @@
     }
 
     function handleDataActionClick(target){
-      const actionEl = target.closest('[data-action]');
-      if(!actionEl) return false;
-
-      const action = actionEl.dataset.action;
-
-      if(action === 'open-photo'){
-        const index = Number(actionEl.dataset.photoIndex || 0);
-        const clickedFromMobilePhoto = !!actionEl.closest('.mobile-photo-stage, .mobile-photo-preview-strip');
-        const source = clickedFromMobilePhoto
-          ? getPhotosForActiveFilter(state.photoFilter)
-          : (photoGalleryList.length ? photoGalleryList.slice() : mediaContent.photos.slice());
-        activePhotoList = source;
-        const safeIndex = Math.max(0, Math.min(index, Math.max(source.length - 1, 0)));
-        state.mobilePhotoIndex = safeIndex;
-        openMedia('photo', safeIndex);
-        return true;
-      }
-
-      if(action === 'open-stay-photo'){
-        const index = Number(actionEl.dataset.stayIndex || 0);
-        const stayGallery = getStayGallery();
-        if(!stayGallery.length) return true;
-        activePhotoList = stayGallery;
-        openMedia('photo', Math.max(0, Math.min(index, stayGallery.length - 1)));
-        return true;
-      }
-
-      if(action === 'open-video'){
-        const directUrl = actionEl.dataset.video || '';
-        if(directUrl){
-          openVideo(directUrl);
-          return true;
-        }
-        const index = Number(actionEl.dataset.videoIndex || 0);
-        const item = mediaContent.videos[index];
-        if(item?.url) openVideo(item.url);
-        return true;
-      }
-
-      if(action === 'open-referral-photo'){
-        activePhotoList = [{
-          src:'/assets/images/referral-hoodie.jpeg',
-          alt:'Фирменная толстовка лагеря',
-          cat:'all'
-        }];
-        openMedia('photo', 0);
-        return true;
-      }
-
-      if(action === 'video-carousel-prev'){
-        const scopeRoot = actionEl.closest('.section-modal-body') || document;
-        scrollVideoCarousel(-1, scopeRoot);
-        return true;
-      }
-
-      if(action === 'video-carousel-next'){
-        const scopeRoot = actionEl.closest('.section-modal-body') || document;
-        scrollVideoCarousel(1, scopeRoot);
-        return true;
-      }
-
-      if(action === 'toggle-shift-about'){
-        const shiftId = actionEl.dataset.shiftId || '';
-        if(shiftId){
-          openShiftAboutModal(shiftId);
-        }
-        return true;
-      }
-
-      if(action === 'toggle-shift-calendar-inline'){
-        const shiftId = actionEl.dataset.shiftId || '';
-        const viewKey = actionEl.dataset.shiftView || 'desktop';
-        if(shiftId){
-          if(viewKey === 'desktop'){
-            openCalendar(shiftId);
-          } else {
-            toggleShiftOptionPanel(viewKey, 'calendarId', shiftId);
-          }
-        }
-        return true;
-      }
-
-      if(action === 'open-all-shifts'){
-        navigateToSection('section-programs');
-        return true;
-      }
-
-      if(action === 'mobile-focus-age'){
-        focusMobileAgeGate();
-        return true;
-      }
-
-      if(action === 'dismiss-summary-bar'){
-        dismissSummaryBarTemporarily(30000);
-        return true;
-      }
-
-      if(action === 'mobile-photo-select'){
-        const index = Number(actionEl.dataset.photoIndex || 0);
-        if(Number.isFinite(index)){
-          const photosByFilter = {
-            camp: ['all'],
-            pool: ['pool'],
-            sport: ['sport'],
-            study: ['study'],
-            food: ['food']
-          };
-          const tags = photosByFilter[state.photoFilter] || ['all'];
-          const list = mediaContent.photos.filter((item) => tags.includes(item.cat));
-          const maxIndex = Math.max(0, (list.length || 1) - 1);
-          state.mobilePhotoIndex = Math.max(0, Math.min(index, maxIndex));
-          renderCompactTrustPanelContent();
-          openMedia('photo', state.mobilePhotoIndex);
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-video-select'){
-        const index = Number(actionEl.dataset.videoIndex || 0);
-        if(Number.isFinite(index)){
-          const maxIndex = Math.max(0, (mediaContent.videos?.length || 1) - 1);
-          state.mobileVideoIndex = Math.max(0, Math.min(index, maxIndex));
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-review-select'){
-        const index = Number(actionEl.dataset.reviewIndex || 0);
-        if(Number.isFinite(index)){
-          const maxIndex = Math.max(0, (mediaContent.reviews?.length || 1) - 1);
-          state.mobileReviewIndex = Math.max(0, Math.min(index, maxIndex));
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-review-prev'){
-        const total = Math.max(0, mediaContent.reviews?.length || 0);
-        if(total){
-          state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) - 1 + total) % total;
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-review-next'){
-        const total = Math.max(0, mediaContent.reviews?.length || 0);
-        if(total){
-          state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) + 1) % total;
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-stay-select'){
-        const index = Number(actionEl.dataset.stayIndex || 0);
-        if(Number.isFinite(index)){
-          state.mobileStayIndex = Math.max(0, index);
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-faq-filter'){
-        const group = (actionEl.dataset.faqGroup || '').trim();
-        if(group){
-          state.mobileFaqGroup = group;
-          state.mobileFaqOpenKey = '';
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-faq-toggle'){
-        const key = (actionEl.dataset.faqKey || '').trim();
-        if(key){
-          state.mobileFaqOpenKey = key;
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-team-prev'){
-        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
-        if(list.length){
-          state.mobileTeamIndex = (state.mobileTeamIndex - 1 + list.length) % list.length;
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-team-next'){
-        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
-        if(list.length){
-          state.mobileTeamIndex = (state.mobileTeamIndex + 1 + list.length) % list.length;
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-team-select'){
-        const list = mediaContent.team.filter((item) => item.fio !== 'Дарья Афанасьева');
-        if(list.length){
-          const index = Number(actionEl.dataset.teamIndex || 0);
-          if(Number.isFinite(index)){
-            state.mobileTeamIndex = Math.max(0, Math.min(index, list.length - 1));
-            renderCompactTrustPanelContent();
-            persist();
-          }
-        }
-        return true;
-      }
-
-      if(action === 'mobile-journey-step'){
-        const index = Number(actionEl.dataset.stepIndex || 0);
-        if(Number.isFinite(index)){
-          state.mobileJourneyStep = Math.max(0, Math.min(index, 3));
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-program-select'){
-        const shiftId = (actionEl.dataset.shiftId || '').trim();
-        if(shiftId){
-          state.mobileProgramShiftId = shiftId;
-          renderCompactTrustPanelContent();
-          persist();
-        }
-        return true;
-      }
-
-      if(action === 'mobile-docs-toggle'){
-        state.mobileDocsExpanded = !state.mobileDocsExpanded;
-        syncMobileDocsExpandedUi();
-        renderDesktopMobileDocsBlock();
-        syncMobileDocsExpandedUi();
-        persist();
-        return true;
-      }
-
-      if(action === 'open-book-photo'){
-        activePhotoList = [{ src: '/assets/images/cdn-cache/8fc8172e_8991804334.webp', alt: 'Собственная книга по Python', cat: 'study' }];
-        openMedia('photo', 0);
-        return true;
-      }
-
-      if(action === 'team-carousel-prev'){
-        const scopeRoot = actionEl.closest('.section-modal-body') || document;
-        scrollTeamCarousel(-1, scopeRoot);
-        return true;
-      }
-
-      if(action === 'team-carousel-next'){
-        const scopeRoot = actionEl.closest('.section-modal-body') || document;
-        scrollTeamCarousel(1, scopeRoot);
-        return true;
-      }
-
-      if(action === 'open-calendar'){
-        const shiftId = actionEl.dataset.shiftId || '';
-        if(shiftId) openCalendar(shiftId);
-        return true;
-      }
-
-      if(action === 'open-season-calendar'){
-        openSeasonCalendar();
-        return true;
-      }
-
-      if(action === 'primary-cta'){
-        handlePrimaryCTA();
-        return true;
-      }
-
-      if(action === 'reset-age-selection'){
-        resetAgeSelection();
-        return true;
-      }
-
-      if(action === 'reset-shift-selection'){
-        resetShiftSelection();
-        return true;
-      }
-
-      if(action === 'reset-booking-all'){
-        openResetBookingConfirmModal();
-        return true;
-      }
-
-      if(action === 'close-offer'){
-        offerRunId += 1;
-        clearOfferTimeout();
-        document.getElementById('offerOverlay')?.classList.add('hidden');
-        resetOfferProgressUI();
-        return true;
-      }
-
-      if(action === 'save-on-device'){
-        saveOfferAndClose();
-        showHint('Условия сохранены на этом устройстве.');
-        return true;
-      }
-
-      if(action === 'apply-offer'){
-        clearOfferTimeout();
-        state.offerStage = Math.max(state.offerStage, 1);
-        persist();
-        renderAll();
-        document.getElementById('offerOverlay')?.classList.add('hidden');
-        openForm();
-        return true;
-      }
-
-      if(action === 'close-form'){
-        closeForm();
-        return true;
-      }
-
-      if(action === 'submit-form'){
-        submitLead();
-        return true;
-      }
-
-      if(action === 'submit-inline-lead'){
-        const scope = (actionEl.dataset.inlineScope || '').trim();
-        submitLeadFromScope(scope);
-        return true;
-      }
-
-      if(action === 'close-success'){
-        closeSuccessModal();
-        return true;
-      }
-
-      if(action === 'close-notice'){
-        closeNoticeModal();
-        return true;
-      }
-
-      if(action === 'close-variant-coach'){
-        const dismissKey = String(actionEl.dataset.variantKey || '').trim();
-        hideVariantCoachBadge(getPrimaryBookingViewConfig(), dismissKey);
-        return true;
-      }
-
-      if(action === 'confirm-notice'){
-        const confirmHandler = noticeConfirmHandler;
-        closeNoticeModal();
-        if(typeof confirmHandler === 'function'){
-          confirmHandler();
-        }
-        return true;
-      }
-
-      if(action === 'close-calendar'){
-        closeCalendar();
-        return true;
-      }
-
-      if(action === 'close-section-modal'){
-        closeSectionModal();
-        return true;
-      }
-
-      if(action === 'close-video-modal'){
-        closeVideo();
-        return true;
-      }
-
-      if(action === 'debug-reset-booking'){
-        resetBookingFlowDebug();
-        return true;
-      }
-
-      if(action === 'debug-booking-blocks'){
-        setBookingDebugBlocks(!state.debugBookingBlocks);
-        return true;
-      }
-
-      if(action === 'debug-booking-stage-3'){
-        forceBookingDebugStage('stage-3');
-        return true;
-      }
-
-      if(action === 'debug-booking-stage-4'){
-        forceBookingDebugStage('stage-4');
-        return true;
-      }
-
-      if(action === 'debug-booking-what-to-do'){
-        forceBookingDebugStage('what-to-do');
-        return true;
-      }
-
-      if(action === 'invite-friend'){
-        const invitePayload = buildInviteClipboardText();
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(invitePayload)
-            .then(() => openNoticeModal('Ссылка скопирована в буфер обмена'))
-            .catch(() => openNoticeModal('Не удалось скопировать автоматически. Скопируйте ссылку вручную.'));
-        } else {
-          openNoticeModal('Скопируйте ссылку вручную.');
-        }
-        return true;
-      }
-
-      if(action === 'copy-invite-link'){
-        const invitePayload = buildInviteClipboardText();
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(invitePayload)
-            .then(() => openNoticeModal('Ссылка скопирована в буфер обмена'))
-            .catch(() => openNoticeModal('Не удалось скопировать автоматически. Скопируйте ссылку вручную.'));
-        } else {
-          openNoticeModal('Скопируйте ссылку вручную.');
-        }
-        return true;
-      }
-
-      if(action === 'close-debug-controls'){
-        document.getElementById('debugControls')?.classList.add('hidden');
-        return true;
-      }
-
-      if(action === 'close-version-badge'){
-        document.getElementById('version-badge')?.classList.add('hidden');
-        localStorage.setItem(VERSION_BADGE_HIDDEN_KEY, '1');
-        return true;
-      }
-
-      if(action === 'toggle-hero-menu'){
-        setHeroMenuOpen(!isHeroMenuOpen());
-        return true;
-      }
-
-      return false;
+      const dispatcher = ensureActionDispatcher();
+      return !!safeInvoke(dispatcher, 'handleAction', [target], false);
     }
 
     async function notifyLead(eventName, payload){
       const cfg = window.AC_NOTIFY_CONFIG || {};
       const enrichedPayload = {
-        ...(payload && typeof payload === 'object' ? payload : {}),
+        ...asObject(payload),
         ...buildAbMeta()
       };
       const body = {event: eventName, payload: enrichedPayload};
@@ -3036,7 +2250,7 @@
     }
 
     function getSelectedShift(){
-      return state.shiftId ? shifts.find(s => s.id === state.shiftId) : null;
+      return (state.shiftId && shifts.find(s => s.id === state.shiftId)) || null;
     }
 
     function hasSelectedAge(){
@@ -3056,7 +2270,7 @@
 
     function syncGuidedState(){
       if(hasActiveBookingContext() && state.age){
-        state.ageSelected = true;
+        Object.assign(state, { ageSelected: true });
       }
     }
 
@@ -3134,10 +2348,10 @@
 
     function clearBookingCookies(){
       const isBookingCookie = (name) => /(aidacamp|booking|promo|lead|aida|ac_)/i.test(name);
-      const pairs = document.cookie ? document.cookie.split(';') : [];
+      const pairs = (document.cookie && document.cookie.split(';')) || [];
       const host = window.location.hostname || '';
       const hostParts = host.split('.').filter(Boolean);
-      const baseDomain = hostParts.length >= 2 ? `.${hostParts.slice(-2).join('.')}` : '';
+      const baseDomain = (hostParts.length >= 2 && `.${hostParts.slice(-2).join('.')}`) || '';
       const domains = ['', host ? `;domain=${host}` : '', baseDomain ? `;domain=${baseDomain}` : ''];
       const paths = [';path=/', ';path=/;SameSite=Lax'];
 
@@ -3180,7 +2394,7 @@
       try {
         const key = 'aidacamp_lead_fallback_meta';
         const prevRaw = localStorage.getItem(key);
-        const prev = prevRaw ? JSON.parse(prevRaw) : {};
+        const prev = (prevRaw && JSON.parse(prevRaw)) || {};
         const count = Number(prev.count || 0) + 1;
         const safeMeta = {
           ts: Date.now(),
@@ -3217,7 +2431,7 @@
       const keepView = state.previewView || state.view || 'desktop';
       const keepDesktopMode = state.desktopMode || 'full';
       const keepMobileMode = state.mobileMode || 'full';
-      const keepOfferModalTheme = state.offerModalTheme === 'dark' ? 'dark' : 'light';
+      const keepOfferModalTheme = ((state.offerModalTheme === 'dark') && 'dark') || 'light';
       const keepOfferLayout = state.offerLayout || 'legacy';
       const keepDebugBookingBlocks = !!state.debugBookingBlocks;
       state = {
@@ -3262,7 +2476,7 @@
       setPhoneError(false);
       ['desktop', 'mobile'].forEach((viewKey) => {
         const hostId = getLeadScopeConfig(getBookingViewConfig(viewKey).inlineLeadScope)?.hostId;
-        const host = hostId ? document.getElementById(hostId) : null;
+        const host = (hostId && document.getElementById(hostId)) || null;
         if(host){
           host.classList.add('hidden');
           host.innerHTML = '';
@@ -3312,7 +2526,7 @@
       const shift = getSelectedShift();
       if(state.offerPrice) return state.offerPrice;
       if(state.basePrice) return state.basePrice;
-      return shift ? shift.price : null;
+      return (shift && shift.price) || null;
     }
 
     function getPrimaryActionState(){
@@ -3337,11 +2551,9 @@
       }
 
       if(!shift){
-        return {
-          text:'Выберите смену',
-          disabled:true,
-          hint:''
-        };
+        return HERO_V3_SIMPLE_ENABLED
+          ? { text:'Оставить заявку', disabled:false, hint:'' }
+          : { text:'Выберите смену', disabled:true, hint:'' };
       }
 
       if(state.offerStage === 0){
@@ -3379,8 +2591,9 @@
       if(!hasSelectedAge()){
         return 1;
       }
+      const simpleStage = HERO_V3_SIMPLE_ENABLED && 3;
       if(hasSelectedAge() && !state.shiftId){
-        return 2;
+        return simpleStage || 2;
       }
       if(state.shiftId && state.offerStage === 0){
         return 3;
@@ -3507,7 +2720,7 @@
 
       const heroShell = card.closest('.hero-shell');
       const cardRect = card.getBoundingClientRect();
-      const heroRect = heroShell ? heroShell.getBoundingClientRect() : null;
+      const heroRect = (heroShell && heroShell.getBoundingClientRect()) || null;
       const viewportHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
       const preferred = Math.floor(viewportHeight * 0.72);
       let availableByHero = Math.floor(viewportHeight * 0.68);
@@ -3534,7 +2747,7 @@
     }
 
     function applyBookingStageClass(viewCfg){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const cfg = resolveBookingViewCfg(viewCfg);
       const card = document.getElementById(cfg.cardId);
       if(!card) return;
       const stage = getBookingStage();
@@ -3566,7 +2779,7 @@
     }
 
     function applyBookingStage2Alignment(viewCfg){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const cfg = resolveBookingViewCfg(viewCfg);
       const card = document.getElementById(cfg.cardId);
       if(!card) return;
       const stage2Align = cfg.stage2Align || {};
@@ -3579,7 +2792,7 @@
     }
 
     function applyBookingStructureSchema(viewCfg){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const cfg = resolveBookingViewCfg(viewCfg);
       const card = document.getElementById(cfg.cardId);
       if(!card) return;
       const stage = getBookingStage();
@@ -3617,7 +2830,7 @@
         const rect = node.getBoundingClientRect();
         const style = window.getComputedStyle(node);
         const isZeroHeight = style.display === 'none' || style.visibility === 'hidden' || node.offsetHeight === 0 || rect.height < 1;
-        return isZeroHeight ? `${regionName} 0` : regionName;
+        return (isZeroHeight && `${regionName} 0`) || regionName;
       };
 
       const isRegionZero = (node) => {
@@ -3632,7 +2845,7 @@
         if(!node) return;
         node.dataset.bookingRegion = regionName;
         node.dataset.bookingRegionLabel = resolveRegionLabel(regionName, node);
-        node.dataset.bookingRegionZero = isRegionZero(node) ? '1' : '0';
+        node.dataset.bookingRegionZero = String(Number(isRegionZero(node)));
         node.dataset.bookingRegionLabelSide = regionLabelSideMap[regionName] || 'left';
       });
     }
@@ -3688,7 +2901,7 @@
     }
 
     function syncCompletedBookingScaffold(viewCfg, bookingCard){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const cfg = resolveBookingViewCfg(viewCfg);
       const card = bookingCard || document.getElementById(cfg.cardId);
       if(!card) return;
       const stepsRoot = document.getElementById(cfg.stepsId);
@@ -3740,7 +2953,7 @@
     }
 
     function renderSteps(viewCfg){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
+      const cfg = resolveBookingViewCfg(viewCfg);
       const root = document.getElementById(cfg.stepsId);
       if(!root) return;
       const current = getStepState();
@@ -3760,253 +2973,23 @@
     }
 
     function renderGuidedState(viewCfg){
-      const cfg = viewCfg && viewCfg.key ? viewCfg : getBookingViewConfig('desktop');
-      syncGuidedState();
-      const stage = getBookingStage();
-      const shiftList = document.getElementById(cfg.shiftListId);
-      const ctaWrap = document.getElementById(cfg.ctaWrapId);
-      const ageTabs = document.getElementById(cfg.ageTabsId);
-      const chipHost = document.getElementById(cfg.summaryChipsId);
-      const ageChip = document.getElementById(cfg.ageChipId);
-      const ageChipText = document.getElementById(cfg.ageChipTextId);
-      const shiftChip = document.getElementById(cfg.shiftChipId);
-      const shiftChipText = document.getElementById(cfg.shiftChipTextId);
-      const baseHint = document.getElementById(cfg.hintId);
-      const guidedInlineHint = document.getElementById(cfg.guidedInlineHintId);
-      const bookingCard = document.getElementById(cfg.cardId);
-      const stepThree = bookingCard?.querySelector('.booking-step-3');
-      const allShiftsBtn = bookingCard?.querySelector('.booking-all-shifts-link');
-
-      if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
-
-      placeStage2ContentForView(cfg, stage, bookingCard);
-      syncCompletedBookingScaffold(cfg, bookingCard);
-      const isMobile = cfg.key === 'mobile';
-      if(state.bookingCompleted){
-        stopVariantFlowScenario();
-        shiftList.classList.add('disabled');
-        ageTabs.classList.add('hidden');
-        ctaWrap.classList.add('hidden');
-        ageChip.classList.remove('visible');
-        shiftChip.classList.remove('visible');
-        if(chipHost){
-          chipHost.classList.add('visible', 'booking-summary-chips--completed');
-        }
-        if(stepThree){
-          stepThree.classList.remove('is-force-hidden');
-        }
-        if(allShiftsBtn){
-          allShiftsBtn.classList.add('hidden');
-        }
-        if(isMobile){
-          document.getElementById(cfg.cardId)?.classList.remove('has-mobile-summary-chips');
-        }
-        if(baseHint){
-          baseHint.textContent = '';
-          baseHint.classList.remove('is-muted-hidden');
-        }
-        if(guidedInlineHint){
-          guidedInlineHint.textContent = '';
-          guidedInlineHint.classList.remove('visible', 'variant-coach');
-        }
-        return;
-      }
-      if(allShiftsBtn){
-        allShiftsBtn.textContent = 'Все смены по возрастам';
-        allShiftsBtn.classList.toggle('hidden', stage !== 2 || state.offerStage >= 1);
-      }
-      if(chipHost){
-        if(ageChip.parentElement !== chipHost){
-          chipHost.appendChild(ageChip);
-        }
-        if(shiftChip.parentElement !== chipHost){
-          chipHost.appendChild(shiftChip);
-        }
-      }
-
-      shiftList.classList.remove('disabled','highlight','collapsed');
-      ctaWrap.classList.remove('hidden');
-      ctaWrap.classList.remove('highlight');
-      ageTabs.classList.remove('hidden');
-      ageChip.classList.remove('visible');
-      shiftChip.classList.remove('visible');
-      if(chipHost){
-        chipHost.classList.remove('visible');
-      }
-      if(stepThree){
-        const shouldShowStepThree = stage >= 1;
-        stepThree.classList.toggle('is-force-hidden', !shouldShowStepThree);
-      }
-      if(isMobile){
-        document.getElementById(cfg.cardId)?.classList.remove('has-mobile-summary-chips');
-      }
-
-      if(stage === 1 || stage === 2){
-        ctaWrap.classList.add('hidden');
-      }
-
-      if(!hasSelectedAge()){
-        const ageHintText = 'Выберите возраст, чтобы увидеть смены и цены.';
-        if(baseHint){
-          baseHint.textContent = '';
-          baseHint.classList.add('is-muted-hidden');
-        }
-        if(guidedInlineHint){
-          guidedInlineHint.textContent = '';
-          guidedInlineHint.classList.remove('visible');
-          guidedInlineHint.classList.remove('variant-coach');
-        }
-        stopVariantFlowScenario();
-        shiftList.classList.add('disabled');
-        hideVariantCoachBadge(cfg);
-        return;
-      }
-
-      if(baseHint){
-        baseHint.textContent = '';
-        baseHint.classList.remove('is-muted-hidden');
-      }
-      if(guidedInlineHint){
-        guidedInlineHint.textContent = '';
-        guidedInlineHint.classList.remove('visible', 'variant-coach');
-      }
-
-      ageChipText.textContent = ageLabel(state.age);
-      ageChip.classList.add('visible');
-      if(chipHost){
-        chipHost.classList.add('visible');
-      }
-      ageTabs.classList.add('hidden');
-
-      if(hasSelectedAge() && !state.shiftId){
-        shiftList.classList.remove('collapsed');
-        shiftList.classList.add('highlight');
-        scheduleVariantFlowScenario();
-        hideVariantCoachBadge(cfg);
-        return;
-      }
-
-      const shift = getSelectedShift();
-      if(shift){
-        shiftChipText.textContent = shift.dates;
-        if(isMobile){
-          document.getElementById(cfg.cardId)?.classList.add('has-mobile-summary-chips');
-        }
-        shiftChip.classList.add('visible');
-        shiftList.classList.add('collapsed');
-        if(stepThree){
-          stepThree.classList.remove('is-force-hidden');
-        }
-      }
-
-      if(state.shiftId && state.offerStage === 0){
-        stopVariantFlowScenario();
-        ctaWrap.classList.add('highlight');
-        hideVariantCoachBadge(cfg);
-        return;
-      }
-
-      stopVariantFlowScenario();
-      hideVariantCoachBadge(cfg);
+      return safeInvoke(ensureGuidedStateFlow(), 'renderGuidedState', [viewCfg], null);
     }
 
     function pulseNode(node){
-      if(!node) return;
-      node.classList.remove('guided-pulse');
-      void node.offsetWidth;
-      node.classList.add('guided-pulse');
-      window.setTimeout(() => {
-        node.classList.remove('guided-pulse');
-      }, 1300);
+      return safeInvoke(ensureBookingHintFlow(), 'pulseNode', [node], null);
     }
 
     function nudgeUserToNextStep(message = 'Сначала завершите предыдущий шаг.'){
-      getActiveBookingViewKeys().forEach((prefix) => {
-        const cfg = getBookingViewConfig(prefix);
-        const inlineHint = document.getElementById(cfg.guidedInlineHintId);
-        if(inlineHint){
-          inlineHint.textContent = message;
-          inlineHint.classList.add('visible');
-          pulseNode(inlineHint);
-          window.clearTimeout(inlineHint.__hideTimer);
-          inlineHint.__hideTimer = window.setTimeout(() => {
-            inlineHint.classList.remove('visible');
-          }, 2400);
-        }
-
-        if(!hasSelectedAge()){
-          pulseNode(document.getElementById(cfg.ageTabsId));
-          return;
-        }
-
-        if(!state.shiftId){
-          pulseNode(document.getElementById(cfg.shiftListId));
-          return;
-        }
-
-        if(state.offerStage === 0){
-          pulseNode(document.getElementById(cfg.ctaWrapId));
-        }
-      });
+      return safeInvoke(ensureBookingHintFlow(), 'nudgeUserToNextStep', [message], null);
     }
 
     function showHint(message, requiredStep = ''){
-      getActiveBookingViewKeys().forEach((prefix) => {
-        const cfg = getBookingViewConfig(prefix);
-        const el = document.getElementById(cfg.inlineHintId);
-        const baseHint = document.getElementById(cfg.hintId);
-        const stage = getBookingStage();
-        if(!el) return;
-        window.clearTimeout(el.__hideTimer);
-        el.textContent = message;
-        if(requiredStep){
-          el.dataset.requiredStep = requiredStep;
-        } else {
-          delete el.dataset.requiredStep;
-          el.__hideTimer = window.setTimeout(() => {
-            el.classList.remove('visible');
-            el.textContent = '';
-            if(baseHint) baseHint.classList.remove('is-muted-hidden');
-          }, 2400);
-        }
-        el.classList.add('visible');
-        if(baseHint){
-          if(stage <= 1){
-            baseHint.classList.remove('is-muted-hidden');
-          } else {
-            baseHint.classList.add('is-muted-hidden');
-          }
-        }
-      });
+      return safeInvoke(ensureBookingHintFlow(), 'showHint', [message, requiredStep], null);
     }
 
     function syncBookingHints(){
-      getRenderableBookingViewKeys().forEach((prefix) => {
-        const cfg = getBookingViewConfig(prefix);
-        const el = document.getElementById(cfg.inlineHintId);
-        const baseHint = document.getElementById(cfg.hintId);
-        if(!el) return;
-        const requiredStep = el.dataset.requiredStep || '';
-        if(!requiredStep){
-          if(!el.classList.contains('visible') && baseHint){
-            baseHint.classList.remove('is-muted-hidden');
-          }
-          return;
-        }
-
-        const resolved = (
-          (requiredStep === 'age' && hasSelectedAge()) ||
-          (requiredStep === 'shift' && !!state.shiftId) ||
-          !!state.shiftId
-        );
-
-        if(resolved){
-          el.classList.remove('visible');
-          el.textContent = '';
-          delete el.dataset.requiredStep;
-          if(baseHint) baseHint.classList.remove('is-muted-hidden');
-        }
-      });
+      return safeInvoke(ensureBookingHintFlow(), 'syncBookingHints', [], null);
     }
 
     function formatRemainingClock(diff){
@@ -4042,7 +3025,7 @@
 
       const extract = (pattern) => {
         const match = source.match(pattern);
-        return match ? Number(match[1]) || 0 : 0;
+        return (match && (Number(match[1]) || 0)) || 0;
       };
 
       const days = extract(/(\d+)\s*(?:д(?:ень|ня|ней)?|[dDД])/);
@@ -4058,7 +3041,7 @@
         return `Осталось ${hh}:${mm}:${ss}`;
       }
 
-      return stripRemainingPrefix(source) ? `Осталось ${stripRemainingPrefix(source)}` : '';
+      return ((stripRemainingPrefix(source) && `Осталось ${stripRemainingPrefix(source)}`) || '');
     }
 
     function stripRemainingPrefix(text){
@@ -4107,296 +3090,15 @@
     }
 
     function stopBookingStage1TitleTypewriter(){
-      bookingStage1TitleTypewriterRunId += 1;
-      if(bookingStage1TitleTypewriterTimer){
-        window.clearTimeout(bookingStage1TitleTypewriterTimer);
-        bookingStage1TitleTypewriterTimer = null;
-      }
+      return safeInvoke(ensureBookingViewFlow(), 'stopBookingStage1TitleTypewriter', [], null);
     }
 
     function runBookingStage1TitleTypewriter(target, text){
-      if(!target) return;
-      const phrase = String(text || '').trim();
-      if(!phrase){
-        target.textContent = '';
-        target.classList.remove('booking-title-typewriter', 'is-typing', 'is-typed');
-        return;
-      }
-      if(target.classList.contains('is-typing') && target.dataset.typewriterText === phrase){
-        return;
-      }
-      stopBookingStage1TitleTypewriter();
-      const runId = bookingStage1TitleTypewriterRunId;
-      const typeDelay = 156;
-      const moveDelay = 92;
-      target.dataset.typewriterText = phrase;
-      target.textContent = '';
-      target.classList.add('booking-title-typewriter', 'is-typing');
-      target.classList.remove('is-typed');
-      const wait = (ms) => new Promise((resolve) => {
-        bookingStage1TitleTypewriterTimer = window.setTimeout(() => {
-          bookingStage1TitleTypewriterTimer = null;
-          resolve();
-        }, ms);
-      });
-      const canContinue = () => runId === bookingStage1TitleTypewriterRunId;
-      const escapeHtml = (value) => String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-      let value = '';
-      let caret = 0;
-      const render = (showCaret = true) => {
-        const left = escapeHtml(value.slice(0, caret));
-        const right = escapeHtml(value.slice(caret));
-        target.innerHTML = `${left}${showCaret ? '<span class="booking-title-typewriter__caret" aria-hidden="true"></span>' : ''}${right}`;
-      };
-      const moveCaretTo = async (targetPos) => {
-        const to = Math.max(0, Math.min(value.length, targetPos));
-        while(caret !== to){
-          if(!canContinue()) return false;
-          caret += caret < to ? 1 : -1;
-          render(true);
-          await wait(moveDelay);
-        }
-        return canContinue();
-      };
-      const insertAtCaret = async (chunk) => {
-        const source = String(chunk || '');
-        for(let i = 0; i < source.length; i += 1){
-          if(!canContinue()) return false;
-          value = value.slice(0, caret) + source[i] + value.slice(caret);
-          caret += 1;
-          render(true);
-          await wait(typeDelay);
-        }
-        return canContinue();
-      };
-      const deleteBackward = async (count = 1) => {
-        let remaining = Math.max(0, Number(count) || 0);
-        while(remaining > 0 && caret > 0){
-          if(!canContinue()) return false;
-          value = value.slice(0, caret - 1) + value.slice(caret);
-          caret -= 1;
-          remaining -= 1;
-          render(true);
-          await wait(typeDelay);
-        }
-        return canContinue();
-      };
-      const runScript = async () => {
-        if(!await insertAtCaret('Выберите возраст, чтобы увидеть цены и смены.')) return;
-        await wait(1200);
-
-        const seenWordStart = value.indexOf('увидеть');
-        if(seenWordStart >= 0){
-          const letterEPos = seenWordStart + 4;
-          if(!await moveCaretTo(letterEPos + 1)) return;
-          if(!await deleteBackward(1)) return;
-          if(!await insertAtCaret('И')) return;
-        }
-
-        await wait(900);
-        const pricesStart = value.indexOf('цены и смены');
-        if(pricesStart >= 0){
-          if(!await moveCaretTo(pricesStart + 'цены и смены'.length)) return;
-          if(!await deleteBackward('цены и смены'.length)) return;
-          if(!await insertAtCaret('смены и цены')) return;
-        }
-
-        await wait(1000);
-        const chooseStart = value.indexOf('Выберите');
-        if(chooseStart >= 0){
-          const itRusStart = chooseStart + 5;
-          if(!await moveCaretTo(itRusStart + 2)) return;
-          if(!await deleteBackward(2)) return;
-          if(!await insertAtCaret('IT')) return;
-        }
-
-        if(!canContinue()) return;
-        render(true);
-        target.classList.remove('is-typing');
-        target.classList.add('is-typed');
-        bookingStage1TitleTypewriterDone = true;
-      };
-      runScript().catch(() => {
-        bookingStage1TitleTypewriterDone = true;
-        target.classList.remove('is-typing');
-        target.classList.add('is-typed');
-      });
+      return safeInvoke(ensureBookingViewFlow(), 'runBookingStage1TitleTypewriter', [target, text], null);
     }
 
     function renderBookingInfo(viewCfg){
-      if(!viewCfg) return;
-      const info = document.getElementById(viewCfg.infoId);
-      const title = document.getElementById(viewCfg.titleId);
-      const lead = document.getElementById(viewCfg.leadId);
-      const btn = document.getElementById(viewCfg.startBtnId);
-      const hint = document.getElementById(viewCfg.hintId);
-      const shift = getSelectedShift();
-      const action = getPrimaryActionState();
-      const isDesktopPanel = viewCfg.key === 'desktop';
-      const isPriceCheckStage = !!shift && state.offerStage === 0;
-      const actionText = getResolvedPrimaryActionText(action, shift);
-
-      if(btn){
-        btn.classList.remove('hidden');
-        const isStageFour = getBookingStage() === 4 && !state.bookingCompleted;
-        const shouldUseStackedCta = isStageFour && /^(?:Завершить бронирование|Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText);
-        if(shouldUseStackedCta){
-          const gainText = actionText.replace(/^(?:Завершить бронирование|Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
-          btn.innerHTML = `
-            <span class="cta-main-line cta-main-line--primary">Завершить бронирование</span>
-            <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
-          `;
-          btn.dataset.ctaLayout = 'stacked';
-          btn.setAttribute('aria-label', `Завершить бронирование. Выгода ${gainText}`);
-        } else {
-          btn.textContent = actionText;
-          btn.removeAttribute('data-cta-layout');
-          btn.removeAttribute('aria-label');
-        }
-        btn.classList.toggle('is-disabled', !!action.disabled);
-        btn.classList.toggle('cta-main-compact', isDesktopPanel && isPriceCheckStage);
-        btn.setAttribute('aria-disabled', action.disabled ? 'true' : 'false');
-        btn.disabled = !!action.disabled;
-      }
-      if(hint){
-        hint.textContent = action.hint;
-      }
-      if(state.bookingCompleted){
-        stopBookingStage1TitleTypewriter();
-        bookingStage1TitleTypewriterDone = false;
-        if(title){
-          title.classList.remove('booking-title-typewriter', 'is-typing', 'is-typed');
-        }
-        if(title) title.textContent = 'Мы свяжемся с вами в ближайшее время.';
-        if(lead) lead.textContent = '';
-        if(btn){
-          btn.classList.add('is-disabled');
-          btn.setAttribute('aria-disabled', 'true');
-          btn.disabled = true;
-          btn.classList.add('hidden');
-          btn.removeAttribute('data-cta-layout');
-          btn.removeAttribute('aria-label');
-          btn.textContent = 'Заявка принята';
-          btn.classList.remove('cta-main-compact');
-        }
-        if(!shift){
-          if(info) info.innerHTML = '';
-          return;
-        }
-        if(info){
-          info.innerHTML = `
-            <div class="booking-completed-main">
-              <button class="completed-followup-image-trigger" type="button" data-action="open-referral-photo" aria-label="Открыть фото в полном размере">
-                <img class="completed-followup-image" src="/assets/images/referral-hoodie.jpeg" alt="Фирменная толстовка лагеря">
-                <span class="completed-followup-note-overlay">Обычно дети приезжают с друзьями, так им проще адаптироваться. Позовите друга, подарим вам обоим фирменную толстовку.</span>
-              </button>
-            </div>
-          `;
-        }
-        return;
-      }
-
-      if(!hasSelectedAge()){
-        const stage1TitleText = 'Выберите возраст, чтобы увидеть смены и цены.';
-        if(title){
-          if(!bookingStage1TitleTypewriterDone){
-            runBookingStage1TitleTypewriter(title, stage1TitleText);
-          } else {
-            title.textContent = 'ВыбериITе возраст, чтобы увидИть смены и цены.';
-            title.classList.add('booking-title-typewriter', 'is-typed');
-            title.classList.remove('is-typing');
-          }
-        }
-        if(lead) lead.textContent = '';
-        if(info) info.innerHTML = '';
-        return;
-      }
-
-      stopBookingStage1TitleTypewriter();
-      bookingStage1TitleTypewriterDone = false;
-      if(title){
-        title.classList.remove('booking-title-typewriter', 'is-typing', 'is-typed');
-      }
-
-      if(!shift){
-        if(title) title.textContent = `Смены для ${ageLabel(state.age)}`;
-        if(lead) lead.textContent = '';
-        if(info) info.innerHTML = '';
-        if(btn) btn.classList.remove('cta-main-compact');
-        return;
-      }
-
-      const currentPrice = formatPrice(shift.price);
-      const visiblePriceValue = getVisiblePrice();
-      const visiblePrice = formatPrice(visiblePriceValue);
-      const timerText = isOfferActive() ? formatRemainingCompact(state.expiresAt - Date.now()) : '';
-      const basePriceValue = Number(state.basePrice || shift.price || 0);
-      const safeVisiblePrice = Number(visiblePriceValue || 0);
-      const savingsValue = Math.max(0, basePriceValue - safeVisiblePrice);
-      const savingsText = formatPrice(savingsValue);
-      const discountPercent = basePriceValue > 0
-        ? Math.max(0, Math.round(((basePriceValue - safeVisiblePrice) / basePriceValue) * 100))
-        : 0;
-      if(state.offerStage >= 1){
-        if(title) title.textContent = 'Ваши условия';
-        if(lead) lead.textContent = '';
-      } else {
-        if(title) title.textContent = 'Проверим цену и условия';
-        if(lead) lead.textContent = '';
-      }
-
-      if(isDesktopPanel && state.offerStage === 0){
-        if(info) info.innerHTML = `
-          <div class="booking-shift-focus">
-            <div class="booking-shift-focus__dates">${shift.dates}</div>
-            <div class="booking-shift-focus__days">${shiftDaysLabel(shift)}</div>
-            <div class="booking-shift-focus__preliminary">
-              <span class="booking-shift-focus__preliminary-label">Предварительная цена</span>
-              <span class="booking-shift-focus__preliminary-value">${formatPrice(shift.price)}</span>
-            </div>
-            <div class="booking-shift-focus__seats">Осталось ${shift.left} мест</div>
-          </div>
-        `;
-        return;
-      }
-
-      const isSummaryStage = state.offerStage >= 1;
-      if(info) info.innerHTML = isSummaryStage ? `
-        <div class="booking-price-box booking-summary-mini">
-          <div class="booking-summary-stage4-head">
-            <div class="booking-summary-stage4-age">${ageLabel(state.age)} · ${shift.dates}</div>
-          </div>
-          <div class="booking-price-head">
-            <div class="booking-price-col booking-price-col--fixed" style="text-align:left;">
-              <small>Зафиксированная цена</small>
-              <div class="booking-price-main big">${visiblePrice}</div>
-            </div>
-          </div>
-          <div class="booking-stage4-badges">
-            ${discountPercent > 0 ? `<span class="booking-stage4-badge">Скидка ${discountPercent}%</span>` : ''}
-            ${savingsValue > 0 ? `<span class="booking-stage4-badge">Выгода ${savingsText}</span>` : ''}
-            ${state.code ? `<span class="booking-stage4-badge booking-stage4-badge--code">Код бронирования: ${state.code}</span>` : ''}
-          </div>
-          <div class="booking-stage4-note">Мы вас ждём</div>
-          ${timerText ? `<div class="booking-timer-line" data-live-timer="true"><span class="booking-timer-label">Осталось</span><span class="booking-timer-value">${stripRemainingPrefix(timerText)}</span></div>` : ''}
-        </div>
-      ` : `
-        <div class="booking-price-box">
-          <div class="booking-price-head">
-            <div class="booking-price-col">
-              <small>Текущая цена</small>
-              <div class="booking-price-main">${currentPrice}</div>
-            </div>
-            <div class="booking-price-col" style="text-align:right;">
-              <small>После проверки</small>
-              <div class="booking-price-main big">${visiblePrice}</div>
-            </div>
-          </div>
-        </div>
-      `;
+      return safeInvoke(ensureBookingViewFlow(), 'renderBookingInfo', [viewCfg], null);
     }
 
     function renderBookingPanels(){
@@ -4427,135 +3129,37 @@
     }
 
     function getViewportPreviewView(){
-      return window.matchMedia('(max-width: 900px)').matches ? 'mobile' : 'desktop';
-    }
-
-    function switchView(view){
-      const requestedView = view === 'mobile' ? 'mobile' : 'desktop';
-      const effectiveView = (requestedView === 'mobile' && USE_DESKTOP_BASE_FOR_MOBILE)
-        ? 'desktop'
-        : requestedView;
-      setHeroMenuOpen(false);
-      if(requestedView === 'mobile'){
-        state.mobileDocsExpanded = false;
-      }
-      state.previewView = requestedView;
-      state.view = effectiveView;
-      const desktopView = document.getElementById('desktopView');
-      const mobileView = document.getElementById('mobileView');
-      if(desktopView){
-        desktopView.classList.toggle('hidden', effectiveView !== 'desktop');
-        desktopView.classList.toggle(
-          'mobile-preview-active',
-          requestedView === 'mobile' && USE_DESKTOP_BASE_FOR_MOBILE
-        );
-      }
-      document.body.classList.toggle(
-        'mobile-preview-active',
-        requestedView === 'mobile' && USE_DESKTOP_BASE_FOR_MOBILE
-      );
-      if(mobileView){
-        const showLegacyMobile = requestedView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE;
-        mobileView.classList.toggle('hidden', !showLegacyMobile);
-      }
-      safeInvoke({applyHeroAbVariant}, 'applyHeroAbVariant');
-      const desktopModeWrap = document.getElementById('desktopModeWrap');
-      if(desktopModeWrap){
-        desktopModeWrap.classList.toggle('hidden', effectiveView !== 'desktop');
-      }
-      if(effectiveView !== 'desktop'){
-        closeSectionModal();
-      }
-      if(requestedView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE){
-        applyMobileMode();
-      }
-      if(effectiveView === 'desktop'){
-        applyDesktopMode();
-      }
-      applyMobileTemplatesToDesktopSections();
-      renderMediaSections();
-      renderDesktopMobileDocsBlock();
-      safeInvoke({updateSummaryBarVisibility}, 'updateSummaryBarVisibility');
-      persist();
-      requestAnimationFrame(() => {
-        window.dispatchEvent(new Event('resize'));
+      return safeInvoke(ensureViewModeFlow(), 'getViewportPreviewView', [], () => {
+        return (window.matchMedia('(max-width: 900px)').matches && 'mobile') || 'desktop';
       });
     }
 
+    function switchView(view){
+      return safeInvoke(ensureViewModeFlow(), 'switchView', [view], null);
+    }
+
     function applyHeroContrastMode(){
-      const desktopView = document.getElementById('desktopView');
-      const beforeBtn = document.getElementById('heroContrastBeforeBtn');
-      const afterBtn = document.getElementById('heroContrastAfterBtn');
-      const afterSoftBtn = document.getElementById('heroContrastAfterSoftBtn');
-      if(!desktopView) return;
-      const mode = normalizeMode(state.heroContrastMode, HERO_CONTRAST_MODES, 'after-soft');
-      desktopView.classList.toggle('hero-contrast-before', mode === 'before');
-      desktopView.classList.toggle('hero-contrast-after', mode === 'after');
-      desktopView.classList.toggle('hero-contrast-after-soft', mode === 'after-soft');
-      if(beforeBtn){
-        beforeBtn.classList.toggle('active', mode === 'before');
-      }
-      if(afterBtn){
-        afterBtn.classList.toggle('active', mode === 'after');
-      }
-      if(afterSoftBtn){
-        afterSoftBtn.classList.toggle('active', mode === 'after-soft');
-      }
+      return safeInvoke(ensureViewModeFlow(), 'applyHeroContrastMode', [], null);
     }
 
     function switchHeroContrastMode(mode){
-      state.heroContrastMode = normalizeMode(mode, HERO_CONTRAST_MODES, 'after-soft');
-      applyHeroContrastMode();
-      persist();
+      return safeInvoke(ensureViewModeFlow(), 'switchHeroContrastMode', [mode], null);
     }
 
     function applyHeroMicroMode(){
-      const desktopView = document.getElementById('desktopView');
-      const offBtn = document.getElementById('heroMicroOffBtn');
-      const onBtn = document.getElementById('heroMicroOnBtn');
-      const demoBtn = document.getElementById('heroMicroDemoBtn');
-      if(!desktopView) return;
-      const mode = normalizeMode(state.heroMicroMode, HERO_MICRO_MODES, 'off');
-      desktopView.classList.toggle('hero-micro-on', mode === 'on');
-      desktopView.classList.toggle('hero-micro-demo', mode === 'demo');
-      desktopView.classList.toggle('hero-micro-off', mode === 'off');
-      if(offBtn){
-        offBtn.classList.toggle('active', mode === 'off');
-      }
-      if(onBtn){
-        onBtn.classList.toggle('active', mode === 'on');
-      }
-      if(demoBtn){
-        demoBtn.classList.toggle('active', mode === 'demo');
-      }
+      return safeInvoke(ensureViewModeFlow(), 'applyHeroMicroMode', [], null);
     }
 
     function switchHeroMicroMode(mode){
-      state.heroMicroMode = normalizeMode(mode, HERO_MICRO_MODES, 'off');
-      applyHeroMicroMode();
-      persist();
+      return safeInvoke(ensureViewModeFlow(), 'switchHeroMicroMode', [mode], null);
     }
 
     function applyOfferModalTheme(cardEl = null){
-      const mode = normalizeMode(state.offerModalTheme, OFFER_MODAL_THEMES, 'light');
-      const lightBtn = document.getElementById('offerThemeLightBtn');
-      const darkBtn = document.getElementById('offerThemeDarkBtn');
-      if(lightBtn){
-        lightBtn.classList.toggle('active', mode === 'light');
-      }
-      if(darkBtn){
-        darkBtn.classList.toggle('active', mode === 'dark');
-      }
-      const card = cardEl || document.getElementById('offerCard');
-      if(card){
-        card.classList.toggle('dark', mode === 'dark');
-      }
+      return safeInvoke(ensureViewModeFlow(), 'applyOfferModalTheme', [cardEl], null);
     }
 
     function switchOfferModalTheme(mode){
-      state.offerModalTheme = normalizeMode(mode, OFFER_MODAL_THEMES, 'light');
-      applyOfferModalTheme();
-      persist();
+      return safeInvoke(ensureViewModeFlow(), 'switchOfferModalTheme', [mode], null);
     }
 
     function applyOfferLayoutMode(){
@@ -4575,81 +3179,41 @@
     }
 
     function switchOfferLayout(mode){
-      const normalizedMode = normalizeMode(mode, OFFER_LAYOUT_MODES, 'current');
-      state.offerLayout = normalizedMode;
-      applyOfferLayoutMode();
-      persist();
-      const overlay = document.getElementById('offerOverlay');
-      if(overlay && !overlay.classList.contains('hidden') && !state.offerSearching && state.offerStage > 0){
-        showOffer();
-      }
+      return safeInvoke(ensureViewModeFlow(), 'switchOfferLayout', [mode], null);
     }
 
     function applyDesktopMode(){
-      const desktopView = document.getElementById('desktopView');
-      const fullBtn = document.getElementById('fullModeBtn');
-      const compactBtn = document.getElementById('compactModeBtn');
-      if(!desktopView || !fullBtn || !compactBtn) return;
-
-      desktopView.classList.toggle('compact-mode', state.desktopMode === 'compact');
-      fullBtn.classList.toggle('active', state.desktopMode === 'full');
-      compactBtn.classList.toggle('active', state.desktopMode === 'full');
-      compactBtn.setAttribute('aria-pressed', state.desktopMode === 'full' ? 'true' : 'false');
+      return safeInvoke(ensureViewModeFlow(), 'applyDesktopMode', [], null);
     }
 
     function switchDesktopMode(mode){
-      state.desktopMode = mode;
-      applyDesktopMode();
-      if(mode !== 'compact'){
-        closeSectionModal();
-      }
-      updateSummaryBarVisibility();
-      persist();
+      return safeInvoke(ensureViewModeFlow(), 'switchDesktopMode', [mode], null);
     }
 
     function applyMobileMode(){
-      if(USE_DESKTOP_BASE_FOR_MOBILE){
-        return;
-      }
-      const mobileView = document.getElementById('mobileView');
-      const fullBtn = document.getElementById('mobileFullModeBtn');
-      const compactBtn = document.getElementById('mobileCompactModeBtn');
-      const modeToggle = document.getElementById('mobileModeToggle');
-      const modeToggleLabel = modeToggle?.querySelector('.mobile-mode-toggle-label');
-      if(!mobileView) return;
-
-      mobileView.classList.toggle('mobile-compact-mode', state.mobileMode === 'compact');
-      if(fullBtn) fullBtn.classList.toggle('active', state.mobileMode === 'full');
-      if(compactBtn) compactBtn.classList.toggle('active', state.mobileMode === 'compact');
-      if(modeToggle){
-        const isFull = state.mobileMode === 'full';
-        modeToggle.setAttribute('aria-checked', isFull ? 'true' : 'false');
-        modeToggle.classList.toggle('is-compact', !isFull);
-        if(modeToggleLabel){
-          modeToggleLabel.textContent = isFull ? 'Подробный' : 'Кратко';
+      return safeInvoke(ensureViewModeFlow(), 'applyMobileMode', [], () => {
+        if(USE_DESKTOP_BASE_FOR_MOBILE){
+          return;
         }
-      }
-      applyMobileSectionAccordion();
+        applyMobileSectionAccordion();
+      });
     }
 
     function switchMobileMode(mode){
-      state.mobileMode = mode;
-      applyMobileMode();
-      updateSummaryBarVisibility();
-      persist();
+      return safeInvoke(ensureViewModeFlow(), 'switchMobileMode', [mode], null);
     }
 
     // SECTION 6: View mode controls (desktop/mobile, full/compact).
     document.getElementById('fullModeBtn')?.addEventListener('click', () => switchDesktopMode('full'));
     document.getElementById('compactModeBtn')?.addEventListener('click', () => {
-      const nextMode = state.desktopMode === 'compact' ? 'full' : 'compact';
+      const nextMode = (state.desktopMode === 'compact' && 'full') || 'compact';
       switchDesktopMode(nextMode);
     });
     if(!USE_DESKTOP_BASE_FOR_MOBILE){
       document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => switchMobileMode('full'));
       document.getElementById('mobileCompactModeBtn')?.addEventListener('click', () => switchMobileMode('compact'));
       document.getElementById('mobileModeToggle')?.addEventListener('click', () => {
-        switchMobileMode(state.mobileMode === 'full' ? 'compact' : 'full');
+        switchMobileMode((state.mobileMode === 'full' && 'compact') || 'full');
       });
     }
 
@@ -4830,10 +3394,10 @@
     }
 
     function toggleShiftOptionPanel(viewKey, panelType, shiftId){
-      const safeView = viewKey === 'mobile' ? 'mobile' : 'desktop';
+      const safeView = resolveViewKey(viewKey);
       safeInvoke(ensureCalendarFlow(), 'toggleShiftOptionPanel', [safeView, panelType, shiftId], () => {
         const current = shiftOptionPanels[safeView]?.[panelType] || null;
-        shiftOptionPanels[safeView][panelType] = current === shiftId ? null : shiftId;
+        shiftOptionPanels[safeView][panelType] = (current !== shiftId && shiftId) || null;
         renderShiftOptions(safeView);
       });
     }
@@ -4879,11 +3443,11 @@
       const shift = getSelectedShift();
       return {
         shift_id: state.shiftId || '',
-        shift_title: shift ? shift.title : '',
-        shift_dates: shift ? shift.dates : '',
-        shift_days: shift ? shiftDaysLabel(shift) : '',
+        shift_title: (shift && shift.title) || '',
+        shift_dates: (shift && shift.dates) || '',
+        shift_days: (shift && shiftDaysLabel(shift)) || '',
         age: state.age || '',
-        price: state.offerPrice || state.basePrice || (shift ? shift.price : '')
+        price: state.offerPrice || state.basePrice || ((shift && shift.price) || '')
       };
     }
 
@@ -4895,15 +3459,19 @@
 
     function resetOfferState({preserveShift = true} = {}){
       clearOfferTimeout();
-      state.offerStage = 0;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerSearching = false;
-      state.bookingCompleted = false;
+      Object.assign(state, {
+        offerStage: 0,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerSearching: false,
+        bookingCompleted: false
+      });
       if(!preserveShift){
-        state.shiftId = null;
-        state.basePrice = null;
+        Object.assign(state, {
+          shiftId: null,
+          basePrice: null
+        });
       }
     }
 
@@ -4911,7 +3479,7 @@
       const shift = getSelectedShift();
       if(!shift) return '';
       const shouldShowTimer = !!showTimer && isOfferActive();
-      const timeLeft = shouldShowTimer ? stripRemainingPrefix(formatRemainingCompact(state.expiresAt - Date.now())) : '';
+      const timeLeft = (shouldShowTimer && stripRemainingPrefix(formatRemainingCompact(state.expiresAt - Date.now()))) || '';
       return `
         <div class="booking-summary-line">
           <span class="booking-summary-line__segment booking-summary-line__segment--price"><span class="booking-summary-price">${formatPrice(state.offerPrice || state.basePrice || shift.price)}</span></span>
@@ -4950,17 +3518,21 @@
         btn.addEventListener('click', () => {
           root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
           btn.classList.add('active');
-          state.age = btn.dataset.age;
-          state.ageSelected = true;
-          state.shiftId = null;
-          state.basePrice = null;
-          state.offerPrice = null;
-          state.code = null;
-          state.expiresAt = null;
-          state.offerStage = 0;
-          state.bookingCompleted = false;
+          Object.assign(state, {
+            age: btn.dataset.age,
+            ageSelected: true,
+            shiftId: null,
+            basePrice: null,
+            offerPrice: null,
+            code: null,
+            expiresAt: null,
+            offerStage: 0,
+            bookingCompleted: false
+          });
           renderAll();
           persist();
+          const scope = state.previewView === 'mobile' ? 'booking-mobile' : 'booking-desktop';
+          HERO_V3_SIMPLE_ENABLED && window.setTimeout(() => openInlineLead(scope), 0);
         });
       });
     }
@@ -4983,7 +3555,7 @@
 
     function canRunDesktopAgeTapHint(){
       const card = document.getElementById('desktop-booking-card');
-      if(!card || !card.classList.contains('booking-stage-1')) return false;
+      if(HERO_V3_SIMPLE_ENABLED || !card || !card.classList.contains('booking-stage-1')) return false;
       if(state.previewView === 'mobile') return false;
       if(state.previewView !== 'desktop') return false;
       if(hasSelectedAge() || state.ageSelected) return false;
@@ -5067,7 +3639,7 @@
         clearDesktopAgeTapHintRows();
         ageRow.classList.add('is-hint-target');
         placeDesktopAgeTapHint(hintNode, ageRow);
-        await waitDesktopAgeTapHint(rowIndex === 0 ? 320 : 1000);
+        await waitDesktopAgeTapHint((rowIndex === 0 && 320) || 1000);
         for(let tapIndex = 0; tapIndex < 3; tapIndex += 1){
           if(runToken !== desktopAgeTapHintToken || !canRunDesktopAgeTapHint()) break;
           pulseDesktopAgeTapHint(hintNode, ageRow);
@@ -5208,8 +3780,8 @@
     function getVariantFlowKey(){
       const variant = heroVariantState || resolveHeroVariantFromUtm();
       const tier = variant.tier || HERO_VARIANT_DEFAULT_TIER;
-      const mode = (tier === 'tier2' || tier === 'tier4') ? 'menu' : 'info';
-      const view = state.previewView === 'mobile' ? 'mobile' : 'desktop';
+      const mode = resolveVariantCoachMode(tier);
+      const view = resolveViewKey(state.previewView);
       return `${tier}:${mode}:${view}`;
     }
 
@@ -5220,7 +3792,7 @@
       }
       const variant = heroVariantState || resolveHeroVariantFromUtm();
       const tier = variant.tier || HERO_VARIANT_DEFAULT_TIER;
-      const mode = (tier === 'tier2' || tier === 'tier4') ? 'menu' : 'info';
+      const mode = resolveVariantCoachMode(tier);
       const runId = ++variantFlowRunId;
       const flowKey = getVariantFlowKey();
       if(variantFlowCompletedKey === flowKey){
@@ -5233,14 +3805,14 @@
       if(mode === 'info'){
         const cfg = getPrimaryBookingViewConfig();
         const host = document.getElementById(cfg.shiftOptionsId || '');
-        const infoButtons = host ? [...host.querySelectorAll('[data-action="toggle-shift-about"]')].slice(0, 2) : [];
+        const infoButtons = (host && [...host.querySelectorAll('[data-action="toggle-shift-about"]')].slice(0, 2)) || [];
         await runVariantFlowForTargets(infoButtons, runId);
       } else if(state.previewView === 'mobile'){
         setHeroMenuOpen(true);
         const openOk = await waitVariantFlow(280, runId);
         if(!openOk || runId !== variantFlowRunId) return;
         const shiftsMenuBtn = document.querySelector('#serviceMenu [data-nav="section-programs"]');
-        await runVariantFlowForTargets(shiftsMenuBtn ? [shiftsMenuBtn] : [], runId);
+        await runVariantFlowForTargets([].concat(shiftsMenuBtn || []), runId);
         if(runId === variantFlowRunId){
           setHeroMenuOpen(false);
         }
@@ -5248,7 +3820,7 @@
         const cfg = getPrimaryBookingViewConfig();
         const card = document.getElementById(cfg.cardId || '');
         const allShiftsBtn = card?.querySelector('.booking-all-shifts-link');
-        await runVariantFlowForTargets(allShiftsBtn ? [allShiftsBtn] : [], runId);
+        await runVariantFlowForTargets([].concat(allShiftsBtn || []), runId);
       }
 
       if(runId === variantFlowRunId){
@@ -5258,7 +3830,7 @@
     }
 
     function scheduleVariantFlowScenario(){
-      if(!hasSelectedAge() || !!state.shiftId || getBookingStage() !== 2 || state.bookingCompleted){
+      if(HERO_V3_SIMPLE_ENABLED || !hasSelectedAge() || !!state.shiftId || getBookingStage() !== 2 || state.bookingCompleted){
         stopVariantFlowScenario();
         return;
       }
@@ -5269,15 +3841,17 @@
 
     function resetAgeSelection(){
       clearShiftOptionPanels();
-      state.age = null;
-      state.ageSelected = false;
-      state.shiftId = null;
-      state.basePrice = null;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerStage = 0;
-      state.bookingCompleted = false;
+      Object.assign(state, {
+        age: null,
+        ageSelected: false,
+        shiftId: null,
+        basePrice: null,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerStage: 0,
+        bookingCompleted: false
+      });
 
       ['desktopAgeTabs','mobileAgeTabs'].forEach(id => {
         const root = document.getElementById(id);
@@ -5292,27 +3866,29 @@
 
     function resetShiftSelection(){
       clearShiftOptionPanels();
-      state.shiftId = null;
-      state.basePrice = null;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerStage = 0;
-      state.offerSearching = false;
-      state.bookingCompleted = false;
+      Object.assign(state, {
+        shiftId: null,
+        basePrice: null,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerStage: 0,
+        offerSearching: false,
+        bookingCompleted: false
+      });
       showHint('Смена сброшена. Выберите подходящий вариант.', 'shift');
       renderAll();
       persist();
     }
 
     function setPhotoFilter(filter){
-      state.photoFilter = filter;
+      Object.assign(state, { photoFilter: filter });
       renderMediaSections();
       persist();
     }
 
     function setFaqFilter(filter){
-      state.faqFilter = filter;
+      Object.assign(state, { faqFilter: filter });
       track('faq_filter', {filter});
       renderMediaSections();
       persist();
@@ -5389,7 +3965,7 @@
       const agePart = normalizeShiftText(agePartMatch?.[1] || '');
 
       const sentences = compact.match(/[^.!?]+[.!?]?/g) || [];
-      const finalPart = normalizeShiftText(sentences.length ? sentences[sentences.length - 1] : '');
+      const finalPart = normalizeShiftText((sentences.length && sentences[sentences.length - 1]) || '');
 
       const result = [];
       if(firstPart) result.push(firstPart);
@@ -5415,8 +3991,8 @@
 
       const start = parseShiftDate(shift.start);
       const end = parseShiftDate(shift.end);
-      const startText = start ? start.toLocaleDateString('ru-RU') : shift.start;
-      const endText = end ? end.toLocaleDateString('ru-RU') : shift.end;
+      const startText = (start && start.toLocaleDateString('ru-RU')) || shift.start;
+      const endText = (end && end.toLocaleDateString('ru-RU')) || shift.end;
       const summaryLines = getShiftSummaryLines(state.age || '7-9');
 
       titleEl.textContent = `${shift.label || `Смена ${shift.title}`}: программа`;
@@ -5444,7 +4020,7 @@
     }
 
     function renderShiftOptions(viewKey){
-      const safeViewKey = viewKey === 'mobile' ? 'mobile' : 'desktop';
+      const safeViewKey = resolveViewKey(viewKey);
       const targetId = resolveShiftOptionsTargetId(safeViewKey);
       const box = document.getElementById(targetId);
       if(!box) return;
@@ -5458,8 +4034,8 @@
         const showCalendar = isInlineView && shiftOptionPanels[safeViewKey]?.calendarId === s.id;
         const start = parseShiftDate(s.start);
         const end = parseShiftDate(s.end);
-        const startText = start ? start.toLocaleDateString('ru-RU') : s.start;
-        const endText = end ? end.toLocaleDateString('ru-RU') : s.end;
+        const startText = (start && start.toLocaleDateString('ru-RU')) || s.start;
+        const endText = (end && end.toLocaleDateString('ru-RU')) || s.end;
 
         return `
         <div class="shift-option ${state.shiftId === s.id ? 'active' : ''}" data-id="${s.id}">
@@ -5595,11 +4171,11 @@
         telegram:'/assets/icons/telegram.svg'
       };
       const src = map[label];
-      return src ? `<img class="ac-icon" src="${src}" alt="" aria-hidden="true">` : '•';
+      return ((src && `<img class="ac-icon" src="${src}" alt="" aria-hidden="true">`) || '•');
     }
 
     function resolveFloatingContactLinks(){
-      const contacts = Array.isArray(mediaContent.contacts) ? mediaContent.contacts : [];
+      const contacts = (Array.isArray(mediaContent.contacts) && mediaContent.contacts) || [];
       const mobilePhone = contacts.find((item) => item.label === 'mobile_phone');
       const cityPhone = contacts.find((item) => item.label === 'city_phone');
       const whatsapp = contacts.find((item) => item.label === 'whatsapp');
@@ -5654,8 +4230,8 @@
       if(!toggle) return;
       toggle.addEventListener('click', () => {
         const isOpen = host.classList.toggle('is-open');
-        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        track('floating_contacts_toggle', {open:isOpen ? 1 : 0});
+        toggle.setAttribute('aria-expanded', String(!!isOpen));
+        track('floating_contacts_toggle', {open:Number(!!isOpen)});
       });
 
       host.querySelectorAll('.floating-contacts-link').forEach((link) => {
@@ -5685,7 +4261,7 @@
     function socialBadgeMark(item){
       const mark = String(item?.label || '').trim().toUpperCase();
       const allowed = new Set(['VK','RT','IG','OK','YT','LI','TT','PI','YA']);
-      return allowed.has(mark) ? mark : '•';
+      return ((allowed.has(mark) && mark) || '•');
     }
 
     function socialDisplayName(item){
@@ -5717,171 +4293,43 @@
       flow.renderMediaSections();
     }
 
-    function renderCompactInlineStayList(mobileInlineStayList){
-      if(!mobileInlineStayList) return;
-      const stayCards = getCompactStayCards();
-      if(!stayCards.length){
-        mobileInlineStayList.innerHTML = '';
-        return;
-      }
+    function getMediaFlowInlineApi(){
+      return window.AC_FEATURES?.mediaFlowInline || null;
+    }
 
-      const safeIndex = Math.min(Math.max(state.mobileStayIndex || 0, 0), stayCards.length - 1);
-      state.mobileStayIndex = safeIndex;
-      const active = stayCards[safeIndex];
-
-      mobileInlineStayList.innerHTML = `
-        <article class="mobile-stay-feature">
-          <button
-            type="button"
-            class="mobile-stay-feature-photo"
-            data-action="open-stay-photo"
-            data-stay-index="${safeIndex}"
-            aria-label="Открыть фото: ${active.title}"
-          >
-            ${active.img ? `<img src="${active.img}" alt="${active.title}">` : ''}
-          </button>
-          <strong>${active.title}</strong>
-          <p>${active.text}</p>
-        </article>
-        <div class="mobile-stay-preview-strip">
-          ${stayCards.map((item, idx) => `
-            <button
-              type="button"
-              class="mobile-stay-preview-thumb ${idx === safeIndex ? 'active' : ''}"
-              data-action="mobile-stay-select"
-              data-stay-index="${idx}"
-              aria-label="Показать: ${item.title}"
-            >
-              ${item.img ? `<img src="${item.img}" alt="${item.title}">` : ''}
-            </button>
-          `).join('')}
-        </div>
-      `;
+    function buildMediaFlowInlineContext(){
+      return {
+        document,
+        state,
+        mediaContent,
+        socialDisplayName,
+        socialBadgeMark
+      };
     }
 
     function getCompactStayCards(){
-      let cards = Array.from(document.querySelectorAll('#section-stay .stay-card')).map((card) => {
-        return {
-          img: card.querySelector('img')?.getAttribute('src') || '',
-          title: (card.querySelector('.stay-card-body strong')?.textContent || '').trim(),
-          text: (card.querySelector('.stay-card-body span')?.textContent || '').trim()
-        };
-      }).filter((item) => item.title);
-      if(!cards.length){
-        cards = [
-          {
-            img:'/assets/images/cdn-cache/53d52bed_45b1eb46cf5961c2188d.jpg.webp',
-            title:'Комнаты и размещение',
-            text:'Спокойные светлые комнаты, удобное размещение и бытовая среда без ощущения «походного лагеря».'
-          },
-          {
-            img:'/assets/images/cdn-cache/62b758b3_63e9322f53ec8ca1b307.jpg.webp',
-            title:'Санузлы и бытовые зоны',
-            text:'Родителям важно понимать не только программу, но и бытовой комфорт ребёнка.'
-          },
-          {
-            img:'/assets/images/stay-common-lounge.webp',
-            title:'Общая гостиная и зона отдыха',
-            text:'Тёплое общее пространство для спокойного досуга, настольных игр и вечернего общения под присмотром вожатых.'
-          }
-        ];
-      }
-      return cards;
+      const api = getMediaFlowInlineApi();
+      return safeInvoke(api, 'getCompactStayCards', [buildMediaFlowInlineContext()], []);
+    }
+
+    function renderCompactInlineStayList(mobileInlineStayList){
+      const api = getMediaFlowInlineApi();
+      return safeInvoke(api, 'renderCompactInlineStayList', [buildMediaFlowInlineContext(), mobileInlineStayList], null);
     }
 
     function renderCompactInlineTeamList(mobileInlineTeamList){
-      if(!mobileInlineTeamList) return;
-      const founder = mediaContent.team.find((item) => item.fio === 'Дарья Афанасьева') || mediaContent.team[0];
-      const teachers = mediaContent.team.filter((item) => item.fio !== founder?.fio);
-      const founderSummary = founder?.bio
-        ? founder.bio.split('.').map((part) => part.trim()).filter(Boolean).slice(0, 2).join('. ') + '.'
-        : '';
-      const teacherFocusMap = {
-        'Никита Брагин':'Scratch, Minecraft и Python',
-        'Омар Алхамви':'Python и нейросети',
-        'Александр Ташкин':'Scratch, Minecraft и Python'
-      };
-
-      mobileInlineTeamList.innerHTML = `
-        <article class="mobile-team-feature-card">
-          <div class="mobile-team-feature-cover-wrap" data-action="open-book-photo" role="button" tabindex="0" aria-label="Открыть обложку книги">
-            <img class="mobile-team-feature-cover" src="/assets/images/cdn-cache/8fc8172e_8991804334.webp" alt="Собственная книга по Python">
-          </div>
-          <strong>Собственная книга по Python</strong>
-          <span>Команда не только ведёт занятия, но и создаёт собственные учебники и игровые методики. <a class="mobile-team-feature-link" href="${mediaContent.references.programmingBookUrl}" target="_blank" rel="noopener noreferrer">Смотреть книгу</a></span>
-        </article>
-        ${founder ? `
-          <article class="mobile-team-founder-card">
-            <div class="mobile-team-avatar">
-              <img src="${founder.avatarUrl}" alt="${founder.fio}">
-            </div>
-            <strong>${founder.fio}</strong>
-            <span class="mobile-team-role">${founder.role}</span>
-            <p>${founderSummary}</p>
-          </article>
-        ` : ''}
-        ${teachers.length ? `
-          <div class="mobile-team-carousel-block">
-            <div class="mobile-team-carousel-head">
-              <strong>Преподаватели</strong>
-            </div>
-            <div class="mobile-team-carousel-track">
-              ${teachers.map((teacher) => `
-                <article class="mobile-team-teacher-card">
-                  <div class="mobile-team-avatar">
-                    <img src="${teacher.avatarUrl}" alt="${teacher.fio}">
-                  </div>
-                  <strong>${teacher.fio}</strong>
-                  <span class="mobile-team-role">${teacherFocusMap[teacher.fio] || teacher.role}</span>
-                </article>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
-      `;
+      const api = getMediaFlowInlineApi();
+      return safeInvoke(api, 'renderCompactInlineTeamList', [buildMediaFlowInlineContext(), mobileInlineTeamList], null);
     }
 
     function renderCompactInlineContactsList(mobileInlineContactsList){
-      if(!mobileInlineContactsList) return;
-      const mapUrl = mediaContent.references.locationMapUrl;
-      const mapEmbedUrl = mediaContent.references.locationMapEmbedUrl;
-      const cityPhone = mediaContent.contacts.find((item) => item.label === 'city_phone');
-      const mobilePhone = mediaContent.contacts.find((item) => item.label === 'mobile_phone');
-      const whatsapp = mediaContent.contacts.find((item) => item.label === 'whatsapp');
-      const telegram = mediaContent.contacts.find((item) => item.label === 'telegram');
-      mobileInlineContactsList.innerHTML = `
-        <article class="mobile-map-preview-card">
-          <div class="mobile-map-preview">
-            <iframe
-              src="${mapEmbedUrl}"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              title="Карта локации лагеря"
-            ></iframe>
-          </div>
-          <strong>Московская область, Наро-Фоминский округ</strong>
-          <span>
-            Удобный заезд и понятная локация. Маршрут открывается в Яндекс.Картах.
-            <a class="mobile-map-inline-link" href="${mapUrl}" target="_blank" rel="noopener noreferrer">Открыть карту</a>
-          </span>
-        </article>
-        <div class="mobile-contact-grid">
-          ${cityPhone ? `<a class="mobile-contact-card" href="${cityPhone.href}"><strong>${cityPhone.text}</strong></a>` : ''}
-          ${mobilePhone ? `<a class="mobile-contact-card" href="${mobilePhone.href}"><strong>${mobilePhone.text}</strong></a>` : ''}
-          ${whatsapp ? `<a class="mobile-contact-card" href="${whatsapp.href}" target="_blank" rel="noopener noreferrer"><strong>${whatsapp.text}</strong></a>` : ''}
-          ${telegram ? `<a class="mobile-contact-card" href="${telegram.href}" target="_blank" rel="noopener noreferrer"><strong>Telegram</strong></a>` : ''}
-        </div>
-      `;
+      const api = getMediaFlowInlineApi();
+      return safeInvoke(api, 'renderCompactInlineContactsList', [buildMediaFlowInlineContext(), mobileInlineContactsList], null);
     }
 
     function renderCompactInlineSocials(mobileInlineSocials){
-      if(!mobileInlineSocials) return;
-      mobileInlineSocials.innerHTML = mediaContent.socials.map((item) => `
-        <a class="mobile-social-link" href="${item.href}" target="_blank" rel="noopener noreferrer" aria-label="${socialDisplayName(item)}">
-          <span class="mobile-social-icon"><span class="social-badge-mark">${socialBadgeMark(item)}</span></span>
-          <span class="mobile-social-label">${socialDisplayName(item)}</span>
-        </a>
-      `).join('');
+      const api = getMediaFlowInlineApi();
+      return safeInvoke(api, 'renderCompactInlineSocials', [buildMediaFlowInlineContext(), mobileInlineSocials], null);
     }
 
     function renderCompactTrustPanelContent(){
@@ -5903,7 +4351,7 @@
         renderCompactInlineContactsList,
         renderCompactInlineSocials,
         setPhotoLists: (list = []) => {
-          const next = Array.isArray(list) ? list.slice() : [];
+          const next = cloneArrayOrEmpty(list);
           photoGalleryList = next.slice();
           activePhotoList = next.slice();
         },
@@ -6067,12 +4515,14 @@
     function selectShift(id){
       const shift = shifts.find(s => s.id === id);
       clearShiftOptionPanels();
-      state.shiftId = id;
-      state.basePrice = shift.price;
-      state.offerPrice = null;
-      state.code = null;
-      state.expiresAt = null;
-      state.offerStage = 0;
+      Object.assign(state, {
+        shiftId: id,
+        basePrice: shift.price,
+        offerPrice: null,
+        code: null,
+        expiresAt: null,
+        offerStage: 0
+      });
       renderAll();
       persist();
     }
@@ -6088,11 +4538,12 @@
         return;
       }
 
-      if(!state.shiftId){
+      if(!state.shiftId || HERO_V3_SIMPLE_ENABLED){
+        const simpleScope = HERO_V3_SIMPLE_ENABLED && (state.previewView === 'mobile' ? 'booking-mobile' : 'booking-desktop');
         const hintText = formatVariantHint(copy.hintStage2 || 'Выберите подходящую смену.');
-        showHint(hintText, 'shift');
-        nudgeUserToNextStep(hintText);
-        return;
+        return simpleScope
+          ? openInlineLead(simpleScope)
+          : (showHint(hintText, 'shift'), nudgeUserToNextStep(hintText));
       }
 
       const action = getPrimaryActionState();
@@ -6118,7 +4569,7 @@
       card?.classList.add('offer-card-stable');
       offerRunId += 1;
       const currentRunId = offerRunId;
-      state.offerSearching = true;
+      Object.assign(state, { offerSearching: true });
       clearOfferTimeout();
       track('offer_open', selectedShiftPayload());
       track('offer_start', selectedShiftPayload());
@@ -6231,7 +4682,7 @@
       const card = document.getElementById('offerCard');
       const featureOfferUtils = window.AC_FEATURES && window.AC_FEATURES.offerUtils;
       const selectedShift = getSelectedShift();
-      const basePrice = state.basePrice || (selectedShift ? selectedShift.price : null);
+      const basePrice = state.basePrice || ((selectedShift && selectedShift.price) || null);
 
       if(basePrice){
         if(featureOfferUtils && typeof featureOfferUtils.buildOfferState === 'function'){
@@ -6241,27 +4692,33 @@
             now: Date.now(),
             ttlHours: 72
           });
-          state.offerPrice = nextOfferState.offerPrice;
-          state.expiresAt = nextOfferState.expiresAt;
-          state.offerStage = nextOfferState.offerStage;
+          Object.assign(state, {
+            offerPrice: nextOfferState.offerPrice,
+            expiresAt: nextOfferState.expiresAt,
+            offerStage: nextOfferState.offerStage
+          });
         } else {
-          state.offerPrice = Math.round(basePrice * OFFER_DISCOUNT_FACTOR);
-          state.expiresAt = Date.now() + 72 * 60 * 60 * 1000;
-          state.offerStage = 1;
+          Object.assign(state, {
+            offerPrice: Math.round(basePrice * OFFER_DISCOUNT_FACTOR),
+            expiresAt: Date.now() + 72 * 60 * 60 * 1000,
+            offerStage: 1
+          });
         }
       }
 
       if(state.code){
-        state.previousCode = state.code;
+        Object.assign(state, { previousCode: state.code });
       }
-      state.code = generateCode();
-      state.nextCodePreview = null;
-      state.offerSearching = false;
+      Object.assign(state, {
+        code: generateCode(),
+        nextCodePreview: null
+      });
+      Object.assign(state, { offerSearching: false });
       persist();
       track('offer_complete', selectedShiftPayload());
       card?.classList.add('offer-card-stable');
       applyOfferModalTheme(card);
-      const oldPriceText = basePrice ? formatPrice(basePrice) : '—';
+      const oldPriceText = (basePrice && formatPrice(basePrice)) || '—';
       const newPriceText = formatPrice(state.offerPrice);
       const appliedPrice = state.offerPrice || basePrice || 0;
       const savingsValue = Math.max(0, (basePrice || 0) - appliedPrice);
@@ -6358,7 +4815,7 @@
 
     function resetOfferProgressUI(){
       clearOfferTimeout();
-      state.offerSearching = false;
+      Object.assign(state, { offerSearching: false });
     }
 
     function startTimer(){
@@ -6419,9 +4876,8 @@
     function isSummaryBelowHero(){
       const heroSelector = '#desktopView .hero-shell';
       const hero = document.querySelector(heroSelector);
-      if(!hero) return true;
-      const rect = hero.getBoundingClientRect();
-      return rect.bottom <= 8;
+      const rect = hero?.getBoundingClientRect();
+      return !rect || rect.bottom <= 8;
     }
 
     function isBookingPrimaryCtaVisibleInViewport(){
@@ -6518,7 +4974,7 @@
       const isStageFourSummary = summaryStage === 4 && !state.bookingCompleted;
       bar.classList.toggle('summary-bar--stage4', isStageFourSummary);
 
-      document.getElementById('summaryMain').textContent = isStageFourSummary ? '' : `${labelAge(state.age)}`;
+      document.getElementById('summaryMain').textContent = ((isStageFourSummary && '') || `${labelAge(state.age)}`);
       document.getElementById('summaryMeta').textContent = isStageFourSummary
         ? ''
         : `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
@@ -6539,7 +4995,7 @@
           summaryCtaBtn.removeAttribute('aria-label');
         }
         summaryCtaBtn.classList.toggle('is-disabled', !!action.disabled);
-        summaryCtaBtn.setAttribute('aria-disabled', action.disabled ? 'true' : 'false');
+        summaryCtaBtn.setAttribute('aria-disabled', String(!!action.disabled));
         summaryCtaBtn.disabled = false;
       }
 
@@ -6548,93 +5004,36 @@
     }
 
     function onlyDigits(value){
-      return (value || '').replace(/\D/g, '');
+      return safeInvoke(ensureBookingInlineLeadApi(), 'onlyDigits', [value], (value || '').replace(/\D/g, ''));
     }
 
     function formatPhoneInput(value){
-      let digits = onlyDigits(value);
-
-      if(!digits) return '';
-
-      if(digits[0] === '8') digits = '7' + digits.slice(1);
-      if(digits[0] === '9') digits = '7' + digits;
-      if(digits[0] !== '7') digits = '7' + digits;
-
-      digits = digits.slice(0, 11);
-
-      let out = '+7';
-      if(digits.length > 1) out += ` (${digits.slice(1, 4)}`;
-      if(digits.length >= 4) out += ')';
-      if(digits.length > 4) out += ` ${digits.slice(4, 7)}`;
-      if(digits.length > 7) out += `-${digits.slice(7, 9)}`;
-      if(digits.length > 9) out += `-${digits.slice(9, 11)}`;
-
-      return out;
+      return safeInvoke(ensureBookingInlineLeadApi(), 'formatPhoneInput', [value], () => String(value || ''));
     }
 
     function normalizePhone(value){
-      let digits = onlyDigits(value);
-      if(!digits) return '';
-
-      if(digits[0] === '8') digits = '7' + digits.slice(1);
-      if(digits[0] === '9') digits = '7' + digits;
-      if(digits[0] !== '7') digits = '7' + digits;
-
-      digits = digits.slice(0, 11);
-      return digits.length === 11 ? `+${digits}` : '';
+      return safeInvoke(ensureBookingInlineLeadApi(), 'normalizePhone', [value], '');
     }
 
     function isValidPhone(value){
-      return !!normalizePhone(value);
+      return !!safeInvoke(ensureBookingInlineLeadApi(), 'isValidPhone', [value], () => !!normalizePhone(value));
     }
 
     function getLeadScopeConfig(scope = 'drawer'){
-      const map = {
-        drawer: {
-          hostId:'formDrawer',
-          phoneInputId:'parentPhone',
-          consentId:'consentCheck',
-          errorId:'phoneError',
-          submitId:'submitLeadBtn'
-        },
-        'booking-desktop': {
-          hostId:'desktopInlineLeadHost',
-          phoneInputId:'inlineLeadPhoneDesktop',
-          consentId:'inlineLeadConsentDesktop',
-          errorId:'inlineLeadErrorDesktop',
-          submitId:'inlineLeadSubmitDesktop'
-        },
-        'booking-mobile': {
-          hostId:'mobileInlineLeadHost',
-          phoneInputId:'inlineLeadPhoneMobile',
-          consentId:'inlineLeadConsentMobile',
-          errorId:'inlineLeadErrorMobile',
-          submitId:'inlineLeadSubmitMobile'
-        },
-        offer: {
-          hostId:'offerInlineLeadHost',
-          phoneInputId:'inlineLeadPhoneOffer',
-          consentId:'inlineLeadConsentOffer',
-          errorId:'inlineLeadErrorOffer',
-          submitId:'inlineLeadSubmitOffer'
-        }
-      };
-      return map[scope] || null;
+      return safeInvoke(ensureBookingInlineLeadApi(), 'getLeadScopeConfig', [scope], null);
     }
 
     function getLeadSubmitDefaultText(scope = 'drawer'){
-      return 'Забронировать';
+      return safeInvoke(ensureBookingInlineLeadApi(), 'getLeadSubmitDefaultText', [scope], 'Забронировать');
     }
 
     function setLeadPhoneError(scope = 'drawer', show = false, message = ''){
-      const cfg = getLeadScopeConfig(scope);
-      if(!cfg) return;
-      const input = document.getElementById(cfg.phoneInputId);
-      const error = document.getElementById(cfg.errorId);
-      if(!input || !error) return;
-      if(message) error.textContent = message;
-      input.classList.toggle('input-error', !!show);
-      error.classList.toggle('visible', !!show);
+      safeInvoke(ensureBookingInlineLeadApi(), 'setLeadPhoneError', [{
+        scope,
+        show,
+        message,
+        document
+      }], null);
     }
 
     function setPhoneError(show){
@@ -6642,133 +5041,58 @@
     }
 
     function setLeadSubmitState(loading, scope = 'drawer'){
-      const cfg = getLeadScopeConfig(scope);
-      if(!cfg) return;
-      const btn = document.getElementById(cfg.submitId);
-      if(!btn) return;
-      btn.disabled = !!loading;
-      btn.textContent = loading ? 'Бронируем...' : getLeadSubmitDefaultText(scope);
+      safeInvoke(ensureBookingInlineLeadApi(), 'setLeadSubmitState', [{
+        loading,
+        scope,
+        document
+      }], null);
     }
 
     function bindPhoneMaskForScope(scope = 'drawer'){
-      const cfg = getLeadScopeConfig(scope);
-      if(!cfg) return;
-      const phoneInput = document.getElementById(cfg.phoneInputId);
-      if(!phoneInput || phoneInput.dataset.maskBound === '1') return;
-
-      phoneInput.addEventListener('input', (e) => {
-        e.target.value = formatPhoneInput(e.target.value);
-        setLeadPhoneError(scope, false);
-      });
-      phoneInput.addEventListener('blur', () => {
-        const val = phoneInput.value.trim();
-        if(!val){
-          setLeadPhoneError(scope, false);
-          return;
-        }
-        setLeadPhoneError(scope, !isValidPhone(val));
-      });
-      phoneInput.addEventListener('paste', () => {
-        requestAnimationFrame(() => {
-          phoneInput.value = formatPhoneInput(phoneInput.value);
-          setLeadPhoneError(scope, false);
-        });
-      });
-      phoneInput.dataset.maskBound = '1';
+      safeInvoke(ensureBookingInlineLeadApi(), 'bindPhoneMaskForScope', [{
+        scope,
+        document
+      }], null);
     }
 
     function buildInlineLeadFormHtml(scope){
-      const cfg = getLeadScopeConfig(scope);
-      if(!cfg) return '';
-      return `
-        <div class="inline-lead-card ${scope === 'offer' ? 'inline-lead-card--offer' : ''}" data-inline-scope="${scope}">
-          <div class="form-field">
-            <label for="${cfg.phoneInputId}">Телефон</label>
-            <input class="input-box" id="${cfg.phoneInputId}" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" maxlength="18" />
-            <div class="field-error" id="${cfg.errorId}">Введите телефон полностью в формате +7 (___) ___-__-__</div>
-          </div>
-          <label class="check-row inline-lead-check">
-            <input type="checkbox" id="${cfg.consentId}" />
-            <span>Я согласен(на) на обработку персональных данных.</span>
-          </label>
-          <button class="cta-main inline-lead-submit" id="${cfg.submitId}" type="button" data-action="submit-inline-lead" data-inline-scope="${scope}">
-            ${getLeadSubmitDefaultText(scope)}
-          </button>
-        </div>
-      `;
+      return safeInvoke(ensureBookingInlineLeadApi(), 'buildInlineLeadFormHtml', [scope], '');
     }
 
     function openInlineLead(scope){
-      const cfg = getLeadScopeConfig(scope);
-      if(!cfg) return;
-      const host = document.getElementById(cfg.hostId);
-      if(!host) return;
-
-      if(!host.innerHTML.trim()){
-        host.innerHTML = buildInlineLeadFormHtml(scope);
-      }
-      host.classList.remove('hidden');
-
-      const phoneInput = document.getElementById(cfg.phoneInputId);
-      if(phoneInput){
-        phoneInput.value = formatPhoneInput(state.phone || '');
-      }
-      const consentCheck = document.getElementById(cfg.consentId);
-      if(consentCheck){
-        consentCheck.checked = false;
-      }
-      setLeadPhoneError(scope, false);
-      setLeadSubmitState(false, scope);
-      bindPhoneMaskForScope(scope);
-      phoneInput?.focus();
-      track('form_open', {
-        ...selectedShiftPayload(),
-        lead_scope: scope
-      });
-      track('hero_variant_form_open_new', buildHeroVariantMeta({
-        ...selectedShiftPayload(),
-        lead_scope: scope
-      }));
+      safeInvoke(ensureBookingInlineLeadApi(), 'openInlineLead', [{
+        scope,
+        state,
+        document,
+        track,
+        selectedShiftPayload,
+        buildHeroVariantMeta
+      }], null);
     }
 
     function closeInlineLead(scope){
-      const cfg = getLeadScopeConfig(scope);
-      if(!cfg) return;
-      const host = document.getElementById(cfg.hostId);
-      if(!host) return;
-      host.classList.add('hidden');
+      safeInvoke(ensureBookingInlineLeadApi(), 'closeInlineLead', [{
+        scope,
+        document
+      }], null);
     }
 
     function openForm(){
-      syncGuidedState();
-      if(!state.shiftId) return;
-
-      const formLead = document.getElementById('formLead');
-      if(formLead){
-        formLead.textContent = '';
-      }
-
-      const phoneInput = document.getElementById('parentPhone');
-      document.getElementById('parentPhone').value = state.phone || '';
-      if(phoneInput) phoneInput.value = formatPhoneInput(state.phone || '');
-      const bookingSummaryBox = document.getElementById('bookingSummaryBox');
-      if(bookingSummaryBox) bookingSummaryBox.innerHTML = buildBookingSummaryHtml({showTimer: true});
-      setLeadPhoneError('drawer', false);
-      setLeadSubmitState(false, 'drawer');
-      bindPhoneMaskForScope('drawer');
-      if(isOfferActive()){
-        startTimer();
-      }
-      track('form_open', selectedShiftPayload());
-      track('hero_variant_form_open_new', buildHeroVariantMeta({
-        ...selectedShiftPayload(),
-        lead_scope: 'drawer'
-      }));
-      document.getElementById('formDrawer').classList.remove('hidden');
+      safeInvoke(ensureBookingInlineLeadApi(), 'openForm', [{
+        state,
+        document,
+        syncGuidedState,
+        buildBookingSummaryHtml,
+        isOfferActive,
+        startTimer,
+        track,
+        selectedShiftPayload,
+        buildHeroVariantMeta
+      }], null);
     }
 
     function closeForm(){
-      document.getElementById('formDrawer').classList.add('hidden');
+      safeInvoke(ensureBookingInlineLeadApi(), 'closeForm', [{ document }], null);
     }
 
     function openSuccessModal(deliveryResult){
@@ -6851,8 +5175,10 @@
       actionsEl.classList.add('notice-actions--reset-booking');
       noticeConfirmHandler = () => {
         resetOfferState({preserveShift:false});
-        state.age = null;
-        state.ageSelected = false;
+        Object.assign(state, {
+          age: null,
+          ageSelected: false
+        });
         persist();
         renderAll();
       };
@@ -6860,101 +5186,36 @@
     }
 
     async function submitLeadFromScope(scope = 'drawer'){
-      if(leadSubmitInProgress) return;
-      syncGuidedState();
-      const cfg = getLeadScopeConfig(scope);
-      if(!cfg) return;
-      const phoneInput = document.getElementById(cfg.phoneInputId);
-      const consentInput = document.getElementById(cfg.consentId);
-      const nameInput = document.getElementById('parentName');
-      const name = (nameInput && nameInput.value.trim()) || 'Родитель';
-      const phoneRaw = phoneInput ? phoneInput.value.trim() : '';
-      const phone = normalizePhone(phoneRaw);
-      const consent = !!(consentInput && consentInput.checked);
-
-      if(!phoneRaw){
-        setLeadPhoneError(scope, true);
-        openNoticeModal('Введите номер телефона.');
-        phoneInput?.focus();
-        return;
-      }
-
-      if(!consent){
-        openNoticeModal('Подтвердите согласие на обработку персональных данных.');
-        consentInput?.focus();
-        return;
-      }
-
-      if(!isValidPhone(phoneRaw)){
-        setLeadPhoneError(scope, true);
-        openNoticeModal('Проверьте номер телефона.');
-        phoneInput?.focus();
-        return;
-      }
-
-      setLeadPhoneError(scope, false);
-      leadSubmitInProgress = true;
-      setLeadSubmitState(true, scope);
-
-      state.phone = phone;
-      persist();
-
-      const shift = shifts.find(s => s.id === state.shiftId);
-      const price = state.offerPrice || state.basePrice || (shift ? shift.price : null);
-      const payload = {
-        name,
-        phone,
-        age: labelAge(state.age),
-        shift_id: shift ? shift.id : '',
-        shift_name: shift ? shift.dates : '',
-        shift_date: shift ? shift.dates : '',
-        price_final: price || null,
-        price_text: price ? formatPrice(price) : '—',
-        promo_code: state.code || '',
-        promo_status: state.offerPrice ? (state.offerStage >= 2 ? 'improved_again' : 'fixed') : 'none',
-        mode: state.previewView === 'mobile'
-          ? `mobile:${state.mobileMode || 'full'}`
-          : `desktop:${state.desktopMode || 'full'}`,
-        sent_at_local: new Date().toLocaleString('ru-RU'),
-        ...buildAbMeta()
-      };
-      track('form_submit', {
-        ...selectedShiftPayload(),
-        booking_code: state.code || '',
-        lead_scope: scope,
-        parent_name_present: !!name,
-        phone_present: !!phone
-      });
-      track('hero_variant_form_submit_new', buildHeroVariantMeta({
-        ...selectedShiftPayload(),
-        booking_code: state.code || '',
-        lead_scope: scope,
-        parent_name_present: !!name,
-        phone_present: !!phone
-      }));
-      try {
-        const deliveryResult = await notifyLead('booking_submitted', payload);
-        state.bookingCompleted = true;
-        state.offerSearching = false;
-        persist();
-        if(scope === 'drawer'){
-          closeForm();
-        } else {
-          closeInlineLead(scope);
-        }
-        if(scope === 'offer'){
-          document.getElementById('offerOverlay')?.classList.add('hidden');
-        }
-        renderSummary();
-        renderBookingPanels();
-        updateSummaryBarVisibility();
-        if(!isAdminDebugSession() || !deliveryResult || deliveryResult.ok !== false){
-          // Skip dedicated success popup; keep booking in final booked card state.
-        }
-      } finally {
-        leadSubmitInProgress = false;
-        setLeadSubmitState(false, scope);
-      }
+      await safeInvoke(ensureBookingInlineLeadApi(), 'submitLeadFromScope', [{
+        scope,
+        state,
+        shifts,
+        document,
+        getInProgress: () => leadSubmitInProgress,
+        setInProgress: (next) => {
+          leadSubmitInProgress = !!next;
+        },
+        syncGuidedState,
+        normalizePhone,
+        isValidPhone,
+        setLeadPhoneError,
+        setLeadSubmitState,
+        openNoticeModal,
+        persist,
+        labelAge,
+        formatPrice,
+        buildAbMeta,
+        track,
+        selectedShiftPayload,
+        buildHeroVariantMeta,
+        notifyLead,
+        closeForm,
+        closeInlineLead,
+        renderSummary,
+        renderBookingPanels,
+        updateSummaryBarVisibility,
+        isAdminDebugSession
+      }], null);
     }
 
     async function submitLead(){
@@ -6969,512 +5230,85 @@
       return safeInvoke(ensureNavigationFlow(), 'navigateToSection', [id], null);
     }
 
-    document.addEventListener('click', (e) => {
-      const navEl = e.target.closest('[data-nav]');
-      if(!navEl) return;
+    safeInvoke(ensureMediaGestureBindingsApi(), 'init', [{
+      document,
+      closeMedia,
+      nextMedia,
+      prevMedia,
+      applyStatePatch: (patch = {}) => {
+        Object.assign(state, patch);
+      },
+      renderCompactTrustPanelContent,
+      persist,
+      getMediaContent: () => mediaContent,
+      getCompactStayCards,
+      getPhotosForActiveFilter,
+      getState: () => state
+    }], null);
 
-      e.preventDefault();
-      const target = navEl.dataset.nav;
-      if(!target) return;
+    function bindModalKeyboardShortcuts(){
+      document.addEventListener('keydown', (e) => {
+        const lightbox = document.getElementById('mediaLightbox');
+        if(!lightbox || lightbox.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeMedia();
+        if(e.key === 'ArrowRight') nextMedia();
+        if(e.key === 'ArrowLeft') prevMedia();
+      });
 
-      if(navEl.closest('#serviceMenu')){
-        document.querySelectorAll('#serviceMenu [data-nav]').forEach(x => x.classList.remove('active'));
-        navEl.classList.add('active');
-        setHeroMenuOpen(false);
-      }
+      document.addEventListener('keydown', (e) => {
+        const modal = document.getElementById('videoModal');
+        if(!modal || modal.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeVideo();
+      });
 
-      navigateToSection(target);
-    });
+      document.addEventListener('keydown', (e) => {
+        const modal = document.getElementById('calendarModal');
+        if(!modal || modal.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeCalendar();
+      });
 
-    document.addEventListener('click', (e) => {
-      const anchor = e.target.closest('a[href^="#section-"]');
-      if(!anchor) return;
-      const href = anchor.getAttribute('href');
-      if(!href) return;
-      e.preventDefault();
-      navigateToSection(href);
-    });
-
-    document.addEventListener('click', (e) => {
-      if(!isHeroMenuOpen()) return;
-      const withinMenu = e.target.closest('#heroMenuWrap');
-      if(!withinMenu){
-        setHeroMenuOpen(false);
-      }
-    });
-
-    window.addEventListener('scroll', () => {
-      if(isHeroMenuOpen()){
-        setHeroMenuOpen(false);
-      }
-    }, {passive:true});
-
-    document.addEventListener('scroll', () => {
-      if(isHeroMenuOpen()){
-        setHeroMenuOpen(false);
-      }
-    }, {capture:true, passive:true});
-
-    bindPhoneMaskForScope('drawer');
-
-    document.getElementById('formDrawer').addEventListener('click', (e) => {
-      if(e.target.id === 'formDrawer') closeForm();
-    });
-
-    const successOverlay = document.getElementById('successOverlay');
-    if(successOverlay){
-      successOverlay.addEventListener('click', (e) => {
-        if(e.target.id === 'successOverlay') closeSuccessModal();
+      document.addEventListener('keydown', (e) => {
+        const modal = document.getElementById('sectionModal');
+        if(!modal || modal.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeSectionModal();
       });
     }
 
-    const noticeOverlay = document.getElementById('noticeOverlay');
-    if(noticeOverlay){
-      noticeOverlay.addEventListener('click', (e) => {
-        if(e.target.id === 'noticeOverlay') closeNoticeModal();
-      });
-    }
-
-    const offerOverlay = document.getElementById('offerOverlay');
-    if(offerOverlay){
-      offerOverlay.addEventListener('click', (e) => {
-        if(e.target.id === 'offerOverlay'){
-          offerRunId += 1;
-          clearOfferTimeout();
-          offerOverlay.classList.add('hidden');
-          resetOfferProgressUI();
-        }
-      });
-    }
-
-    document.getElementById('mediaClose').addEventListener('click', closeMedia);
-    document.getElementById('mediaNext').addEventListener('click', nextMedia);
-    document.getElementById('mediaPrev').addEventListener('click', prevMedia);
-
-    document.getElementById('mediaLightbox').addEventListener('click', (e) => {
-      if(e.target.id === 'mediaLightbox') closeMedia();
-    });
-
-    (function bindMediaSwipe(){
-      const lightbox = document.getElementById('mediaLightbox');
-      const content = document.getElementById('mediaContent');
-      if(!lightbox || !content) return;
-      let startX = 0;
-      let startY = 0;
-      let moved = false;
-
-      content.addEventListener('touchstart', (e) => {
-        if(lightbox.classList.contains('hidden')) return;
-        const touch = e.touches && e.touches[0];
-        if(!touch) return;
-        startX = touch.clientX;
-        startY = touch.clientY;
-        moved = false;
-      }, {passive:true});
-
-      content.addEventListener('touchmove', (e) => {
-        if(lightbox.classList.contains('hidden')) return;
-        const touch = e.touches && e.touches[0];
-        if(!touch) return;
-        const dx = touch.clientX - startX;
-        const dy = touch.clientY - startY;
-        if(Math.abs(dx) > 6 || Math.abs(dy) > 6){
-          moved = true;
-        }
-      }, {passive:true});
-
-      content.addEventListener('touchend', (e) => {
-        if(lightbox.classList.contains('hidden')) return;
-        const touch = (e.changedTouches && e.changedTouches[0]) || null;
-        if(!touch || !moved) return;
-        const dx = touch.clientX - startX;
-        const dy = touch.clientY - startY;
-        if(Math.abs(dx) < 36 || Math.abs(dx) <= Math.abs(dy)) return;
-        if(dx < 0){
-          nextMedia();
-        } else {
-          prevMedia();
-        }
-      }, {passive:true});
-    })();
-
-    (function bindMobileReviewSwipe(){
-      let startX = 0;
-      let startY = 0;
-      let track = null;
-
-      document.addEventListener('touchstart', (e) => {
-        const card = e.target.closest('.mobile-review-card');
-        if(!card) return;
-        const touch = e.touches && e.touches[0];
-        if(!touch) return;
-        track = card;
-        startX = touch.clientX;
-        startY = touch.clientY;
-      }, {passive:true});
-
-      document.addEventListener('touchend', (e) => {
-        if(!track) return;
-        const touch = (e.changedTouches && e.changedTouches[0]) || null;
-        track = null;
-        if(!touch) return;
-        const dx = touch.clientX - startX;
-        const dy = touch.clientY - startY;
-        if(Math.abs(dx) < 36 || Math.abs(dx) <= Math.abs(dy)) return;
-        const total = Math.max(0, mediaContent.reviews?.length || 0);
-        if(!total) return;
-        if(dx < 0){
-          state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) + 1) % total;
-        } else {
-          state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) - 1 + total) % total;
-        }
-        renderCompactTrustPanelContent();
-        persist();
-      }, {passive:true});
-    })();
-
-    (function bindMobileEdgeTapNavigation(){
-      function getVisibleElement(nodeList){
-        const list = Array.from(nodeList || []);
-        return list.find((node) => node && node.offsetParent !== null) || list[0] || null;
-      }
-
-      function getEdgeDirection(stageEl, clientX){
-        if(!stageEl || !Number.isFinite(clientX)) return 0;
-        const rect = stageEl.getBoundingClientRect();
-        if(!rect || rect.width < 120) return 0;
-        const leftZone = rect.left + rect.width * 0.28;
-        const rightZone = rect.right - rect.width * 0.28;
-        if(clientX <= leftZone) return -1;
-        if(clientX >= rightZone) return 1;
-        return 0;
-      }
-
-      function stepThumb(root, stripSelector, thumbSelector, direction){
-        const strip = getVisibleElement(root.querySelectorAll(stripSelector));
-        if(!strip) return false;
-        const thumbs = Array.from(strip.querySelectorAll(thumbSelector));
-        if(!thumbs.length) return false;
-        const currentIndex = Math.max(0, thumbs.findIndex((thumb) => thumb.classList.contains('active')));
-        const nextIndex = (currentIndex + direction + thumbs.length) % thumbs.length;
-        thumbs[nextIndex]?.click();
-        return true;
-      }
-
-      document.addEventListener('click', (e) => {
-        const stage = e.target.closest('.mobile-photo-stage, .mobile-video-stage, .mobile-review-card, .mobile-stay-feature, .mobile-program-active-card, .mobile-journey-active');
-        if(!stage) return;
-        if(e.target.closest('button, a, [data-action], iframe, input, textarea, select')) return;
-        const direction = getEdgeDirection(stage, e.clientX);
-        if(!direction) return;
-
-        const root = stage.closest('.section-card, .section-modal-body, #mobileView, #desktopView') || document;
-
-        if(stage.classList.contains('mobile-photo-stage')){
-          if(stepThumb(root, '.mobile-photo-preview-strip', '.mobile-photo-preview-thumb', direction)){
-            persist();
-          }
-          return;
-        }
-
-        if(stage.classList.contains('mobile-video-stage')){
-          if(stepThumb(root, '.mobile-video-preview-strip', '.mobile-video-preview-thumb', direction)){
-            persist();
-          }
-          return;
-        }
-
-        if(stage.classList.contains('mobile-program-active-card')){
-          if(stepThumb(root, '.mobile-program-dots', '.mobile-program-dot', direction)){
-            persist();
-          }
-          return;
-        }
-
-        if(stage.classList.contains('mobile-stay-feature')){
-          if(stepThumb(root, '.mobile-stay-preview-strip', '.mobile-stay-preview-thumb', direction)){
-            persist();
-          }
-          return;
-        }
-
-        if(stage.classList.contains('mobile-journey-active')){
-          const total = 4;
-          const current = Math.max(0, Number(state.mobileJourneyStep || 0));
-          state.mobileJourneyStep = (current + (direction > 0 ? 1 : -1) + total) % total;
-          renderCompactTrustPanelContent();
-          persist();
-          return;
-        }
-
-        if(stage.classList.contains('mobile-review-card')){
-          const total = Math.max(0, mediaContent.reviews?.length || 0);
-          if(!total) return;
-          if(direction > 0){
-            state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) + 1) % total;
-          }else{
-            state.mobileReviewIndex = (Math.max(0, state.mobileReviewIndex || 0) - 1 + total) % total;
-          }
-          renderCompactTrustPanelContent();
-          persist();
-        }
-      });
-    })();
-
-    (function bindMobileProgramSwipe(){
-      let startX = 0;
-      let startY = 0;
-      let activeCard = null;
-
-      function stepProgramBySwipe(card, direction){
-        if(!card || !direction) return;
-        const root = card.closest('.section-card, .section-modal-body, #mobileView, #desktopView') || document;
-        const dots = Array.from(root.querySelectorAll('.mobile-program-dots .mobile-program-dot'));
-        if(!dots.length) return;
-        const current = Math.max(0, dots.findIndex((dot) => dot.classList.contains('active')));
-        const next = (current + direction + dots.length) % dots.length;
-        dots[next]?.click();
-        persist();
-      }
-
-      document.addEventListener('touchstart', (e) => {
-        const card = e.target.closest('.mobile-program-active-card');
-        if(!card) return;
-        const touch = e.touches && e.touches[0];
-        if(!touch) return;
-        activeCard = card;
-        startX = touch.clientX;
-        startY = touch.clientY;
-      }, {passive:true});
-
-      document.addEventListener('touchend', (e) => {
-        if(!activeCard) return;
-        const card = activeCard;
-        const touch = e.changedTouches && e.changedTouches[0];
-        if(!touch){
-          activeCard = null;
-          return;
-        }
-        const dx = touch.clientX - startX;
-        const dy = touch.clientY - startY;
-        activeCard = null;
-        if(Math.abs(dx) < 38 || Math.abs(dx) <= Math.abs(dy)) return;
-        stepProgramBySwipe(card, dx < 0 ? 1 : -1);
-      }, {passive:true});
-    })();
-
-    (function bindMobileJourneySwipe(){
-      let startX = 0;
-      let startY = 0;
-      let activeCard = null;
-
-      document.addEventListener('touchstart', (e) => {
-        const card = e.target.closest('.mobile-journey-active');
-        if(!card) return;
-        const touch = e.touches && e.touches[0];
-        if(!touch) return;
-        activeCard = card;
-        startX = touch.clientX;
-        startY = touch.clientY;
-      }, {passive:true});
-
-      document.addEventListener('touchend', (e) => {
-        if(!activeCard) return;
-        const touch = e.changedTouches && e.changedTouches[0];
-        activeCard = null;
-        if(!touch) return;
-        const dx = touch.clientX - startX;
-        const dy = touch.clientY - startY;
-        if(Math.abs(dx) < 32 || Math.abs(dx) <= Math.abs(dy)) return;
-        const total = 4;
-        const current = Math.max(0, Number(state.mobileJourneyStep || 0));
-        state.mobileJourneyStep = (current + (dx < 0 ? 1 : -1) + total) % total;
-        renderCompactTrustPanelContent();
-        persist();
-      }, {passive:true});
-    })();
-
-    (function bindMobileStaySwipe(){
-      let startX = 0;
-      let startY = 0;
-      let activeCard = null;
-
-      document.addEventListener('touchstart', (e) => {
-        const card = e.target.closest('.mobile-stay-feature, .mobile-stay-feature-photo');
-        if(!card) return;
-        const touch = e.touches && e.touches[0];
-        if(!touch) return;
-        activeCard = card;
-        startX = touch.clientX;
-        startY = touch.clientY;
-      }, {passive:true});
-
-      document.addEventListener('touchend', (e) => {
-        if(!activeCard) return;
-        const touch = e.changedTouches && e.changedTouches[0];
-        activeCard = null;
-        if(!touch) return;
-        const dx = touch.clientX - startX;
-        const dy = touch.clientY - startY;
-        if(Math.abs(dx) < 32 || Math.abs(dx) <= Math.abs(dy)) return;
-        const list = getCompactStayCards();
-        const total = Math.max(0, list.length || 0);
-        if(!total) return;
-        state.mobileStayIndex = (Math.max(0, state.mobileStayIndex || 0) + (dx < 0 ? 1 : -1) + total) % total;
-        renderCompactTrustPanelContent();
-        persist();
-      }, {passive:true});
-    })();
-
-    (function bindMobilePhotoSwipe(){
-      let startX = 0;
-      let startY = 0;
-      let activeNode = null;
-
-      document.addEventListener('touchstart', (e) => {
-        const node = e.target.closest('.mobile-photo-stage, .mobile-photo-preview-strip');
-        if(!node) return;
-        const touch = e.touches && e.touches[0];
-        if(!touch) return;
-        activeNode = node;
-        startX = touch.clientX;
-        startY = touch.clientY;
-      }, {passive:true});
-
-      document.addEventListener('touchend', (e) => {
-        if(!activeNode) return;
-        const touch = e.changedTouches && e.changedTouches[0];
-        activeNode = null;
-        if(!touch) return;
-        const dx = touch.clientX - startX;
-        const dy = touch.clientY - startY;
-        if(Math.abs(dx) < 34 || Math.abs(dx) <= Math.abs(dy)) return;
-        const list = getPhotosForActiveFilter(state.photoFilter);
-        const total = Math.max(0, list.length || 0);
-        if(!total) return;
-        const current = Math.max(0, Number(state.mobilePhotoIndex || 0));
-        state.mobilePhotoIndex = (current + (dx < 0 ? 1 : -1) + total) % total;
-        renderCompactTrustPanelContent();
-        persist();
-      }, {passive:true});
-    })();
-
-    const videoModal = document.getElementById('videoModal');
-    if(videoModal){
-      videoModal.addEventListener('click', (e) => {
-        if(e.target.id === 'videoModal') closeVideo();
-      });
-    }
-
-    const calendarModal = document.getElementById('calendarModal');
-    if(calendarModal){
-      calendarModal.addEventListener('click', (e) => {
-        if(e.target.id === 'calendarModal') closeCalendar();
-      });
-    }
-
-    const sectionModal = document.getElementById('sectionModal');
-    if(sectionModal){
-      sectionModal.addEventListener('click', (e) => {
-        if(e.target.id === 'sectionModal') closeSectionModal();
-      });
-      const sectionModalBody = document.getElementById('sectionModalBody');
-      let sectionModalTouchY = 0;
-      sectionModal.addEventListener('wheel', (e) => {
-        if(sectionModal.classList.contains('hidden')) return;
-        const scroller = e.target.closest('.section-modal-body') || sectionModalBody;
-        if(!scroller || !sectionModal.contains(scroller)) return;
-        if(scroller.scrollHeight <= scroller.clientHeight + 1) return;
-        e.preventDefault();
-        scroller.scrollTop += e.deltaY;
-      }, {passive:false});
-      sectionModal.addEventListener('touchstart', (e) => {
-        if(sectionModal.classList.contains('hidden')) return;
-        const touch = e.touches && e.touches[0];
-        if(!touch) return;
-        sectionModalTouchY = touch.clientY;
-      }, {passive:true});
-      sectionModal.addEventListener('touchmove', (e) => {
-        if(sectionModal.classList.contains('hidden')) return;
-        const scroller = e.target.closest('.section-modal-body') || sectionModalBody;
-        if(!scroller || !sectionModal.contains(scroller)) return;
-        if(scroller.scrollHeight <= scroller.clientHeight + 1) return;
-        const touch = e.touches && e.touches[0];
-        if(!touch) return;
-        const deltaY = sectionModalTouchY - touch.clientY;
-        sectionModalTouchY = touch.clientY;
-        if(Math.abs(deltaY) < 0.5) return;
-        e.preventDefault();
-        scroller.scrollTop += deltaY;
-      }, {passive:false});
-    }
-
-    document.addEventListener('visibilitychange', () => {
-      try{
-        // FastTrack toggle: temporarily disable welcome-back popup on return.
-        const ENABLE_WELCOME_BACK_POPUP = false;
-        if(!ENABLE_WELCOME_BACK_POPUP) return;
-        const hiddenKey = 'aidacamp_hidden_once';
-        const shownKey = 'aidacamp_welcome_back_shown';
-        if(document.hidden){
-          sessionStorage.setItem(hiddenKey, '1');
-          return;
-        }
-        if(
-          sessionStorage.getItem(hiddenKey) === '1' &&
-          sessionStorage.getItem(shownKey) !== '1'
-        ){
-          openNoticeModal('А мы уже заждались. Рады, что вернулись.', 'С возвращением');
-          sessionStorage.setItem(shownKey, '1');
-        }
-      }catch(e){
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if(document.getElementById('mediaLightbox').classList.contains('hidden')) return;
-      if(e.key === 'Escape') closeMedia();
-      if(e.key === 'ArrowRight') nextMedia();
-      if(e.key === 'ArrowLeft') prevMedia();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      const modal = document.getElementById('videoModal');
-      if(!modal || modal.classList.contains('hidden')) return;
-      if(e.key === 'Escape') closeVideo();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      const modal = document.getElementById('calendarModal');
-      if(!modal || modal.classList.contains('hidden')) return;
-      if(e.key === 'Escape') closeCalendar();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      const modal = document.getElementById('sectionModal');
-      if(!modal || modal.classList.contains('hidden')) return;
-      if(e.key === 'Escape') closeSectionModal();
-    });
-
-    window.addEventListener('resize', () => {
-      if(heroResizeTimer){
-        clearTimeout(heroResizeTimer);
-      }
-      heroResizeTimer = setTimeout(() => {
-        const autoView = getViewportPreviewView();
-        if(autoView !== state.previewView){
-          switchView(autoView);
-          return;
-        }
-        initHero();
-        safeInvoke({applyHeroAbVariant}, 'applyHeroAbVariant');
-        applyCompactSectionModalLayout();
-        safeInvoke({updateSummaryBarVisibility}, 'updateSummaryBarVisibility');
-        scheduleBookingCardMinHeightSync();
-      }, 160);
-    }, {passive:true});
+    safeInvoke(ensureGlobalUiBindingsApi(), 'init', [{
+      document,
+      navigateToSection,
+      isHeroMenuOpen,
+      setHeroMenuOpen,
+      isHeroPhoneDropdownOpen,
+      setHeroPhoneDropdownOpen,
+      closeSuccessModal,
+      closeNoticeModal,
+      bumpOfferRunId: () => { offerRunId += 1; },
+      clearOfferTimeout,
+      resetOfferProgressUI,
+      closeMedia,
+      nextMedia,
+      prevMedia,
+      closeVideo,
+      closeCalendar,
+      closeSectionModal,
+      openNoticeModal,
+      bookingText,
+      bindModalKeyboardShortcuts,
+      getViewportPreviewView,
+      switchView,
+      initHero,
+      applyHeroAbVariant,
+      applyCompactSectionModalLayout,
+      updateSummaryBarVisibility,
+      scheduleBookingCardMinHeightSync,
+      getState: () => state,
+      getHeroResizeTimer: () => heroResizeTimer,
+      setHeroResizeTimer: (next) => { heroResizeTimer = next || null; }
+    }], null);
 
     heroAbVariant = resolveHeroAbVariant();
+    applyHeroV3SimpleMode();
     preloadHeroAssets();
     initHero();
     applyHeroAbVariant();
