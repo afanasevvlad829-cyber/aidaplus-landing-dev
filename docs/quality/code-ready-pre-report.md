@@ -22,6 +22,7 @@ Generated: 2026-04-05 05:51 MSK
 - `bash ./tools/smoke-booking-flow.sh https://aidacamp.ru` — PASS (`lead 503` known infra constraint)
 - `node ./tools/smoke-booking-ui-playwright.mjs https://dev.aidacamp.ru` — PASS (desktop/mobile)
 - `bash ./tools/build-astro-preview.sh` — PASS
+- Final acceptance loop (x3 consecutive runs, 2026-04-05 05:52–05:57 MSK) — PASS/PASS/PASS
 
 ## Contract Lock (current)
 
@@ -53,3 +54,8 @@ Generated: 2026-04-05 05:51 MSK
 
 - Lead transport sometimes returns `503` due to Telegram transport/config availability.
 - This is infra/runtime delivery constraint, not a code regression in UI/runtime architecture.
+
+## Final Technical Status (No Rollout)
+
+- `CODE_READY=YES` (architecture/quality phase complete).
+- Rollout remains explicitly out of scope for this phase.
