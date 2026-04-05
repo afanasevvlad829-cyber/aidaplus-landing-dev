@@ -910,7 +910,25 @@
         getBookingViewConfig,
         getBookingStage,
         hasSelectedAge,
-        getState: () => state
+        getState: () => state,
+        isSimpleModeEnabled: () => HERO_V3_SIMPLE_ENABLED,
+        getHintTimerId: () => desktopAgeTapHintTimer,
+        setHintTimerId: (next) => {
+          desktopAgeTapHintTimer = next || null;
+        },
+        getHintRunning: () => desktopAgeTapHintRunning,
+        setHintRunning: (flag) => {
+          desktopAgeTapHintRunning = !!flag;
+        },
+        getHintPlayed: () => desktopAgeTapHintPlayed,
+        setHintPlayed: (flag) => {
+          desktopAgeTapHintPlayed = !!flag;
+        },
+        getHintToken: () => desktopAgeTapHintToken,
+        setHintToken: (next) => {
+          desktopAgeTapHintToken = Number(next) || 0;
+        },
+        getHintStartedAt: () => desktopAgeTapHintStartedAt
       });
       return bookingHintFlowApi;
     }
@@ -3163,145 +3181,43 @@
     }
 
     function waitDesktopAgeTapHint(ms){
-      return new Promise(resolve => {
-        setTimeout(resolve, ms);
-      });
+      return safeInvoke(ensureBookingHintFlow(), 'waitDesktopAgeTapHint', [ms], Promise.resolve());
     }
 
     function canRunDesktopAgeTapHint(){
-      const card = document.getElementById('desktop-booking-card');
-      if(HERO_V3_SIMPLE_ENABLED || !card || !card.classList.contains('booking-stage-1')) return false;
-      if(state.previewView === 'mobile') return false;
-      if(state.previewView !== 'desktop') return false;
-      if(hasSelectedAge() || state.ageSelected) return false;
-      const tabs = document.getElementById('desktopAgeTabs');
-      if(!tabs) return false;
-      return tabs.querySelectorAll('.age-tab[data-age]').length >= 3;
+      return safeInvoke(ensureBookingHintFlow(), 'canRunDesktopAgeTapHint', [], false);
     }
 
     function ensureDesktopAgeTapHintNode(){
-      const tabs = document.getElementById('desktopAgeTabs');
-      if(!tabs) return null;
-      let hint = tabs.querySelector('.age-tap-hint');
-      if(hint) return hint;
-      hint = document.createElement('div');
-      hint.className = 'age-tap-hint';
-      hint.setAttribute('aria-hidden', 'true');
-      hint.innerHTML = '<span class="age-tap-finger"></span><span class="age-tap-ripple"></span><span class="age-tap-ripple delay"></span>';
-      tabs.appendChild(hint);
-      return hint;
+      return safeInvoke(ensureBookingHintFlow(), 'ensureDesktopAgeTapHintNode', [], null);
     }
 
     function placeDesktopAgeTapHint(hintNode, ageRow){
-      if(!hintNode || !ageRow) return;
-      const host = hintNode.parentElement;
-      if(!host) return;
-      const hostRect = host.getBoundingClientRect();
-      const rowRect = ageRow.getBoundingClientRect();
-      const x = Math.max(8, rowRect.right - hostRect.left - 60);
-      const y = Math.max(6, rowRect.top - hostRect.top - 2);
-      hintNode.style.setProperty('--age-hint-x', `${Math.round(x)}px`);
-      hintNode.style.setProperty('--age-hint-y', `${Math.round(y)}px`);
+      return safeInvoke(ensureBookingHintFlow(), 'placeDesktopAgeTapHint', [hintNode, ageRow], null);
     }
 
     function clearDesktopAgeTapHintRows(){
-      const tabs = document.getElementById('desktopAgeTabs');
-      if(!tabs) return;
-      tabs.querySelectorAll('.age-tab.is-hint-target, .age-tab.is-hint-tapping').forEach((row) => {
-        row.classList.remove('is-hint-target', 'is-hint-tapping');
-      });
+      return safeInvoke(ensureBookingHintFlow(), 'clearDesktopAgeTapHintRows', [], null);
     }
 
     function pulseDesktopAgeTapHint(hintNode, ageRow){
-      if(!hintNode) return;
-      hintNode.classList.remove('is-tapping');
-      void hintNode.offsetWidth;
-      hintNode.classList.add('is-tapping');
-      if(ageRow){
-        ageRow.classList.add('is-hint-target');
-        ageRow.classList.remove('is-hint-tapping');
-        void ageRow.offsetWidth;
-        ageRow.classList.add('is-hint-tapping');
-        setTimeout(() => {
-          ageRow.classList.remove('is-hint-tapping');
-        }, 680);
-      }
+      return safeInvoke(ensureBookingHintFlow(), 'pulseDesktopAgeTapHint', [hintNode, ageRow], null);
     }
 
     function hideDesktopAgeTapHint(){
-      const hintNode = document.querySelector('#desktopAgeTabs .age-tap-hint');
-      if(!hintNode) return;
-      hintNode.classList.remove('is-visible', 'is-tapping');
-      clearDesktopAgeTapHintRows();
+      return safeInvoke(ensureBookingHintFlow(), 'hideDesktopAgeTapHint', [], null);
     }
 
     async function runDesktopAgeTapHint(){
-      if(desktopAgeTapHintPlayed || desktopAgeTapHintRunning) return;
-      if(!canRunDesktopAgeTapHint()) return;
-      const hintNode = ensureDesktopAgeTapHintNode();
-      const tabs = document.getElementById('desktopAgeTabs');
-      if(!hintNode || !tabs) return;
-      const ageRows = [...tabs.querySelectorAll('.age-tab[data-age]')];
-      if(!ageRows.length) return;
-
-      desktopAgeTapHintRunning = true;
-      const runToken = ++desktopAgeTapHintToken;
-      hintNode.classList.add('is-visible');
-
-      for(let rowIndex = 0; rowIndex < ageRows.length; rowIndex += 1){
-        const ageRow = ageRows[rowIndex];
-        if(runToken !== desktopAgeTapHintToken || !canRunDesktopAgeTapHint()) break;
-        clearDesktopAgeTapHintRows();
-        ageRow.classList.add('is-hint-target');
-        placeDesktopAgeTapHint(hintNode, ageRow);
-        await waitDesktopAgeTapHint((rowIndex === 0 && 320) || 1000);
-        for(let tapIndex = 0; tapIndex < 3; tapIndex += 1){
-          if(runToken !== desktopAgeTapHintToken || !canRunDesktopAgeTapHint()) break;
-          pulseDesktopAgeTapHint(hintNode, ageRow);
-          await waitDesktopAgeTapHint(680);
-          if(tapIndex < 2){
-            await waitDesktopAgeTapHint(120);
-          }
-        }
-        hintNode.classList.remove('is-tapping');
-        await waitDesktopAgeTapHint(120);
-      }
-
-      hintNode.classList.remove('is-visible', 'is-tapping');
-      clearDesktopAgeTapHintRows();
-      desktopAgeTapHintRunning = false;
-      desktopAgeTapHintPlayed = true;
+      return safeInvoke(ensureBookingHintFlow(), 'runDesktopAgeTapHint', [], Promise.resolve());
     }
 
     function syncDesktopAgeTapHintVisibility(){
-      const hintNode = document.querySelector('#desktopAgeTabs .age-tap-hint');
-      if(!hintNode) return;
-      if(desktopAgeTapHintRunning && canRunDesktopAgeTapHint()){
-        hintNode.classList.add('is-visible');
-        return;
-      }
-      hintNode.classList.remove('is-visible', 'is-tapping');
-      clearDesktopAgeTapHintRows();
+      return safeInvoke(ensureBookingHintFlow(), 'syncDesktopAgeTapHintVisibility', [], null);
     }
 
     function scheduleDesktopAgeTapHint(){
-      if(desktopAgeTapHintPlayed || desktopAgeTapHintRunning) return;
-      if(!canRunDesktopAgeTapHint()) return;
-      if(desktopAgeTapHintTimer){
-        return;
-      }
-      const elapsedMs = Date.now() - desktopAgeTapHintStartedAt;
-      const isFirstRun = desktopAgeTapHintToken === 0;
-      const delayMs = isFirstRun
-        ? Math.max(0, 7000 - elapsedMs)
-        : 7000;
-      desktopAgeTapHintTimer = setTimeout(() => {
-        desktopAgeTapHintTimer = null;
-        runDesktopAgeTapHint().catch(() => {
-          desktopAgeTapHintRunning = false;
-          hideDesktopAgeTapHint();
-        });
-      }, delayMs);
+      return safeInvoke(ensureBookingHintFlow(), 'scheduleDesktopAgeTapHint', [], null);
     }
 
     function clearVariantFlowFingerTimer(){
