@@ -40,7 +40,9 @@ const metrics = {
   LEGACY_MAIN_OFFER_LAYOUT_REFS: countPattern(main, /\bofferLayout\b/g),
   LEGACY_MAIN_LEGACY_WORD_REFS: countPattern(main, /\blegacy\b/g),
   LEGACY_MAIN_DEBUG_ACTION_REFS: countPattern(main, /debug-booking/g),
-  LEGACY_MAIN_INNERHTML_ASSIGNMENTS: countPattern(main, /innerHTML\s*=/g)
+  LEGACY_MAIN_INNERHTML_ASSIGNMENTS: countPattern(main, /innerHTML\s*=/g),
+  LEGACY_MAIN_MOBILE_DOCS_COPY_REFS: countPattern(main, /\bMOBILE_DOCS_COPY\b/g),
+  LEGACY_MAIN_DESKTOP_MOBILE_TEMPLATES_REFS: countPattern(main, /\bDESKTOP_MOBILE_SECTION_TEMPLATES\b/g)
 };
 
 const regressions = [];
