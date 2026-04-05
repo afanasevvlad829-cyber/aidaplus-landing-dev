@@ -2549,26 +2549,11 @@
 
     function getStepState(){
       syncGuidedState();
-      if(state.bookingCompleted){
-        return 4;
-      }
-      if(!hasSelectedAge()){
-        return 1;
-      }
-      const simpleStage = HERO_V3_SIMPLE_ENABLED && 3;
-      if(hasSelectedAge() && !state.shiftId){
-        return simpleStage || 2;
-      }
-      if(state.shiftId && state.offerStage === 0){
-        return 3;
-      }
-      if(state.offerStage >= 1 && !state.code){
-        return 4;
-      }
-      if(state.offerStage >= 1){
-        return 4;
-      }
-      return 1;
+      return safeInvoke(ensureBookingRuntimeBridge(), 'getStepState', [{
+        state,
+        hasSelectedAge,
+        simpleModeEnabled: HERO_V3_SIMPLE_ENABLED
+      }], 1);
     }
 
     function getBookingStage(){

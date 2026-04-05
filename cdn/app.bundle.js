@@ -1086,6 +1086,16 @@
       });
     }
 
+    function getStepState(overrides){
+      var options = overrides || {};
+      var state = resolveState(options);
+      return invoke('getStepState', {
+        state,
+        hasSelectedAge: options.hasSelectedAge || ctx.hasSelectedAge || function(){ return false; },
+        simpleModeEnabled: !!options.simpleModeEnabled
+      }, function(){ return 1; });
+    }
+
 function runOfferSearch(overrides){
       var options = overrides || {};
       var state = resolveState(options);
@@ -1196,6 +1206,7 @@ function runOfferSearch(overrides){
       generateCode,
       selectShift,
       getPrimaryActionState,
+      getStepState,
       handlePrimaryCTA,
       runOfferSearch,
       openOfferCheck,
@@ -2955,6 +2966,32 @@ function runOfferSearch(overrides){
     };
   }
 
+  function getStepState(options) {
+    var opts = options || {};
+    var state = opts.state || {};
+    var hasSelectedAge = opts.hasSelectedAge || function () { return false; };
+
+    if (state.bookingCompleted) {
+      return 4;
+    }
+    if (!hasSelectedAge()) {
+      return 1;
+    }
+    if (hasSelectedAge() && !state.shiftId) {
+      return opts.simpleModeEnabled ? 3 : 2;
+    }
+    if (state.shiftId && Number(state.offerStage || 0) === 0) {
+      return 3;
+    }
+    if (Number(state.offerStage || 0) >= 1 && !state.code) {
+      return 4;
+    }
+    if (Number(state.offerStage || 0) >= 1) {
+      return 4;
+    }
+    return 1;
+  }
+
   function handlePrimaryCTA(options) {
     var opts = options || {};
     var state = opts.state || {};
@@ -3133,6 +3170,7 @@ function runOfferSearch(overrides){
     buildBookingSummaryHtml: buildBookingSummaryHtml,
     selectShift: selectShift,
     getPrimaryActionState: getPrimaryActionState,
+    getStepState: getStepState,
     handlePrimaryCTA: handlePrimaryCTA,
     runOfferSearch: runOfferSearch,
     openOfferCheck: openOfferCheck,
@@ -17756,26 +17794,11 @@ function runOfferSearch(overrides){
 
     function getStepState(){
       syncGuidedState();
-      if(state.bookingCompleted){
-        return 4;
-      }
-      if(!hasSelectedAge()){
-        return 1;
-      }
-      const simpleStage = HERO_V3_SIMPLE_ENABLED && 3;
-      if(hasSelectedAge() && !state.shiftId){
-        return simpleStage || 2;
-      }
-      if(state.shiftId && state.offerStage === 0){
-        return 3;
-      }
-      if(state.offerStage >= 1 && !state.code){
-        return 4;
-      }
-      if(state.offerStage >= 1){
-        return 4;
-      }
-      return 1;
+      return safeInvoke(ensureBookingRuntimeBridge(), 'getStepState', [{
+        state,
+        hasSelectedAge,
+        simpleModeEnabled: HERO_V3_SIMPLE_ENABLED
+      }], 1);
     }
 
     function getBookingStage(){

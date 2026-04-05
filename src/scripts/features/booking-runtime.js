@@ -148,6 +148,32 @@
     };
   }
 
+  function getStepState(options) {
+    var opts = options || {};
+    var state = opts.state || {};
+    var hasSelectedAge = opts.hasSelectedAge || function () { return false; };
+
+    if (state.bookingCompleted) {
+      return 4;
+    }
+    if (!hasSelectedAge()) {
+      return 1;
+    }
+    if (hasSelectedAge() && !state.shiftId) {
+      return opts.simpleModeEnabled ? 3 : 2;
+    }
+    if (state.shiftId && Number(state.offerStage || 0) === 0) {
+      return 3;
+    }
+    if (Number(state.offerStage || 0) >= 1 && !state.code) {
+      return 4;
+    }
+    if (Number(state.offerStage || 0) >= 1) {
+      return 4;
+    }
+    return 1;
+  }
+
   function handlePrimaryCTA(options) {
     var opts = options || {};
     var state = opts.state || {};
@@ -326,6 +352,7 @@
     buildBookingSummaryHtml: buildBookingSummaryHtml,
     selectShift: selectShift,
     getPrimaryActionState: getPrimaryActionState,
+    getStepState: getStepState,
     handlePrimaryCTA: handlePrimaryCTA,
     runOfferSearch: runOfferSearch,
     openOfferCheck: openOfferCheck,

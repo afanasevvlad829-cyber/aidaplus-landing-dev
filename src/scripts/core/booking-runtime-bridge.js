@@ -167,6 +167,16 @@
       });
     }
 
+    function getStepState(overrides){
+      var options = overrides || {};
+      var state = resolveState(options);
+      return invoke('getStepState', {
+        state,
+        hasSelectedAge: options.hasSelectedAge || ctx.hasSelectedAge || function(){ return false; },
+        simpleModeEnabled: !!options.simpleModeEnabled
+      }, function(){ return 1; });
+    }
+
 function runOfferSearch(overrides){
       var options = overrides || {};
       var state = resolveState(options);
@@ -277,6 +287,7 @@ function runOfferSearch(overrides){
       generateCode,
       selectShift,
       getPrimaryActionState,
+      getStepState,
       handlePrimaryCTA,
       runOfferSearch,
       openOfferCheck,
