@@ -347,9 +347,9 @@
     const BOOKING_SCARCITY_BASE = Number(STORAGE_RUNTIME_CONFIG.bookingScarcityBase || 63);
     const BOOKING_SCARCITY_STEP = Number(STORAGE_RUNTIME_CONFIG.bookingScarcityStep || 7);
     const BOOKING_SCARCITY_MAX = Number(STORAGE_RUNTIME_CONFIG.bookingScarcityMax || 98);
-    const OFFER_STAGE_KEY = ['offer', 'Stage'].join('');
-    const OFFER_LAYOUT_KEY = ['offer', 'Layout'].join('');
-    const OFFER_LAYOUT_DATASET_KEY = ['offer', 'Layout'].join('');
+    const OFFER_STAGE_KEY = String(STORAGE_RUNTIME_CONFIG.offerStageStateKey || ['offer', 'Stage'].join(''));
+    const OFFER_LAYOUT_KEY = String(STORAGE_RUNTIME_CONFIG.offerLayoutStateKey || ['offer', 'Layout'].join(''));
+    const OFFER_LAYOUT_DATASET_KEY = String(STORAGE_RUNTIME_CONFIG.offerLayoutDatasetKey || ['offer', 'Layout'].join(''));
 
     let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
       age:null,
