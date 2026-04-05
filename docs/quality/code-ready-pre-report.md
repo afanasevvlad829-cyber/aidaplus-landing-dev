@@ -6,6 +6,8 @@ Generated: 2026-04-05 05:51 MSK
 
 - `CODE_READY=YES` for architecture/quality phase (without production rollout).
 - Rollout remains explicitly out of scope for this phase.
+- Runtime/content contracts are frozen as `v2-final-draft` for Zero Legacy cycle.
+- Gate policy lock: any regression in quality/architecture/smoke blocks movement to next batch.
 
 ## KPI Snapshot
 
@@ -14,6 +16,14 @@ Generated: 2026-04-05 05:51 MSK
 - `js_ternary_count = 19`
 - `js_state_mutations = 0`
 - `dist_bytes = 56263`
+
+## Ideal Targets (Zero Legacy cycle)
+
+- `main.js` remains orchestration-only (no business/config blobs).
+- `legacy_paths = 0` for active runtime path.
+- `js_state_mutations = 0` (strict lock).
+- `css_duplicate_selectors <= 8` (stability lock).
+- `quality-check` + `architecture-check` + smoke pack stable on repeated runs.
 
 ## Gate Results
 
