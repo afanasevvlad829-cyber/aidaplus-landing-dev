@@ -12940,7 +12940,7 @@ function runOfferSearch(overrides){
       opts.applyOfferModalTheme(card);
     }
 
-    var useLegacyLayout = state.offerLayout === "legacy";
+    var useLegacyLayout = false;
     card.innerHTML = buildSearchMarkup(useLegacyLayout);
 
     if (typeof opts.normalizeCloseIconButtons === "function") {
@@ -13047,7 +13047,7 @@ function runOfferSearch(overrides){
       var savingsPercent = basePrice ? String(Math.max(0, Math.round((savingsValue / basePrice) * 100))) + "%" : "0%";
 
       card.innerHTML = buildResultMarkup({
-        useLegacyLayout: state.offerLayout === "legacy",
+        useLegacyLayout: false,
         newPriceText: newPriceText,
         oldPriceText: oldPriceText,
         savingsText: savingsText,
@@ -13100,13 +13100,13 @@ function runOfferSearch(overrides){
     var opts = options || {};
     var state = opts.state || {};
     var normalizeMode = opts.normalizeMode || function (value) { return value; };
-    var modes = opts.modes || ["legacy", "current"];
+    var modes = opts.modes || ["current"];
     var mode = normalizeMode(state.offerLayout, modes, "current");
     var document = opts.document || window.document;
     var currentBtn = document.getElementById("offerLayoutCurrentBtn");
     var legacyBtn = document.getElementById("offerLayoutLegacyBtn");
     if (currentBtn) currentBtn.classList.toggle("active", mode === "current");
-    if (legacyBtn) legacyBtn.classList.toggle("active", mode === "legacy");
+    if (legacyBtn) legacyBtn.classList.toggle("active", false);
     var card = document.getElementById("offerCard");
     if (card) card.dataset.offerLayout = mode;
   }
@@ -13115,7 +13115,7 @@ function runOfferSearch(overrides){
     var opts = options || {};
     var state = opts.state || {};
     var normalizeMode = opts.normalizeMode || function (value) { return value; };
-    var modes = opts.modes || ["legacy", "current"];
+    var modes = opts.modes || ["current"];
     var normalizedMode = normalizeMode(opts.mode, modes, "current");
     state.offerLayout = normalizedMode;
     applyOfferLayoutMode({
@@ -15500,7 +15500,7 @@ function runOfferSearch(overrides){
     const HERO_CONTRAST_MODES = Object.freeze(['before', 'after', 'after-soft']);
     const HERO_MICRO_MODES = Object.freeze(['on', 'demo']);
     const OFFER_MODAL_THEMES = Object.freeze(['light', 'dark']);
-    const OFFER_LAYOUT_MODES = Object.freeze(['legacy', 'current']);
+    const OFFER_LAYOUT_MODES = Object.freeze(['current']);
     const normalizeMode = (value, allowedModes, fallbackMode) => (
       allowedModes.includes(value) ? value : fallbackMode
     );
@@ -15559,7 +15559,7 @@ function runOfferSearch(overrides){
       heroContrastMode: 'after-soft',
       heroMicroMode: 'off',
       offerModalTheme: 'light',
-      offerLayout: state.offerLayout || 'legacy',
+      offerLayout: 'current',
       ageSelected: typeof state.ageSelected === 'boolean' ? state.ageSelected : false,
       bookingCompleted: !!state.bookingCompleted
     });
@@ -17435,7 +17435,7 @@ function runOfferSearch(overrides){
       const keepDesktopMode = state.desktopMode || 'full';
       const keepMobileMode = state.mobileMode || 'full';
       const keepOfferModalTheme = ((state.offerModalTheme === 'dark') && 'dark') || 'light';
-      const keepOfferLayout = state.offerLayout || 'legacy';
+      const keepOfferLayout = 'current';
       const keepDebugBookingBlocks = !!state.debugBookingBlocks;
       state = {
         age: null,

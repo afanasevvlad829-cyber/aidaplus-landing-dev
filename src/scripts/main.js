@@ -497,7 +497,7 @@
     const HERO_CONTRAST_MODES = Object.freeze(['before', 'after', 'after-soft']);
     const HERO_MICRO_MODES = Object.freeze(['on', 'demo']);
     const OFFER_MODAL_THEMES = Object.freeze(['light', 'dark']);
-    const OFFER_LAYOUT_MODES = Object.freeze(['legacy', 'current']);
+    const OFFER_LAYOUT_MODES = Object.freeze(['current']);
     const normalizeMode = (value, allowedModes, fallbackMode) => (
       allowedModes.includes(value) ? value : fallbackMode
     );
@@ -556,7 +556,7 @@
       heroContrastMode: 'after-soft',
       heroMicroMode: 'off',
       offerModalTheme: 'light',
-      offerLayout: state.offerLayout || 'legacy',
+      offerLayout: 'current',
       ageSelected: typeof state.ageSelected === 'boolean' ? state.ageSelected : false,
       bookingCompleted: !!state.bookingCompleted
     });
@@ -2432,7 +2432,7 @@
       const keepDesktopMode = state.desktopMode || 'full';
       const keepMobileMode = state.mobileMode || 'full';
       const keepOfferModalTheme = ((state.offerModalTheme === 'dark') && 'dark') || 'light';
-      const keepOfferLayout = state.offerLayout || 'legacy';
+      const keepOfferLayout = 'current';
       const keepDebugBookingBlocks = !!state.debugBookingBlocks;
       state = {
         age: null,
