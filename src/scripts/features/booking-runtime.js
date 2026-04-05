@@ -174,6 +174,26 @@
     return 1;
   }
 
+  function getResolvedPrimaryActionText(options){
+    var opts = options || {};
+    var state = opts.state || {};
+    var actionState = opts.actionState || null;
+    var shift = opts.shift || null;
+    if(!actionState){
+      return "";
+    }
+    if(!shift || Number(state.offerStage || 0) < 1){
+      return actionState.text || "";
+    }
+    var formatPrice = opts.formatPrice || function(value){ return String(value || ""); };
+    var baseForGain = state.basePrice || shift.price || 0;
+    var gainValue = Math.max(0, baseForGain - (state.offerPrice || baseForGain));
+    if(gainValue > 0){
+      return "Завершить бронирование · выгода " + formatPrice(gainValue);
+    }
+    return "Завершить бронирование";
+  }
+
   function normalizeInitialState(options) {
     var opts = options || {};
     var state = opts.state || {};
@@ -426,6 +446,7 @@
     selectShift: selectShift,
     getPrimaryActionState: getPrimaryActionState,
     getStepState: getStepState,
+    getResolvedPrimaryActionText: getResolvedPrimaryActionText,
     normalizeInitialState: normalizeInitialState,
     handlePrimaryCTA: handlePrimaryCTA,
     runOfferSearch: runOfferSearch,

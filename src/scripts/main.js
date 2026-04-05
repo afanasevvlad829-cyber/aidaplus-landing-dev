@@ -2361,15 +2361,12 @@
     }
 
     function getResolvedPrimaryActionText(actionState, shift){
-      if(!actionState) return '';
-      if(!shift || state.offerStage < 1){
-        return actionState.text || '';
-      }
-      const baseForGain = state.basePrice || shift.price || 0;
-      const gainValue = Math.max(0, baseForGain - (state.offerPrice || baseForGain));
-      return gainValue > 0
-        ? `Завершить бронирование · выгода ${formatPrice(gainValue)}`
-        : 'Завершить бронирование';
+      return safeInvoke(ensureBookingRuntimeBridge(), 'getResolvedPrimaryActionText', [{
+        state,
+        actionState,
+        shift,
+        formatPrice
+      }], '');
     }
 
     function getStepState(){

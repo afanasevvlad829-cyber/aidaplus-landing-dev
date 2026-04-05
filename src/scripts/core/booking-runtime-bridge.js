@@ -177,6 +177,16 @@
       }, function(){ return 1; });
     }
 
+    function getResolvedPrimaryActionText(overrides){
+      var options = overrides || {};
+      return invoke('getResolvedPrimaryActionText', {
+        state: resolveState(options),
+        actionState: options.actionState || null,
+        shift: options.shift || null,
+        formatPrice: options.formatPrice || ctx.formatPrice || function(value){ return String(value || ''); }
+      }, function(){ return ''; });
+    }
+
     function normalizeInitialState(overrides){
       var options = overrides || {};
       var state = resolveState(options);
@@ -297,6 +307,7 @@ function runOfferSearch(overrides){
       selectShift,
       getPrimaryActionState,
       getStepState,
+      getResolvedPrimaryActionText,
       normalizeInitialState,
       handlePrimaryCTA,
       runOfferSearch,
