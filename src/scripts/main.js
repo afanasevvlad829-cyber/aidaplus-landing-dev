@@ -672,6 +672,7 @@
     let guidedStateFlowApi = null;
     let bookingViewFlowApi = null;
     let bookingHintFlowApi = null;
+    let summaryFlowApi = null;
     let viewModeFlowApi = null;
     let heroV3SimpleFlowApi = null;
     let offerFlowApi = null;
@@ -928,6 +929,46 @@
         getState: () => state
       });
       return bookingHintFlowApi;
+    }
+
+    function ensureSummaryFlow(){
+      if(summaryFlowApi) return summaryFlowApi;
+      const create = window.AC_FEATURES?.summaryFlow?.create;
+      if(typeof create !== 'function') return null;
+      summaryFlowApi = create({
+        getState: () => state,
+        getShifts: () => shifts,
+        getTimerId: () => timerId,
+        setTimerId: (next) => {
+          timerId = next || null;
+        },
+        getDismissUntilTs: () => summaryBarDismissUntilTs,
+        setDismissUntilTs: (next) => {
+          summaryBarDismissUntilTs = Number(next) || 0;
+        },
+        getDismissTimerId: () => summaryBarDismissTimer,
+        setDismissTimerId: (next) => {
+          summaryBarDismissTimer = next || null;
+        },
+        resetOfferState,
+        persist,
+        formatRemaining,
+        formatRemainingCompact,
+        normalizeCompactTimerText,
+        stripRemainingPrefix,
+        renderBookingPanels,
+        syncGuidedState,
+        getBookingStage,
+        getPrimaryActionState,
+        getResolvedPrimaryActionText,
+        splitPrimaryActionText,
+        bookingText,
+        labelAge,
+        formatPrice,
+        getPrimaryBookingViewConfig,
+        isCompactCurrentMode: isSummaryCompactMode
+      });
+      return summaryFlowApi;
     }
 
     function ensureViewModeFlow(){
@@ -4541,51 +4582,7 @@
     }
 
     function startTimer(){
-      if(timerId) clearInterval(timerId);
-
-      const updateTimers = () => {
-        if(!state.expiresAt) return;
-
-        const diff = state.expiresAt - Date.now();
-        const offerTimer = document.getElementById('offerTimer');
-        const summaryTimer = document.getElementById('summaryTimer');
-        const bookingTimers = document.querySelectorAll('.booking-timer-line[data-live-timer="true"]');
-
-        if(diff <= 0){
-          clearInterval(timerId);
-          resetOfferState({preserveShift:true});
-          persist();
-          if(offerTimer) offerTimer.textContent = '';
-          if(summaryTimer) summaryTimer.textContent = '';
-          bookingTimers.forEach((node) => {
-            const timerValueNode = node.querySelector('.booking-timer-value');
-            if(timerValueNode){
-              timerValueNode.textContent = '';
-            } else {
-              node.textContent = '';
-            }
-          });
-          renderBookingPanels();
-          return;
-        }
-
-        const fullText = formatRemaining(diff);
-        const compactText = normalizeCompactTimerText(formatRemainingCompact(diff));
-
-        if(offerTimer) offerTimer.textContent = fullText;
-        if(summaryTimer) summaryTimer.textContent = compactText;
-        bookingTimers.forEach((node) => {
-          const timerValueNode = node.querySelector('.booking-timer-value');
-          if(timerValueNode){
-            timerValueNode.textContent = stripRemainingPrefix(compactText);
-          } else {
-            node.textContent = compactText;
-          }
-        });
-      };
-
-      updateTimers();
-      timerId = setInterval(updateTimers, 1000);
+      return safeInvoke(ensureSummaryFlow(), 'startTimer', [], null);
     }
 
     function isSummaryCompactMode(){
@@ -4596,133 +4593,23 @@
     }
 
     function isSummaryBelowHero(){
-      const heroSelector = '#desktopView .hero-shell';
-      const hero = document.querySelector(heroSelector);
-      const rect = hero?.getBoundingClientRect();
-      return !rect || rect.bottom <= 8;
+      return !!safeInvoke(ensureSummaryFlow(), 'isSummaryBelowHero', [], true);
     }
 
     function isBookingPrimaryCtaVisibleInViewport(){
-      const cardSelector = `#${getPrimaryBookingViewConfig().cardId}`;
-      const card = document.querySelector(cardSelector);
-      if(!card || card.classList.contains('hidden')) return false;
-      const ctaButtons = Array.from(card.querySelectorAll('[data-action="primary-cta"]'));
-      if(!ctaButtons.length) return false;
-
-      return ctaButtons.some((button) => {
-        if(!button || button.disabled) return false;
-        const style = window.getComputedStyle(button);
-        if(style.display === 'none' || style.visibility === 'hidden') return false;
-        if(Number(style.opacity || 1) === 0) return false;
-        if(Number(style.height || 0) === 0 || Number(style.width || 0) === 0) return false;
-        const rect = button.getBoundingClientRect();
-        if(rect.width < 2 || rect.height < 2) return false;
-        return !(rect.bottom <= -16 || rect.top >= window.innerHeight + 16);
-      });
+      return !!safeInvoke(ensureSummaryFlow(), 'isBookingPrimaryCtaVisibleInViewport', [], false);
     }
 
     function updateSummaryBarVisibility(){
-      const bar = document.getElementById('summaryBar');
-      if(!bar) return;
-
-      if(state.bookingCompleted){
-        bar.classList.remove('is-visible');
-        bar.classList.add('hidden');
-        document.body.classList.remove('summary-visible');
-        return;
-      }
-
-      if(!state.shiftId || isSummaryCompactMode()){
-        bar.classList.remove('is-visible');
-        bar.classList.add('hidden');
-        document.body.classList.remove('summary-visible');
-        return;
-      }
-
-      if(Date.now() < summaryBarDismissUntilTs){
-        bar.classList.remove('is-visible');
-        bar.classList.add('hidden');
-        document.body.classList.remove('summary-visible');
-        return;
-      }
-
-      const action = getPrimaryActionState();
-      if(!action || action.disabled){
-        bar.classList.remove('is-visible');
-        bar.classList.add('hidden');
-        document.body.classList.remove('summary-visible');
-        return;
-      }
-
-      const shouldShow = isSummaryBelowHero() && !isBookingPrimaryCtaVisibleInViewport();
-      bar.classList.remove('hidden');
-      bar.classList.toggle('is-visible', shouldShow);
-      document.body.classList.toggle('summary-visible', shouldShow);
+      return safeInvoke(ensureSummaryFlow(), 'updateSummaryBarVisibility', [], null);
     }
 
     function dismissSummaryBarTemporarily(ms = 30000){
-      summaryBarDismissUntilTs = Date.now() + Math.max(1000, Number(ms) || 30000);
-      if(summaryBarDismissTimer){
-        clearTimeout(summaryBarDismissTimer);
-      }
-      summaryBarDismissTimer = setTimeout(() => {
-        summaryBarDismissUntilTs = 0;
-        summaryBarDismissTimer = null;
-        updateSummaryBarVisibility();
-      }, Math.max(1000, Number(ms) || 30000));
-      updateSummaryBarVisibility();
+      return safeInvoke(ensureSummaryFlow(), 'dismissSummaryBarTemporarily', [ms], null);
     }
 
     function renderSummary(){
-      syncGuidedState();
-      if(state.expiresAt && Date.now() >= state.expiresAt){
-        resetOfferState({preserveShift:true});
-        persist();
-      }
-      const bar = document.getElementById('summaryBar');
-      if(bar){
-        bar.classList.remove('summary-bar--stage4');
-      }
-
-      if(!state.shiftId){
-        updateSummaryBarVisibility();
-        renderBookingPanels();
-        return;
-      }
-
-      const shift = shifts.find(s => s.id === state.shiftId);
-      const price = state.offerPrice || state.basePrice || shift.price;
-      const summaryStage = getBookingStage();
-      const isStageFourSummary = summaryStage === 4 && !state.bookingCompleted;
-      bar.classList.toggle('summary-bar--stage4', isStageFourSummary);
-
-      document.getElementById('summaryMain').textContent = ((isStageFourSummary && '') || `${labelAge(state.age)}`);
-      document.getElementById('summaryMeta').textContent = isStageFourSummary
-        ? ''
-        : `${shift.dates}${state.code ? ` · Код ${state.code}` : ''}`;
-      document.getElementById('summaryPrice').textContent = formatPrice(price);
-      const summaryCtaBtn = bar.querySelector('[data-action="primary-cta"]');
-      if(summaryCtaBtn){
-        const action = getPrimaryActionState();
-        const actionText = getResolvedPrimaryActionText(action, shift);
-        if(isStageFourSummary && /^(?:Завершить бронирование|Оформить заявку|Бронировать)\s*·\s*выгода\s+/i.test(actionText)){
-          const gainText = actionText.replace(/^(?:Завершить бронирование|Оформить заявку|Бронировать)\s*·\s*выгода\s+/i, '').trim();
-          summaryCtaBtn.innerHTML = `
-            <span class="cta-main-line cta-main-line--primary">Завершить бронирование</span>
-            <span class="cta-main-line cta-main-line--accent">Выгода ${gainText}</span>
-          `;
-          summaryCtaBtn.setAttribute('aria-label', `Завершить бронирование · Выгода ${gainText}`);
-        } else {
-          summaryCtaBtn.textContent = actionText;
-          summaryCtaBtn.removeAttribute('aria-label');
-        }
-        summaryCtaBtn.classList.toggle('is-disabled', !!action.disabled);
-        summaryCtaBtn.setAttribute('aria-disabled', String(!!action.disabled));
-        summaryCtaBtn.disabled = false;
-      }
-
-      updateSummaryBarVisibility();
-      renderBookingPanels();
+      return safeInvoke(ensureSummaryFlow(), 'renderSummary', [], null);
     }
 
     function onlyDigits(value){
