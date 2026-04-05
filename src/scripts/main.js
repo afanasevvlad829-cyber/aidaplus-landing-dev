@@ -634,6 +634,8 @@
     let bookingInlineLeadApi = null;
     let mediaGestureBindingsApi = null;
     let globalUiBindingsApi = null;
+    let docsFlowApi = null;
+    let uiInitFlowApi = null;
     let runtimeQualityPipelineApi = null;
     let bookingRuntimeBridgeApi = null;
     let leadNotifyFlowApi = null;
@@ -1174,6 +1176,33 @@
       return globalUiBindingsApi;
     }
 
+    function ensureDocsFlow(){
+      if(docsFlowApi) return docsFlowApi;
+      const create = window.AC_FEATURES?.docsFlow?.create;
+      if(typeof create !== 'function') return null;
+      docsFlowApi = create({
+        shouldUseMobileTemplatesForDesktopSource: () => USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile',
+        getMobileDocsCopy: () => MOBILE_DOCS_COPY,
+        getState: () => state,
+        getDesktopMobileSectionTemplates: () => DESKTOP_MOBILE_SECTION_TEMPLATES
+      });
+      return docsFlowApi;
+    }
+
+    function ensureUiInitFlow(){
+      if(uiInitFlowApi) return uiInitFlowApi;
+      const create = window.AC_FEATURES?.uiInitFlow?.create;
+      if(typeof create !== 'function') return null;
+      uiInitFlowApi = create({
+        closeIconHtml: CLOSE_ICON_HTML,
+        getScrollMarks: () => scrollMarks,
+        track,
+        trackOnce,
+        updateSummaryBarVisibility
+      });
+      return uiInitFlowApi;
+    }
+
     function ensureLeadNotifyFlow(){
       if(leadNotifyFlowApi) return leadNotifyFlowApi;
       const create = window.AC_FEATURES?.leadNotifyFlow?.create;
@@ -1494,92 +1523,19 @@
     }
 
     function normalizeCloseIconButtons(scope = document){
-      const root = scope || document;
-      const nodes = root.querySelectorAll(
-        [
-          '.version-badge-close',
-          '.media-close',
-          '.video-close',
-          '.form-close',
-          "[data-action='close-version-badge']",
-          "[data-action='close-form']",
-          "[data-action='close-success']",
-          "[data-action='close-section-modal']",
-          "[data-action='close-video-modal']",
-          "[data-action='close-calendar']"
-        ].join(',')
-      );
-
-      nodes.forEach((btn) => {
-        if(!btn || btn.dataset.closeIconNormalized === '1') return;
-
-        const raw = (btn.textContent || '').trim();
-
-        if(
-          raw === '×' ||
-          raw === '✕' ||
-          btn.classList.contains('version-badge-close') ||
-          btn.classList.contains('media-close') ||
-          btn.classList.contains('video-close') ||
-          btn.classList.contains('form-close') ||
-          btn.classList.contains('offer-close-btn')
-        ){
-          if(!btn.querySelector('img.ac-icon')){
-            btn.innerHTML = CLOSE_ICON_HTML;
-          }
-        }
-
-        btn.dataset.closeIconNormalized = '1';
-      });
+      return safeInvoke(ensureUiInitFlow(), 'normalizeCloseIconButtons', [scope], null);
     }
 
     function initScrollTracking(){
-      window.addEventListener('scroll', () => {
-        const h = document.documentElement;
-        const max = h.scrollHeight - h.clientHeight;
-        if(max <= 0) return;
-        const scrolled = (h.scrollTop / max) * 100;
-        [25,50,75,90].forEach((p) => {
-          if(scrolled >= p && !scrollMarks[p]){
-            scrollMarks[p] = true;
-            track(`scroll_${p}`);
-          }
-        });
-        safeInvoke({updateSummaryBarVisibility}, 'updateSummaryBarVisibility');
-      }, {passive:true});
+      return safeInvoke(ensureUiInitFlow(), 'initScrollTracking', [], null);
     }
 
     function initSummaryBarViewportSync(){
-      const sync = () => {
-        safeInvoke({updateSummaryBarVisibility}, 'updateSummaryBarVisibility');
-      };
-      window.addEventListener('scroll', sync, {passive:true});
-      window.addEventListener('orientationchange', sync, {passive:true});
-      document.addEventListener('visibilitychange', () => {
-        if(document.hidden) return;
-        sync();
-      });
+      return safeInvoke(ensureUiInitFlow(), 'initSummaryBarViewportSync', [], null);
     }
 
     function initSectionViewTracking(){
-      const targets = [
-        {id:'section-stay', event:'stay_view'},
-        {id:'section-reviews', event:'eviews_view'},
-        {id:'section-team', event:'team_view'}
-      ];
-
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if(!entry.isIntersecting) return;
-          const found = targets.find(t => t.id === entry.target.id);
-          if(found) trackOnce(found.event);
-        });
-      }, {threshold:0.35});
-
-      targets.forEach((t) => {
-        const el = document.getElementById(t.id);
-        if(el) io.observe(el);
-      });
+      return safeInvoke(ensureUiInitFlow(), 'initSectionViewTracking', [], null);
     }
 
     function trackFaqOpen(){
@@ -3398,56 +3354,28 @@
     }
 
     function renderDesktopMobileDocsBlock(){
-      const footer = document.getElementById('section-legal');
-      if(!footer) return;
-
-      if(!footer.dataset.originalMarkup){
-        footer.dataset.originalMarkup = footer.innerHTML;
-      }
-
-      const useMobileDocs = USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile';
-      if(!useMobileDocs){
-        if(footer.dataset.mobileDocsApplied === '1'){
-          footer.innerHTML = footer.dataset.originalMarkup || footer.innerHTML;
-          footer.dataset.mobileDocsApplied = '0';
-        }
-        footer.classList.remove('mobile-docs-inline');
-        return;
-      }
-
-      footer.classList.add('mobile-docs-inline');
-      footer.dataset.mobileDocsApplied = '1';
-      footer.innerHTML = `
-        <div class="mobile-docs-shell">
-          <article class="mobile-docs-accordion-item ${state.mobileDocsExpanded ? 'open' : ''}">
-            <button type="button" class="mobile-docs-toggle" data-action="mobile-docs-toggle">
-              <span class="mobile-docs-toggle-copy">
-                <span class="mobile-docs-toggle-main">ООО «ВОИП КОННЕКТ»</span>
-                <span class="mobile-docs-toggle-meta">ИНН 7729713637 · РТО 025773</span>
-              </span>
-              <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-right.svg" alt="" aria-hidden="true">
-            </button>
-            <div class="mobile-docs-links">
-              <a href="legal.html#education-license" target="_blank" rel="noopener noreferrer">Образовательная лицензия Л035-01298-77/01082973</a>
-              <a href="mailto:hello@codims.ru">hello@codims.ru</a>
-              <a href="https://www.codims.ru/privacy" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
-              <a href="legal.html#legal-info" target="_blank" rel="noopener noreferrer">Юридическая информация</a>
-              <a href="legal.html#org-info" target="_blank" rel="noopener noreferrer">Сведения об организации</a>
-              <a href="legal.html#children-rest" target="_blank" rel="noopener noreferrer">Отдых и оздоровление детей</a>
-              <a href="legal.html#partners-info" target="_blank" rel="noopener noreferrer">Условия для партнёров</a>
-              <a href="legal.html#bloggers-info" target="_blank" rel="noopener noreferrer">Сотрудничество с блогерами</a>
-            </div>
-          </article>
-          <div class="footer-copyright-mini">© 2019–2026</div>
-        </div>
-      `;
+      return safeInvoke(ensureDocsFlow(), 'renderDesktopMobileDocsBlock', [], null);
     }
 
     function syncMobileDocsExpandedUi(){
-      document.querySelectorAll('.mobile-docs-accordion-item').forEach((item) => {
-        item.classList.toggle('open', !!state.mobileDocsExpanded);
-      });
+      return safeInvoke(ensureDocsFlow(), 'syncMobileDocsExpandedUi', [], null);
     }
+
+    const MOBILE_DOCS_COPY = Object.freeze({
+      orgName: 'ООО «ВОИП КОННЕКТ»',
+      orgMeta: 'ИНН 7729713637 · РТО 025773',
+      copyright: '© 2019–2026',
+      links: [
+        { href:'legal.html#education-license', target:'_blank', rel:'noopener noreferrer', text:'Образовательная лицензия Л035-01298-77/01082973' },
+        { href:'mailto:hello@codims.ru', text:'hello@codims.ru' },
+        { href:'https://www.codims.ru/privacy', target:'_blank', rel:'noopener noreferrer', text:'Политика обработки персональных данных' },
+        { href:'legal.html#legal-info', target:'_blank', rel:'noopener noreferrer', text:'Юридическая информация' },
+        { href:'legal.html#org-info', target:'_blank', rel:'noopener noreferrer', text:'Сведения об организации' },
+        { href:'legal.html#children-rest', target:'_blank', rel:'noopener noreferrer', text:'Отдых и оздоровление детей' },
+        { href:'legal.html#partners-info', target:'_blank', rel:'noopener noreferrer', text:'Условия для партнёров' },
+        { href:'legal.html#bloggers-info', target:'_blank', rel:'noopener noreferrer', text:'Сотрудничество с блогерами' }
+      ]
+    });
 
     const DESKTOP_MOBILE_SECTION_TEMPLATES = {
       'section-about': `
@@ -3512,21 +3440,7 @@
     };
 
     function applyMobileTemplatesToDesktopSections(){
-      const useMobileTemplates = USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile';
-      Object.entries(DESKTOP_MOBILE_SECTION_TEMPLATES).forEach(([sectionId, template]) => {
-        const section = document.getElementById(sectionId);
-        if(!section) return;
-        if(!section.dataset.desktopOriginalMarkup){
-          section.dataset.desktopOriginalMarkup = section.innerHTML;
-        }
-        if(useMobileTemplates){
-          section.innerHTML = template;
-          section.classList.add('mobile-template');
-        } else if(section.dataset.desktopOriginalMarkup){
-          section.innerHTML = section.dataset.desktopOriginalMarkup;
-          section.classList.remove('mobile-template');
-        }
-      });
+      return safeInvoke(ensureDocsFlow(), 'applyMobileTemplatesToDesktopSections', [], null);
     }
 
     function applyMobileSectionAccordion(){
