@@ -18510,65 +18510,47 @@ function runOfferSearch(overrides){
     }
 
     function selectedShiftPayload(){
-      const shift = getSelectedShift();
-      return {
-        shift_id: state.shiftId || '',
-        shift_title: (shift && shift.title) || '',
-        shift_dates: (shift && shift.dates) || '',
-        shift_days: (shift && shiftDaysLabel(shift)) || '',
-        age: state.age || '',
-        price: state.offerPrice || state.basePrice || ((shift && shift.price) || '')
-      };
+      return safeInvoke(ensureBookingRuntimeBridge(), 'selectedShiftPayload', [{
+        state,
+        getSelectedShift,
+        shiftDaysLabel
+      }], () => ({}));
     }
 
     function clearOfferTimeout(){
-      if(!offerTimeoutIds.length) return;
-      offerTimeoutIds.forEach((id) => clearTimeout(id));
-      offerTimeoutIds = [];
+      return safeInvoke(ensureBookingRuntimeBridge(), 'clearOfferTimeout', [{
+        getTimeoutIds: () => offerTimeoutIds,
+        setTimeoutIds: (next = []) => {
+          offerTimeoutIds = Array.isArray(next) ? next : [];
+        },
+        clearTimeoutFn: clearTimeout
+      }], null);
     }
 
     function resetOfferState({preserveShift = true} = {}){
-      clearOfferTimeout();
-      Object.assign(state, {
-        offerStage: 0,
-        offerPrice: null,
-        code: null,
-        expiresAt: null,
-        offerSearching: false,
-        bookingCompleted: false
-      });
-      if(!preserveShift){
-        Object.assign(state, {
-          shiftId: null,
-          basePrice: null
-        });
-      }
+      return safeInvoke(ensureBookingRuntimeBridge(), 'resetOfferState', [{
+        preserveShift,
+        state,
+        getTimeoutIds: () => offerTimeoutIds,
+        setTimeoutIds: (next = []) => {
+          offerTimeoutIds = Array.isArray(next) ? next : [];
+        },
+        clearTimeoutFn: clearTimeout
+      }], null);
     }
 
     function buildBookingSummaryHtml({showTimer = false} = {}){
-      const shift = getSelectedShift();
-      if(!shift) return '';
-      const shouldShowTimer = !!showTimer && isOfferActive();
-      const timeLeft = (shouldShowTimer && stripRemainingPrefix(formatRemainingCompact(state.expiresAt - Date.now()))) || '';
-      return `
-        <div class="booking-summary-line">
-          <span class="booking-summary-line__segment booking-summary-line__segment--price"><span class="booking-summary-price">${formatPrice(state.offerPrice || state.basePrice || shift.price)}</span></span>
-          <span class="booking-summary-sep" aria-hidden="true">•</span>
-          <span class="booking-summary-line__segment">
-            <span class="booking-summary-selection">${ageLabel(state.age)}</span>
-          </span>
-          <span class="booking-summary-sep" aria-hidden="true">•</span>
-          <span class="booking-summary-line__segment booking-summary-line__segment--date">
-            <span class="booking-summary-selection booking-summary-selection--date">${shift.dates}</span>
-          </span>
-        </div>
-        ${timeLeft ? `
-        <div class="booking-summary-timer">
-          <div class="booking-summary-timer-title">Цена закреплена за вами</div>
-          <div class="booking-timer-line booking-timer-line--summary" data-live-timer="true">${timeLeft}</div>
-        </div>
-        ` : ''}
-      `;
+      return safeInvoke(ensureBookingRuntimeBridge(), 'buildBookingSummaryHtml', [{
+        showTimer,
+        state,
+        getSelectedShift,
+        isOfferActive,
+        formatPrice,
+        ageLabel,
+        bookingText,
+        stripRemainingPrefix,
+        formatRemainingCompact
+      }], '');
     }
 
     function generateCode(){
