@@ -5,7 +5,7 @@
     const CONTENT_RUNTIME = (window.AIDACAMP_CONTENT && typeof window.AIDACAMP_CONTENT === 'object')
       ? window.AIDACAMP_CONTENT
       : {};
-    const shifts = Array.isArray(CONTENT_RUNTIME.shifts) ? CONTENT_RUNTIME.shifts : [];
+    const shifts = (Array.isArray(CONTENT_RUNTIME.shifts) && CONTENT_RUNTIME.shifts) || [];
     const mediaContent = (CONTENT_RUNTIME.mediaContent && typeof CONTENT_RUNTIME.mediaContent === 'object')
       ? CONTENT_RUNTIME.mediaContent
       : {
@@ -114,13 +114,11 @@
     );
     const toFiniteNumberOrZero = (value) => {
       const parsed = Number(value);
-      if(Number.isFinite(parsed)) return parsed;
-      return 0;
+      return (Number.isFinite(parsed) && parsed) || 0;
     };
     const toPositiveIntegerOrZero = (value) => {
       const parsed = Number(value);
-      if(!Number.isFinite(parsed) || parsed <= 0) return 0;
-      return Math.floor(parsed);
+      return ((Number.isFinite(parsed) && parsed > 0) && Math.floor(parsed)) || 0;
     };
     const versionMonotonicKeyCfg = String(STORAGE_RUNTIME_CONFIG.versionMonotonicKey || 'aidacamp_build_version_last_v1');
     const prodDebuglessDomainsCfg = Object.freeze(OBSERVABILITY_RUNTIME_CONFIG.prodDebuglessDomains || ['aidacamp.ru']);
@@ -144,7 +142,7 @@
     const videoMetaCacheKeyCfg = String(STORAGE_RUNTIME_CONFIG.videoMetaCacheKey || 'aidacamp_video_meta_cache_v2');
     const VIDEO_META_CACHE_TTL_MS = Number(STORAGE_RUNTIME_CONFIG.videoMetaCacheTtlMs || (1000 * 60 * 60 * 4));
     const VIDEO_META_REFRESH_INTERVAL_MS = Number(STORAGE_RUNTIME_CONFIG.videoMetaRefreshIntervalMs || (1000 * 60 * 60 * 4));
-    const compactModalSectionsCfg = new Set(Array.isArray(UI_MODES_RUNTIME_CONFIG.compactModalSections) ? UI_MODES_RUNTIME_CONFIG.compactModalSections : []);
+    const compactModalSectionsCfg = new Set((Array.isArray(UI_MODES_RUNTIME_CONFIG.compactModalSections) && UI_MODES_RUNTIME_CONFIG.compactModalSections) || []);
     let timerId = null;
     let mediaIndex = 0;
     let mediaType = 'photo';
@@ -243,10 +241,8 @@
     let leadNotifyFlowApi = null;
 
     function ensureTelemetryFlow(){
-      if(telemetryFlowApi) return telemetryFlowApi;
       const create = window.AC_FEATURES?.telemetryFlow?.create;
-      if(typeof create !== 'function') return null;
-      telemetryFlowApi = create({
+      return telemetryFlowApi || (typeof create === 'function' && (telemetryFlowApi = create({
         document,
         metrikaId: metrikaIdCfg,
         abEventEndpointDefault: abEventEndpointDefaultCfg,
@@ -256,15 +252,12 @@
         getHeroAbVariant: () => heroAbVariant,
         getHeroAbTestId: () => heroAbTestIdCfg,
         isAllowedAbEvent: (eventName) => abEventAllowlistSet.has(String(eventName || ''))
-      });
-      return telemetryFlowApi;
+      }))) || null;
     }
 
     function ensureHeroVariantFlow(){
-      if(heroVariantFlowApi) return heroVariantFlowApi;
       const create = window.AC_FEATURES?.heroVariantFlow?.create;
-      if(typeof create !== 'function') return null;
-      heroVariantFlowApi = create({
+      return heroVariantFlowApi || (typeof create === 'function' && (heroVariantFlowApi = create({
         document,
         getCurrentSearchParams,
         getHeroVariantState: () => heroVariantState,
@@ -284,15 +277,12 @@
         getSimpleModeEnabled: () => HERO_V3_SIMPLE_ENABLED,
         trackOnce,
         getBookingViewConfig
-      });
-      return heroVariantFlowApi;
+      }))) || null;
     }
 
     function ensureVariantFlow(){
-      if(variantFlowApi) return variantFlowApi;
       const create = window.AC_FEATURES?.variantFlow?.create;
-      if(typeof create !== 'function') return null;
-      variantFlowApi = create({
+      return variantFlowApi || (typeof create === 'function' && (variantFlowApi = create({
         state,
         getBookingStage,
         hasSelectedAge,
@@ -314,15 +304,12 @@
         setCompletedKey: (next) => {
           variantFlowCompletedKey = String(next || '');
         }
-      });
-      return variantFlowApi;
+      }))) || null;
     }
 
     function ensureCalendarFlow(){
-      if(calendarFlowApi) return calendarFlowApi;
       const create = window.AC_FEATURES?.calendarFlow?.create;
-      if(typeof create !== 'function') return null;
-      calendarFlowApi = create({
+      return calendarFlowApi || (typeof create === 'function' && (calendarFlowApi = create({
         getShifts: () => shifts,
         bookingText,
         calendarWeekdaysShort: () => CALENDAR_WEEKDAYS_SHORT,
@@ -335,15 +322,12 @@
           shiftOptionPanels = nextPanels;
         },
         renderShiftOptions
-      });
-      return calendarFlowApi;
+      }))) || null;
     }
 
     function ensureNavigationFlow(){
-      if(navigationFlowApi) return navigationFlowApi;
       const create = window.AC_FEATURES?.navigationFlow?.create;
-      if(typeof create !== 'function') return null;
-      navigationFlowApi = create({
+      return navigationFlowApi || (typeof create === 'function' && (navigationFlowApi = create({
         trackFaqOpen,
         isMobilePreviewView: () => state.previewView === 'mobile',
         hasSelectedAge,
@@ -363,15 +347,12 @@
         compactModalSections: compactModalSectionsCfg,
         openSectionModal,
         buildLegalDocUrl
-      });
-      return navigationFlowApi;
+      }))) || null;
     }
 
     function ensureVideoMetaFlow(){
-      if(videoMetaFlowApi) return videoMetaFlowApi;
       const create = window.AC_FEATURES?.videoMetaFlow?.create;
-      if(typeof create !== 'function') return null;
-      videoMetaFlowApi = create({
+      return videoMetaFlowApi || (typeof create === 'function' && (videoMetaFlowApi = create({
         mediaText: (key) => VIDEO_SOURCE_LABELS[key] || '',
         mediaContent,
         videoMetaCacheKey: videoMetaCacheKeyCfg,
@@ -382,15 +363,12 @@
         setVideoMetaRefreshTimer: (timerId) => {
           videoMetaRefreshTimer = timerId;
         }
-      });
-      return videoMetaFlowApi;
+      }))) || null;
     }
 
     function ensureMediaSectionsFlow(){
-      if(mediaSectionsFlowApi) return mediaSectionsFlowApi;
       const create = window.AC_FEATURES?.mediaSectionsFlow?.create;
-      if(typeof create !== 'function') return null;
-      mediaSectionsFlowApi = create({
+      return mediaSectionsFlowApi || (typeof create === 'function' && (mediaSectionsFlowApi = create({
         getState: () => state,
         getMediaContent: () => mediaContent,
         photoCatLabel,
@@ -406,15 +384,12 @@
         },
         prepareStayGalleryTriggers,
         renderCompactTrustPanelContent
-      });
-      return mediaSectionsFlowApi;
+      }))) || null;
     }
 
     function ensureModalMediaFlow(){
-      if(modalMediaFlowApi) return modalMediaFlowApi;
       const create = window.AC_FEATURES?.modalMediaFlow?.create;
-      if(typeof create !== 'function') return null;
-      modalMediaFlowApi = create({
+      return modalMediaFlowApi || (typeof create === 'function' && (modalMediaFlowApi = create({
         getState: () => state,
         getMediaContent: () => mediaContent,
         getActivePhotoList: () => activePhotoList,
@@ -427,15 +402,12 @@
         track,
         photoCatLabel,
         resolveVideoSource
-      });
-      return modalMediaFlowApi;
+      }))) || null;
     }
 
     function ensureGuidedStateFlow(){
-      if(guidedStateFlowApi) return guidedStateFlowApi;
       const create = window.AC_FEATURES?.guidedStateFlow?.create;
-      if(typeof create !== 'function') return null;
-      guidedStateFlowApi = create({
+      return guidedStateFlowApi || (typeof create === 'function' && (guidedStateFlowApi = create({
         getBookingViewConfig,
         syncGuidedState,
         getBookingStage,
@@ -454,15 +426,12 @@
           }
           safeInvoke(ensureVariantFlow(), 'scheduleVariantFlowScenario', [], null);
         }
-      });
-      return guidedStateFlowApi;
+      }))) || null;
     }
 
     function ensureBookingViewFlow(){
-      if(bookingViewFlowApi) return bookingViewFlowApi;
       const create = window.AC_FEATURES?.bookingViewFlow?.create;
-      if(typeof create !== 'function') return null;
-      bookingViewFlowApi = create({
+      return bookingViewFlowApi || (typeof create === 'function' && (bookingViewFlowApi = create({
         bookingText,
         getBookingStage,
         splitPrimaryActionText,
@@ -502,15 +471,12 @@
         updateBookingScarcityUi,
         scheduleBookingCardMinHeightSync,
         closeInlineLead
-      });
-      return bookingViewFlowApi;
+      }))) || null;
     }
 
     function ensureBookingHintFlow(){
-      if(bookingHintFlowApi) return bookingHintFlowApi;
       const create = window.AC_FEATURES?.bookingHintFlow?.create;
-      if(typeof create !== 'function') return null;
-      bookingHintFlowApi = create({
+      return bookingHintFlowApi || (typeof create === 'function' && (bookingHintFlowApi = create({
         getActiveBookingViewKeys,
         getRenderableBookingViewKeys,
         getBookingViewConfig,
@@ -535,15 +501,12 @@
           desktopAgeTapHintToken = Number(next) || 0;
         },
         getHintStartedAt: () => desktopAgeTapHintStartedAt
-      });
-      return bookingHintFlowApi;
+      }))) || null;
     }
 
     function ensureSummaryFlow(){
-      if(summaryFlowApi) return summaryFlowApi;
       const create = window.AC_FEATURES?.summaryFlow?.create;
-      if(typeof create !== 'function') return null;
-      summaryFlowApi = create({
+      return summaryFlowApi || (typeof create === 'function' && (summaryFlowApi = create({
         getState: () => state,
         getShifts: () => shifts,
         getTimerId: () => timerId,
@@ -575,15 +538,12 @@
         formatPrice,
         getPrimaryBookingViewConfig,
         isCompactCurrentMode: isSummaryCompactMode
-      });
-      return summaryFlowApi;
+      }))) || null;
     }
 
     function ensureViewModeFlow(){
-      if(viewModeFlowApi) return viewModeFlowApi;
       const create = window.AC_FEATURES?.viewModeFlow?.create;
-      if(typeof create !== 'function') return null;
-      viewModeFlowApi = create({
+      return viewModeFlowApi || (typeof create === 'function' && (viewModeFlowApi = create({
         getState: () => state,
         useDesktopBaseForMobile: useDesktopBaseForMobileCfg,
         normalizeMode,
@@ -602,47 +562,35 @@
         applyOfferLayoutMode,
         showOffer,
         applyMobileSectionAccordion
-      });
-      return viewModeFlowApi;
+      }))) || null;
     }
 
     function ensureHeroV3SimpleFlow(){
-      if(heroV3SimpleFlowApi) return heroV3SimpleFlowApi;
       const create = window.AC_FEATURES?.heroV3SimpleFlow?.create;
-      if(typeof create !== 'function') return null;
-      heroV3SimpleFlowApi = create({
+      return heroV3SimpleFlowApi || (typeof create === 'function' && (heroV3SimpleFlowApi = create({
         document,
         getEnabled: () => HERO_V3_SIMPLE_ENABLED,
         setHeroPhoneDropdownOpen,
         navigateToSection
-      });
-      return heroV3SimpleFlowApi;
+      }))) || null;
     }
 
     function ensureHeroBackgroundFlow(){
-      if(heroBackgroundFlowApi) return heroBackgroundFlowApi;
       const create = window.AC_FEATURES?.heroBackgroundFlow?.create;
-      if(typeof create !== 'function') return null;
-      heroBackgroundFlowApi = create({
+      return heroBackgroundFlowApi || (typeof create === 'function' && (heroBackgroundFlowApi = create({
         getHeroAbVariant: () => heroAbVariant,
         getHeroAbAssets,
         getHeroImages: () => HERO_IMAGES
-      });
-      return heroBackgroundFlowApi;
+      }))) || null;
     }
 
     function ensureOfferFlow(){
-      if(offerFlowApi) return offerFlowApi;
-      const api = window.AC_FEATURES?.offerFlow || null;
-      offerFlowApi = asFeatureApi(api);
-      return offerFlowApi;
+      return offerFlowApi || (offerFlowApi = asFeatureApi(window.AC_FEATURES?.offerFlow || null));
     }
 
     function ensureBookingRuntimeBridge(){
-      if(bookingRuntimeBridgeApi) return bookingRuntimeBridgeApi;
       const createBridge = window.AC_RUNTIME_BOOKING_BRIDGE?.createBridge;
-      if(typeof createBridge !== 'function') return null;
-      bookingRuntimeBridgeApi = createBridge({
+      return bookingRuntimeBridgeApi || (typeof createBridge === 'function' && (bookingRuntimeBridgeApi = createBridge({
         getState: () => state,
         getSelectedShift,
         shiftDaysLabel,
@@ -665,15 +613,12 @@
         ageLabel,
         stripRemainingPrefix,
         formatRemainingCompact
-      });
-      return bookingRuntimeBridgeApi;
+      }))) || null;
     }
 
     function ensureActionDispatcher(){
-      if(actionDispatcherApi) return actionDispatcherApi;
       const create = window.AC_FEATURES?.actionDispatcher?.createActionDispatcher;
-      if(typeof create !== 'function') return null;
-      actionDispatcherApi = create({
+      return actionDispatcherApi || (typeof create === 'function' && (actionDispatcherApi = create({
         bookingText,
         getState: () => state,
         getMediaContent: () => mediaContent,
@@ -733,22 +678,16 @@
         isHeroMenuOpen,
         setHeroPhoneDropdownOpen,
         isHeroPhoneDropdownOpen
-      });
-      return actionDispatcherApi;
+      }))) || null;
     }
 
     function ensureBookingInlineLeadApi(){
-      if(bookingInlineLeadApi) return bookingInlineLeadApi;
-      const api = window.AC_FEATURES?.bookingInlineLead || null;
-      bookingInlineLeadApi = asFeatureApi(api);
-      return bookingInlineLeadApi;
+      return bookingInlineLeadApi || (bookingInlineLeadApi = asFeatureApi(window.AC_FEATURES?.bookingInlineLead || null));
     }
 
     function ensureOverlayFlow(){
-      if(overlayFlowApi) return overlayFlowApi;
       const create = window.AC_FEATURES?.overlays?.create;
-      if(typeof create !== 'function') return null;
-      overlayFlowApi = create({
+      return overlayFlowApi || (typeof create === 'function' && (overlayFlowApi = create({
         document,
         buildBookingSummaryHtml,
         isAdminDebugSession,
@@ -756,62 +695,45 @@
         getState: () => state,
         persist,
         renderAll
-      });
-      return overlayFlowApi;
+      }))) || null;
     }
 
     function ensureMediaGestureBindingsApi(){
-      if(mediaGestureBindingsApi) return mediaGestureBindingsApi;
-      const api = window.AC_FEATURES?.mediaGestureBindings || null;
-      mediaGestureBindingsApi = asFeatureApi(api);
-      return mediaGestureBindingsApi;
+      return mediaGestureBindingsApi || (mediaGestureBindingsApi = asFeatureApi(window.AC_FEATURES?.mediaGestureBindings || null));
     }
 
     function ensureGlobalUiBindingsApi(){
-      if(globalUiBindingsApi) return globalUiBindingsApi;
-      const api = window.AC_FEATURES?.globalUiBindings || null;
-      globalUiBindingsApi = asFeatureApi(api);
-      return globalUiBindingsApi;
+      return globalUiBindingsApi || (globalUiBindingsApi = asFeatureApi(window.AC_FEATURES?.globalUiBindings || null));
     }
 
     function ensureMediaFlowApi(){
-      if(mediaFlowApi) return mediaFlowApi;
-      mediaFlowApi = asFeatureApi(window.AC_FEATURES?.mediaFlow || null);
-      return mediaFlowApi;
+      return mediaFlowApi || (mediaFlowApi = asFeatureApi(window.AC_FEATURES?.mediaFlow || null));
     }
 
     function ensureDocsFlow(){
-      if(docsFlowApi) return docsFlowApi;
       const create = window.AC_FEATURES?.docsFlow?.create;
-      if(typeof create !== 'function') return null;
-      docsFlowApi = create({
+      return docsFlowApi || (typeof create === 'function' && (docsFlowApi = create({
         shouldUseMobileTemplatesForDesktopSource: () => useDesktopBaseForMobileCfg && state.previewView === 'mobile',
         getMobileDocsCopy: () => Object.freeze(DOCS_RUNTIME_CONFIG.mobileDocsCopy || DOCS_MOBILE_COPY_FALLBACK),
         getState: () => state,
         getDesktopMobileSectionTemplates: () => Object.freeze(DOCS_RUNTIME_CONFIG.desktopMobileSectionTemplates || DOCS_DESKTOP_SECTION_TEMPLATES_FALLBACK)
-      });
-      return docsFlowApi;
+      }))) || null;
     }
 
     function ensureUiInitFlow(){
-      if(uiInitFlowApi) return uiInitFlowApi;
       const create = window.AC_FEATURES?.uiInitFlow?.create;
-      if(typeof create !== 'function') return null;
-      uiInitFlowApi = create({
+      return uiInitFlowApi || (typeof create === 'function' && (uiInitFlowApi = create({
         closeIconHtml: CLOSE_ICON_HTML,
         getScrollMarks: () => scrollMarks,
         track,
         trackOnce,
         updateSummaryBarVisibility
-      });
-      return uiInitFlowApi;
+      }))) || null;
     }
 
     function ensureShiftOptionsFlow(){
-      if(shiftOptionsFlowApi) return shiftOptionsFlowApi;
       const create = window.AC_FEATURES?.shiftOptionsFlow?.create;
-      if(typeof create !== 'function') return null;
-      shiftOptionsFlowApi = create({
+      return shiftOptionsFlowApi || (typeof create === 'function' && (shiftOptionsFlowApi = create({
         getState: () => state,
         getShifts: () => shifts,
         parseShiftDate,
@@ -827,21 +749,17 @@
         resolveViewKey,
         resolveShiftOptionsTargetId,
         getShiftOptionPanels: () => shiftOptionPanels
-      });
-      return shiftOptionsFlowApi;
+      }))) || null;
     }
 
     function ensureLeadNotifyFlow(){
-      if(leadNotifyFlowApi) return leadNotifyFlowApi;
       const create = window.AC_FEATURES?.leadNotifyFlow?.create;
-      if(typeof create !== 'function') return null;
-      leadNotifyFlowApi = create({
+      return leadNotifyFlowApi || (typeof create === 'function' && (leadNotifyFlowApi = create({
         buildAbMeta,
         saveLeadFallbackMeta,
         telegramText: bookingText,
         formatPrice
-      });
-      return leadNotifyFlowApi;
+      }))) || null;
     }
 
     function asObject(value){
@@ -1025,10 +943,8 @@
     }
 
     function ensureRuntimeQualityPipeline(){
-      if(runtimeQualityPipelineApi) return runtimeQualityPipelineApi;
       const create = window.AC_FEATURES?.runtimeQualityPipeline?.create;
-      if(typeof create !== 'function') return null;
-      runtimeQualityPipelineApi = create({
+      runtimeQualityPipelineApi = runtimeQualityPipelineApi || (typeof create === 'function' && create({
         document,
         runtimeStore: AIDACAMP_RUNTIME,
         buildVersionLabel: BUILD_VERSION_LABEL,
@@ -1042,11 +958,11 @@
         shouldUseLegacyMobile: () => state.previewView === 'mobile',
         trackOnce,
         isPipelineEnabled: () => isFeatureEnabled('runtimeQualityPipeline')
-      });
+      }));
       if(runtimeQualityPipelineApi?.namespace){
         AIDACAMP_RUNTIME.quality.pipeline = runtimeQualityPipelineApi.namespace;
       }
-      return runtimeQualityPipelineApi;
+      return runtimeQualityPipelineApi || null;
     }
 
     function getRuntimeQualityNamespace(){
@@ -1200,7 +1116,7 @@
     const abEventEndpointDefaultCfg = String(TELEMETRY_RUNTIME_CONFIG.abEventEndpointDefault || 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event');
     const abVisitorIdKeyCfg = String(TELEMETRY_RUNTIME_CONFIG.abVisitorIdKey || 'aidacamp_ab_visitor_id_v1');
     const abSessionIdKeyCfg = String(TELEMETRY_RUNTIME_CONFIG.abSessionIdKey || 'aidacamp_ab_session_id_v1');
-    const abEventAllowlistSet = new Set(Array.isArray(TELEMETRY_RUNTIME_CONFIG.abEventAllowlist) ? TELEMETRY_RUNTIME_CONFIG.abEventAllowlist : []);
+    const abEventAllowlistSet = new Set((Array.isArray(TELEMETRY_RUNTIME_CONFIG.abEventAllowlist) && TELEMETRY_RUNTIME_CONFIG.abEventAllowlist) || []);
     const HERO_BENEFITS_LAYOUT_EXPERIMENT = !!HERO_AB_RUNTIME_CONFIG.benefitsLayoutExperiment;
     const HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS = Object.freeze(HERO_AB_RUNTIME_CONFIG.benefitsItems || []);
 
@@ -1249,10 +1165,8 @@
     }
 
     function ensureHeroAbFlow(){
-      if(heroAbFlowApi) return heroAbFlowApi;
       const create = window.AC_FEATURES?.heroAbFlow?.create;
-      if(typeof create !== 'function') return null;
-      heroAbFlowApi = create({
+      return heroAbFlowApi || (typeof create === 'function' && (heroAbFlowApi = create({
         heroAbTestKey: heroAbTestKeyCfg,
         heroAbTestId: heroAbTestIdCfg,
         heroAbDesktopBgOnly: HERO_AB_DESKTOP_BG_ONLY,
@@ -1309,8 +1223,7 @@
         },
         resolveDesktopView: () => document.getElementById('desktopView'),
         resolveMobileView: () => document.getElementById('mobileView')
-      });
-      return heroAbFlowApi;
+      }))) || null;
     }
 
     function clearHeroAbTimers(){
@@ -1896,10 +1809,10 @@
         return (match && (Number(match[1]) || 0)) || 0;
       };
 
-      const days = extract(/(\d+)\s*(?:д(?:ень|ня|ней)?|[dDД])/);
-      const hours = extract(/(\d+)\s*(?:час(?:а|ов)?|[hHчЧ])/);
-      const minutes = extract(/(\d+)\s*(?:мин(?:ут(?:а|ы)?|ут)?|[mMмМ])/);
-      const seconds = extract(/(\d+)\s*(?:сек(?:унд(?:а|ы)?|унд)?|[sSсС])/);
+      const days = extract(/(\d+)\s*(д(?:ень|ня|ней)?|[dDД])/);
+      const hours = extract(/(\d+)\s*(час(?:а|ов)?|[hHчЧ])/);
+      const minutes = extract(/(\d+)\s*(мин(?:ут(?:а|ы)?|ут)?|[mMмМ])/);
+      const seconds = extract(/(\d+)\s*(сек(?:унд(?:а|ы)?|унд)?|[sSсС])/);
       const totalHours = (days * 24) + hours;
 
       if(days || hours || minutes || seconds){
@@ -2153,7 +2066,7 @@
       return safeInvoke(ensureBookingRuntimeBridge(), 'clearOfferTimeout', [{
         getTimeoutIds: () => offerTimeoutIds,
         setTimeoutIds: (next = []) => {
-          offerTimeoutIds = Array.isArray(next) ? next : [];
+          offerTimeoutIds = (Array.isArray(next) && next) || [];
         },
         clearTimeoutFn: clearTimeout
       }], null);
@@ -2165,7 +2078,7 @@
         state,
         getTimeoutIds: () => offerTimeoutIds,
         setTimeoutIds: (next = []) => {
-          offerTimeoutIds = Array.isArray(next) ? next : [];
+          offerTimeoutIds = (Array.isArray(next) && next) || [];
         },
         clearTimeoutFn: clearTimeout
       }], null);

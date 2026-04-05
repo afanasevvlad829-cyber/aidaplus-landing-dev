@@ -362,7 +362,7 @@
     *{box-sizing:border-box}
 
     html,
-    body{
+    :where(body){
       margin:0;
       padding:0;
     }
@@ -4863,11 +4863,14 @@
     }
 
     @keyframes shift-indicator-glow{
-      0%, 100%{
+      from{
         box-shadow:0 0 0 0 rgb(255 138 0 / 0%);
       }
       50%{
         box-shadow:0 0 0 6px rgb(255 138 0 / 12%);
+      }
+      to{
+        box-shadow:0 0 0 0 rgb(255 138 0 / 0%);
       }
     }
 
@@ -10999,14 +11002,14 @@
       }
 
       #offerOverlay,
-      #formDrawer{
+      :is(#formDrawer){
         align-items:center;
         justify-content:center;
         padding:12px;
       }
 
       #offerOverlay .overlay-card,
-      #formDrawer .form-panel{
+      :is(#formDrawer) .form-panel{
         width:var(--booking-flow-modal-width-mobile);
         max-width:var(--booking-flow-modal-width-mobile);
         min-height:var(--booking-flow-modal-height-mobile);
@@ -11760,7 +11763,7 @@
     }
 
     @media (max-width: 1180px){
-      :root{
+      html{
         --desktop-booking-height:600px;
       }
 
@@ -12879,7 +12882,7 @@
         flex:1;
       }
 
-       .team-carousel .team-card{
+       .team-carousel :is(.team-card){
         min-width:86%;
         max-width:86%;
       }
@@ -12949,7 +12952,7 @@
         border-radius:18px;
       }
 
-      .hero-shell{
+      .hero-shell:is(*){
         display:block;
         min-height:auto;
       }
@@ -12968,7 +12971,7 @@
         display:none;
       }
 
-      .video-card{
+      .video-card:is(*){
         flex:0 0 min(82vw, 280px);
       }
 

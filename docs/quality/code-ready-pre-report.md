@@ -1,6 +1,6 @@
 # CODE_READY Pre-Report (No Rollout)
 
-Generated: 2026-04-05 07:51 MSK
+Generated: 2026-04-05 08:11 MSK
 
 ## Status
 
@@ -11,19 +11,21 @@ Generated: 2026-04-05 07:51 MSK
 
 ## KPI Snapshot
 
-- `css_duplicate_selectors = 8`
-- `js_if_count = 134`
-- `js_ternary_count = 13`
+- `css_duplicate_selectors = 3`
+- `js_if_count = 79`
+- `js_ternary_count = 8`
 - `js_state_mutations = 0`
 - `dist_bytes = 56263`
-- `main_js_lines = 2855`
+- `main_js_lines = 2768`
 
 ## Ideal Targets (Zero Legacy cycle)
 
 - `main.js` remains orchestration-only (no business/config blobs).
 - `legacy_paths = 0` for active runtime path.
 - `js_state_mutations = 0` (strict lock).
-- `css_duplicate_selectors <= 8` (stability lock).
+- `css_duplicate_selectors <= 3` (absolute-tier lock).
+- `js_if_count <= 95`.
+- `js_ternary_count <= 10`.
 - `quality-check` + `architecture-check` + smoke pack stable on repeated runs.
 
 ## Gate Results
@@ -36,6 +38,8 @@ Generated: 2026-04-05 07:51 MSK
 - Final acceptance loop (x3 consecutive runs, 2026-04-05 05:52–05:57 MSK) — PASS/PASS/PASS
 - Checkpoint after Batch 48/49 (2026-04-05 07:33–07:35 MSK) — PASS (`quality-check`, `architecture-check`, `runtime-api`, `booking-flow`, `booking-ui`, `astro-build`)
 - Final acceptance loop (x3 consecutive runs, 2026-04-05 07:42–07:44 MSK) — PASS/PASS/PASS (no code changes between runs)
+- Absolute-tier checkpoint (2026-04-05 08:09 MSK): `css=3`, `if=79`, `ternary=8`, `state_mutations=0`
+- Absolute-tier acceptance loop (x3 consecutive runs, 2026-04-05 08:10–08:12 MSK) — PASS/PASS/PASS (no code changes between runs)
 
 ## Contract Lock (current)
 
@@ -75,3 +79,5 @@ Generated: 2026-04-05 07:51 MSK
 - `CODE_READY=YES` (architecture/quality phase complete).
 - Rollout remains explicitly out of scope for this phase.
 - Zero-legacy guardrails are active (`no-business-in-main` counters locked to factual zero for active legacy refs).
+- Absolute-tier guardrails are active in `tools/quality-gate.sh` and `docs/quality/baseline.env`.
+- Evidence: `docs/quality/acceptance-evidence-absolute-tier-2026-04-05.md`

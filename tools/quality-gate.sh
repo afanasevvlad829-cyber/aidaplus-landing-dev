@@ -13,12 +13,12 @@ fi
 latest_line="$(tail -n 1 "$HISTORY_FILE")"
 IFS=',' read -r _ css_lines css_max_line css_blocks css_dupe js_lines js_max_line js_functions js_ifs js_ternaries js_state_mutations state_keys dist_lines dist_bytes dist_max_line dist_repl <<< "$latest_line"
 
-# Conservative guardrails: fail only on clearly bad regressions.
-MAX_CSS_DUPE=90
-MAX_JS_IFS=460
-MAX_JS_TERNARIES=140
+# Absolute-tier guardrails for active runtime path.
+MAX_CSS_DUPE=3
+MAX_JS_IFS=95
+MAX_JS_TERNARIES=10
 MAX_JS_LINE_LEN=380
-MAX_JS_STATE_MUTATIONS=120
+MAX_JS_STATE_MUTATIONS=0
 MAX_DIST_BYTES=560000
 MAX_DIST_LINE_LEN=1100
 MAX_REPL_LINES=0
