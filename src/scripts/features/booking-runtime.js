@@ -336,6 +336,9 @@
       if (typeof opts.track === "function" && typeof opts.buildHeroVariantMeta === "function") {
         opts.track("hero_variant_click_new", opts.buildHeroVariantMeta({ cta: copy.cta || "" }));
       }
+      if (opts.simpleModeEnabled) {
+        return;
+      }
       var ageHint = opts.bookingText("selectAge");
       if (copy.hintStage1) {
         ageHint = copy.hintStage1;

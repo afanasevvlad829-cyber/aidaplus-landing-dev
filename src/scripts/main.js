@@ -690,6 +690,7 @@
         getState: () => state,
         hasSelectedAge,
         getBookingStage,
+        getSimpleModeEnabled: () => HERO_V3_SIMPLE_ENABLED,
         trackOnce,
         getBookingViewConfig
       });
