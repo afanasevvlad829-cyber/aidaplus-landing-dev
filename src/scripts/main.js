@@ -3187,45 +3187,22 @@
     }
 
     function resetAgeSelection(){
-      clearShiftOptionPanels();
-      Object.assign(state, {
-        age: null,
-        ageSelected: false,
-        shiftId: null,
-        basePrice: null,
-        offerPrice: null,
-        code: null,
-        expiresAt: null,
-        [OFFER_STAGE_KEY]: 0,
-        bookingCompleted: false
-      });
-
-      ['desktopAgeTabs','mobileAgeTabs'].forEach(id => {
-        const root = document.getElementById(id);
-        if(root){
-          root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
-        }
-      });
-
-      renderAll();
-      persist();
+      return safeInvoke(ensureBookingRuntimeBridge(), 'resetAgeSelection', [{
+        state,
+        clearShiftOptionPanels,
+        renderAll,
+        persist
+      }], null);
     }
 
     function resetShiftSelection(){
-      clearShiftOptionPanels();
-      Object.assign(state, {
-        shiftId: null,
-        basePrice: null,
-        offerPrice: null,
-        code: null,
-        expiresAt: null,
-        [OFFER_STAGE_KEY]: 0,
-        offerSearching: false,
-        bookingCompleted: false
-      });
-      showHint('Смена сброшена. Выберите подходящий вариант.', 'shift');
-      renderAll();
-      persist();
+      return safeInvoke(ensureBookingRuntimeBridge(), 'resetShiftSelection', [{
+        state,
+        clearShiftOptionPanels,
+        renderAll,
+        persist,
+        showHint
+      }], null);
     }
 
     function setPhotoFilter(filter){
@@ -3860,18 +3837,14 @@
     }
 
     function selectShift(id){
-      const shift = shifts.find(s => s.id === id);
-      clearShiftOptionPanels();
-      Object.assign(state, {
+      return safeInvoke(ensureBookingRuntimeBridge(), 'selectShift', [{
+        state,
         shiftId: id,
-        basePrice: shift.price,
-        offerPrice: null,
-        code: null,
-        expiresAt: null,
-        [OFFER_STAGE_KEY]: 0
-      });
-      renderAll();
-      persist();
+        getShifts: () => shifts,
+        clearShiftOptionPanels,
+        renderAll,
+        persist
+      }], false);
     }
 
     function handlePrimaryCTA(){

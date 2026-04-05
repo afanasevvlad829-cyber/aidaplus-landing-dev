@@ -98,6 +98,58 @@
     return true;
   }
 
+  function resetAgeSelection(options){
+    var opts = options || {};
+    var state = opts.state || {};
+    var clearShiftOptionPanels = opts.clearShiftOptionPanels || function(){};
+    var renderAll = opts.renderAll || function(){};
+    var persist = opts.persist || function(){};
+    clearShiftOptionPanels();
+    Object.assign(state, {
+      age: null,
+      ageSelected: false,
+      shiftId: null,
+      basePrice: null,
+      offerPrice: null,
+      code: null,
+      expiresAt: null,
+      offerStage: 0,
+      bookingCompleted: false
+    });
+    ['desktopAgeTabs','mobileAgeTabs'].forEach(function(id){
+      var root = document.getElementById(id);
+      if(!root) return;
+      root.querySelectorAll('[data-age]').forEach(function(node){
+        node.classList.remove('active');
+      });
+    });
+    renderAll();
+    persist();
+  }
+
+  function resetShiftSelection(options){
+    var opts = options || {};
+    var state = opts.state || {};
+    var clearShiftOptionPanels = opts.clearShiftOptionPanels || function(){};
+    var renderAll = opts.renderAll || function(){};
+    var persist = opts.persist || function(){};
+    var showHint = opts.showHint || function(){};
+    clearShiftOptionPanels();
+    Object.assign(state, {
+      shiftId: null,
+      basePrice: null,
+      offerPrice: null,
+      code: null,
+      expiresAt: null,
+      offerStage: 0,
+      offerSearching: false,
+      bookingCompleted: false
+    });
+    showHint('Смена сброшена. Выберите подходящий вариант.', 'shift');
+    renderAll();
+    persist();
+  }
+
   function getPrimaryActionState(options) {
     var opts = options || {};
     var state = opts.state || {};
@@ -444,6 +496,8 @@
     resetOfferState: resetOfferState,
     buildBookingSummaryHtml: buildBookingSummaryHtml,
     selectShift: selectShift,
+    resetAgeSelection: resetAgeSelection,
+    resetShiftSelection: resetShiftSelection,
     getPrimaryActionState: getPrimaryActionState,
     getStepState: getStepState,
     getResolvedPrimaryActionText: getResolvedPrimaryActionText,

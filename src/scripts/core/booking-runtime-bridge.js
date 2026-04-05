@@ -114,6 +114,27 @@
       }, function(){ return false; });
     }
 
+    function resetAgeSelection(overrides){
+      var options = overrides || {};
+      return invoke('resetAgeSelection', {
+        state: resolveState(options),
+        clearShiftOptionPanels: options.clearShiftOptionPanels || ctx.clearShiftOptionPanels || function(){},
+        renderAll: options.renderAll || ctx.renderAll || function(){},
+        persist: options.persist || ctx.persist || function(){}
+      }, function(){ return undefined; });
+    }
+
+    function resetShiftSelection(overrides){
+      var options = overrides || {};
+      return invoke('resetShiftSelection', {
+        state: resolveState(options),
+        clearShiftOptionPanels: options.clearShiftOptionPanels || ctx.clearShiftOptionPanels || function(){},
+        renderAll: options.renderAll || ctx.renderAll || function(){},
+        persist: options.persist || ctx.persist || function(){},
+        showHint: options.showHint || ctx.showHint || function(){}
+      }, function(){ return undefined; });
+    }
+
     function handlePrimaryCTA(overrides){
       var options = overrides || {};
       var state = resolveState(options);
@@ -305,6 +326,8 @@ function runOfferSearch(overrides){
       buildBookingSummaryHtml,
       generateCode,
       selectShift,
+      resetAgeSelection,
+      resetShiftSelection,
       getPrimaryActionState,
       getStepState,
       getResolvedPrimaryActionText,
