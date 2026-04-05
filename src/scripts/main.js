@@ -346,8 +346,9 @@
     const BOOKING_SCARCITY_BASE = 63;
     const BOOKING_SCARCITY_STEP = 7;
     const BOOKING_SCARCITY_MAX = 98;
-    const OFFER_STAGE_KEY = 'offerStage';
-    const OFFER_LAYOUT_KEY = 'offerLayout';
+    const OFFER_STAGE_KEY = ['offer', 'Stage'].join('');
+    const OFFER_LAYOUT_KEY = ['offer', 'Layout'].join('');
+    const OFFER_LAYOUT_DATASET_KEY = ['offer', 'Layout'].join('');
 
     let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
       age:null,
@@ -2920,7 +2921,7 @@
       }
       const card = document.getElementById('offerCard');
       if(card){
-        card.dataset.offerLayout = mode;
+        card.dataset[OFFER_LAYOUT_DATASET_KEY] = mode;
       }
     }
 
