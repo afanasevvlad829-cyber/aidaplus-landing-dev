@@ -1485,8 +1485,9 @@
         mobile: '/assets/images/hero-ab-pool-20260401.jpeg'
       })
     });
-    const HERO_AB_TEST_KEY = 'aidacamp_hero_ab_v1';
-    const HERO_AB_TEST_ID = 'hero_primary_block_v1';
+    const TELEMETRY_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.telemetry) || {};
+    const HERO_AB_TEST_KEY = String(TELEMETRY_RUNTIME_CONFIG.heroAbTestKey || 'aidacamp_hero_ab_v1');
+    const HERO_AB_TEST_ID = String(TELEMETRY_RUNTIME_CONFIG.heroAbTestId || 'hero_primary_block_v1');
     const HERO_AB_VARIANT_LABELS = Object.freeze(HERO_AB_RUNTIME_CONFIG.variantLabels || {
       A: 'Control',
       B: 'Pool Motion'
@@ -1500,19 +1501,10 @@
     const HERO_AB_MOBILE_EFFECTS_ENABLED = !!HERO_AB_RUNTIME_CONFIG.mobileEffectsEnabled;
     const HERO_V3_SIMPLE_QUERY_KEY = 'hero_v3_simple';
     const HERO_V3_SIMPLE_ENABLED = hasQueryFlag(HERO_V3_SIMPLE_QUERY_KEY);
-    const AB_EVENT_ENDPOINT_DEFAULT = 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event';
-    const AB_VISITOR_ID_KEY = 'aidacamp_ab_visitor_id_v1';
-    const AB_SESSION_ID_KEY = 'aidacamp_ab_session_id_v1';
-    const AB_TEST_EVENT_ALLOWLIST = new Set([
-      'page_view',
-      'hero_ab_assigned_v1',
-      'hero_variant_shown_new',
-      'hero_variant_fallback_new',
-      'form_submit',
-      'hero_variant_form_submit_new',
-      'telegram_click',
-      'hero_variant_telegram_click_new'
-    ]);
+    const AB_EVENT_ENDPOINT_DEFAULT = String(TELEMETRY_RUNTIME_CONFIG.abEventEndpointDefault || 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event');
+    const AB_VISITOR_ID_KEY = String(TELEMETRY_RUNTIME_CONFIG.abVisitorIdKey || 'aidacamp_ab_visitor_id_v1');
+    const AB_SESSION_ID_KEY = String(TELEMETRY_RUNTIME_CONFIG.abSessionIdKey || 'aidacamp_ab_session_id_v1');
+    const AB_TEST_EVENT_ALLOWLIST = new Set(Array.isArray(TELEMETRY_RUNTIME_CONFIG.abEventAllowlist) ? TELEMETRY_RUNTIME_CONFIG.abEventAllowlist : []);
     const HERO_BENEFITS_LAYOUT_EXPERIMENT = !!HERO_AB_RUNTIME_CONFIG.benefitsLayoutExperiment;
     const HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS = Object.freeze(HERO_AB_RUNTIME_CONFIG.benefitsItems || []);
 
