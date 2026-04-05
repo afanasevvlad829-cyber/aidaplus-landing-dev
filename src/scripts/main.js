@@ -664,7 +664,6 @@
     let heroVariantState = null;
     let telemetryFlowApi = null;
     let heroVariantFlowApi = null;
-    let bookingDebugFlowApi = null;
     let calendarFlowApi = null;
     let navigationFlowApi = null;
     let videoMetaFlowApi = null;
@@ -674,6 +673,7 @@
     let bookingViewFlowApi = null;
     let bookingHintFlowApi = null;
     let viewModeFlowApi = null;
+    let heroV3SimpleFlowApi = null;
     let offerFlowApi = null;
     let actionDispatcherApi = null;
     let bookingInlineLeadApi = null;
@@ -725,34 +725,6 @@
         getBookingViewConfig
       });
       return heroVariantFlowApi;
-    }
-
-    function ensureBookingDebugFlow(){
-      if(bookingDebugFlowApi) return bookingDebugFlowApi;
-      const create = window.AC_FEATURES?.bookingDebugFlow?.create;
-      if(typeof create !== 'function') return null;
-      bookingDebugFlowApi = create({
-        document,
-        isLocalRuntime,
-        bookingText,
-        getBuildVersionLabel: () => BUILD_VERSION_LABEL.trim(),
-        versionBadgeHiddenKey: VERSION_BADGE_HIDDEN_KEY,
-        getState: () => state,
-        getShifts: () => shifts,
-        offerDiscountFactor: OFFER_DISCOUNT_FACTOR,
-        generateCode,
-        clearOfferTimeout,
-        clearShiftOptionPanels,
-        applyStatePatch: (patch = {}, options = {}) => {
-          Object.assign(state, patch);
-          if(options.persistState){
-            persist();
-          }
-        },
-        renderAll,
-        persist
-      });
-      return bookingDebugFlowApi;
     }
 
     function ensureCalendarFlow(){
@@ -971,6 +943,18 @@
         applyMobileSectionAccordion
       });
       return viewModeFlowApi;
+    }
+
+    function ensureHeroV3SimpleFlow(){
+      if(heroV3SimpleFlowApi) return heroV3SimpleFlowApi;
+      const create = window.AC_FEATURES?.heroV3SimpleFlow?.create;
+      if(typeof create !== 'function') return null;
+      heroV3SimpleFlowApi = create({
+        document,
+        getEnabled: () => HERO_V3_SIMPLE_ENABLED,
+        setHeroPhoneDropdownOpen
+      });
+      return heroV3SimpleFlowApi;
     }
 
     function ensureOfferFlow(){
@@ -1269,22 +1253,6 @@
         }
         applyHeroVariantCopy();
       });
-    }
-
-    function applyDebugUiState(){
-      return safeInvoke(ensureBookingDebugFlow(), 'applyDebugUiState', [], null);
-    }
-
-    function applyBookingDebugBlocksUi(){
-      return safeInvoke(ensureBookingDebugFlow(), 'applyBookingDebugBlocksUi', [], null);
-    }
-
-    function setBookingDebugBlocks(enabled){
-      return safeInvoke(ensureBookingDebugFlow(), 'setBookingDebugBlocks', [enabled], null);
-    }
-
-    function forceBookingDebugStage(mode){
-      return safeInvoke(ensureBookingDebugFlow(), 'forceBookingDebugStage', [mode], null);
     }
 
     function trackOnce(event, params = {}){
@@ -1713,33 +1681,7 @@
     }
 
     function applyHeroV3SimpleMode(){
-      const desktopView = document.getElementById('desktopView');
-      const mobileView = document.getElementById('mobileView');
-      const enabled = HERO_V3_SIMPLE_ENABLED;
-      document.documentElement.classList.toggle('hero-v3-simple-enabled', enabled);
-      document.body.classList.toggle('hero-v3-simple-enabled', enabled);
-      desktopView?.classList.toggle('hero-v3-simple', enabled);
-      mobileView?.classList.toggle('hero-v3-simple', enabled);
-      enabled && document.getElementById('debugControls')?.classList.add('hidden');
-      setHeroPhoneDropdownOpen(false);
-      const menuToggleText = document.querySelector('.hero-menu-toggle-text');
-      menuToggleText && (menuToggleText.textContent = enabled ? '⋯' : 'Меню');
-      const heroTag = document.querySelector('#desktopView .hero-tag');
-      heroTag && enabled && (heroTag.textContent = '66 км от Москвы · смены июнь–август');
-      const heroTitle = document.querySelector('#desktopView .hero-title');
-      heroTitle && enabled && (heroTitle.innerHTML = 'AI-лагерь 7–14:<br><span class=\"hero-title-accent\">проект за смену</span>');
-      const heroSub = document.querySelector('#desktopView .hero-sub');
-      heroSub && enabled && (heroSub.textContent = 'Python · Minecraft · AI · Хакатон · Бассейн');
-      const heroSlogan = document.querySelector('#desktopView .hero-slogan');
-      heroSlogan && enabled && (heroSlogan.textContent = '6 лет работы · 1200+ детей · ★ 5.0 Яндекс Карты');
-      const stepLabels = ['1. ВОЗРАСТ', '2. ВАШ ТЕЛЕФОН', '3. —', '4. —'];
-      document.querySelectorAll('#desktop-booking-card .booking-step').forEach((node, idx) => {
-        enabled && (node.textContent = stepLabels[idx] || node.textContent);
-      });
-      const bookingTitle = document.getElementById('desktopBookingTitle');
-      bookingTitle && enabled && (bookingTitle.textContent = 'Подберём смену за 1 минуту');
-      const bookingLead = document.getElementById('desktopBookingLead');
-      bookingLead && enabled && (bookingLead.textContent = 'Программу и даты — за 10 минут');
+      return safeInvoke(ensureHeroV3SimpleFlow(), 'applyMode', [], null);
     }
 
     function preloadHeroAssets(){
@@ -2471,7 +2413,6 @@
       const keepMobileMode = state.mobileMode || 'full';
       const keepOfferModalTheme = ((state.offerModalTheme === 'dark') && 'dark') || 'light';
       const keepOfferLayout = 'current';
-      const keepDebugBookingBlocks = !!state.debugBookingBlocks;
       state = {
         age: null,
         ageSelected: false,
@@ -2502,7 +2443,7 @@
         mobileTeamIndex: 0,
         mobileDocsExpanded: false,
         offerSearching: false,
-        debugBookingBlocks: keepDebugBookingBlocks
+        debugBookingBlocks: false
       };
 
       ['parentName','parentPhone'].forEach((id) => {
@@ -2542,7 +2483,6 @@
       switchView(keepView);
       applyDesktopMode();
       applyMobileMode();
-      applyBookingDebugBlocksUi();
       persist();
       showHint('Сценарий бронирования сброшен. Начните с выбора возраста.');
     }
@@ -5184,7 +5124,6 @@
     }
     normalizeCloseIconButtons();
     const deferredInit = () => {
-      applyDebugUiState();
       injectHeroSeasonOfferCta();
       initFloatingContactsWidget();
       initHeroAbDevPanel();

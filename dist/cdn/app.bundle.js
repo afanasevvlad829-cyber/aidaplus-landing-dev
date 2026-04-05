@@ -10437,6 +10437,88 @@ function runOfferSearch(overrides){
 })();
 
 
+/* src/scripts/features/hero-v3-simple-flow.js */
+(function registerHeroV3SimpleFlow(windowObj){
+  'use strict';
+
+  if(!windowObj) return;
+  windowObj.AC_FEATURES = windowObj.AC_FEATURES || {};
+  windowObj.AC_FEATURES.heroV3SimpleFlow = windowObj.AC_FEATURES.heroV3SimpleFlow || {};
+
+  var DEFAULT_COPY = Object.freeze({
+    menuToggleText: '⋯',
+    heroTag: '66 км от Москвы · смены июнь–август',
+    heroTitleHtml: 'AI-лагерь 7–14:<br><span class="hero-title-accent">проект за смену</span>',
+    heroSub: 'Python · Minecraft · AI · Хакатон · Бассейн',
+    heroSlogan: '6 лет работы · 1200+ детей · ★ 5.0 Яндекс Карты',
+    bookingTitle: 'Подберём смену за 1 минуту',
+    bookingLead: 'Программу и даты — за 10 минут',
+    stepLabels: Object.freeze(['1. ВОЗРАСТ', '2. ВАШ ТЕЛЕФОН', '3. —', '4. —'])
+  });
+
+  function setTextIfPresent(root, selector, value){
+    var node = root.querySelector(selector);
+    if(node && typeof value === 'string' && value){
+      node.textContent = value;
+    }
+  }
+
+  function create(context){
+    var ctx = context || {};
+    var doc = ctx.document || windowObj.document;
+    var getEnabled = ctx.getEnabled || function(){ return false; };
+    var setHeroPhoneDropdownOpen = ctx.setHeroPhoneDropdownOpen || function(){};
+    var copy = Object.freeze(Object.assign({}, DEFAULT_COPY, ctx.copy || {}));
+
+    function applyMode(){
+      var enabled = !!getEnabled();
+      var desktopView = doc.getElementById('desktopView');
+      var mobileView = doc.getElementById('mobileView');
+      doc.documentElement.classList.toggle('hero-v3-simple-enabled', enabled);
+      doc.body.classList.toggle('hero-v3-simple-enabled', enabled);
+      if(desktopView) desktopView.classList.toggle('hero-v3-simple', enabled);
+      if(mobileView) mobileView.classList.toggle('hero-v3-simple', enabled);
+      if(enabled){
+        var debugControls = doc.getElementById('debugControls');
+        if(debugControls) debugControls.classList.add('hidden');
+      }
+      setHeroPhoneDropdownOpen(false);
+
+      var menuToggleText = doc.querySelector('.hero-menu-toggle-text');
+      if(menuToggleText){
+        menuToggleText.textContent = enabled ? copy.menuToggleText : 'Меню';
+      }
+      if(!enabled){
+        return;
+      }
+
+      setTextIfPresent(doc, '#desktopView .hero-tag', copy.heroTag);
+      setTextIfPresent(doc, '#desktopView .hero-sub', copy.heroSub);
+      setTextIfPresent(doc, '#desktopView .hero-slogan', copy.heroSlogan);
+      setTextIfPresent(doc, '#desktopBookingTitle', copy.bookingTitle);
+      setTextIfPresent(doc, '#desktopBookingLead', copy.bookingLead);
+
+      var heroTitle = doc.querySelector('#desktopView .hero-title');
+      if(heroTitle && copy.heroTitleHtml){
+        heroTitle.innerHTML = copy.heroTitleHtml;
+      }
+      var labels = Array.isArray(copy.stepLabels) ? copy.stepLabels : DEFAULT_COPY.stepLabels;
+      doc.querySelectorAll('#desktop-booking-card .booking-step').forEach(function(node, idx){
+        if(node && labels[idx]){
+          node.textContent = labels[idx];
+        }
+      });
+    }
+
+    return Object.freeze({
+      applyMode: applyMode
+    });
+  }
+
+  windowObj.AC_FEATURES.heroV3SimpleFlow.create = create;
+})(window);
+
+
 /* src/scripts/features/hero-variant-flow.js */
 (function registerHeroVariantFlow(windowObj){
   'use strict';
@@ -15678,7 +15760,6 @@ function runOfferSearch(overrides){
     let heroVariantState = null;
     let telemetryFlowApi = null;
     let heroVariantFlowApi = null;
-    let bookingDebugFlowApi = null;
     let calendarFlowApi = null;
     let navigationFlowApi = null;
     let videoMetaFlowApi = null;
@@ -15688,6 +15769,7 @@ function runOfferSearch(overrides){
     let bookingViewFlowApi = null;
     let bookingHintFlowApi = null;
     let viewModeFlowApi = null;
+    let heroV3SimpleFlowApi = null;
     let offerFlowApi = null;
     let actionDispatcherApi = null;
     let bookingInlineLeadApi = null;
@@ -15739,34 +15821,6 @@ function runOfferSearch(overrides){
         getBookingViewConfig
       });
       return heroVariantFlowApi;
-    }
-
-    function ensureBookingDebugFlow(){
-      if(bookingDebugFlowApi) return bookingDebugFlowApi;
-      const create = window.AC_FEATURES?.bookingDebugFlow?.create;
-      if(typeof create !== 'function') return null;
-      bookingDebugFlowApi = create({
-        document,
-        isLocalRuntime,
-        bookingText,
-        getBuildVersionLabel: () => BUILD_VERSION_LABEL.trim(),
-        versionBadgeHiddenKey: VERSION_BADGE_HIDDEN_KEY,
-        getState: () => state,
-        getShifts: () => shifts,
-        offerDiscountFactor: OFFER_DISCOUNT_FACTOR,
-        generateCode,
-        clearOfferTimeout,
-        clearShiftOptionPanels,
-        applyStatePatch: (patch = {}, options = {}) => {
-          Object.assign(state, patch);
-          if(options.persistState){
-            persist();
-          }
-        },
-        renderAll,
-        persist
-      });
-      return bookingDebugFlowApi;
     }
 
     function ensureCalendarFlow(){
@@ -15985,6 +16039,18 @@ function runOfferSearch(overrides){
         applyMobileSectionAccordion
       });
       return viewModeFlowApi;
+    }
+
+    function ensureHeroV3SimpleFlow(){
+      if(heroV3SimpleFlowApi) return heroV3SimpleFlowApi;
+      const create = window.AC_FEATURES?.heroV3SimpleFlow?.create;
+      if(typeof create !== 'function') return null;
+      heroV3SimpleFlowApi = create({
+        document,
+        getEnabled: () => HERO_V3_SIMPLE_ENABLED,
+        setHeroPhoneDropdownOpen
+      });
+      return heroV3SimpleFlowApi;
     }
 
     function ensureOfferFlow(){
@@ -16283,22 +16349,6 @@ function runOfferSearch(overrides){
         }
         applyHeroVariantCopy();
       });
-    }
-
-    function applyDebugUiState(){
-      return safeInvoke(ensureBookingDebugFlow(), 'applyDebugUiState', [], null);
-    }
-
-    function applyBookingDebugBlocksUi(){
-      return safeInvoke(ensureBookingDebugFlow(), 'applyBookingDebugBlocksUi', [], null);
-    }
-
-    function setBookingDebugBlocks(enabled){
-      return safeInvoke(ensureBookingDebugFlow(), 'setBookingDebugBlocks', [enabled], null);
-    }
-
-    function forceBookingDebugStage(mode){
-      return safeInvoke(ensureBookingDebugFlow(), 'forceBookingDebugStage', [mode], null);
     }
 
     function trackOnce(event, params = {}){
@@ -16727,33 +16777,7 @@ function runOfferSearch(overrides){
     }
 
     function applyHeroV3SimpleMode(){
-      const desktopView = document.getElementById('desktopView');
-      const mobileView = document.getElementById('mobileView');
-      const enabled = HERO_V3_SIMPLE_ENABLED;
-      document.documentElement.classList.toggle('hero-v3-simple-enabled', enabled);
-      document.body.classList.toggle('hero-v3-simple-enabled', enabled);
-      desktopView?.classList.toggle('hero-v3-simple', enabled);
-      mobileView?.classList.toggle('hero-v3-simple', enabled);
-      enabled && document.getElementById('debugControls')?.classList.add('hidden');
-      setHeroPhoneDropdownOpen(false);
-      const menuToggleText = document.querySelector('.hero-menu-toggle-text');
-      menuToggleText && (menuToggleText.textContent = enabled ? '⋯' : 'Меню');
-      const heroTag = document.querySelector('#desktopView .hero-tag');
-      heroTag && enabled && (heroTag.textContent = '66 км от Москвы · смены июнь–август');
-      const heroTitle = document.querySelector('#desktopView .hero-title');
-      heroTitle && enabled && (heroTitle.innerHTML = 'AI-лагерь 7–14:<br><span class=\"hero-title-accent\">проект за смену</span>');
-      const heroSub = document.querySelector('#desktopView .hero-sub');
-      heroSub && enabled && (heroSub.textContent = 'Python · Minecraft · AI · Хакатон · Бассейн');
-      const heroSlogan = document.querySelector('#desktopView .hero-slogan');
-      heroSlogan && enabled && (heroSlogan.textContent = '6 лет работы · 1200+ детей · ★ 5.0 Яндекс Карты');
-      const stepLabels = ['1. ВОЗРАСТ', '2. ВАШ ТЕЛЕФОН', '3. —', '4. —'];
-      document.querySelectorAll('#desktop-booking-card .booking-step').forEach((node, idx) => {
-        enabled && (node.textContent = stepLabels[idx] || node.textContent);
-      });
-      const bookingTitle = document.getElementById('desktopBookingTitle');
-      bookingTitle && enabled && (bookingTitle.textContent = 'Подберём смену за 1 минуту');
-      const bookingLead = document.getElementById('desktopBookingLead');
-      bookingLead && enabled && (bookingLead.textContent = 'Программу и даты — за 10 минут');
+      return safeInvoke(ensureHeroV3SimpleFlow(), 'applyMode', [], null);
     }
 
     function preloadHeroAssets(){
@@ -17485,7 +17509,6 @@ function runOfferSearch(overrides){
       const keepMobileMode = state.mobileMode || 'full';
       const keepOfferModalTheme = ((state.offerModalTheme === 'dark') && 'dark') || 'light';
       const keepOfferLayout = 'current';
-      const keepDebugBookingBlocks = !!state.debugBookingBlocks;
       state = {
         age: null,
         ageSelected: false,
@@ -17516,7 +17539,7 @@ function runOfferSearch(overrides){
         mobileTeamIndex: 0,
         mobileDocsExpanded: false,
         offerSearching: false,
-        debugBookingBlocks: keepDebugBookingBlocks
+        debugBookingBlocks: false
       };
 
       ['parentName','parentPhone'].forEach((id) => {
@@ -17556,7 +17579,6 @@ function runOfferSearch(overrides){
       switchView(keepView);
       applyDesktopMode();
       applyMobileMode();
-      applyBookingDebugBlocksUi();
       persist();
       showHint('Сценарий бронирования сброшен. Начните с выбора возраста.');
     }
@@ -20198,7 +20220,6 @@ function runOfferSearch(overrides){
     }
     normalizeCloseIconButtons();
     const deferredInit = () => {
-      applyDebugUiState();
       injectHeroSeasonOfferCta();
       initFloatingContactsWidget();
       initHeroAbDevPanel();
