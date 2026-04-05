@@ -4741,34 +4741,6 @@
       getState: () => state
     }], null);
 
-    function bindModalKeyboardShortcuts(){
-      document.addEventListener('keydown', (e) => {
-        const lightbox = document.getElementById('mediaLightbox');
-        if(!lightbox || lightbox.classList.contains('hidden')) return;
-        if(e.key === 'Escape') closeMedia();
-        if(e.key === 'ArrowRight') nextMedia();
-        if(e.key === 'ArrowLeft') prevMedia();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        const modal = document.getElementById('videoModal');
-        if(!modal || modal.classList.contains('hidden')) return;
-        if(e.key === 'Escape') closeVideo();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        const modal = document.getElementById('calendarModal');
-        if(!modal || modal.classList.contains('hidden')) return;
-        if(e.key === 'Escape') closeCalendar();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        const modal = document.getElementById('sectionModal');
-        if(!modal || modal.classList.contains('hidden')) return;
-        if(e.key === 'Escape') closeSectionModal();
-      });
-    }
-
     safeInvoke(ensureGlobalUiBindingsApi(), 'init', [{
       document,
       navigateToSection,
@@ -4789,7 +4761,6 @@
       closeSectionModal,
       openNoticeModal,
       bookingText,
-      bindModalKeyboardShortcuts,
       getViewportPreviewView,
       switchView,
       initHero,

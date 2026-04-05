@@ -28,7 +28,6 @@
     var closeSectionModal = ctx.closeSectionModal || function(){};
     var openNoticeModal = ctx.openNoticeModal || function(){};
     var bookingText = ctx.bookingText || function(){ return ''; };
-    var bindModalKeyboardShortcuts = ctx.bindModalKeyboardShortcuts || function(){};
     var getViewportPreviewView = ctx.getViewportPreviewView || function(){ return ''; };
     var switchView = ctx.switchView || function(){};
     var initHero = ctx.initHero || function(){};
@@ -52,6 +51,34 @@
     var buildHeroVariantMeta = ctx.buildHeroVariantMeta || function(){ return {}; };
     var bookingDesktopIds = ctx.bookingDesktopIds || {};
     var bookingMobileIds = ctx.bookingMobileIds || {};
+
+    function bindModalKeyboardShortcuts(){
+      doc.addEventListener('keydown', function(e){
+        var lightbox = doc.getElementById('mediaLightbox');
+        if(!lightbox || lightbox.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeMedia();
+        if(e.key === 'ArrowRight') nextMedia();
+        if(e.key === 'ArrowLeft') prevMedia();
+      });
+
+      doc.addEventListener('keydown', function(e){
+        var modal = doc.getElementById('videoModal');
+        if(!modal || modal.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeVideo();
+      });
+
+      doc.addEventListener('keydown', function(e){
+        var modal = doc.getElementById('calendarModal');
+        if(!modal || modal.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeCalendar();
+      });
+
+      doc.addEventListener('keydown', function(e){
+        var modal = doc.getElementById('sectionModal');
+        if(!modal || modal.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeSectionModal();
+      });
+    }
 
     doc.addEventListener('click', function(e){
       var navEl = e.target.closest('[data-nav]');

@@ -9962,7 +9962,6 @@ function runOfferSearch(overrides){
     var closeSectionModal = ctx.closeSectionModal || function(){};
     var openNoticeModal = ctx.openNoticeModal || function(){};
     var bookingText = ctx.bookingText || function(){ return ''; };
-    var bindModalKeyboardShortcuts = ctx.bindModalKeyboardShortcuts || function(){};
     var getViewportPreviewView = ctx.getViewportPreviewView || function(){ return ''; };
     var switchView = ctx.switchView || function(){};
     var initHero = ctx.initHero || function(){};
@@ -9986,6 +9985,34 @@ function runOfferSearch(overrides){
     var buildHeroVariantMeta = ctx.buildHeroVariantMeta || function(){ return {}; };
     var bookingDesktopIds = ctx.bookingDesktopIds || {};
     var bookingMobileIds = ctx.bookingMobileIds || {};
+
+    function bindModalKeyboardShortcuts(){
+      doc.addEventListener('keydown', function(e){
+        var lightbox = doc.getElementById('mediaLightbox');
+        if(!lightbox || lightbox.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeMedia();
+        if(e.key === 'ArrowRight') nextMedia();
+        if(e.key === 'ArrowLeft') prevMedia();
+      });
+
+      doc.addEventListener('keydown', function(e){
+        var modal = doc.getElementById('videoModal');
+        if(!modal || modal.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeVideo();
+      });
+
+      doc.addEventListener('keydown', function(e){
+        var modal = doc.getElementById('calendarModal');
+        if(!modal || modal.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeCalendar();
+      });
+
+      doc.addEventListener('keydown', function(e){
+        var modal = doc.getElementById('sectionModal');
+        if(!modal || modal.classList.contains('hidden')) return;
+        if(e.key === 'Escape') closeSectionModal();
+      });
+    }
 
     doc.addEventListener('click', function(e){
       var navEl = e.target.closest('[data-nav]');
@@ -20133,34 +20160,6 @@ function runOfferSearch(overrides){
       getState: () => state
     }], null);
 
-    function bindModalKeyboardShortcuts(){
-      document.addEventListener('keydown', (e) => {
-        const lightbox = document.getElementById('mediaLightbox');
-        if(!lightbox || lightbox.classList.contains('hidden')) return;
-        if(e.key === 'Escape') closeMedia();
-        if(e.key === 'ArrowRight') nextMedia();
-        if(e.key === 'ArrowLeft') prevMedia();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        const modal = document.getElementById('videoModal');
-        if(!modal || modal.classList.contains('hidden')) return;
-        if(e.key === 'Escape') closeVideo();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        const modal = document.getElementById('calendarModal');
-        if(!modal || modal.classList.contains('hidden')) return;
-        if(e.key === 'Escape') closeCalendar();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        const modal = document.getElementById('sectionModal');
-        if(!modal || modal.classList.contains('hidden')) return;
-        if(e.key === 'Escape') closeSectionModal();
-      });
-    }
-
     safeInvoke(ensureGlobalUiBindingsApi(), 'init', [{
       document,
       navigateToSection,
@@ -20181,7 +20180,6 @@ function runOfferSearch(overrides){
       closeSectionModal,
       openNoticeModal,
       bookingText,
-      bindModalKeyboardShortcuts,
       getViewportPreviewView,
       switchView,
       initHero,
