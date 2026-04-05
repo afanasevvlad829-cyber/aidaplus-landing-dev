@@ -1491,34 +1491,30 @@
       trackOnce('faq_open');
     }
 
-    const HERO_IMAGES = [
-      '/assets/images/hero-camp-sunset-20260328.png'
-    ];
-
-    const HERO_MOBILE =
-      '/assets/images/hero-camp-sunset-20260328.png';
-    const HERO_IMAGES_B = [
-      '/assets/images/hero-ab-pool-20260401.jpeg'
-    ];
-    const HERO_MOBILE_B =
-      '/assets/images/hero-ab-pool-20260401.jpeg';
-    const HERO_AB_ASSETS = Object.freeze({
-      A: Object.freeze({images:HERO_IMAGES, mobile:HERO_MOBILE}),
-      B: Object.freeze({images:HERO_IMAGES_B, mobile:HERO_MOBILE_B})
+    const HERO_AB_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.heroAb) || {};
+    const HERO_AB_ASSETS = Object.freeze(HERO_AB_RUNTIME_CONFIG.assets || {
+      A: Object.freeze({
+        images: Object.freeze(['/assets/images/hero-camp-sunset-20260328.png']),
+        mobile: '/assets/images/hero-camp-sunset-20260328.png'
+      }),
+      B: Object.freeze({
+        images: Object.freeze(['/assets/images/hero-ab-pool-20260401.jpeg']),
+        mobile: '/assets/images/hero-ab-pool-20260401.jpeg'
+      })
     });
     const HERO_AB_TEST_KEY = 'aidacamp_hero_ab_v1';
     const HERO_AB_TEST_ID = 'hero_primary_block_v1';
-    const HERO_AB_VARIANT_LABELS = Object.freeze({
+    const HERO_AB_VARIANT_LABELS = Object.freeze(HERO_AB_RUNTIME_CONFIG.variantLabels || {
       A: 'Control',
       B: 'Pool Motion'
     });
-    const HERO_AB_SHIFT_UP_MS = 7000;
-    const HERO_AB_BENEFIT_REVEAL_DELAY_MS = 7600;
-    const HERO_AB_BENEFIT_STEP_MS = 4000;
-    const HERO_AB_DESKTOP_SHIFT_UP_MS = 5000;
-    const HERO_AB_DESKTOP_BENEFIT_REVEAL_DELAY_MS = 5000;
-    const HERO_AB_DESKTOP_BG_ONLY = false;
-    const HERO_AB_MOBILE_EFFECTS_ENABLED = false;
+    const HERO_AB_SHIFT_UP_MS = Number(HERO_AB_RUNTIME_CONFIG.timings?.shiftUpMs || 7000);
+    const HERO_AB_BENEFIT_REVEAL_DELAY_MS = Number(HERO_AB_RUNTIME_CONFIG.timings?.benefitRevealDelayMs || 7600);
+    const HERO_AB_BENEFIT_STEP_MS = Number(HERO_AB_RUNTIME_CONFIG.timings?.benefitStepMs || 4000);
+    const HERO_AB_DESKTOP_SHIFT_UP_MS = Number(HERO_AB_RUNTIME_CONFIG.timings?.desktopShiftUpMs || 5000);
+    const HERO_AB_DESKTOP_BENEFIT_REVEAL_DELAY_MS = Number(HERO_AB_RUNTIME_CONFIG.timings?.desktopBenefitRevealDelayMs || 5000);
+    const HERO_AB_DESKTOP_BG_ONLY = !!HERO_AB_RUNTIME_CONFIG.desktopBgOnly;
+    const HERO_AB_MOBILE_EFFECTS_ENABLED = !!HERO_AB_RUNTIME_CONFIG.mobileEffectsEnabled;
     const HERO_V3_SIMPLE_QUERY_KEY = 'hero_v3_simple';
     const HERO_V3_SIMPLE_ENABLED = hasQueryFlag(HERO_V3_SIMPLE_QUERY_KEY);
     const AB_EVENT_ENDPOINT_DEFAULT = 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event';
@@ -1534,24 +1530,8 @@
       'telegram_click',
       'hero_variant_telegram_click_new'
     ]);
-    const HERO_BENEFITS_LAYOUT_EXPERIMENT = true;
-    const HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS = Object.freeze([
-      Object.freeze({
-        title:'AI-проект за смену',
-        icon:'/assets/icons/ai-svgrepo-com.svg',
-        iconClass:''
-      }),
-      Object.freeze({
-        title:'Без телефонов',
-        icon:'/assets/icons/mobile-off-svgrepo-com.svg',
-        iconClass:''
-      }),
-      Object.freeze({
-        title:'Бассейн и спорт',
-        icon:'/assets/icons/swim-svgrepo-com.svg',
-        iconClass:''
-      })
-    ]);
+    const HERO_BENEFITS_LAYOUT_EXPERIMENT = !!HERO_AB_RUNTIME_CONFIG.benefitsLayoutExperiment;
+    const HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS = Object.freeze(HERO_AB_RUNTIME_CONFIG.benefitsItems || []);
 
     let heroAbVariant = 'A';
     let heroAbTimers = [];
