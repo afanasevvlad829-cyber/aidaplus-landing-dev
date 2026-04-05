@@ -76,8 +76,6 @@
     }
 
     .hero-v3-simple.booking-stage-1 .booking-steps .booking-step:nth-child(1),
-    .hero-v3-simple.booking-stage-three-legacy .booking-steps .booking-step:nth-child(1),
-    .hero-v3-simple.booking-stage-three-legacy .booking-steps .booking-step:nth-child(4),
     .hero-v3-simple.booking-completed .booking-steps .booking-step:nth-child(4){
       opacity:1;
     }
@@ -98,8 +96,13 @@
       animation:none !important;
     }
 
+    .hero-v3-simple .hero-shell{
+      min-height:560px;
+    }
+
     .hero-v3-simple .hero-content{
       padding-top:4px;
+      max-width:640px;
     }
 
     .hero-v3-simple .hero-tag{
@@ -133,6 +136,10 @@
       display:flex;
       align-items:flex-start;
       gap:10px;
+      min-height:52px;
+      padding:14px 28px;
+      margin:0 -28px 10px;
+      background:rgba(0,0,0,.15);
     }
 
     #desktopView.hero-v3-simple .hero-left-tools{
@@ -151,20 +158,26 @@
     }
 
     #desktopView.hero-v3-simple .hero-brand-label{
-      font-size:20px;
+      font-size:12px;
+      color:rgba(255,255,255,.9);
+      text-shadow:0 1px 2px rgba(0,0,0,.45);
     }
 
     #desktopView.hero-v3-simple .hero-mode-hashtag{
-      font-size:36px;
-      line-height:1.04;
+      font-size:40px;
+      line-height:1;
     }
 
     #desktopView.hero-v3-simple .hero-menu-wrap{
-      margin-left:auto;
+      margin-left:0;
       align-self:flex-start;
       width:auto;
       min-width:0;
       display:block;
+    }
+
+    #desktopView.hero-v3-simple .hero-menu-wrap + .hero-phone-wrap{
+      margin-left:auto;
     }
 
     #desktopView.hero-v3-simple .hero-menu-toggle{
@@ -288,8 +301,12 @@
       border:1px solid var(--line);
       box-shadow:var(--shadow);
       backdrop-filter:none;
-      max-width:376px;
+      width:320px;
+      max-width:320px;
+      min-height:382px;
       margin-top:2px;
+      border-radius:14px;
+      padding:22px;
     }
 
     #desktopView.hero-v3-simple #desktop-booking-card{
@@ -309,8 +326,9 @@
     }
 
     #mobileView.hero-v3-simple .mobile-hero{
-      padding-top:14px;
+      padding-top:56px;
       border-radius:22px;
+      min-height:560px;
     }
 
     #mobileView.hero-v3-simple .mobile-hero-nav-secondary,
@@ -331,6 +349,8 @@
       border:1px solid var(--line);
       box-shadow:var(--shadow);
       backdrop-filter:none;
+      border-top-left-radius:24px;
+      border-top-right-radius:24px;
     }
 
     #mobileView.hero-v3-simple .mobile-booking-card h3,
