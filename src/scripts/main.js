@@ -841,8 +841,6 @@
         getBookingViewConfig,
         syncGuidedState,
         getBookingStage,
-        placeStage2ContentForView,
-        syncCompletedBookingScaffold,
         stopVariantFlowScenario: () => safeInvoke(ensureVariantFlow(), 'stopVariantFlowScenario', [], null),
         bookingText,
         hideVariantCoachBadge,
@@ -2319,108 +2317,6 @@
       card.style.setProperty('--booking-stage2-y-grid', vertical.grid);
       card.style.setProperty('--booking-stage2-x-flex', horizontal.flex);
       card.style.setProperty('--booking-stage2-x-grid', horizontal.grid);
-    }
-
-    function ensureStage2TransferHost(stepThree){
-      if(!stepThree) return null;
-      let host = stepThree.querySelector('.booking-stage2-transfer-host');
-      if(!host){
-        host = document.createElement('div');
-        host.className = 'booking-stage2-transfer-host';
-      }
-      return host;
-    }
-
-    function placeStage2ContentForView(cfg, stage, bookingCard){
-      if(!cfg || !bookingCard) return;
-      const stepTwo = bookingCard.querySelector('.booking-step-2');
-      const stepThree = bookingCard.querySelector('.booking-step-3');
-      if(!stepTwo || !stepThree) return;
-
-      const allShiftsBtn = bookingCard.querySelector('.booking-all-shifts-link');
-      const host = ensureStage2TransferHost(stepThree);
-      if(!host) return;
-
-      const toTransfer = [allShiftsBtn].filter(Boolean);
-      const insertBackToStepTwo = (node) => {
-        const anchor = stepTwo.querySelector('.guided-inline-hint');
-        if(anchor && anchor.parentElement === stepTwo){
-          if(anchor.nextSibling){
-            stepTwo.insertBefore(node, anchor.nextSibling);
-          } else {
-            stepTwo.appendChild(node);
-          }
-          return;
-        }
-        stepTwo.appendChild(node);
-      };
-
-      if(stage === 2){
-        if(host.parentElement !== stepThree){
-          stepThree.prepend(host);
-        }
-        toTransfer.forEach((node) => host.appendChild(node));
-        stepThree.classList.add('booking-stage2-transfer-enabled');
-        return;
-      }
-
-      if(host.parentElement){
-        toTransfer.forEach((node) => insertBackToStepTwo(node));
-        host.remove();
-      }
-      stepThree.classList.remove('booking-stage2-transfer-enabled');
-    }
-
-    function syncCompletedBookingScaffold(viewCfg, bookingCard){
-      const cfg = resolveBookingViewCfg(viewCfg);
-      const card = bookingCard || document.getElementById(cfg.cardId);
-      if(!card) return;
-      const stepsRoot = document.getElementById(cfg.stepsId);
-      const chipHost = document.getElementById(cfg.summaryChipsId);
-      const stepThree = card.querySelector('.booking-step-3');
-      if(!stepsRoot || !stepThree) return;
-
-      let topClose = stepsRoot.querySelector('.booking-completed-top-close');
-      let chipBar = chipHost?.querySelector('.booking-completed-chipbar');
-      let bottomWrap = stepThree.querySelector('.booking-completed-bottom');
-
-      if(state.bookingCompleted){
-        stepsRoot.classList.add('booking-steps-completed');
-        if(topClose){
-          topClose.remove();
-        }
-        if(chipHost){
-          chipHost.classList.add('visible', 'booking-summary-chips--completed');
-          if(!chipBar){
-            chipBar = document.createElement('div');
-            chipBar.className = 'booking-completed-chipbar';
-            chipHost.appendChild(chipBar);
-          }
-          chipBar.innerHTML = `
-            <span class="booking-completed-chipbar-title">Что дальше?</span>
-            <button type="button" class="booking-completed-top-close booking-completed-chipbar-close" data-action="reset-booking-all" aria-label="Сбросить бронирование">
-              <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
-            </button>
-          `;
-        }
-        if(!bottomWrap){
-          bottomWrap = document.createElement('div');
-          bottomWrap.className = 'booking-completed-bottom';
-          stepThree.appendChild(bottomWrap);
-        }
-        bottomWrap.innerHTML = '<a class="completed-followup-link completed-followup-link--bottom cta-main" href="#" data-action="copy-invite-link">Копировать ссылку приглашение</a>';
-        stepThree.classList.add('booking-completed-bottom-step');
-        return;
-      }
-
-      stepsRoot.classList.remove('booking-steps-completed');
-      if(topClose) topClose.remove();
-      if(chipBar) chipBar.remove();
-      if(chipHost){
-        chipHost.classList.remove('booking-summary-chips--completed');
-      }
-      if(bottomWrap) bottomWrap.remove();
-      stepThree.classList.remove('booking-completed-bottom-step');
     }
 
     function renderSteps(viewCfg){
