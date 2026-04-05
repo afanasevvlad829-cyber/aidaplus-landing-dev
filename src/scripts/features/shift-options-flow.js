@@ -6,6 +6,7 @@
     const formatPrice = typeof ctx.formatPrice === 'function' ? ctx.formatPrice : ((value) => String(value || ''));
     const shiftDaysLabel = typeof ctx.shiftDaysLabel === 'function' ? ctx.shiftDaysLabel : (() => '');
     const hasSelectedAge = typeof ctx.hasSelectedAge === 'function' ? ctx.hasSelectedAge : (() => false);
+    const syncGuidedState = typeof ctx.syncGuidedState === 'function' ? ctx.syncGuidedState : (() => {});
     const showHint = typeof ctx.showHint === 'function' ? ctx.showHint : (() => {});
     const nudgeUserToNextStep = typeof ctx.nudgeUserToNextStep === 'function' ? ctx.nudgeUserToNextStep : (() => {});
     const selectShift = typeof ctx.selectShift === 'function' ? ctx.selectShift : (() => {});
@@ -210,10 +211,83 @@
       });
     }
 
+    function renderShiftCards(){
+      syncGuidedState();
+      const shifts = getShifts();
+      const grid = document.getElementById('shiftCardsGrid');
+      if(!grid) return;
+      const shortGrid = document.getElementById('shortShiftCards');
+      const mainShifts = shifts.filter((shift) => !shift.isShort);
+      const shortShifts = shifts.filter((shift) => !!shift.isShort);
+      const showExtendedDescription = hasSelectedAge();
+      const cleanShiftCardTitle = (title) => {
+        const raw = String(title || '').trim();
+        const cleaned = raw
+          .replace(/^\s*\d+(?:[.,]\d+)?\s*[\])}.:\-–—,]?\s*/u, '')
+          .replace(/^(?:TT|ТТ)\s*[\d.]+[\s:.\-–—]*/iu, '')
+          .trim();
+        return cleaned || raw;
+      };
+
+      grid.innerHTML = mainShifts.map((shift) => `
+        <div class="mini-card">
+          <h4>${cleanShiftCardTitle(shift.title)}</h4>
+          <div class="price-row">
+            <strong>${formatPrice(shift.price)}</strong>
+            <span class="price-row-actions">
+              <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${shift.id}" aria-label="Описание смены ${shift.title}">
+                <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" aria-hidden="true">
+              </button>
+              <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${shift.id}" aria-label="Календарь ${shift.title}">
+                <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar3.svg" alt="" aria-hidden="true">
+              </button>
+            </span>
+          </div>
+          <div class="price-row-meta">${shift.dates} · ${shiftDaysLabel(shift)}</div>
+          ${showExtendedDescription
+            ? `
+              <p><strong>Коротко:</strong> ${shift.desc || ''}</p>
+              <p><strong>Подробно:</strong> ${getShiftDisplayDescription(shift)}</p>
+            `
+            : `<p>${shift.desc || ''}</p>`
+          }
+        </div>
+      `).join('');
+
+      if(shortGrid){
+        shortGrid.innerHTML = shortShifts.map((shift) => `
+          <div class="mini-card short-shift-card">
+            <div class="short-shift-head">
+              <h4>${cleanShiftCardTitle(shift.title)}</h4>
+              <span class="short-shift-tag">короткая смена</span>
+            </div>
+            <div class="price-row">
+              <strong>${formatPrice(shift.price)}</strong>
+              <span class="price-row-actions">
+                <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${shift.id}" aria-label="Описание смены ${shift.title}">
+                  <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" aria-hidden="true">
+                </button>
+                <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${shift.id}" aria-label="Календарь ${shift.title}">
+                  <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar3.svg" alt="" aria-hidden="true">
+                </button>
+              </span>
+            </div>
+            <div class="price-row-meta">${shift.dates}</div>
+            ${showExtendedDescription
+              ? `<p><strong>Коротко:</strong> ${shift.desc || ''}</p>`
+              : `<p>${shift.desc || ''}</p>`
+            }
+          </div>
+        `).join('');
+        shortGrid.closest('.programs-short-block')?.classList.remove('hidden');
+      }
+    }
+
     return Object.freeze({
       getShiftDisplayDescription,
       openShiftAboutModal,
-      renderShiftOptions
+      renderShiftOptions,
+      renderShiftCards
     });
   }
 

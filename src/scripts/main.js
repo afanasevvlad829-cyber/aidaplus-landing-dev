@@ -1219,6 +1219,7 @@
         formatPrice,
         shiftDaysLabel,
         hasSelectedAge,
+        syncGuidedState,
         showHint,
         nudgeUserToNextStep,
         selectShift,
@@ -2772,76 +2773,7 @@
     }
 
     function renderShiftCards(){
-      syncGuidedState();
-      const grid = document.getElementById('shiftCardsGrid');
-      if(!grid) return;
-      const shortGrid = document.getElementById('shortShiftCards');
-      const mainShifts = shifts.filter((s) => !s.isShort);
-      const shortShifts = shifts.filter((s) => !!s.isShort);
-      const showExtendedDescription = hasSelectedAge();
-      const cleanShiftCardTitle = (title) => {
-        const raw = String(title || '').trim();
-        const cleaned = raw
-          .replace(/^\s*\d+(?:[.,]\d+)?\s*[\])}.:\-–—,]?\s*/u, '')
-          .replace(/^(?:TT|ТТ)\s*[\d.]+[\s:.\-–—]*/iu, '')
-          .trim();
-        return cleaned || raw;
-      };
-
-      grid.innerHTML = mainShifts.map(s => `
-        <div class="mini-card">
-          <h4>${cleanShiftCardTitle(s.title)}</h4>
-          <div class="price-row">
-            <strong>${formatPrice(s.price)}</strong>
-            <span class="price-row-actions">
-              <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" aria-label="Описание смены ${s.title}">
-                <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" aria-hidden="true">
-              </button>
-              <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
-                <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar3.svg" alt="" aria-hidden="true">
-              </button>
-            </span>
-          </div>
-          <div class="price-row-meta">${s.dates} · ${shiftDaysLabel(s)}</div>
-          ${showExtendedDescription
-            ? `
-              <p><strong>Коротко:</strong> ${s.desc || ''}</p>
-              <p><strong>Подробно:</strong> ${getShiftDisplayDescription(s)}</p>
-            `
-            : `<p>${s.desc || ''}</p>`
-          }
-        </div>
-      `).join('');
-
-      if(shortGrid){
-        shortGrid.innerHTML = shortShifts.map((s) => `
-          <div class="mini-card short-shift-card">
-            <div class="short-shift-head">
-              <h4>${cleanShiftCardTitle(s.title)}</h4>
-              <span class="short-shift-tag">короткая смена</span>
-            </div>
-            <div class="price-row">
-              <strong>${formatPrice(s.price)}</strong>
-              <span class="price-row-actions">
-                <button class="shift-calendar-btn shift-about-btn" type="button" data-action="toggle-shift-about" data-shift-id="${s.id}" aria-label="Описание смены ${s.title}">
-                  <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" aria-hidden="true">
-                </button>
-                <button class="shift-calendar-btn" type="button" data-action="open-calendar" data-shift-id="${s.id}" aria-label="Календарь ${s.title}">
-                  <img class="ac-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar3.svg" alt="" aria-hidden="true">
-                </button>
-              </span>
-            </div>
-            <div class="price-row-meta">${s.dates}</div>
-            ${showExtendedDescription
-              ? `
-                <p><strong>Коротко:</strong> ${s.desc || ''}</p>
-              `
-              : `<p>${s.desc || ''}</p>`
-            }
-          </div>
-        `).join('');
-        shortGrid.closest('.programs-short-block')?.classList.remove('hidden');
-      }
+      return safeInvoke(ensureShiftOptionsFlow(), 'renderShiftCards', [], null);
     }
 
     function contactIconMarkup(label){
