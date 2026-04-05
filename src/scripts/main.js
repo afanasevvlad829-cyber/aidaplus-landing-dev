@@ -674,11 +674,13 @@
     let bookingViewFlowApi = null;
     let bookingHintFlowApi = null;
     let viewModeFlowApi = null;
+    let offerFlowApi = null;
     let actionDispatcherApi = null;
     let bookingInlineLeadApi = null;
     let mediaGestureBindingsApi = null;
     let globalUiBindingsApi = null;
     let runtimeQualityPipelineApi = null;
+    let bookingRuntimeBridgeApi = null;
 
     function ensureTelemetryFlow(){
       if(telemetryFlowApi) return telemetryFlowApi;
@@ -969,6 +971,42 @@
         applyMobileSectionAccordion
       });
       return viewModeFlowApi;
+    }
+
+    function ensureOfferFlow(){
+      if(offerFlowApi) return offerFlowApi;
+      const api = window.AC_FEATURES?.offerFlow || null;
+      offerFlowApi = asFeatureApi(api);
+      return offerFlowApi;
+    }
+
+    function ensureBookingRuntimeBridge(){
+      if(bookingRuntimeBridgeApi) return bookingRuntimeBridgeApi;
+      const createBridge = window.AC_RUNTIME_BOOKING_BRIDGE?.createBridge;
+      if(typeof createBridge !== 'function') return null;
+      bookingRuntimeBridgeApi = createBridge({
+        getState: () => state,
+        getSelectedShift,
+        shiftDaysLabel,
+        clearShiftOptionPanels,
+        persist,
+        renderAll,
+        bookingText,
+        track,
+        buildHeroVariantMeta,
+        showHint,
+        nudgeUserToNextStep,
+        formatVariantHint,
+        getPrimaryActionState,
+        isOfferActive,
+        startTimer,
+        syncGuidedState,
+        formatPrice,
+        ageLabel,
+        stripRemainingPrefix,
+        formatRemainingCompact
+      });
+      return bookingRuntimeBridgeApi;
     }
 
     function ensureActionDispatcher(){
@@ -3165,12 +3203,8 @@
     function applyOfferLayoutMode(){
       const mode = normalizeMode(state.offerLayout, OFFER_LAYOUT_MODES, 'current');
       const currentBtn = document.getElementById('offerLayoutCurrentBtn');
-      const legacyBtn = document.getElementById('offerLayoutLegacyBtn');
       if(currentBtn){
         currentBtn.classList.toggle('active', mode === 'current');
-      }
-      if(legacyBtn){
-        legacyBtn.classList.toggle('active', mode === 'legacy');
       }
       const card = document.getElementById('offerCard');
       if(card){
@@ -4528,294 +4562,112 @@
     }
 
     function handlePrimaryCTA(){
-      const variant = heroVariantState || resolveHeroVariantFromUtm();
-      const copy = variant.copy || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER];
-      if(!hasSelectedAge()){
-        track('hero_variant_click_new', buildHeroVariantMeta({cta: variant.copy?.cta || ''}));
-        const hintText = copy.hintStage1 || 'Чтобы продолжить, выберите возраст.';
-        showHint(hintText, 'age');
-        nudgeUserToNextStep(hintText);
-        return;
-      }
-
-      if(!state.shiftId || HERO_V3_SIMPLE_ENABLED){
-        const simpleScope = HERO_V3_SIMPLE_ENABLED && (state.previewView === 'mobile' ? 'booking-mobile' : 'booking-desktop');
-        const hintText = formatVariantHint(copy.hintStage2 || 'Выберите подходящую смену.');
-        return simpleScope
-          ? openInlineLead(simpleScope)
-          : (showHint(hintText, 'shift'), nudgeUserToNextStep(hintText));
-      }
-
-      const action = getPrimaryActionState();
-      if(action.disabled) return;
-
-      if(state.offerStage === 0){
-        runOfferSearch();
-        return;
-      }
-
-      openForm();
+      return safeInvoke(ensureBookingRuntimeBridge(), 'handlePrimaryCTA', [{
+        state,
+        heroVariantState,
+        resolveHeroVariantFromUtm,
+        HERO_VARIANT_COPY,
+        HERO_VARIANT_DEFAULT_TIER,
+        hasSelectedAge,
+        bookingText,
+        track,
+        buildHeroVariantMeta,
+        showHint,
+        nudgeUserToNextStep,
+        formatVariantHint,
+        getPrimaryActionState,
+        runOfferSearch,
+        isOfferActive,
+        startTimer,
+        syncGuidedState,
+        getSelectedShift,
+        shiftDaysLabel,
+        formatPrice,
+        ageLabel,
+        stripRemainingPrefix,
+        formatRemainingCompact,
+        selectedShiftPayload,
+        simpleModeEnabled: HERO_V3_SIMPLE_ENABLED,
+        getSimpleScope: () => (
+          state.previewView === 'mobile'
+            ? 'booking-mobile'
+            : 'booking-desktop'
+        ),
+        openInlineLead
+      }], null);
     }
 
     function runOfferSearch(){
-      const shift = getSelectedShift();
-      if(!shift){
-        nudgeUserToNextStep('Сначала выберите смену — потом мы сможем показать цену и условия.');
-        return;
-      }
-
-      const wrap = document.getElementById('offerOverlay');
-      const card = document.getElementById('offerCard');
-      card?.classList.add('offer-card-stable');
-      offerRunId += 1;
-      const currentRunId = offerRunId;
-      Object.assign(state, { offerSearching: true });
-      clearOfferTimeout();
-      track('offer_open', selectedShiftPayload());
-      track('offer_start', selectedShiftPayload());
-      wrap.classList.remove('hidden');
-      applyOfferModalTheme(card);
-
-      const useLegacyLayout = state.offerLayout === 'legacy';
-      card.innerHTML = useLegacyLayout
-        ? `
-          <div class="offer-state-shell offer-state-shell--search offer-state-shell--search-legacy">
-            <div class="offer-headline">
-              <h3>Ищем лучшую цену</h3>
-              <button class="form-close offer-close-btn offer-close-placeholder" type="button" aria-hidden="true" tabindex="-1">
-                <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
-              </button>
-            </div>
-            <div class="offer-legacy-search-icon" aria-hidden="true">
-              <img class="offer-legacy-search-icon__asset" src="/assets/icons/offer-search.svg" alt="">
-            </div>
-            <div class="offer-legacy-status" id="offerProgressLead">Смотрим текущие бронирования...</div>
-            <div class="offer-progress-track offer-progress-track--legacy">
-              <div class="offer-progress-fill" id="offerProgressFillLine"></div>
-            </div>
-            <p class="offer-legacy-note">Проверяем доступные условия по выбранной смене.</p>
-          </div>
-        `
-        : `
-          <div class="offer-state-shell offer-state-shell--search">
-            <div class="offer-headline">
-              <h3>Ищем лучшую цену</h3>
-              <button class="form-close offer-close-btn offer-close-placeholder" type="button" aria-hidden="true" tabindex="-1">
-                <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
-              </button>
-            </div>
-            <p id="offerProgressLead">Проверяем остаток мест и доступные условия для выбранной смены.</p>
-            <div class="offer-progress-track">
-              <div class="offer-progress-fill" id="offerProgressFillLine"></div>
-            </div>
-            <div class="offer-progress-steps">
-              <div class="offer-progress-step active" id="offerStepA">Проверяем смену</div>
-              <div class="offer-progress-step" id="offerStepB">Сверяем цену</div>
-              <div class="offer-progress-step" id="offerStepC">Генерируем код</div>
-            </div>
-          </div>
-        `;
-      normalizeCloseIconButtons(card);
-      card.querySelectorAll('[data-action="close-offer"]').forEach((btn) => btn.remove());
-      const fillEl = document.getElementById('offerProgressFillLine');
-      const leadEl = document.getElementById('offerProgressLead');
-      const stepA = document.getElementById('offerStepA');
-      const stepB = document.getElementById('offerStepB');
-      const stepC = document.getElementById('offerStepC');
-
-      const progressDurationMs = 7000;
-      if(fillEl){
-        fillEl.style.transition = 'none';
-        fillEl.style.width = '0%';
-        requestAnimationFrame(() => {
-          if(currentRunId !== offerRunId) return;
-          fillEl.style.transition = `width ${progressDurationMs}ms linear`;
-          fillEl.style.width = '100%';
-        });
-      }
-
-      const progressSteps = (useLegacyLayout
-        ? [
-          { delay: 900, lead: 'Смотрим текущие бронирования...' },
-          { delay: 2700, lead: 'Ищем свободные места...' },
-          { delay: 4700, lead: 'Проверяем отказы и неоплаты...' },
-          { delay: 6400, lead: 'Считаем максимально доступную цену...' }
-        ]
-        : [
-          {
-            delay: 2300,
-            lead: 'Сверяем цену и проверяем, можно ли зафиксировать условия.',
-            from: stepA,
-            to: stepB
-          },
-          {
-            delay: 4700,
-            lead: 'Готовим персональный код бронирования и закрепляем цену.',
-            from: stepB,
-            to: stepC
-          }
-        ]);
-
-      progressSteps.forEach((step) => {
-        offerTimeoutIds.push(setTimeout(() => {
-          if(currentRunId !== offerRunId) return;
-          if(leadEl && step.lead) leadEl.textContent = step.lead;
-          if(step.from && step.from.classList) step.from.classList.remove('active');
-          if(step.to && step.to.classList) step.to.classList.add('active');
-        }, step.delay));
-      });
-
-      const finalProgressDelay = progressDurationMs + 160;
-
-      offerTimeoutIds.push(setTimeout(() => {
-        if(currentRunId !== offerRunId) return;
-        clearOfferTimeout();
-        showOffer();
-      }, finalProgressDelay));
+      return safeInvoke(ensureOfferFlow(), 'runOfferSearch', [{
+        state,
+        document,
+        getSelectedShift,
+        nudgeUserToNextStep,
+        bookingText,
+        bumpOfferRunId: () => {
+          offerRunId += 1;
+          return offerRunId;
+        },
+        isOfferRunCurrent: (runId) => runId === offerRunId,
+        clearOfferTimeout,
+        pushOfferTimeout: (id) => {
+          offerTimeoutIds.push(id);
+        },
+        track,
+        selectedShiftPayload,
+        applyOfferModalTheme,
+        normalizeCloseIconButtons,
+        showOffer,
+        discountFactor: OFFER_DISCOUNT_FACTOR,
+        ttlHours: 72
+      }], null);
     }
 
     function openOfferCheck(){
-      runOfferSearch();
+      return safeInvoke(ensureOfferFlow(), 'openOfferCheck', [{
+        runOfferSearch
+      }], () => runOfferSearch());
     }
 
     function showOffer(){
-      const card = document.getElementById('offerCard');
-      const featureOfferUtils = window.AC_FEATURES && window.AC_FEATURES.offerUtils;
-      const selectedShift = getSelectedShift();
-      const basePrice = state.basePrice || ((selectedShift && selectedShift.price) || null);
-
-      if(basePrice){
-        if(featureOfferUtils && typeof featureOfferUtils.buildOfferState === 'function'){
-          const nextOfferState = featureOfferUtils.buildOfferState({
-            basePrice,
-            discountFactor: OFFER_DISCOUNT_FACTOR,
-            now: Date.now(),
-            ttlHours: 72
-          });
-          Object.assign(state, {
-            offerPrice: nextOfferState.offerPrice,
-            expiresAt: nextOfferState.expiresAt,
-            offerStage: nextOfferState.offerStage
-          });
-        } else {
-          Object.assign(state, {
-            offerPrice: Math.round(basePrice * OFFER_DISCOUNT_FACTOR),
-            expiresAt: Date.now() + 72 * 60 * 60 * 1000,
-            offerStage: 1
-          });
-        }
-      }
-
-      if(state.code){
-        Object.assign(state, { previousCode: state.code });
-      }
-      Object.assign(state, {
-        code: generateCode(),
-        nextCodePreview: null
-      });
-      Object.assign(state, { offerSearching: false });
-      persist();
-      track('offer_complete', selectedShiftPayload());
-      card?.classList.add('offer-card-stable');
-      applyOfferModalTheme(card);
-      const oldPriceText = (basePrice && formatPrice(basePrice)) || '—';
-      const newPriceText = formatPrice(state.offerPrice);
-      const appliedPrice = state.offerPrice || basePrice || 0;
-      const savingsValue = Math.max(0, (basePrice || 0) - appliedPrice);
-      const savingsText = formatPrice(savingsValue);
-      const savingsPercent = basePrice
-        ? `${Math.max(0, Math.round((savingsValue / basePrice) * 100))}%`
-        : '0%';
-
-      const useLegacyLayout = state.offerLayout === 'legacy';
-      card.innerHTML = useLegacyLayout
-        ? `
-          <div class="offer-state-shell offer-state-shell--result offer-state-shell--result-legacy">
-            <div class="offer-headline">
-              <h3>Нашли лучшие условия</h3>
-              <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">
-                <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
-              </button>
-            </div>
-            <div class="offer-legacy-result-banner">
-              <div class="offer-legacy-result-banner__icon" aria-hidden="true">
-                <img class="offer-legacy-result-banner__asset" src="/assets/icons/search-job-svgrepo-com.svg" alt="">
-              </div>
-              <div class="offer-legacy-result-banner__text">
-                <strong>Цена закреплена за вами</strong>
-                <span>На ограниченное время</span>
-              </div>
-            </div>
-            <div class="offer-legacy-price-box">
-              <small>Ваша цена</small>
-              <strong>${newPriceText}</strong>
-              <span>Вместо ${oldPriceText}</span>
-            </div>
-            <div class="offer-price-compare__benefits">
-              <span class="offer-benefit-chip"><strong>Выгода:</strong> ${savingsText}</span>
-              <span class="offer-benefit-chip"><strong>Разница:</strong> ${savingsPercent}</span>
-              ${state.code ? `<span class="offer-benefit-chip"><strong>Код бронирования:</strong> ${state.code}</span>` : ''}
-            </div>
-            <div class="offer-booking-block">
-              <p class="offer-booking-note">Действует 72 часа. Вы можете спокойно подумать и вернуться.</p>
-            </div>
-            <div class="overlay-actions">
-              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Забронировать</button>
-            </div>
-            <div class="inline-lead-host hidden" id="offerInlineLeadHost"></div>
-          </div>
-        `
-        : `
-          <div class="offer-state-shell offer-state-shell--result">
-            <div class="offer-headline">
-              <h3>Нашли лучшие условия</h3>
-              <button class="form-close offer-close-btn" type="button" data-action="close-offer" aria-label="Закрыть">
-                <img class="ac-icon" src="/assets/icons/close.svg" alt="" aria-hidden="true">
-              </button>
-            </div>
-            <div class="offer-price-compare">
-              <div class="offer-price-compare__new">
-                <small>Новая цена после проверки</small>
-                <strong>${newPriceText}</strong>
-              </div>
-              <div class="offer-price-compare__old">
-                <small>Старая цена</small>
-                <span>${oldPriceText}</span>
-              </div>
-              <div class="offer-price-compare__benefits">
-                <span class="offer-benefit-chip"><strong>Выгода:</strong> ${savingsText}</span>
-                <span class="offer-benefit-chip"><strong>Разница:</strong> ${savingsPercent}</span>
-                ${state.code ? `<span class="offer-benefit-chip"><strong>Код бронирования:</strong> ${state.code}</span>` : ''}
-              </div>
-            </div>
-            <div class="offer-booking-block">
-              <p class="offer-booking-note">Действует 72 часа. Вы можете спокойно подумать и вернуться.</p>
-            </div>
-
-            <div class="overlay-actions">
-              <button class="cta-main" id="offerApplyBtn" data-action="apply-offer" type="button">Забронировать</button>
-            </div>
-            <div class="inline-lead-host hidden" id="offerInlineLeadHost"></div>
-          </div>
-        `;
-      normalizeCloseIconButtons(card);
-
-      startTimer();
-      renderSummary();
-      renderBookingPanels();
+      return safeInvoke(ensureOfferFlow(), 'showOffer', [{
+        state,
+        document,
+        getSelectedShift,
+        featureOfferUtils: window.AC_FEATURES && window.AC_FEATURES.offerUtils,
+        discountFactor: OFFER_DISCOUNT_FACTOR,
+        ttlHours: 72,
+        generateCode,
+        persist,
+        track,
+        selectedShiftPayload,
+        applyOfferModalTheme,
+        formatPrice,
+        normalizeCloseIconButtons,
+        startTimer,
+        renderSummary,
+        renderBookingPanels
+      }], null);
     }
 
     function saveOfferAndClose(){
-      syncGuidedState();
-      clearOfferTimeout();
-      document.getElementById('offerOverlay').classList.add('hidden');
-      renderSummary();
-      renderBookingPanels();
+      return safeInvoke(ensureOfferFlow(), 'saveOfferAndClose', [{
+        syncGuidedState,
+        clearOfferTimeout,
+        document,
+        renderSummary,
+        renderBookingPanels
+      }], null);
     }
 
     function resetOfferProgressUI(){
-      clearOfferTimeout();
-      Object.assign(state, { offerSearching: false });
+      return safeInvoke(ensureOfferFlow(), 'resetOfferProgressUI', [{
+        clearOfferTimeout,
+        state
+      }], () => {
+        clearOfferTimeout();
+        Object.assign(state, { offerSearching: false });
+      });
     }
 
     function startTimer(){
