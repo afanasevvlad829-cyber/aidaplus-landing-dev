@@ -1,6 +1,6 @@
 # CODE_READY Pre-Report (No Rollout)
 
-Generated: 2026-04-05 07:44 MSK
+Generated: 2026-04-05 07:47 MSK
 
 ## Status
 
@@ -16,7 +16,7 @@ Generated: 2026-04-05 07:44 MSK
 - `js_ternary_count = 13`
 - `js_state_mutations = 0`
 - `dist_bytes = 56263`
-- `main_js_lines = 2861`
+- `main_js_lines = 2863`
 
 ## Ideal Targets (Zero Legacy cycle)
 
@@ -74,3 +74,4 @@ Generated: 2026-04-05 07:44 MSK
 
 - `CODE_READY=YES` (architecture/quality phase complete).
 - Rollout remains explicitly out of scope for this phase.
+- Zero-legacy guardrails are active (`no-business-in-main` counters locked to factual zero for active legacy refs).
