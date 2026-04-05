@@ -366,55 +366,29 @@
     };
 
     const METRIKA_ID = 96499295;
-    const MAX_CONTACT_URL = 'https://web.max.ru/185807479';
-    const LEGAL_REPO_SLUG = 'afanasevvlad829-cyber/aidaplus-landing-dev';
+    const RUNTIME_POLICY_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.runtimePolicy) || {};
+    const MAX_CONTACT_URL = String(RUNTIME_POLICY_CONFIG.maxContactUrl || 'https://web.max.ru/185807479');
+    const LEGAL_REPO_SLUG = String(RUNTIME_POLICY_CONFIG.legalRepoSlug || 'afanasevvlad829-cyber/aidaplus-landing-dev');
     const HERO_VARIANT_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.heroVariant) || {};
     const HERO_VARIANT_BANNER_TIER = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.bannerTier || {});
     const HERO_VARIANT_COPY = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.copy || {});
     const HERO_VARIANT_DEFAULT_TIER = String(HERO_VARIANT_RUNTIME_CONFIG.defaultTier || 'broad');
     const USE_DESKTOP_BASE_FOR_MOBILE = true;
-    const BUILD_VERSION_LABEL = 'v0.0.288 (ab-analytics-endpoint)';
-    const ARCHITECTURE_POLICY = Object.freeze({
+    const BUILD_VERSION_LABEL = String(RUNTIME_POLICY_CONFIG.buildVersionLabel || 'v0.0.288 (ab-analytics-endpoint)');
+    const ARCHITECTURE_POLICY = Object.freeze(RUNTIME_POLICY_CONFIG.architecturePolicy || {
       id: 'desktop-source-mobile-presentation',
       version: '2026-03-30',
       desktopSourceOfTruth: true,
       sharedStatePipeline: true,
       mobileUsesDesktopTemplates: true
     });
-    const QUALITY_SCORE_MODEL = Object.freeze({
+    const QUALITY_SCORE_MODEL = Object.freeze(RUNTIME_POLICY_CONFIG.qualityScoreModel || {
       scale: '0..10',
       debtScale: '0 best .. 10 worst',
       baselineVersion: 'v0.0.112 (debug-offer-layout-switch)',
-      css: Object.freeze({
-        start: 10,
-        penalties: Object.freeze({
-          duplicateSelectors: 0.25,
-          deadRules: 0.2,
-          highSpecificityHotspots: 0.35,
-          stageLeakage: 0.4,
-          mobileDesktopDivergence: 0.35
-        })
-      }),
-      js: Object.freeze({
-        start: 10,
-        penalties: Object.freeze({
-          branchComplexity: 0.35,
-          stateCoupling: 0.35,
-          duplicateHandlers: 0.25,
-          magicNumbers: 0.15,
-          legacyFlagsInProdPath: 0.35
-        })
-      }),
-      debt: Object.freeze({
-        start: 0,
-        increments: Object.freeze({
-          noGuardrails: 0.8,
-          monolithEdits: 0.7,
-          duplicatedUiLogic: 0.7,
-          unresolvedStageRegressions: 0.9,
-          debugArtifactsInProdPath: 0.7
-        })
-      })
+      css: Object.freeze({ start: 10, penalties: Object.freeze({}) }),
+      js: Object.freeze({ start: 10, penalties: Object.freeze({}) }),
+      debt: Object.freeze({ start: 0, increments: Object.freeze({}) })
     });
     const AIDACAMP_RUNTIME = (window.__AIDACAMP_RUNTIME && typeof window.__AIDACAMP_RUNTIME === 'object')
       ? window.__AIDACAMP_RUNTIME

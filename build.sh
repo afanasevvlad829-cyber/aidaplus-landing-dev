@@ -26,8 +26,12 @@ cdn_repo_css_path = root / "cdn" / "app.css"
 cdn_tilda_bundle_path = root / "dist" / "cdn" / "app.tilda.js"
 cdn_tilda_repo_bundle_path = root / "cdn" / "app.tilda.js"
 css_path = root / "src" / "styles" / "main.css"
-script_paths = [
-    root / "src" / "scripts" / "config" / "hero-variant-runtime.js",
+script_paths = []
+config_dir = root / "src" / "scripts" / "config"
+if config_dir.exists():
+    script_paths.extend(sorted(config_dir.glob("*.js")))
+
+script_paths.extend([
     root / "src" / "scripts" / "core" / "view-mode.js",
     root / "src" / "scripts" / "core" / "block-factory.js",
     root / "src" / "scripts" / "core" / "modular-runtime.js",
@@ -35,7 +39,7 @@ script_paths = [
     root / "src" / "scripts" / "core" / "runtime-content.js",
     root / "src" / "scripts" / "core" / "bootstrap-deferred-queue.js",
     root / "src" / "scripts" / "core" / "booking-runtime-bridge.js",
-]
+])
 features_dir = root / "src" / "scripts" / "features"
 if features_dir.exists():
     script_paths.extend(sorted(features_dir.glob("*.js")))
