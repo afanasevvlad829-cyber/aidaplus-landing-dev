@@ -3185,120 +3185,6 @@
       if(handleDataActionClick(e.target)){
         return;
       }
-
-      const photoFilterBtn = e.target.closest('[data-photo-filter]');
-      if(photoFilterBtn){
-        setPhotoFilter(photoFilterBtn.dataset.photoFilter);
-        const sectionModal = document.getElementById('sectionModal');
-        const sectionModalOpened = !!(sectionModal && !sectionModal.classList.contains('hidden'));
-        if((state.previewView === 'desktop' && state.desktopMode === 'compact') || (state.previewView === 'mobile' && sectionModalOpened)){
-          openSectionModal('section-photos');
-        }
-        return;
-      }
-
-      const faqFilterBtn = e.target.closest('[data-faq-filter]');
-      if(faqFilterBtn){
-        setFaqFilter(faqFilterBtn.dataset.faqFilter);
-        const sectionModal = document.getElementById('sectionModal');
-        const sectionModalOpened = !!(sectionModal && !sectionModal.classList.contains('hidden'));
-        if((state.previewView === 'desktop' && state.desktopMode === 'compact') || (state.previewView === 'mobile' && sectionModalOpened)){
-          openSectionModal('section-faq');
-        }
-        return;
-      }
-
-      const ageWrap = e.target.closest(`#${BOOKING_VIEWS.desktop.ageTabsId}, #${BOOKING_VIEWS.mobile.ageTabsId}`);
-      const ageBtn = e.target.closest('button');
-      if(ageWrap && ageBtn){
-        const ageText = (ageBtn.textContent || '').trim();
-        if(ageText){
-          track('age_select', {age_label: ageText});
-        }
-      }
-
-      const shiftWrap = e.target.closest(`#${BOOKING_VIEWS.desktop.shiftOptionsId}, #${BOOKING_VIEWS.mobile.shiftOptionsId}`);
-      const shiftBtn = e.target.closest('button, .shift-option, .slot-card');
-      if(shiftWrap && shiftBtn){
-        const shiftText = (shiftBtn.textContent || '').trim().split('\n')[0];
-        if(shiftText){
-          track('shift_select', {
-            shift_label: shiftText,
-            age: state.age || ''
-          });
-        }
-      }
-    });
-
-    document.addEventListener('click', (e) => {
-      const videoCard = e.target.closest('[data-video]');
-      if(videoCard){
-        const url = videoCard.dataset.video || '';
-        if(url){
-          if(videoCard.tagName === 'A') e.preventDefault();
-          openVideo(url);
-          return;
-        }
-      }
-
-      const shiftDisabled = e.target.closest(`#${BOOKING_VIEWS.desktop.shiftListId}.disabled, #${BOOKING_VIEWS.mobile.shiftListId}.disabled`);
-      if(shiftDisabled){
-        showHint('Сначала выберите возраст ребёнка', 'age');
-        nudgeUserToNextStep('Сначала выберите возраст ребёнка — тогда откроется список смен.');
-      }
-
-      const shiftVeil = e.target.closest('.shift-list-veil');
-      if(shiftVeil){
-        showHint('Сначала выберите возраст ребёнка', 'age');
-        nudgeUserToNextStep('Сначала выберите возраст ребёнка — после этого откроются смены.');
-      }
-
-      const ctaBtn = e.target.closest('#desktopStartBtn');
-      if(ctaBtn && ctaBtn.classList.contains('is-disabled')){
-        if(!hasSelectedAge()){
-          showHint('Выберите возраст', 'age');
-        } else if(!state.shiftId){
-          showHint('Выберите подходящую смену', 'shift');
-        }
-        nudgeUserToNextStep();
-      }
-
-      const summaryBtn = e.target.closest('#summaryBar button, #summaryBar .cta-main');
-      if(summaryBtn && (!hasSelectedAge() || !state.shiftId)){
-        if(!hasSelectedAge()){
-          showHint('Сначала выберите возраст ребёнка', 'age');
-          nudgeUserToNextStep('Чтобы перейти дальше, сначала выберите возраст ребёнка.');
-        } else {
-          showHint('Выберите подходящую смену', 'shift');
-          nudgeUserToNextStep('Чтобы перейти дальше, выберите смену.');
-        }
-      }
-    });
-
-    document.getElementById('locationMapBtn')?.addEventListener('click', () => {
-      track('map_click', {source:'contacts_map'});
-    });
-
-    document.getElementById('yandexReviewsBtn')?.addEventListener('click', () => {
-      track('social_click', {network:'Яндекс Отзывы'});
-    });
-
-    document.getElementById('socialsGrid')?.addEventListener('click', (e) => {
-      const link = e.target.closest('.social-link');
-      if(!link) return;
-      const network = String(link.dataset.network || '').trim() || (link.querySelector('.social-label')?.textContent || '').trim();
-      track('social_click', {network});
-    });
-
-    document.getElementById('successTelegramBtn')?.addEventListener('click', () => {
-      track('telegram_click', {
-        source:'success_modal',
-        ...selectedShiftPayload()
-      });
-      track('hero_variant_telegram_click_new', buildHeroVariantMeta({
-        source:'success_modal',
-        ...selectedShiftPayload()
-      }));
     });
 
     function formatPrice(v){
@@ -4914,6 +4800,20 @@
       getState: () => state,
       getHeroResizeTimer: () => heroResizeTimer,
       setHeroResizeTimer: (next) => { heroResizeTimer = next || null; }
+      ,
+      setPhotoFilter,
+      setFaqFilter,
+      openSectionModal,
+      track,
+      showHint,
+      nudgeUserToNextStep,
+      hasSelectedAge,
+      getBookingState: () => state,
+      openVideo,
+      selectedShiftPayload,
+      buildHeroVariantMeta,
+      bookingDesktopIds: BOOKING_VIEWS.desktop,
+      bookingMobileIds: BOOKING_VIEWS.mobile
     }], null);
 
     heroAbVariant = resolveHeroAbVariant();
