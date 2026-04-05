@@ -237,8 +237,20 @@
     let shiftOptionsFlowApi = null;
     let mediaFlowApi = null;
     let runtimeQualityPipelineApi = null;
+    let runtimeQualityOrchestratorApi = null;
     let bookingRuntimeBridgeApi = null;
+    let bookingCalendarRuntimeFlowApi = null;
     let leadNotifyFlowApi = null;
+    let heroNavFlowApi = null;
+    let mainHelpersApi = null;
+
+    function ensureMainHelpers(){
+      const create = window.AC_CORE?.mainHelpers?.createMainHelpers;
+      return mainHelpersApi || (typeof create === 'function' && (mainHelpersApi = create({
+        document,
+        getBookingViewConfig
+      }))) || null;
+    }
 
     function ensureTelemetryFlow(){
       const create = window.AC_FEATURES?.telemetryFlow?.create;
@@ -616,6 +628,54 @@
       }))) || null;
     }
 
+    function ensureBookingCalendarRuntimeFlow(){
+      const create = window.AC_FEATURES?.bookingCalendarRuntimeFlow?.create;
+      return bookingCalendarRuntimeFlowApi || (typeof create === 'function' && (bookingCalendarRuntimeFlowApi = create({
+        safeInvoke,
+        document,
+        state,
+        getCalendarFlow: ensureCalendarFlow,
+        getBookingRuntimeBridge: ensureBookingRuntimeBridge,
+        getShiftOptionsFlow: ensureShiftOptionsFlow,
+        getSelectedShift,
+        shiftDaysLabel,
+        isOfferActive,
+        formatPrice,
+        ageLabel,
+        bookingText,
+        stripRemainingPrefix,
+        formatRemainingCompact,
+        renderAll,
+        persist,
+        showHint,
+        getShiftOptionPanels: () => shiftOptionPanels,
+        setShiftOptionPanels: (nextPanels = null) => {
+          shiftOptionPanels = nextPanels || {
+            desktop:{aboutId:null, calendarId:null},
+            mobile:{aboutId:null, calendarId:null}
+          };
+        },
+        renderShiftOptions,
+        getOfferTimeoutIds: () => offerTimeoutIds,
+        setOfferTimeoutIds: (next = []) => {
+          offerTimeoutIds = (Array.isArray(next) && next) || [];
+        },
+        openInlineLead: (scope) => {
+          safeInvoke(ensureBookingInlineLeadApi(), 'openInlineLead', [{
+            scope,
+            state,
+            document,
+            track,
+            selectedShiftPayload,
+            buildHeroVariantMeta
+          }], null);
+        },
+        useDesktopBaseForMobile: useDesktopBaseForMobileCfg,
+        simpleModeEnabled: HERO_V3_SIMPLE_ENABLED,
+        offerStageKey: OFFER_STAGE_KEY
+      }))) || null;
+    }
+
     function ensureActionDispatcher(){
       const create = window.AC_FEATURES?.actionDispatcher?.createActionDispatcher;
       return actionDispatcherApi || (typeof create === 'function' && (actionDispatcherApi = create({
@@ -762,37 +822,43 @@
       }))) || null;
     }
 
-    function asObject(value){
-      return (value && typeof value === 'object' && value) || {};
+    function ensureHeroNavFlow(){
+      const create = window.AC_FEATURES?.heroNavFlow?.create;
+      return heroNavFlowApi || (typeof create === 'function' && (heroNavFlowApi = create({
+        getMediaType: () => mediaType,
+        getMediaContent: () => mediaContent,
+        getActivePhotoList: () => activePhotoList,
+        getMediaIndex: () => mediaIndex,
+        setMediaIndex: (next) => {
+          mediaIndex = Number(next) || 0;
+        },
+        renderMediaViewer,
+        resolveScopeRoot,
+        openSectionModalBase: (sectionId) => safeInvoke(ensureModalMediaFlow(), 'openSectionModal', [sectionId], false),
+        trackFaqOpen
+      }))) || null;
     }
 
-    function asFeatureApi(value){
-      return (value && typeof value === 'object' && value) || null;
-    }
+    const mainHelperFallbacks = Object.freeze({
+      asObject: (value) => ((value && typeof value === 'object' && value) || {}),
+      asFeatureApi: (value) => ((value && typeof value === 'object' && value) || null),
+      cloneArrayOrEmpty: (value) => ((Array.isArray(value) && value.slice()) || []),
+      resolveBookingViewCfg: (viewCfg) => ((viewCfg && viewCfg.key && viewCfg) || getBookingViewConfig('desktop')),
+      resolveScopeRoot: (scopeRoot) => ((scopeRoot && scopeRoot.nodeType === 1 && scopeRoot) || document),
+      resolveViewKey: (viewKey) => ((viewKey === 'mobile' && 'mobile') || 'desktop'),
+      resolveVariantCoachMode: (tier) => (((tier === 'tier2' || tier === 'tier4') && 'menu') || 'info'),
+      toHeroAbVariant: (value) => (((String(value || 'A').toUpperCase() === 'B') && 'B') || 'A')
+    });
 
-    function cloneArrayOrEmpty(value){
-      return (Array.isArray(value) && value.slice()) || [];
-    }
-
-    function resolveBookingViewCfg(viewCfg){
-      return (viewCfg && viewCfg.key && viewCfg) || getBookingViewConfig('desktop');
-    }
-
-    function resolveScopeRoot(scopeRoot){
-      return (scopeRoot && scopeRoot.nodeType === 1 && scopeRoot) || document;
-    }
-
-    function resolveViewKey(viewKey){
-      return (viewKey === 'mobile' && 'mobile') || 'desktop';
-    }
-
-    function resolveVariantCoachMode(tier){
-      return ((tier === 'tier2' || tier === 'tier4') && 'menu') || 'info';
-    }
-
-    function toHeroAbVariant(value){
-      return ((String(value || 'A').toUpperCase() === 'B') && 'B') || 'A';
-    }
+    const getMainHelpers = () => ensureMainHelpers() || mainHelperFallbacks;
+    const asObject = (value) => getMainHelpers().asObject(value);
+    const asFeatureApi = (value) => getMainHelpers().asFeatureApi(value);
+    const cloneArrayOrEmpty = (value) => getMainHelpers().cloneArrayOrEmpty(value);
+    const resolveBookingViewCfg = (viewCfg) => getMainHelpers().resolveBookingViewCfg(viewCfg);
+    const resolveScopeRoot = (scopeRoot) => getMainHelpers().resolveScopeRoot(scopeRoot);
+    const resolveViewKey = (viewKey) => getMainHelpers().resolveViewKey(viewKey);
+    const resolveVariantCoachMode = (tier) => getMainHelpers().resolveVariantCoachMode(tier);
+    const toHeroAbVariant = (value) => getMainHelpers().toHeroAbVariant(value);
 
     function hasQueryFlag(name){
       try{
@@ -965,31 +1031,37 @@
       return runtimeQualityPipelineApi || null;
     }
 
-    function getRuntimeQualityNamespace(){
-      const pipeline = ensureRuntimeQualityPipeline();
-      return pipeline?.namespace || null;
+    function ensureRuntimeQualityOrchestrator(){
+      const create = window.AC_FEATURES?.runtimeQualityOrchestrator?.create;
+      return runtimeQualityOrchestratorApi || (typeof create === 'function' && (runtimeQualityOrchestratorApi = create({
+        getRuntimeQualityNamespace: () => {
+          const pipeline = ensureRuntimeQualityPipeline();
+          return pipeline?.namespace || null;
+        },
+        architecturePolicyId: ARCHITECTURE_POLICY.id
+      }))) || null;
     }
 
     function runGuardrails(){
-      return safeInvoke(getRuntimeQualityNamespace(), 'runGuardrails', [], {
+      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'runGuardrails', [], {
         ok: false,
         policy: ARCHITECTURE_POLICY.id
       });
     }
 
     function runQualityBaselineAudit(){
-      return safeInvoke(getRuntimeQualityNamespace(), 'runQualityBaselineAudit', [], null);
+      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'runQualityBaselineAudit', [], null);
     }
 
     function evaluateSoftQualityGates(snapshot){
-      return safeInvoke(getRuntimeQualityNamespace(), 'evaluateSoftQualityGates', [snapshot], {
+      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'evaluateSoftQualityGates', [snapshot], {
         ok: false,
         warnings: ['pipeline_unavailable']
       });
     }
 
     function buildDebtRegister(guardrails, baseline, gates){
-      return safeInvoke(getRuntimeQualityNamespace(), 'buildDebtRegister', [guardrails, baseline, gates], {
+      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'buildDebtRegister', [guardrails, baseline, gates], {
         debtItems: [],
         pressureScore: 0,
         pressureLevel: 'low'
@@ -997,7 +1069,7 @@
     }
 
     function buildRuntimeQualityScore(baseline, gates, debtRegister){
-      return safeInvoke(getRuntimeQualityNamespace(), 'buildRuntimeQualityScore', [baseline, gates, debtRegister], {
+      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'buildRuntimeQualityScore', [baseline, gates, debtRegister], {
         css: 0,
         js: 0,
         techDebt: 0,
@@ -1006,7 +1078,7 @@
     }
 
     function buildQualityTrendSummary(delta){
-      return safeInvoke(getRuntimeQualityNamespace(), 'buildQualityTrendSummary', [delta], {
+      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'buildQualityTrendSummary', [delta], {
         trend: 'flat',
         better: 0,
         worse: 0
@@ -1014,33 +1086,14 @@
     }
 
     function runReleaseIntegrityChecks(){
-      return safeInvoke(getRuntimeQualityNamespace(), 'runReleaseIntegrityChecks', [], {
+      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'runReleaseIntegrityChecks', [], {
         ok: false,
         missing: ['runtime_quality_pipeline']
       });
     }
 
     function printRuntimeStatusReport(){
-      return safeInvoke(getRuntimeQualityNamespace(), 'printRuntimeStatusReport', [], '');
-    }
-
-    function runQualityPipelineAll(){
-      const qualityResult = safeInvoke(getRuntimeQualityNamespace(), 'runAll', [], null);
-      if(qualityResult) return qualityResult;
-      const guardrailReport = runGuardrails();
-      const qualityBaseline = runQualityBaselineAudit();
-      const qualityGates = evaluateSoftQualityGates(qualityBaseline);
-      const debtRegister = buildDebtRegister(guardrailReport, qualityBaseline, qualityGates);
-      buildRuntimeQualityScore(qualityBaseline, qualityGates, debtRegister);
-      buildQualityTrendSummary(qualityBaseline?.delta);
-      runReleaseIntegrityChecks();
-      printRuntimeStatusReport();
-      return {
-        guardrailReport,
-        qualityBaseline,
-        qualityGates,
-        debtRegister
-      };
+      return safeInvoke(ensureRuntimeQualityOrchestrator(), 'printRuntimeStatusReport', [], '');
     }
 
     const QUALITY_PIPELINE_NAMESPACE = Object.freeze({
@@ -1052,7 +1105,24 @@
       buildQualityTrendSummary,
       runReleaseIntegrityChecks,
       printRuntimeStatusReport,
-      runAll: runQualityPipelineAll
+      runAll: () => {
+        const qualityResult = safeInvoke(ensureRuntimeQualityOrchestrator(), 'runAll', [], null);
+        if(qualityResult) return qualityResult;
+        const guardrailReport = runGuardrails();
+        const qualityBaseline = runQualityBaselineAudit();
+        const qualityGates = evaluateSoftQualityGates(qualityBaseline);
+        const debtRegister = buildDebtRegister(guardrailReport, qualityBaseline, qualityGates);
+        buildRuntimeQualityScore(qualityBaseline, qualityGates, debtRegister);
+        buildQualityTrendSummary(qualityBaseline?.delta);
+        runReleaseIntegrityChecks();
+        printRuntimeStatusReport();
+        return {
+          guardrailReport,
+          qualityBaseline,
+          qualityGates,
+          debtRegister
+        };
+      }
     });
     AIDACAMP_RUNTIME.quality.pipeline = QUALITY_PIPELINE_NAMESPACE;
 
@@ -1064,22 +1134,6 @@
         return target[methodName](...list);
       }
       return typeof fallback === 'function' ? fallback(...list) : fallback;
-    }
-
-    function normalizeCloseIconButtons(scope = document){
-      return safeInvoke(ensureUiInitFlow(), 'normalizeCloseIconButtons', [scope], null);
-    }
-
-    function initScrollTracking(){
-      return safeInvoke(ensureUiInitFlow(), 'initScrollTracking', [], null);
-    }
-
-    function initSummaryBarViewportSync(){
-      return safeInvoke(ensureUiInitFlow(), 'initSummaryBarViewportSync', [], null);
-    }
-
-    function initSectionViewTracking(){
-      return safeInvoke(ensureUiInitFlow(), 'initSectionViewTracking', [], null);
     }
 
     function trackFaqOpen(){
@@ -1308,65 +1362,32 @@
       await flow.refreshVideoMeta({force});
     }
 
-    function scheduleVideoMetaRefresh(){
-      return safeInvoke(ensureVideoMetaFlow(), 'scheduleVideoMetaRefresh', [], null);
-    }
-
     function closeSectionModal(){
       return safeInvoke(ensureModalMediaFlow(), 'closeSectionModal', [], null);
     }
 
     function setHeroMenuOpen(isOpen){
-      const wrap = document.getElementById('heroMenuWrap');
-      const toggle = document.getElementById('heroMenuToggle');
-      const menu = document.getElementById('serviceMenu');
-      if(!wrap || !toggle || !menu) return;
-      const next = !!isOpen;
-      wrap.dataset.open = String(Number(!!next));
-      toggle.setAttribute('aria-expanded', String(!!next));
-      menu.classList.toggle('is-open', next);
-      menu.hidden = !next;
+      return safeInvoke(ensureHeroNavFlow(), 'setHeroMenuOpen', [isOpen], null);
     }
 
     function isHeroMenuOpen(){
-      return document.getElementById('heroMenuWrap')?.dataset.open === '1';
+      return safeInvoke(ensureHeroNavFlow(), 'isHeroMenuOpen', [], false);
     }
 
     function setHeroPhoneDropdownOpen(isOpen){
-      const trigger = document.getElementById('heroPhoneTrigger');
-      const dropdown = document.getElementById('heroPhoneDropdown');
-      return (trigger && dropdown && (() => {
-        const next = !!isOpen;
-        trigger.dataset.open = String(Number(next));
-        trigger.setAttribute('aria-expanded', String(next));
-        dropdown.classList.toggle('is-open', next);
-        dropdown.hidden = !next;
-        return next;
-      })()) || false;
+      return safeInvoke(ensureHeroNavFlow(), 'setHeroPhoneDropdownOpen', [isOpen], false);
     }
 
     function isHeroPhoneDropdownOpen(){
-      return document.getElementById('heroPhoneTrigger')?.dataset.open === '1';
+      return safeInvoke(ensureHeroNavFlow(), 'isHeroPhoneDropdownOpen', [], false);
     }
 
     function scrollVideoCarousel(direction = 1, scopeRoot = null){
-      const scope = resolveScopeRoot(scopeRoot);
-      const list = scope.querySelector('#videoList, .video-list');
-      if(!list) return;
-      const card = list.querySelector('.video-card');
-      const gap = 12;
-      const step = (card && (card.getBoundingClientRect().width + gap)) || 260;
-      list.scrollBy({left: step * direction, behavior:'smooth'});
+      return safeInvoke(ensureHeroNavFlow(), 'scrollVideoCarousel', [direction, scopeRoot], null);
     }
 
     function scrollTeamCarousel(direction = 1, scopeRoot = null){
-      const scope = resolveScopeRoot(scopeRoot);
-      const list = scope.querySelector('#teamCarousel, .team-carousel');
-      if(!list) return;
-      const card = list.querySelector('.team-card');
-      const gap = 12;
-      const step = (card && (card.getBoundingClientRect().width + gap)) || 320;
-      list.scrollBy({left: step * direction, behavior:'smooth'});
+      return safeInvoke(ensureHeroNavFlow(), 'scrollTeamCarousel', [direction, scopeRoot], null);
     }
 
     function applyCompactSectionModalLayout(){
@@ -1374,11 +1395,7 @@
     }
 
     function openSectionModal(sectionId){
-      const opened = safeInvoke(ensureModalMediaFlow(), 'openSectionModal', [sectionId], false);
-      if(opened && sectionId === 'section-faq'){
-        trackFaqOpen();
-      }
-      return !!opened;
+      return !!safeInvoke(ensureHeroNavFlow(), 'openSectionModal', [sectionId], false);
     }
 
     function renderMediaViewer(){
@@ -1386,42 +1403,23 @@
     }
 
     function getActiveMediaList(){
-      if(mediaType !== 'photo') return mediaContent.videos;
-      if(activePhotoList.length) return activePhotoList;
-      return mediaContent.photos;
+      return safeInvoke(ensureHeroNavFlow(), 'getActiveMediaList', [], []);
     }
 
     function nextMedia(){
-      const list = getActiveMediaList();
-      mediaIndex = (mediaIndex + 1) % list.length;
-      renderMediaViewer();
+      return safeInvoke(ensureHeroNavFlow(), 'nextMedia', [], null);
     }
 
     function prevMedia(){
-      const list = getActiveMediaList();
-      mediaIndex = (mediaIndex - 1 + list.length) % list.length;
-      renderMediaViewer();
+      return safeInvoke(ensureHeroNavFlow(), 'prevMedia', [], null);
     }
 
     function getPhotoTagsByFilter(filter){
-      const photoByFilter = {
-        all: ['all', 'camp', 'pool', 'sport', 'study', 'food'],
-        camp: ['all', 'camp'],
-        pool: ['pool'],
-        sport: ['sport'],
-        study: ['study'],
-        food: ['food']
-      };
-      return photoByFilter[String(filter || '').trim()] || ['all', 'camp'];
+      return safeInvoke(ensureHeroNavFlow(), 'getPhotoTagsByFilter', [filter], ['all', 'camp']);
     }
 
     function getPhotosForActiveFilter(filter = state.photoFilter){
-      const tags = getPhotoTagsByFilter(filter);
-      let list = mediaContent.photos.filter((item) => tags.includes(item.cat));
-      if(!list.length){
-        list = mediaContent.photos.filter((item) => item.cat === 'all' || item.cat === 'camp');
-      }
-      return list.length ? list : mediaContent.photos.slice();
+      return safeInvoke(ensureHeroNavFlow(), 'getPhotosForActiveFilter', [filter], mediaContent.photos.slice());
     }
 
     function handleDataActionClick(target){
@@ -2009,21 +2007,11 @@
     }
 
     function toggleShiftOptionPanel(viewKey, panelType, shiftId){
-      const safeView = resolveViewKey(viewKey);
-      safeInvoke(ensureCalendarFlow(), 'toggleShiftOptionPanel', [safeView, panelType, shiftId], () => {
-        const current = shiftOptionPanels[safeView]?.[panelType] || null;
-        shiftOptionPanels[safeView][panelType] = (current !== shiftId && shiftId) || null;
-        renderShiftOptions(safeView);
-      });
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'toggleShiftOptionPanel', [viewKey, panelType, shiftId], null);
     }
 
     function clearShiftOptionPanels(){
-      safeInvoke(ensureCalendarFlow(), 'clearShiftOptionPanels', [], () => {
-        shiftOptionPanels = {
-          desktop:{aboutId:null, calendarId:null},
-          mobile:{aboutId:null, calendarId:null}
-        };
-      });
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'clearShiftOptionPanels', [], null);
     }
 
     function parseShiftDate(dateStr){
@@ -2043,59 +2031,31 @@
     }
 
     function openCalendar(shiftId){
-      return safeInvoke(ensureCalendarFlow(), 'openCalendar', [shiftId], null);
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openCalendar', [shiftId], null);
     }
 
     function openSeasonCalendar(){
-      return safeInvoke(ensureCalendarFlow(), 'openSeasonCalendar', [], null);
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openSeasonCalendar', [], null);
     }
 
     function closeCalendar(){
-      return safeInvoke(ensureCalendarFlow(), 'closeCalendar', [], null);
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'closeCalendar', [], null);
     }
 
     function selectedShiftPayload(){
-      return safeInvoke(ensureBookingRuntimeBridge(), 'selectedShiftPayload', [{
-        state,
-        getSelectedShift,
-        shiftDaysLabel
-      }], () => ({}));
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'selectedShiftPayload', [], () => ({}));
     }
 
     function clearOfferTimeout(){
-      return safeInvoke(ensureBookingRuntimeBridge(), 'clearOfferTimeout', [{
-        getTimeoutIds: () => offerTimeoutIds,
-        setTimeoutIds: (next = []) => {
-          offerTimeoutIds = (Array.isArray(next) && next) || [];
-        },
-        clearTimeoutFn: clearTimeout
-      }], null);
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'clearOfferTimeout', [], null);
     }
 
     function resetOfferState({preserveShift = true} = {}){
-      return safeInvoke(ensureBookingRuntimeBridge(), 'resetOfferState', [{
-        preserveShift,
-        state,
-        getTimeoutIds: () => offerTimeoutIds,
-        setTimeoutIds: (next = []) => {
-          offerTimeoutIds = (Array.isArray(next) && next) || [];
-        },
-        clearTimeoutFn: clearTimeout
-      }], null);
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'resetOfferState', [{preserveShift}], null);
     }
 
     function buildBookingSummaryHtml({showTimer = false} = {}){
-      return safeInvoke(ensureBookingRuntimeBridge(), 'buildBookingSummaryHtml', [{
-        showTimer,
-        state,
-        getSelectedShift,
-        isOfferActive,
-        formatPrice,
-        ageLabel,
-        bookingText,
-        stripRemainingPrefix,
-        formatRemainingCompact
-      }], '');
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'buildBookingSummaryHtml', [{showTimer}], '');
     }
 
     function generateCode(){
@@ -2109,62 +2069,19 @@
     }
 
     function bindAgeTabs(rootId){
-      const root = document.getElementById(rootId);
-      if(!root) return;
-      root.querySelectorAll('[data-age]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          root.querySelectorAll('[data-age]').forEach(x => x.classList.remove('active'));
-          btn.classList.add('active');
-          Object.assign(state, {
-            age: btn.dataset.age,
-            ageSelected: true,
-            shiftId: null,
-            basePrice: null,
-            offerPrice: null,
-            code: null,
-            expiresAt: null,
-            [OFFER_STAGE_KEY]: 0,
-            bookingCompleted: false
-          });
-          renderAll();
-          persist();
-          let scope = 'booking-desktop';
-          if(state.previewView === 'mobile') scope = 'booking-mobile';
-          HERO_V3_SIMPLE_ENABLED && window.setTimeout(() => openInlineLead(scope), 0);
-        });
-      });
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'bindAgeTabs', [rootId], null);
     }
 
     function focusMobileAgeGate(){
-      let gate = null;
-      if(useDesktopBaseForMobileCfg){
-        gate = document.getElementById('desktopAgeTabs');
-      } else {
-        gate = document.getElementById('mobileAgeGateCard') || document.getElementById('mobileAgeTabs');
-      }
-      if(!gate) return;
-      gate.scrollIntoView({behavior:'smooth', block:'center'});
-      gate.classList.add('guided-pulse');
-      setTimeout(() => gate.classList.remove('guided-pulse'), 1100);
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'focusMobileAgeGate', [], null);
     }
 
     function resetAgeSelection(){
-      return safeInvoke(ensureBookingRuntimeBridge(), 'resetAgeSelection', [{
-        state,
-        clearShiftOptionPanels,
-        renderAll,
-        persist
-      }], null);
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'resetAgeSelection', [], null);
     }
 
     function resetShiftSelection(){
-      return safeInvoke(ensureBookingRuntimeBridge(), 'resetShiftSelection', [{
-        state,
-        clearShiftOptionPanels,
-        renderAll,
-        persist,
-        showHint
-      }], null);
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'resetShiftSelection', [], null);
     }
 
     function setPhotoFilter(filter){
@@ -2190,7 +2107,7 @@
     }
 
     function openShiftAboutModal(shiftId){
-      return safeInvoke(ensureShiftOptionsFlow(), 'openShiftAboutModal', [shiftId], false);
+      return safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openShiftAboutModal', [shiftId], false);
     }
 
     function renderShiftOptions(viewKey){
@@ -2414,7 +2331,9 @@
         applyOfferModalTheme: (cardEl = null) => {
           return safeInvoke(ensureViewModeFlow(), 'applyOfferModalTheme', [cardEl], null);
         },
-        normalizeCloseIconButtons,
+        normalizeCloseIconButtons: (scope = document) => {
+          return safeInvoke(ensureUiInitFlow(), 'normalizeCloseIconButtons', [scope], null);
+        },
         showOffer,
         discountFactor: OFFER_DISCOUNT_FACTOR,
         ttlHours: 72
@@ -2443,7 +2362,9 @@
           return safeInvoke(ensureViewModeFlow(), 'applyOfferModalTheme', [cardEl], null);
         },
         formatPrice,
-        normalizeCloseIconButtons,
+        normalizeCloseIconButtons: (scope = document) => {
+          return safeInvoke(ensureUiInitFlow(), 'normalizeCloseIconButtons', [scope], null);
+        },
         startTimer,
         renderSummary,
         renderBookingPanels
@@ -2743,7 +2664,7 @@
     if(!useDesktopBaseForMobileCfg){
       safeInvoke(ensureViewModeFlow(), 'applyMobileMode', [], null);
     }
-    normalizeCloseIconButtons();
+    safeInvoke(ensureUiInitFlow(), 'normalizeCloseIconButtons', [document], null);
     const deferredInit = () => {
       injectHeroSeasonOfferCta();
       initFloatingContactsWidget();
@@ -2753,13 +2674,14 @@
         desktop_mode: state.desktopMode || '',
         mobile_mode: state.mobileMode || ''
       });
-      initScrollTracking();
-      initSummaryBarViewportSync();
-      initSectionViewTracking();
+      safeInvoke(ensureUiInitFlow(), 'initScrollTracking', [], null);
+      safeInvoke(ensureUiInitFlow(), 'initSummaryBarViewportSync', [], null);
+      safeInvoke(ensureUiInitFlow(), 'initSectionViewTracking', [], null);
       refreshVideoMeta({force:true});
-      scheduleVideoMetaRefresh();
+      safeInvoke(ensureVideoMetaFlow(), 'scheduleVideoMetaRefresh', [], null);
       safeInvoke(ensureBookingHintFlow(), 'scheduleDesktopAgeTapHint', [], null);
-      runQualityPipelineAll();
+      safeInvoke(ensureRuntimeQualityOrchestrator(), 'runAll', [], null)
+        || QUALITY_PIPELINE_NAMESPACE.runAll();
     };
     window.setTimeout(deferredInit, 0);
 
