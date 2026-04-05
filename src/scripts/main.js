@@ -20,8 +20,8 @@
       };
 
     const STORAGE_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.storage) || {};
-    const STORAGE_KEY = String(STORAGE_RUNTIME_CONFIG.stateKey || 'aidacamp_proto_state_v3');
-    const BOOKING_SCARCITY_KEY = String(STORAGE_RUNTIME_CONFIG.bookingScarcityKey || 'aidacamp_booking_scarcity_v1');
+    const storageStateKeyCfg = String(STORAGE_RUNTIME_CONFIG.stateKey || 'aidacamp_proto_state_v3');
+    const bookingScarcityKeyCfg = String(STORAGE_RUNTIME_CONFIG.bookingScarcityKey || 'aidacamp_booking_scarcity_v1');
     const BOOKING_SCARCITY_BASE = Number(STORAGE_RUNTIME_CONFIG.bookingScarcityBase || 63);
     const BOOKING_SCARCITY_STEP = Number(STORAGE_RUNTIME_CONFIG.bookingScarcityStep || 7);
     const BOOKING_SCARCITY_MAX = Number(STORAGE_RUNTIME_CONFIG.bookingScarcityMax || 98);
@@ -29,7 +29,7 @@
     const OFFER_LAYOUT_KEY = String(STORAGE_RUNTIME_CONFIG.offerLayoutStateKey || ['offer', 'Layout'].join(''));
     const OFFER_LAYOUT_DATASET_KEY = String(STORAGE_RUNTIME_CONFIG.offerLayoutDatasetKey || ['offer', 'Layout'].join(''));
 
-    let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
+    let state = JSON.parse(localStorage.getItem(storageStateKeyCfg) || 'null') || {
       age:null,
       shiftId:null,
       basePrice:null,
@@ -45,7 +45,7 @@
     };
 
     const OBSERVABILITY_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.observability) || {};
-    const METRIKA_ID = Number(OBSERVABILITY_RUNTIME_CONFIG.metrikaId || 96499295);
+    const metrikaIdCfg = Number(OBSERVABILITY_RUNTIME_CONFIG.metrikaId || 96499295);
     const RUNTIME_POLICY_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.runtimePolicy) || {};
     const MAX_CONTACT_URL = String(RUNTIME_POLICY_CONFIG.maxContactUrl || 'https://web.max.ru/185807479');
     const LEGAL_REPO_SLUG = String(RUNTIME_POLICY_CONFIG.legalRepoSlug || 'afanasevvlad829-cyber/aidaplus-landing-dev');
@@ -53,7 +53,7 @@
     const HERO_VARIANT_BANNER_TIER = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.bannerTier || {});
     const HERO_VARIANT_COPY = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.copy || {});
     const HERO_VARIANT_DEFAULT_TIER = String(HERO_VARIANT_RUNTIME_CONFIG.defaultTier || 'broad');
-    const USE_DESKTOP_BASE_FOR_MOBILE = !!OBSERVABILITY_RUNTIME_CONFIG.useDesktopBaseForMobile;
+    const useDesktopBaseForMobileCfg = !!OBSERVABILITY_RUNTIME_CONFIG.useDesktopBaseForMobile;
     const BUILD_VERSION_LABEL = String(RUNTIME_POLICY_CONFIG.buildVersionLabel || 'v0.0.288 (ab-analytics-endpoint)');
     const ARCHITECTURE_POLICY = Object.freeze(RUNTIME_POLICY_CONFIG.architecturePolicy || {
       id: 'desktop-source-mobile-presentation',
@@ -87,10 +87,10 @@
       baselineVersion: QUALITY_SCORE_MODEL.baselineVersion
     });
     const UI_MODES_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.uiModes) || {};
-    const HERO_CONTRAST_MODES = Object.freeze(UI_MODES_RUNTIME_CONFIG.heroContrastModes || []);
-    const HERO_MICRO_MODES = Object.freeze(UI_MODES_RUNTIME_CONFIG.heroMicroModes || []);
-    const OFFER_MODAL_THEMES = Object.freeze(UI_MODES_RUNTIME_CONFIG.offerModalThemes || []);
-    const OFFER_LAYOUT_MODES = Object.freeze(UI_MODES_RUNTIME_CONFIG.offerLayoutModes || []);
+    const heroContrastModesCfg = Object.freeze(UI_MODES_RUNTIME_CONFIG.heroContrastModes || []);
+    const heroMicroModesCfg = Object.freeze(UI_MODES_RUNTIME_CONFIG.heroMicroModes || []);
+    const offerModalThemesCfg = Object.freeze(UI_MODES_RUNTIME_CONFIG.offerModalThemes || []);
+    const offerLayoutModesCfg = Object.freeze(UI_MODES_RUNTIME_CONFIG.offerLayoutModes || []);
     const normalizeMode = (value, allowedModes, fallbackMode) => (
       allowedModes.includes(value) ? value : fallbackMode
     );
@@ -104,10 +104,10 @@
       if(!Number.isFinite(parsed) || parsed <= 0) return 0;
       return Math.floor(parsed);
     };
-    const VERSION_MONOTONIC_KEY = String(STORAGE_RUNTIME_CONFIG.versionMonotonicKey || 'aidacamp_build_version_last_v1');
-    const PROD_DEBUGLESS_DOMAINS = Object.freeze(OBSERVABILITY_RUNTIME_CONFIG.prodDebuglessDomains || ['aidacamp.ru']);
-    const QUALITY_BASELINE_KEY = String(STORAGE_RUNTIME_CONFIG.qualityBaselineKey || 'aidacamp_quality_baseline_v1');
-    const DEBT_REGISTER_KEY = String(STORAGE_RUNTIME_CONFIG.debtRegisterKey || 'aidacamp_debt_register_v1');
+    const versionMonotonicKeyCfg = String(STORAGE_RUNTIME_CONFIG.versionMonotonicKey || 'aidacamp_build_version_last_v1');
+    const prodDebuglessDomainsCfg = Object.freeze(OBSERVABILITY_RUNTIME_CONFIG.prodDebuglessDomains || ['aidacamp.ru']);
+    const qualityBaselineKeyCfg = String(STORAGE_RUNTIME_CONFIG.qualityBaselineKey || 'aidacamp_quality_baseline_v1');
+    const debtRegisterKeyCfg = String(STORAGE_RUNTIME_CONFIG.debtRegisterKey || 'aidacamp_debt_register_v1');
     const RUNTIME_QUALITY_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.runtimeQuality) || {};
     const QUALITY_SOFT_GATES = Object.freeze(RUNTIME_QUALITY_CONFIG.softGates || {});
     const GUARDRAIL_REQUIRED_SELECTORS = Object.freeze(RUNTIME_QUALITY_CONFIG.requiredSelectors || []);
@@ -122,11 +122,11 @@
       links: Object.freeze([])
     });
     const DOCS_DESKTOP_SECTION_TEMPLATES_FALLBACK = Object.freeze({});
-    const VERSION_BADGE_HIDDEN_KEY = String(STORAGE_RUNTIME_CONFIG.versionBadgeHiddenKey || 'aidacamp_version_badge_hidden_v1');
-    const VIDEO_META_CACHE_KEY = String(STORAGE_RUNTIME_CONFIG.videoMetaCacheKey || 'aidacamp_video_meta_cache_v2');
+    const versionBadgeHiddenKeyCfg = String(STORAGE_RUNTIME_CONFIG.versionBadgeHiddenKey || 'aidacamp_version_badge_hidden_v1');
+    const videoMetaCacheKeyCfg = String(STORAGE_RUNTIME_CONFIG.videoMetaCacheKey || 'aidacamp_video_meta_cache_v2');
     const VIDEO_META_CACHE_TTL_MS = Number(STORAGE_RUNTIME_CONFIG.videoMetaCacheTtlMs || (1000 * 60 * 60 * 4));
     const VIDEO_META_REFRESH_INTERVAL_MS = Number(STORAGE_RUNTIME_CONFIG.videoMetaRefreshIntervalMs || (1000 * 60 * 60 * 4));
-    const COMPACT_MODAL_SECTIONS = new Set(Array.isArray(UI_MODES_RUNTIME_CONFIG.compactModalSections) ? UI_MODES_RUNTIME_CONFIG.compactModalSections : []);
+    const compactModalSectionsCfg = new Set(Array.isArray(UI_MODES_RUNTIME_CONFIG.compactModalSections) ? UI_MODES_RUNTIME_CONFIG.compactModalSections : []);
     let timerId = null;
     let mediaIndex = 0;
     let mediaType = 'photo';
@@ -135,11 +135,11 @@
     // SECTION 2: State normalization and hydration.
     const stateNormalizeResult = safeInvoke(ensureBookingRuntimeBridge(), 'normalizeInitialState', [{
       state,
-      useDesktopBaseForMobile: USE_DESKTOP_BASE_FOR_MOBILE
+      useDesktopBaseForMobile: useDesktopBaseForMobileCfg
     }], { changed: false });
     if(stateNormalizeResult && stateNormalizeResult.changed){
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem(storageStateKeyCfg, JSON.stringify(state));
       } catch (error){
         console.warn('[STATE] normalize persist failed', error);
       }
@@ -170,7 +170,7 @@
     let lastRenderedBookingStage = 0;
     let bookingScarcityState = (() => {
       try {
-        const saved = JSON.parse(localStorage.getItem(BOOKING_SCARCITY_KEY) || 'null');
+        const saved = JSON.parse(localStorage.getItem(bookingScarcityKeyCfg) || 'null');
         return {
           visits: toPositiveIntegerOrZero(saved && saved.visits)
         };
@@ -230,13 +230,13 @@
       if(typeof create !== 'function') return null;
       telemetryFlowApi = create({
         document,
-        metrikaId: METRIKA_ID,
-        abEventEndpointDefault: AB_EVENT_ENDPOINT_DEFAULT,
-        abVisitorKey: AB_VISITOR_ID_KEY,
-        abSessionKey: AB_SESSION_ID_KEY,
+        metrikaId: metrikaIdCfg,
+        abEventEndpointDefault: abEventEndpointDefaultCfg,
+        abVisitorKey: abVisitorIdKeyCfg,
+        abSessionKey: abSessionIdKeyCfg,
         legalRepoSlug: LEGAL_REPO_SLUG,
         getHeroAbVariant: () => heroAbVariant,
-        getHeroAbTestId: () => HERO_AB_TEST_ID,
+        getHeroAbTestId: () => heroAbTestIdCfg,
         isAllowedAbEvent: (eventName) => abEventAllowlistSet.has(String(eventName || ''))
       });
       return telemetryFlowApi;
@@ -337,12 +337,12 @@
         isCompactDesktopMode: () => state.desktopMode === 'compact',
         isCompactMobileMode: () => (
           state.previewView === 'mobile' && (
-            USE_DESKTOP_BASE_FOR_MOBILE
+            useDesktopBaseForMobileCfg
               ? state.desktopMode === 'compact'
               : state.mobileMode === 'compact'
           )
         ),
-        compactModalSections: COMPACT_MODAL_SECTIONS,
+        compactModalSections: compactModalSectionsCfg,
         openSectionModal,
         buildLegalDocUrl
       });
@@ -360,7 +360,7 @@
           return '';
         },
         mediaContent,
-        videoMetaCacheKey: VIDEO_META_CACHE_KEY,
+        videoMetaCacheKey: videoMetaCacheKeyCfg,
         videoMetaCacheTtlMs: VIDEO_META_CACHE_TTL_MS,
         videoMetaRefreshIntervalMs: VIDEO_META_REFRESH_INTERVAL_MS,
         renderMediaSections,
@@ -571,12 +571,12 @@
       if(typeof create !== 'function') return null;
       viewModeFlowApi = create({
         getState: () => state,
-        useDesktopBaseForMobile: USE_DESKTOP_BASE_FOR_MOBILE,
+        useDesktopBaseForMobile: useDesktopBaseForMobileCfg,
         normalizeMode,
-        heroContrastModes: HERO_CONTRAST_MODES,
-        heroMicroModes: HERO_MICRO_MODES,
-        offerModalThemes: OFFER_MODAL_THEMES,
-        offerLayoutModes: OFFER_LAYOUT_MODES,
+        heroContrastModes: heroContrastModesCfg,
+        heroMicroModes: heroMicroModesCfg,
+        offerModalThemes: offerModalThemesCfg,
+        offerLayoutModes: offerLayoutModesCfg,
         setHeroMenuOpen,
         closeSectionModal,
         applyHeroAbVariant,
@@ -771,7 +771,7 @@
       const create = window.AC_FEATURES?.docsFlow?.create;
       if(typeof create !== 'function') return null;
       docsFlowApi = create({
-        shouldUseMobileTemplatesForDesktopSource: () => USE_DESKTOP_BASE_FOR_MOBILE && state.previewView === 'mobile',
+        shouldUseMobileTemplatesForDesktopSource: () => useDesktopBaseForMobileCfg && state.previewView === 'mobile',
         getMobileDocsCopy: () => Object.freeze(DOCS_RUNTIME_CONFIG.mobileDocsCopy || DOCS_MOBILE_COPY_FALLBACK),
         getState: () => state,
         getDesktopMobileSectionTemplates: () => Object.freeze(DOCS_RUNTIME_CONFIG.desktopMobileSectionTemplates || DOCS_DESKTOP_SECTION_TEMPLATES_FALLBACK)
@@ -877,7 +877,7 @@
 
     function buildAbMeta(extra = {}){
       const fallback = {
-        ab_test_id: HERO_AB_TEST_ID,
+        ab_test_id: heroAbTestIdCfg,
         ab_variant: toHeroAbVariant(heroAbVariant),
         ...asObject(extra)
       };
@@ -892,7 +892,7 @@
       return safeInvoke(ensureTelemetryFlow(), 'track', [event, trackedParams], () => {
         try {
           if(typeof ym !== 'undefined'){
-            ym(METRIKA_ID, 'reachGoal', event, trackedParams);
+            ym(metrikaIdCfg, 'reachGoal', event, trackedParams);
           }
         } catch (error){
           console.warn('Metrika track error:', event, error);
@@ -1018,13 +1018,13 @@
         document,
         runtimeStore: AIDACAMP_RUNTIME,
         buildVersionLabel: BUILD_VERSION_LABEL,
-        versionMonotonicKey: VERSION_MONOTONIC_KEY,
-        qualityBaselineKey: QUALITY_BASELINE_KEY,
-        debtRegisterKey: DEBT_REGISTER_KEY,
+        versionMonotonicKey: versionMonotonicKeyCfg,
+        qualityBaselineKey: qualityBaselineKeyCfg,
+        debtRegisterKey: debtRegisterKeyCfg,
         requiredSelectors: GUARDRAIL_REQUIRED_SELECTORS,
         qualitySoftGates: QUALITY_SOFT_GATES,
         architecturePolicy: ARCHITECTURE_POLICY,
-        useDesktopBaseForMobile: USE_DESKTOP_BASE_FOR_MOBILE,
+        useDesktopBaseForMobile: useDesktopBaseForMobileCfg,
         shouldUseLegacyMobile: () => state.previewView === 'mobile',
         trackOnce,
         isPipelineEnabled: () => isFeatureEnabled('runtimeQualityPipeline')
@@ -1168,8 +1168,8 @@
       })
     });
     const TELEMETRY_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.telemetry) || {};
-    const HERO_AB_TEST_KEY = String(TELEMETRY_RUNTIME_CONFIG.heroAbTestKey || 'aidacamp_hero_ab_v1');
-    const HERO_AB_TEST_ID = String(TELEMETRY_RUNTIME_CONFIG.heroAbTestId || 'hero_primary_block_v1');
+    const heroAbTestKeyCfg = String(TELEMETRY_RUNTIME_CONFIG.heroAbTestKey || 'aidacamp_hero_ab_v1');
+    const heroAbTestIdCfg = String(TELEMETRY_RUNTIME_CONFIG.heroAbTestId || 'hero_primary_block_v1');
     const heroAbVariantLabelsCfg = Object.freeze(HERO_AB_RUNTIME_CONFIG.variantLabels || {
       A: 'Control',
       B: 'Pool Motion'
@@ -1183,9 +1183,9 @@
     const HERO_AB_MOBILE_EFFECTS_ENABLED = !!HERO_AB_RUNTIME_CONFIG.mobileEffectsEnabled;
     const HERO_V3_SIMPLE_QUERY_KEY = 'hero_v3_simple';
     const HERO_V3_SIMPLE_ENABLED = hasQueryFlag(HERO_V3_SIMPLE_QUERY_KEY);
-    const AB_EVENT_ENDPOINT_DEFAULT = String(TELEMETRY_RUNTIME_CONFIG.abEventEndpointDefault || 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event');
-    const AB_VISITOR_ID_KEY = String(TELEMETRY_RUNTIME_CONFIG.abVisitorIdKey || 'aidacamp_ab_visitor_id_v1');
-    const AB_SESSION_ID_KEY = String(TELEMETRY_RUNTIME_CONFIG.abSessionIdKey || 'aidacamp_ab_session_id_v1');
+    const abEventEndpointDefaultCfg = String(TELEMETRY_RUNTIME_CONFIG.abEventEndpointDefault || 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event');
+    const abVisitorIdKeyCfg = String(TELEMETRY_RUNTIME_CONFIG.abVisitorIdKey || 'aidacamp_ab_visitor_id_v1');
+    const abSessionIdKeyCfg = String(TELEMETRY_RUNTIME_CONFIG.abSessionIdKey || 'aidacamp_ab_session_id_v1');
     const abEventAllowlistSet = new Set(Array.isArray(TELEMETRY_RUNTIME_CONFIG.abEventAllowlist) ? TELEMETRY_RUNTIME_CONFIG.abEventAllowlist : []);
     const HERO_BENEFITS_LAYOUT_EXPERIMENT = !!HERO_AB_RUNTIME_CONFIG.benefitsLayoutExperiment;
     const HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS = Object.freeze(HERO_AB_RUNTIME_CONFIG.benefitsItems || []);
@@ -1203,12 +1203,12 @@
     let summaryBarDismissTimer = null;
 
     function persist(){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(storageStateKeyCfg, JSON.stringify(state));
     }
 
     function persistBookingScarcity(){
       try {
-        localStorage.setItem(BOOKING_SCARCITY_KEY, JSON.stringify({
+        localStorage.setItem(bookingScarcityKeyCfg, JSON.stringify({
           visits: bookingScarcityState.visits
         }));
       } catch (error){
@@ -1239,8 +1239,8 @@
       const create = window.AC_FEATURES?.heroAbFlow?.create;
       if(typeof create !== 'function') return null;
       heroAbFlowApi = create({
-        heroAbTestKey: HERO_AB_TEST_KEY,
-        heroAbTestId: HERO_AB_TEST_ID,
+        heroAbTestKey: heroAbTestKeyCfg,
+        heroAbTestId: heroAbTestIdCfg,
         heroAbDesktopBgOnly: HERO_AB_DESKTOP_BG_ONLY,
         heroAbMobileEffectsEnabled: HERO_AB_MOBILE_EFFECTS_ENABLED,
         heroAbBenefitStepMs: HERO_AB_BENEFIT_STEP_MS,
@@ -1248,7 +1248,7 @@
         heroAbBenefitRevealDelayMs: HERO_AB_BENEFIT_REVEAL_DELAY_MS,
         heroAbDesktopShiftUpMs: HERO_AB_DESKTOP_SHIFT_UP_MS,
         heroAbDesktopBenefitRevealDelayMs: HERO_AB_DESKTOP_BENEFIT_REVEAL_DELAY_MS,
-        useDesktopBaseForMobile: USE_DESKTOP_BASE_FOR_MOBILE,
+        useDesktopBaseForMobile: useDesktopBaseForMobileCfg,
         getCurrentSearchParams,
         bookingText,
         trackOnce,
@@ -1517,7 +1517,7 @@
           try {
             const host = String(window.location.hostname || '').toLowerCase().replace(/^www\./, '');
             if(!host) return false;
-            return PROD_DEBUGLESS_DOMAINS.some((domain) => host === domain || host.endsWith(`.${domain}`));
+            return prodDebuglessDomainsCfg.some((domain) => host === domain || host.endsWith(`.${domain}`));
           } catch(error){
             return false;
           }
@@ -1723,14 +1723,14 @@
     }
 
     function getRenderableBookingViewKeys(){
-      if(USE_DESKTOP_BASE_FOR_MOBILE){
+      if(useDesktopBaseForMobileCfg){
         return ['desktop'];
       }
       return ['desktop', 'mobile'];
     }
 
     function getActiveBookingViewKeys(){
-      if(state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE){
+      if(state.previewView === 'mobile' && !useDesktopBaseForMobileCfg){
         return ['mobile'];
       }
       return ['desktop'];
@@ -2007,7 +2007,7 @@
     }
 
     function applyOfferLayoutMode(){
-      const mode = normalizeMode(state[OFFER_LAYOUT_KEY], OFFER_LAYOUT_MODES, 'current');
+      const mode = normalizeMode(state[OFFER_LAYOUT_KEY], offerLayoutModesCfg, 'current');
       const currentBtn = document.getElementById('offerLayoutCurrentBtn');
       if(currentBtn){
         currentBtn.classList.toggle('active', mode === 'current');
@@ -2026,7 +2026,7 @@
       const nextMode = (state.desktopMode === 'compact' && 'full') || 'compact';
       safeInvoke(ensureViewModeFlow(), 'switchDesktopMode', [nextMode], null);
     });
-    if(!USE_DESKTOP_BASE_FOR_MOBILE){
+    if(!useDesktopBaseForMobileCfg){
       document.getElementById('mobileFullModeBtn')?.addEventListener('click', () => {
         safeInvoke(ensureViewModeFlow(), 'switchMobileMode', ['full'], null);
       });
@@ -2232,7 +2232,7 @@
 
     function focusMobileAgeGate(){
       let gate = null;
-      if(USE_DESKTOP_BASE_FOR_MOBILE){
+      if(useDesktopBaseForMobileCfg){
         gate = document.getElementById('desktopAgeTabs');
       } else {
         gate = document.getElementById('mobileAgeGateCard') || document.getElementById('mobileAgeTabs');
@@ -2276,7 +2276,7 @@
     }
 
     bindAgeTabs('desktopAgeTabs');
-    if(!USE_DESKTOP_BASE_FOR_MOBILE){
+    if(!useDesktopBaseForMobileCfg){
       bindAgeTabs('mobileAgeTabs');
     }
 
@@ -2433,7 +2433,7 @@
       safeInvoke(ensureBookingHintFlow(), 'syncDesktopAgeTapHintVisibility', [], null);
       safeInvoke(ensureBookingHintFlow(), 'scheduleDesktopAgeTapHint', [], null);
       renderMediaSections();
-      if(!USE_DESKTOP_BASE_FOR_MOBILE){
+      if(!useDesktopBaseForMobileCfg){
         applyMobileSectionAccordion();
       }
       renderDesktopMobileDocsBlock();
@@ -2570,7 +2570,7 @@
     }
 
     function isSummaryCompactMode(){
-      if(state.previewView === 'mobile' && !USE_DESKTOP_BASE_FOR_MOBILE){
+      if(state.previewView === 'mobile' && !useDesktopBaseForMobileCfg){
         return state.mobileMode === 'compact';
       }
       return state.desktopMode === 'compact';
@@ -2835,7 +2835,7 @@
     safeInvoke(ensureViewModeFlow(), 'applyOfferModalTheme', [], null);
     applyOfferLayoutMode();
     safeInvoke(ensureViewModeFlow(), 'applyDesktopMode', [], null);
-    if(!USE_DESKTOP_BASE_FOR_MOBILE){
+    if(!useDesktopBaseForMobileCfg){
       safeInvoke(ensureViewModeFlow(), 'applyMobileMode', [], null);
     }
     normalizeCloseIconButtons();
