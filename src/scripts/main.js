@@ -237,7 +237,7 @@
         legalRepoSlug: LEGAL_REPO_SLUG,
         getHeroAbVariant: () => heroAbVariant,
         getHeroAbTestId: () => HERO_AB_TEST_ID,
-        isAllowedAbEvent: (eventName) => AB_TEST_EVENT_ALLOWLIST.has(String(eventName || ''))
+        isAllowedAbEvent: (eventName) => abEventAllowlistSet.has(String(eventName || ''))
       });
       return telemetryFlowApi;
     }
@@ -872,7 +872,7 @@
     }
 
     function getHeroAbAssets(value){
-      return HERO_AB_ASSETS[toHeroAbVariant(value)] || HERO_AB_ASSETS.A;
+      return heroAbAssetsCfg[toHeroAbVariant(value)] || heroAbAssetsCfg.A;
     }
 
     function buildAbMeta(extra = {}){
@@ -1157,7 +1157,7 @@
     }
 
     const HERO_AB_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.heroAb) || {};
-    const HERO_AB_ASSETS = Object.freeze(HERO_AB_RUNTIME_CONFIG.assets || {
+    const heroAbAssetsCfg = Object.freeze(HERO_AB_RUNTIME_CONFIG.assets || {
       A: Object.freeze({
         images: Object.freeze(['/assets/images/hero-camp-sunset-20260328.png']),
         mobile: '/assets/images/hero-camp-sunset-20260328.png'
@@ -1170,7 +1170,7 @@
     const TELEMETRY_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.telemetry) || {};
     const HERO_AB_TEST_KEY = String(TELEMETRY_RUNTIME_CONFIG.heroAbTestKey || 'aidacamp_hero_ab_v1');
     const HERO_AB_TEST_ID = String(TELEMETRY_RUNTIME_CONFIG.heroAbTestId || 'hero_primary_block_v1');
-    const HERO_AB_VARIANT_LABELS = Object.freeze(HERO_AB_RUNTIME_CONFIG.variantLabels || {
+    const heroAbVariantLabelsCfg = Object.freeze(HERO_AB_RUNTIME_CONFIG.variantLabels || {
       A: 'Control',
       B: 'Pool Motion'
     });
@@ -1186,7 +1186,7 @@
     const AB_EVENT_ENDPOINT_DEFAULT = String(TELEMETRY_RUNTIME_CONFIG.abEventEndpointDefault || 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event');
     const AB_VISITOR_ID_KEY = String(TELEMETRY_RUNTIME_CONFIG.abVisitorIdKey || 'aidacamp_ab_visitor_id_v1');
     const AB_SESSION_ID_KEY = String(TELEMETRY_RUNTIME_CONFIG.abSessionIdKey || 'aidacamp_ab_session_id_v1');
-    const AB_TEST_EVENT_ALLOWLIST = new Set(Array.isArray(TELEMETRY_RUNTIME_CONFIG.abEventAllowlist) ? TELEMETRY_RUNTIME_CONFIG.abEventAllowlist : []);
+    const abEventAllowlistSet = new Set(Array.isArray(TELEMETRY_RUNTIME_CONFIG.abEventAllowlist) ? TELEMETRY_RUNTIME_CONFIG.abEventAllowlist : []);
     const HERO_BENEFITS_LAYOUT_EXPERIMENT = !!HERO_AB_RUNTIME_CONFIG.benefitsLayoutExperiment;
     const HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS = Object.freeze(HERO_AB_RUNTIME_CONFIG.benefitsItems || []);
 
@@ -1286,7 +1286,7 @@
         getViewMode: () => window.AC_VIEW_MODE,
         heroBenefitsLayoutExperiment: HERO_BENEFITS_LAYOUT_EXPERIMENT,
         heroBenefitsLayoutExperimentItems: HERO_BENEFITS_LAYOUT_EXPERIMENT_ITEMS,
-        heroAbVariantLabels: HERO_AB_VARIANT_LABELS,
+        heroAbVariantLabels: heroAbVariantLabelsCfg,
         onHeroVariantChange: () => {
           initHero();
           const url = new URL(window.location.href);
