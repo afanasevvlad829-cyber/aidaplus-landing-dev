@@ -111,6 +111,9 @@
     const RUNTIME_QUALITY_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.runtimeQuality) || {};
     const QUALITY_SOFT_GATES = Object.freeze(RUNTIME_QUALITY_CONFIG.softGates || {});
     const GUARDRAIL_REQUIRED_SELECTORS = Object.freeze(RUNTIME_QUALITY_CONFIG.requiredSelectors || []);
+    const CALENDAR_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.calendar) || {};
+    const CALENDAR_WEEKDAYS_SHORT = Object.freeze(CALENDAR_RUNTIME_CONFIG.weekdaysShort || []);
+    const CALENDAR_MONTH_NAMES = Object.freeze(CALENDAR_RUNTIME_CONFIG.monthNames || []);
     const VERSION_BADGE_HIDDEN_KEY = String(STORAGE_RUNTIME_CONFIG.versionBadgeHiddenKey || 'aidacamp_version_badge_hidden_v1');
     const VIDEO_META_CACHE_KEY = String(STORAGE_RUNTIME_CONFIG.videoMetaCacheKey || 'aidacamp_video_meta_cache_v2');
     const VIDEO_META_CACHE_TTL_MS = Number(STORAGE_RUNTIME_CONFIG.videoMetaCacheTtlMs || (1000 * 60 * 60 * 4));
@@ -296,8 +299,8 @@
       calendarFlowApi = create({
         getShifts: () => shifts,
         bookingText,
-        calendarWeekdaysShort: () => ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
-        calendarMonthNames: () => ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'],
+        calendarWeekdaysShort: () => CALENDAR_WEEKDAYS_SHORT,
+        calendarMonthNames: () => CALENDAR_MONTH_NAMES,
         closeTransientModals,
         emitModularEvent,
         track,

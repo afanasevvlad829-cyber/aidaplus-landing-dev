@@ -53,7 +53,8 @@ const metrics = {
   LEGACY_MAIN_OBSERVABILITY_CONFIG_REFS: countPattern(main, /\b(METRIKA_ID|USE_DESKTOP_BASE_FOR_MOBILE|PROD_DEBUGLESS_DOMAINS)\b/g),
   LEGACY_MAIN_TELEMETRY_CONFIG_REFS: countPattern(main, /\b(AB_EVENT_ENDPOINT_DEFAULT|AB_VISITOR_ID_KEY|AB_SESSION_ID_KEY|HERO_AB_TEST_KEY|HERO_AB_TEST_ID)\b/g),
   LEGACY_MAIN_INLINE_SHIFTS_BLOB_REFS: countPattern(main, /\bconst\s+shifts\s*=\s*\[/g),
-  LEGACY_MAIN_INLINE_MEDIA_BLOB_REFS: countPattern(main, /\bconst\s+mediaContent\s*=\s*\{/g)
+  LEGACY_MAIN_INLINE_MEDIA_BLOB_REFS: countPattern(main, /\bconst\s+mediaContent\s*=\s*\{/g),
+  LEGACY_MAIN_INLINE_CALENDAR_LOCALE_ARRAYS_REFS: countPattern(main, /\[(?:'Вс'|'Пн'|'Вт'|'Ср'|'Чт'|'Пт'|'Сб'|'январь'|'февраль'|'март'|'апрель'|'май'|'июнь'|'июль'|'август'|'сентябрь'|'октябрь'|'ноябрь'|'декабрь')/g)
 };
 
 const regressions = [];
