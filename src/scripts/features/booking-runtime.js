@@ -204,6 +204,9 @@
     var opts = options || {};
     var state = opts.state || {};
     var hasSelectedAge = opts.hasSelectedAge || function () { return false; };
+    if (opts.simpleModeEnabled) {
+      return 1;
+    }
 
     if (state.bookingCompleted) {
       return 4;

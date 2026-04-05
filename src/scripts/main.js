@@ -858,6 +858,7 @@
         ageLabel,
         getState: () => state,
         getSelectedShift,
+        simpleModeEnabled: HERO_V3_SIMPLE_ENABLED,
         scheduleVariantFlowScenario: () => {
           if(HERO_V3_SIMPLE_ENABLED){
             safeInvoke(ensureVariantFlow(), 'stopVariantFlowScenario', [], null);

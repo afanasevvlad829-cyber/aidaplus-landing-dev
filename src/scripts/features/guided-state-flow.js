@@ -13,6 +13,7 @@
     const getState = typeof ctx.getState === 'function' ? ctx.getState : (() => ({}));
     const getSelectedShift = typeof ctx.getSelectedShift === 'function' ? ctx.getSelectedShift : (() => null);
     const scheduleVariantFlowScenario = typeof ctx.scheduleVariantFlowScenario === 'function' ? ctx.scheduleVariantFlowScenario : (() => {});
+    const simpleModeEnabled = !!ctx.simpleModeEnabled;
 
     function ensureStage2TransferHost(stepThree){
       if(!stepThree) return null;
@@ -143,6 +144,43 @@
       const stepThree = bookingCard?.querySelector('.booking-step-3');
       const allShiftsBtn = bookingCard?.querySelector('.booking-all-shifts-link');
       if(!shiftList || !ctaWrap || !ageTabs || !ageChip || !ageChipText || !shiftChip || !shiftChipText) return;
+
+      if(simpleModeEnabled){
+        stopVariantFlowScenario();
+        hideVariantCoachBadge(cfg);
+        if(allShiftsBtn) allShiftsBtn.classList.add('hidden');
+        shiftList.classList.add('hidden', 'disabled');
+        shiftList.classList.remove('highlight', 'collapsed');
+        if(stepThree){
+          stepThree.classList.add('is-force-hidden');
+          stepThree.classList.remove('booking-stage2-transfer-enabled');
+        }
+        ageChip.classList.remove('visible');
+        shiftChip.classList.remove('visible');
+        if(chipHost){
+          chipHost.classList.remove('visible', 'booking-summary-chips--completed');
+        }
+        if(state.bookingCompleted){
+          ageTabs.classList.add('hidden');
+          ctaWrap.classList.add('hidden');
+        } else if(!hasSelectedAge()){
+          ageTabs.classList.remove('hidden');
+          ctaWrap.classList.add('hidden');
+        } else {
+          ageTabs.classList.add('hidden');
+          ctaWrap.classList.remove('hidden');
+          ctaWrap.classList.add('highlight');
+        }
+        if(baseHint){
+          baseHint.textContent = '';
+          baseHint.classList.toggle('is-muted-hidden', !hasSelectedAge());
+        }
+        if(guidedInlineHint){
+          guidedInlineHint.textContent = '';
+          guidedInlineHint.classList.remove('visible', 'variant-coach');
+        }
+        return;
+      }
 
       placeStage2ContentForView(cfg, stage, bookingCard);
       syncCompletedBookingScaffold(cfg, bookingCard);
