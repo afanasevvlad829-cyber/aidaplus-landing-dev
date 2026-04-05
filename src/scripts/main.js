@@ -341,11 +341,12 @@
       ]
     };
 
-    const STORAGE_KEY = 'aidacamp_proto_state_v3';
-    const BOOKING_SCARCITY_KEY = 'aidacamp_booking_scarcity_v1';
-    const BOOKING_SCARCITY_BASE = 63;
-    const BOOKING_SCARCITY_STEP = 7;
-    const BOOKING_SCARCITY_MAX = 98;
+    const STORAGE_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.storage) || {};
+    const STORAGE_KEY = String(STORAGE_RUNTIME_CONFIG.stateKey || 'aidacamp_proto_state_v3');
+    const BOOKING_SCARCITY_KEY = String(STORAGE_RUNTIME_CONFIG.bookingScarcityKey || 'aidacamp_booking_scarcity_v1');
+    const BOOKING_SCARCITY_BASE = Number(STORAGE_RUNTIME_CONFIG.bookingScarcityBase || 63);
+    const BOOKING_SCARCITY_STEP = Number(STORAGE_RUNTIME_CONFIG.bookingScarcityStep || 7);
+    const BOOKING_SCARCITY_MAX = Number(STORAGE_RUNTIME_CONFIG.bookingScarcityMax || 98);
     const OFFER_STAGE_KEY = ['offer', 'Stage'].join('');
     const OFFER_LAYOUT_KEY = ['offer', 'Layout'].join('');
     const OFFER_LAYOUT_DATASET_KEY = ['offer', 'Layout'].join('');
@@ -405,10 +406,11 @@
       debtScale: '0 best .. 10 worst',
       baselineVersion: QUALITY_SCORE_MODEL.baselineVersion
     });
-    const HERO_CONTRAST_MODES = Object.freeze(['before', 'after', 'after-soft']);
-    const HERO_MICRO_MODES = Object.freeze(['on', 'demo']);
-    const OFFER_MODAL_THEMES = Object.freeze(['light', 'dark']);
-    const OFFER_LAYOUT_MODES = Object.freeze(['current']);
+    const UI_MODES_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.uiModes) || {};
+    const HERO_CONTRAST_MODES = Object.freeze(UI_MODES_RUNTIME_CONFIG.heroContrastModes || []);
+    const HERO_MICRO_MODES = Object.freeze(UI_MODES_RUNTIME_CONFIG.heroMicroModes || []);
+    const OFFER_MODAL_THEMES = Object.freeze(UI_MODES_RUNTIME_CONFIG.offerModalThemes || []);
+    const OFFER_LAYOUT_MODES = Object.freeze(UI_MODES_RUNTIME_CONFIG.offerLayoutModes || []);
     const normalizeMode = (value, allowedModes, fallbackMode) => (
       allowedModes.includes(value) ? value : fallbackMode
     );
@@ -422,29 +424,18 @@
       if(!Number.isFinite(parsed) || parsed <= 0) return 0;
       return Math.floor(parsed);
     };
-    const VERSION_MONOTONIC_KEY = 'aidacamp_build_version_last_v1';
+    const VERSION_MONOTONIC_KEY = String(STORAGE_RUNTIME_CONFIG.versionMonotonicKey || 'aidacamp_build_version_last_v1');
     const PROD_DEBUGLESS_DOMAINS = Object.freeze(['aidacamp.ru']);
-    const QUALITY_BASELINE_KEY = 'aidacamp_quality_baseline_v1';
-    const DEBT_REGISTER_KEY = 'aidacamp_debt_register_v1';
+    const QUALITY_BASELINE_KEY = String(STORAGE_RUNTIME_CONFIG.qualityBaselineKey || 'aidacamp_quality_baseline_v1');
+    const DEBT_REGISTER_KEY = String(STORAGE_RUNTIME_CONFIG.debtRegisterKey || 'aidacamp_debt_register_v1');
     const RUNTIME_QUALITY_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.runtimeQuality) || {};
     const QUALITY_SOFT_GATES = Object.freeze(RUNTIME_QUALITY_CONFIG.softGates || {});
     const GUARDRAIL_REQUIRED_SELECTORS = Object.freeze(RUNTIME_QUALITY_CONFIG.requiredSelectors || []);
-    const VERSION_BADGE_HIDDEN_KEY = 'aidacamp_version_badge_hidden_v1';
-    const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v2';
-    const VIDEO_META_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
-    const VIDEO_META_REFRESH_INTERVAL_MS = 1000 * 60 * 60 * 4;
-    const COMPACT_MODAL_SECTIONS = new Set([
-      'section-about',
-      'section-journey',
-      'section-programs',
-      'section-photos',
-      'section-videos',
-      'section-reviews',
-      'section-faq',
-      'section-team',
-      'section-stay',
-      'section-contacts'
-    ]);
+    const VERSION_BADGE_HIDDEN_KEY = String(STORAGE_RUNTIME_CONFIG.versionBadgeHiddenKey || 'aidacamp_version_badge_hidden_v1');
+    const VIDEO_META_CACHE_KEY = String(STORAGE_RUNTIME_CONFIG.videoMetaCacheKey || 'aidacamp_video_meta_cache_v2');
+    const VIDEO_META_CACHE_TTL_MS = Number(STORAGE_RUNTIME_CONFIG.videoMetaCacheTtlMs || (1000 * 60 * 60 * 4));
+    const VIDEO_META_REFRESH_INTERVAL_MS = Number(STORAGE_RUNTIME_CONFIG.videoMetaRefreshIntervalMs || (1000 * 60 * 60 * 4));
+    const COMPACT_MODAL_SECTIONS = new Set(Array.isArray(UI_MODES_RUNTIME_CONFIG.compactModalSections) ? UI_MODES_RUNTIME_CONFIG.compactModalSections : []);
     let timerId = null;
     let mediaIndex = 0;
     let mediaType = 'photo';
@@ -1846,7 +1837,8 @@
         const search = new URLSearchParams(window.location.search || '');
         const adminFlag = (search.get('admin') || search.get('debug') || '').toLowerCase();
         if(['1', 'true', 'yes', 'on'].includes(adminFlag)) return true;
-        const storedFlag = String(localStorage.getItem('aidacamp_admin_debug') || '').toLowerCase();
+        const adminDebugKey = String(STORAGE_RUNTIME_CONFIG.adminDebugKey || 'aidacamp_admin_debug');
+        const storedFlag = String(localStorage.getItem(adminDebugKey) || '').toLowerCase();
         return ['1', 'true', 'yes', 'on'].includes(storedFlag);
       } catch(error){
         return false;
@@ -1952,7 +1944,7 @@
 
     function saveLeadFallbackMeta(eventName, endpoint, reason = ''){
       try {
-        const key = 'aidacamp_lead_fallback_meta';
+        const key = String(STORAGE_RUNTIME_CONFIG.leadFallbackMetaKey || 'aidacamp_lead_fallback_meta');
         const prevRaw = localStorage.getItem(key);
         const prev = (prevRaw && JSON.parse(prevRaw)) || {};
         const count = Number(prev.count || 0) + 1;
