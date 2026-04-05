@@ -1969,33 +1969,23 @@
 
     function isAdminDebugSession(){
       try {
+        const resolveIsProductionRuntime = () => {
+          try {
+            const host = String(window.location.hostname || '').toLowerCase().replace(/^www\./, '');
+            if(!host) return false;
+            return PROD_DEBUGLESS_DOMAINS.some((domain) => host === domain || host.endsWith(`.${domain}`));
+          } catch(error){
+            return false;
+          }
+        };
         // Production must never expose debug controls via query/localStorage toggles.
-        if(isProductionRuntime()) return false;
+        if(resolveIsProductionRuntime()) return false;
         if(window.AC_DEBUG === true) return true;
         const search = new URLSearchParams(window.location.search || '');
         const adminFlag = (search.get('admin') || search.get('debug') || '').toLowerCase();
         if(['1', 'true', 'yes', 'on'].includes(adminFlag)) return true;
         const storedFlag = String(localStorage.getItem('aidacamp_admin_debug') || '').toLowerCase();
         return ['1', 'true', 'yes', 'on'].includes(storedFlag);
-      } catch(error){
-        return false;
-      }
-    }
-
-    function isProductionRuntime(){
-      try {
-        const host = String(window.location.hostname || '').toLowerCase().replace(/^www\./, '');
-        if(!host) return false;
-        return PROD_DEBUGLESS_DOMAINS.some((domain) => host === domain || host.endsWith(`.${domain}`));
-      } catch(error){
-        return false;
-      }
-    }
-
-    function isLocalRuntime(){
-      try {
-        const host = String(window.location.hostname || '').toLowerCase();
-        return host === 'localhost' || host === '127.0.0.1';
       } catch(error){
         return false;
       }
