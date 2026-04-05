@@ -584,7 +584,6 @@
     let offerTimeoutIds = [];
     let offerRunId = 0;
     let leadSubmitInProgress = false;
-    let noticeConfirmHandler = null;
     let lastRenderedBookingStage = 0;
     let bookingScarcityState = (() => {
       try {
@@ -627,6 +626,7 @@
     let bookingHintFlowApi = null;
     let summaryFlowApi = null;
     let viewModeFlowApi = null;
+    let overlayFlowApi = null;
     let heroV3SimpleFlowApi = null;
     let heroBackgroundFlowApi = null;
     let offerFlowApi = null;
@@ -1124,7 +1124,7 @@
         closeNoticeModal,
         hideVariantCoachBadge,
         getPrimaryBookingViewConfig,
-        getNoticeConfirmHandler: () => noticeConfirmHandler,
+        getNoticeConfirmHandler: () => safeInvoke(ensureOverlayFlow(), 'getNoticeConfirmHandler', [], null),
         closeCalendar,
         closeSectionModal,
         closeVideo,
@@ -1142,6 +1142,22 @@
       const api = window.AC_FEATURES?.bookingInlineLead || null;
       bookingInlineLeadApi = asFeatureApi(api);
       return bookingInlineLeadApi;
+    }
+
+    function ensureOverlayFlow(){
+      if(overlayFlowApi) return overlayFlowApi;
+      const create = window.AC_FEATURES?.overlays?.create;
+      if(typeof create !== 'function') return null;
+      overlayFlowApi = create({
+        document,
+        buildBookingSummaryHtml,
+        isAdminDebugSession,
+        resetOfferState,
+        getState: () => state,
+        persist,
+        renderAll
+      });
+      return overlayFlowApi;
     }
 
     function ensureMediaGestureBindingsApi(){
@@ -3793,93 +3809,23 @@
     }
 
     function openSuccessModal(deliveryResult){
-      const box = document.getElementById('successSummaryBox');
-      if(box) box.innerHTML = buildBookingSummaryHtml();
-      const deliveryState = document.getElementById('successDeliveryState');
-      if(deliveryState){
-        const isAdmin = isAdminDebugSession();
-        if(isAdmin && deliveryResult && deliveryResult.ok === false){
-          deliveryState.textContent = 'Заявка сохранена локально, но сейчас нет связи с сервером отправки. Если мы не ответим в течение 15 минут, напишите нам в Telegram.';
-          deliveryState.classList.remove('hidden');
-          deliveryState.classList.add('error');
-        } else {
-          deliveryState.textContent = '';
-          deliveryState.classList.add('hidden');
-          deliveryState.classList.remove('error');
-        }
-      }
-      document.getElementById('successOverlay').classList.remove('hidden');
+      safeInvoke(ensureOverlayFlow(), 'openSuccessModal', [deliveryResult], null);
     }
 
     function closeSuccessModal(){
-      document.getElementById('successOverlay').classList.add('hidden');
+      safeInvoke(ensureOverlayFlow(), 'closeSuccessModal', [], null);
     }
 
     function openNoticeModal(message, title = 'Проверьте данные'){
-      const overlay = document.getElementById('noticeOverlay');
-      if(!overlay) return;
-      const titleEl = document.getElementById('noticeTitle');
-      const messageEl = document.getElementById('noticeMessage');
-      const actionsEl = document.getElementById('noticeActions');
-      noticeConfirmHandler = null;
-      if(titleEl) titleEl.textContent = title;
-      if(messageEl) messageEl.textContent = message || '';
-      if(actionsEl){
-        actionsEl.classList.add('hidden');
-        actionsEl.classList.remove('notice-actions--reset-booking');
-      }
-      overlay.classList.remove('hidden');
+      safeInvoke(ensureOverlayFlow(), 'openNoticeModal', [message, title], null);
     }
 
     function closeNoticeModal(){
-      noticeConfirmHandler = null;
-      const actionsEl = document.getElementById('noticeActions');
-      if(actionsEl){
-        actionsEl.classList.add('hidden');
-        actionsEl.classList.remove('notice-actions--reset-booking');
-      }
-      document.getElementById('noticeOverlay')?.classList.add('hidden');
-    }
-
-    function ensureNoticeActions(){
-      const overlay = document.getElementById('noticeOverlay');
-      const card = overlay?.querySelector('.notice-card');
-      if(!overlay || !card) return null;
-      let actionsEl = document.getElementById('noticeActions');
-      if(actionsEl) return actionsEl;
-      actionsEl = document.createElement('div');
-      actionsEl.id = 'noticeActions';
-      actionsEl.className = 'notice-actions hidden';
-      actionsEl.innerHTML = `
-        <button class="secondary-outline notice-cancel-btn" type="button" data-action="close-notice">Отмена</button>
-        <button class="cta-main notice-confirm-btn" type="button" data-action="confirm-notice">Подтвердить</button>
-      `;
-      card.appendChild(actionsEl);
-      return actionsEl;
+      safeInvoke(ensureOverlayFlow(), 'closeNoticeModal', [], null);
     }
 
     function openResetBookingConfirmModal(){
-      openNoticeModal(
-        'Это действие аннулирует ваше предварительное бронирование. Вы точно хотите продолжить?',
-        'Сбросить бронирование?'
-      );
-      const actionsEl = ensureNoticeActions();
-      if(!actionsEl) return;
-      const cancelBtn = actionsEl.querySelector('.notice-cancel-btn');
-      const confirmBtn = actionsEl.querySelector('.notice-confirm-btn');
-      if(cancelBtn) cancelBtn.textContent = 'Отмена';
-      if(confirmBtn) confirmBtn.textContent = 'Сбросить';
-      actionsEl.classList.add('notice-actions--reset-booking');
-      noticeConfirmHandler = () => {
-        resetOfferState({preserveShift:false});
-        Object.assign(state, {
-          age: null,
-          ageSelected: false
-        });
-        persist();
-        renderAll();
-      };
-      actionsEl.classList.remove('hidden');
+      safeInvoke(ensureOverlayFlow(), 'openResetBookingConfirmModal', [], null);
     }
 
     async function submitLeadFromScope(scope = 'drawer'){
