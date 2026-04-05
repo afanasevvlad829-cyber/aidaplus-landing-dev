@@ -1709,17 +1709,17 @@
 
     // SECTION 4: Booking module (view config, actions, render pipeline).
     const BOOKING_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.bookingViews) || {};
-    const BOOKING_STAGE2_VERTICAL_ALIGN = Object.freeze(BOOKING_RUNTIME_CONFIG.stage2VerticalAlign || {});
-    const BOOKING_STAGE2_HORIZONTAL_ALIGN = Object.freeze(BOOKING_RUNTIME_CONFIG.stage2HorizontalAlign || {});
-    const BOOKING_VIEWS = Object.freeze(BOOKING_RUNTIME_CONFIG.views || {
+    const bookingStage2VerticalAlignCfg = Object.freeze(BOOKING_RUNTIME_CONFIG.stage2VerticalAlign || {});
+    const bookingStage2HorizontalAlignCfg = Object.freeze(BOOKING_RUNTIME_CONFIG.stage2HorizontalAlign || {});
+    const bookingViewsCfg = Object.freeze(BOOKING_RUNTIME_CONFIG.views || {
       desktop: Object.freeze({ key: 'desktop' }),
       mobile: Object.freeze({ key: 'mobile' })
     });
     let bookingCardMinHeightFrame = 0;
 
     function getBookingViewConfig(viewKey){
-      if(viewKey === 'mobile') return BOOKING_VIEWS.mobile;
-      return BOOKING_VIEWS.desktop;
+      if(viewKey === 'mobile') return bookingViewsCfg.mobile;
+      return bookingViewsCfg.desktop;
     }
 
     function getRenderableBookingViewKeys(){
@@ -1803,16 +1803,16 @@
     }
 
     function resolveStage2VerticalAlign(value){
-      if(value === 'center') return BOOKING_STAGE2_VERTICAL_ALIGN.center;
-      if(value === 'bottom') return BOOKING_STAGE2_VERTICAL_ALIGN.bottom;
-      return BOOKING_STAGE2_VERTICAL_ALIGN.top;
+      if(value === 'center') return bookingStage2VerticalAlignCfg.center;
+      if(value === 'bottom') return bookingStage2VerticalAlignCfg.bottom;
+      return bookingStage2VerticalAlignCfg.top;
     }
 
     function resolveStage2HorizontalAlign(value){
-      if(value === 'left') return BOOKING_STAGE2_HORIZONTAL_ALIGN.left;
-      if(value === 'center') return BOOKING_STAGE2_HORIZONTAL_ALIGN.center;
-      if(value === 'right') return BOOKING_STAGE2_HORIZONTAL_ALIGN.right;
-      return BOOKING_STAGE2_HORIZONTAL_ALIGN.stretch;
+      if(value === 'left') return bookingStage2HorizontalAlignCfg.left;
+      if(value === 'center') return bookingStage2HorizontalAlignCfg.center;
+      if(value === 'right') return bookingStage2HorizontalAlignCfg.right;
+      return bookingStage2HorizontalAlignCfg.stretch;
     }
 
     function applyBookingStage2Alignment(viewCfg){
@@ -2811,8 +2811,8 @@
       openVideo,
       selectedShiftPayload,
       buildHeroVariantMeta,
-      bookingDesktopIds: BOOKING_VIEWS.desktop,
-      bookingMobileIds: BOOKING_VIEWS.mobile
+      bookingDesktopIds: bookingViewsCfg.desktop,
+      bookingMobileIds: bookingViewsCfg.mobile
     }], null);
 
     heroAbVariant = safeInvoke(ensureHeroAbFlow(), 'resolveHeroAbVariant', [], heroAbVariant) || heroAbVariant;
