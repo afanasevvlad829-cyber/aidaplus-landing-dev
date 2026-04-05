@@ -98,6 +98,56 @@
     return true;
   }
 
+  function getPrimaryActionState(options) {
+    var opts = options || {};
+    var state = opts.state || {};
+    var hasSelectedAge = opts.hasSelectedAge || function () { return false; };
+    var getSelectedShift = opts.getSelectedShift || function () { return null; };
+    var resolveHeroVariantFromUtm = opts.resolveHeroVariantFromUtm || function () { return null; };
+    var variantDefaultTier = opts.HERO_VARIANT_DEFAULT_TIER || "broad";
+    var variantCopyMap = opts.HERO_VARIANT_COPY || {};
+    var variant = opts.heroVariantState || resolveHeroVariantFromUtm() || {};
+    var tierCopy = variantCopyMap[variantDefaultTier] || {};
+    var copy = variant.copy || tierCopy;
+    var shift = getSelectedShift();
+
+    if (!hasSelectedAge()) {
+      return {
+        text: copy.cta || "",
+        disabled: true,
+        hint: ""
+      };
+    }
+
+    if (state.bookingCompleted) {
+      return {
+        text: "Заявка принята",
+        disabled: true,
+        hint: ""
+      };
+    }
+
+    if (!shift) {
+      return opts.simpleModeEnabled
+        ? { text: "Оставить заявку", disabled: false, hint: "" }
+        : { text: "Выберите смену", disabled: true, hint: "" };
+    }
+
+    if (Number(state.offerStage || 0) === 0) {
+      return {
+        text: "Уточнить цену",
+        disabled: false,
+        hint: ""
+      };
+    }
+
+    return {
+      text: "Забронировать",
+      disabled: false,
+      hint: ""
+    };
+  }
+
   function handlePrimaryCTA(options) {
     var opts = options || {};
     var state = opts.state || {};
@@ -275,6 +325,7 @@
     resetOfferState: resetOfferState,
     buildBookingSummaryHtml: buildBookingSummaryHtml,
     selectShift: selectShift,
+    getPrimaryActionState: getPrimaryActionState,
     handlePrimaryCTA: handlePrimaryCTA,
     runOfferSearch: runOfferSearch,
     openOfferCheck: openOfferCheck,

@@ -898,7 +898,19 @@
         getTypewriterDone: () => bookingStage1TitleTypewriterDone,
         setTypewriterDone: (flag) => {
           bookingStage1TitleTypewriterDone = !!flag;
-        }
+        },
+        syncGuidedState,
+        getRenderableBookingViewKeys,
+        getBookingViewConfig,
+        renderSteps,
+        renderGuidedState,
+        applyBookingStageClass,
+        applyBookingStage2Alignment,
+        applyBookingStructureSchema,
+        syncBookingHints,
+        updateBookingScarcityUi,
+        scheduleBookingCardMinHeightSync,
+        closeInlineLead
       });
       return bookingViewFlowApi;
     }
@@ -978,6 +990,8 @@
         bookingText,
         track,
         buildHeroVariantMeta,
+        resolveHeroVariantFromUtm,
+        hasSelectedAge,
         showHint,
         nudgeUserToNextStep,
         formatVariantHint,
@@ -2509,44 +2523,16 @@
 
     function getPrimaryActionState(){
       syncGuidedState();
-      const shift = getSelectedShift();
-      const variant = heroVariantState || resolveHeroVariantFromUtm();
-      const variantCta = variant.copy?.cta || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER].cta;
-      if(!hasSelectedAge()){
-        return {
-          text:variantCta,
-          disabled:true,
-          hint:''
-        };
-      }
-
-      if(state.bookingCompleted){
-        return {
-          text:'Заявка принята',
-          disabled:true,
-          hint:''
-        };
-      }
-
-      if(!shift){
-        return HERO_V3_SIMPLE_ENABLED
-          ? { text:'Оставить заявку', disabled:false, hint:'' }
-          : { text:'Выберите смену', disabled:true, hint:'' };
-      }
-
-      if(state.offerStage === 0){
-        return {
-          text:'Уточнить цену',
-          disabled:false,
-          hint:''
-        };
-      }
-
-      return {
-        text:'Забронировать',
-        disabled:false,
-        hint:''
-      };
+      return safeInvoke(ensureBookingRuntimeBridge(), 'getPrimaryActionState', [{
+        state,
+        heroVariantState,
+        resolveHeroVariantFromUtm,
+        HERO_VARIANT_COPY,
+        HERO_VARIANT_DEFAULT_TIER,
+        hasSelectedAge,
+        getSelectedShift,
+        simpleModeEnabled: HERO_V3_SIMPLE_ENABLED
+      }], { text:'', disabled:true, hint:'' });
     }
 
     function getResolvedPrimaryActionText(actionState, shift){
@@ -3080,30 +3066,7 @@
     }
 
     function renderBookingPanels(){
-      syncGuidedState();
-      const renderableViews = getRenderableBookingViewKeys();
-      renderableViews.forEach((viewKey) => {
-        const cfg = getBookingViewConfig(viewKey);
-        try {
-          renderBookingInfo(cfg);
-          renderSteps(cfg);
-          renderGuidedState(cfg);
-          applyBookingStageClass(cfg);
-          applyBookingStage2Alignment(cfg);
-          applyBookingStructureSchema(cfg);
-        } catch(err){
-          console.warn('[booking] render failed for view:', cfg.key, err);
-        }
-      });
-      syncBookingHints();
-      updateBookingScarcityUi();
-      scheduleBookingCardMinHeightSync();
-      if(getBookingStage() < 4){
-        renderableViews.forEach((viewKey) => {
-          const cfg = getBookingViewConfig(viewKey);
-          closeInlineLead(cfg.inlineLeadScope);
-        });
-      }
+      return safeInvoke(ensureBookingViewFlow(), 'renderBookingPanels', [], null);
     }
 
     function getViewportPreviewView(){

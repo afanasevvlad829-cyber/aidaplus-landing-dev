@@ -1069,6 +1069,23 @@
       });
     }
 
+    function getPrimaryActionState(overrides){
+      var options = overrides || {};
+      var state = resolveState(options);
+      return invoke('getPrimaryActionState', {
+        state,
+        heroVariantState: options.heroVariantState || windowObj.heroVariantState || null,
+        resolveHeroVariantFromUtm: options.resolveHeroVariantFromUtm || ctx.resolveHeroVariantFromUtm || function(){ return null; },
+        HERO_VARIANT_COPY: options.HERO_VARIANT_COPY || ctx.HERO_VARIANT_COPY || {},
+        HERO_VARIANT_DEFAULT_TIER: options.HERO_VARIANT_DEFAULT_TIER || ctx.HERO_VARIANT_DEFAULT_TIER || 'broad',
+        hasSelectedAge: options.hasSelectedAge || ctx.hasSelectedAge || function(){ return false; },
+        getSelectedShift: options.getSelectedShift || ctx.getSelectedShift || function(){ return null; },
+        simpleModeEnabled: !!options.simpleModeEnabled
+      }, function(){
+        return { text:'', disabled:true, hint:'' };
+      });
+    }
+
 function runOfferSearch(overrides){
       var options = overrides || {};
       var state = resolveState(options);
@@ -1178,6 +1195,7 @@ function runOfferSearch(overrides){
       buildBookingSummaryHtml,
       generateCode,
       selectShift,
+      getPrimaryActionState,
       handlePrimaryCTA,
       runOfferSearch,
       openOfferCheck,
@@ -2887,6 +2905,56 @@ function runOfferSearch(overrides){
     return true;
   }
 
+  function getPrimaryActionState(options) {
+    var opts = options || {};
+    var state = opts.state || {};
+    var hasSelectedAge = opts.hasSelectedAge || function () { return false; };
+    var getSelectedShift = opts.getSelectedShift || function () { return null; };
+    var resolveHeroVariantFromUtm = opts.resolveHeroVariantFromUtm || function () { return null; };
+    var variantDefaultTier = opts.HERO_VARIANT_DEFAULT_TIER || "broad";
+    var variantCopyMap = opts.HERO_VARIANT_COPY || {};
+    var variant = opts.heroVariantState || resolveHeroVariantFromUtm() || {};
+    var tierCopy = variantCopyMap[variantDefaultTier] || {};
+    var copy = variant.copy || tierCopy;
+    var shift = getSelectedShift();
+
+    if (!hasSelectedAge()) {
+      return {
+        text: copy.cta || "",
+        disabled: true,
+        hint: ""
+      };
+    }
+
+    if (state.bookingCompleted) {
+      return {
+        text: "Заявка принята",
+        disabled: true,
+        hint: ""
+      };
+    }
+
+    if (!shift) {
+      return opts.simpleModeEnabled
+        ? { text: "Оставить заявку", disabled: false, hint: "" }
+        : { text: "Выберите смену", disabled: true, hint: "" };
+    }
+
+    if (Number(state.offerStage || 0) === 0) {
+      return {
+        text: "Уточнить цену",
+        disabled: false,
+        hint: ""
+      };
+    }
+
+    return {
+      text: "Забронировать",
+      disabled: false,
+      hint: ""
+    };
+  }
+
   function handlePrimaryCTA(options) {
     var opts = options || {};
     var state = opts.state || {};
@@ -3064,6 +3132,7 @@ function runOfferSearch(overrides){
     resetOfferState: resetOfferState,
     buildBookingSummaryHtml: buildBookingSummaryHtml,
     selectShift: selectShift,
+    getPrimaryActionState: getPrimaryActionState,
     handlePrimaryCTA: handlePrimaryCTA,
     runOfferSearch: runOfferSearch,
     openOfferCheck: openOfferCheck,
@@ -3101,6 +3170,18 @@ function runOfferSearch(overrides){
     const setTypewriterTimer = typeof ctx.setTypewriterTimer === 'function' ? ctx.setTypewriterTimer : (() => {});
     const getTypewriterDone = typeof ctx.getTypewriterDone === 'function' ? ctx.getTypewriterDone : (() => false);
     const setTypewriterDone = typeof ctx.setTypewriterDone === 'function' ? ctx.setTypewriterDone : (() => {});
+    const syncGuidedState = typeof ctx.syncGuidedState === 'function' ? ctx.syncGuidedState : (() => {});
+    const getRenderableBookingViewKeys = typeof ctx.getRenderableBookingViewKeys === 'function' ? ctx.getRenderableBookingViewKeys : (() => []);
+    const getBookingViewConfig = typeof ctx.getBookingViewConfig === 'function' ? ctx.getBookingViewConfig : (() => null);
+    const renderSteps = typeof ctx.renderSteps === 'function' ? ctx.renderSteps : (() => {});
+    const renderGuidedState = typeof ctx.renderGuidedState === 'function' ? ctx.renderGuidedState : (() => {});
+    const applyBookingStageClass = typeof ctx.applyBookingStageClass === 'function' ? ctx.applyBookingStageClass : (() => {});
+    const applyBookingStage2Alignment = typeof ctx.applyBookingStage2Alignment === 'function' ? ctx.applyBookingStage2Alignment : (() => {});
+    const applyBookingStructureSchema = typeof ctx.applyBookingStructureSchema === 'function' ? ctx.applyBookingStructureSchema : (() => {});
+    const syncBookingHints = typeof ctx.syncBookingHints === 'function' ? ctx.syncBookingHints : (() => {});
+    const updateBookingScarcityUi = typeof ctx.updateBookingScarcityUi === 'function' ? ctx.updateBookingScarcityUi : (() => {});
+    const scheduleBookingCardMinHeightSync = typeof ctx.scheduleBookingCardMinHeightSync === 'function' ? ctx.scheduleBookingCardMinHeightSync : (() => {});
+    const closeInlineLead = typeof ctx.closeInlineLead === 'function' ? ctx.closeInlineLead : (() => {});
 
     function stopBookingStage1TitleTypewriter(){
       setTypewriterRunId(getTypewriterRunId() + 1);
@@ -3388,10 +3469,40 @@ function runOfferSearch(overrides){
       `;
     }
 
+    function renderBookingPanels(){
+      syncGuidedState();
+      var renderableViews = getRenderableBookingViewKeys();
+      renderableViews.forEach(function(viewKey){
+        var cfg = getBookingViewConfig(viewKey);
+        try {
+          renderBookingInfo(cfg);
+          renderSteps(cfg);
+          renderGuidedState(cfg);
+          applyBookingStageClass(cfg);
+          applyBookingStage2Alignment(cfg);
+          applyBookingStructureSchema(cfg);
+        } catch (err){
+          console.warn('[booking] render failed for view:', cfg && cfg.key, err);
+        }
+      });
+      syncBookingHints();
+      updateBookingScarcityUi();
+      scheduleBookingCardMinHeightSync();
+      if(getBookingStage() < 4){
+        renderableViews.forEach(function(viewKey){
+          var cfg = getBookingViewConfig(viewKey);
+          if(cfg && cfg.inlineLeadScope){
+            closeInlineLead(cfg.inlineLeadScope);
+          }
+        });
+      }
+    }
+
     return Object.freeze({
       stopBookingStage1TitleTypewriter,
       runBookingStage1TitleTypewriter,
-      renderBookingInfo
+      renderBookingInfo,
+      renderBookingPanels
     });
   }
 
@@ -15994,7 +16105,19 @@ function runOfferSearch(overrides){
         getTypewriterDone: () => bookingStage1TitleTypewriterDone,
         setTypewriterDone: (flag) => {
           bookingStage1TitleTypewriterDone = !!flag;
-        }
+        },
+        syncGuidedState,
+        getRenderableBookingViewKeys,
+        getBookingViewConfig,
+        renderSteps,
+        renderGuidedState,
+        applyBookingStageClass,
+        applyBookingStage2Alignment,
+        applyBookingStructureSchema,
+        syncBookingHints,
+        updateBookingScarcityUi,
+        scheduleBookingCardMinHeightSync,
+        closeInlineLead
       });
       return bookingViewFlowApi;
     }
@@ -16074,6 +16197,8 @@ function runOfferSearch(overrides){
         bookingText,
         track,
         buildHeroVariantMeta,
+        resolveHeroVariantFromUtm,
+        hasSelectedAge,
         showHint,
         nudgeUserToNextStep,
         formatVariantHint,
@@ -17605,44 +17730,16 @@ function runOfferSearch(overrides){
 
     function getPrimaryActionState(){
       syncGuidedState();
-      const shift = getSelectedShift();
-      const variant = heroVariantState || resolveHeroVariantFromUtm();
-      const variantCta = variant.copy?.cta || HERO_VARIANT_COPY[HERO_VARIANT_DEFAULT_TIER].cta;
-      if(!hasSelectedAge()){
-        return {
-          text:variantCta,
-          disabled:true,
-          hint:''
-        };
-      }
-
-      if(state.bookingCompleted){
-        return {
-          text:'Заявка принята',
-          disabled:true,
-          hint:''
-        };
-      }
-
-      if(!shift){
-        return HERO_V3_SIMPLE_ENABLED
-          ? { text:'Оставить заявку', disabled:false, hint:'' }
-          : { text:'Выберите смену', disabled:true, hint:'' };
-      }
-
-      if(state.offerStage === 0){
-        return {
-          text:'Уточнить цену',
-          disabled:false,
-          hint:''
-        };
-      }
-
-      return {
-        text:'Забронировать',
-        disabled:false,
-        hint:''
-      };
+      return safeInvoke(ensureBookingRuntimeBridge(), 'getPrimaryActionState', [{
+        state,
+        heroVariantState,
+        resolveHeroVariantFromUtm,
+        HERO_VARIANT_COPY,
+        HERO_VARIANT_DEFAULT_TIER,
+        hasSelectedAge,
+        getSelectedShift,
+        simpleModeEnabled: HERO_V3_SIMPLE_ENABLED
+      }], { text:'', disabled:true, hint:'' });
     }
 
     function getResolvedPrimaryActionText(actionState, shift){
@@ -18176,30 +18273,7 @@ function runOfferSearch(overrides){
     }
 
     function renderBookingPanels(){
-      syncGuidedState();
-      const renderableViews = getRenderableBookingViewKeys();
-      renderableViews.forEach((viewKey) => {
-        const cfg = getBookingViewConfig(viewKey);
-        try {
-          renderBookingInfo(cfg);
-          renderSteps(cfg);
-          renderGuidedState(cfg);
-          applyBookingStageClass(cfg);
-          applyBookingStage2Alignment(cfg);
-          applyBookingStructureSchema(cfg);
-        } catch(err){
-          console.warn('[booking] render failed for view:', cfg.key, err);
-        }
-      });
-      syncBookingHints();
-      updateBookingScarcityUi();
-      scheduleBookingCardMinHeightSync();
-      if(getBookingStage() < 4){
-        renderableViews.forEach((viewKey) => {
-          const cfg = getBookingViewConfig(viewKey);
-          closeInlineLead(cfg.inlineLeadScope);
-        });
-      }
+      return safeInvoke(ensureBookingViewFlow(), 'renderBookingPanels', [], null);
     }
 
     function getViewportPreviewView(){

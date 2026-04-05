@@ -150,6 +150,23 @@
       });
     }
 
+    function getPrimaryActionState(overrides){
+      var options = overrides || {};
+      var state = resolveState(options);
+      return invoke('getPrimaryActionState', {
+        state,
+        heroVariantState: options.heroVariantState || windowObj.heroVariantState || null,
+        resolveHeroVariantFromUtm: options.resolveHeroVariantFromUtm || ctx.resolveHeroVariantFromUtm || function(){ return null; },
+        HERO_VARIANT_COPY: options.HERO_VARIANT_COPY || ctx.HERO_VARIANT_COPY || {},
+        HERO_VARIANT_DEFAULT_TIER: options.HERO_VARIANT_DEFAULT_TIER || ctx.HERO_VARIANT_DEFAULT_TIER || 'broad',
+        hasSelectedAge: options.hasSelectedAge || ctx.hasSelectedAge || function(){ return false; },
+        getSelectedShift: options.getSelectedShift || ctx.getSelectedShift || function(){ return null; },
+        simpleModeEnabled: !!options.simpleModeEnabled
+      }, function(){
+        return { text:'', disabled:true, hint:'' };
+      });
+    }
+
 function runOfferSearch(overrides){
       var options = overrides || {};
       var state = resolveState(options);
@@ -259,6 +276,7 @@ function runOfferSearch(overrides){
       buildBookingSummaryHtml,
       generateCode,
       selectShift,
+      getPrimaryActionState,
       handlePrimaryCTA,
       runOfferSearch,
       openOfferCheck,
