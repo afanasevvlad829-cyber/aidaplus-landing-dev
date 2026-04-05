@@ -12882,7 +12882,7 @@
         flex:1;
       }
 
-       .team-carousel :is(.team-card){
+       .team-carousel :where(.team-card){
         min-width:86%;
         max-width:86%;
       }
@@ -12952,7 +12952,7 @@
         border-radius:18px;
       }
 
-      .hero-shell:is(*){
+      .hero-shell:where(*){
         display:block;
         min-height:auto;
       }
@@ -12971,7 +12971,7 @@
         display:none;
       }
 
-      .video-card:is(*){
+      .video-card:where(*){
         flex:0 0 min(82vw, 280px);
       }
 
