@@ -426,26 +426,9 @@
     const PROD_DEBUGLESS_DOMAINS = Object.freeze(['aidacamp.ru']);
     const QUALITY_BASELINE_KEY = 'aidacamp_quality_baseline_v1';
     const DEBT_REGISTER_KEY = 'aidacamp_debt_register_v1';
-    const QUALITY_SOFT_GATES = Object.freeze({
-      cssDuplicateSelectorsMax: 320,
-      jsBranchPointsMax: 760,
-      jsListenersMax: 220,
-      jsBytesMax: 360000,
-      cssBytesMax: 240000
-    });
-    const GUARDRAIL_REQUIRED_SELECTORS = Object.freeze([
-      '#desktopView',
-      '#mobileView',
-      '.hero-shell',
-      '#desktop-booking-card',
-      '#mobileBookingCard',
-      '#summaryBar',
-      '#offerOverlay',
-      '#offerCard',
-      '#sectionModal',
-      '#videoModal',
-      '#calendarModal'
-    ]);
+    const RUNTIME_QUALITY_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.runtimeQuality) || {};
+    const QUALITY_SOFT_GATES = Object.freeze(RUNTIME_QUALITY_CONFIG.softGates || {});
+    const GUARDRAIL_REQUIRED_SELECTORS = Object.freeze(RUNTIME_QUALITY_CONFIG.requiredSelectors || []);
     const VERSION_BADGE_HIDDEN_KEY = 'aidacamp_version_badge_hidden_v1';
     const VIDEO_META_CACHE_KEY = 'aidacamp_video_meta_cache_v2';
     const VIDEO_META_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
