@@ -901,7 +901,6 @@
         renderGuidedState,
         applyBookingStageClass,
         applyBookingStage2Alignment,
-        applyBookingStructureSchema,
         syncBookingHints,
         updateBookingScarcityUi,
         scheduleBookingCardMinHeightSync,
@@ -2320,65 +2319,6 @@
       card.style.setProperty('--booking-stage2-y-grid', vertical.grid);
       card.style.setProperty('--booking-stage2-x-flex', horizontal.flex);
       card.style.setProperty('--booking-stage2-x-grid', horizontal.grid);
-    }
-
-    function applyBookingStructureSchema(viewCfg){
-      const cfg = resolveBookingViewCfg(viewCfg);
-      const card = document.getElementById(cfg.cardId);
-      if(!card) return;
-      const stage = getBookingStage();
-
-      card.querySelectorAll('[data-booking-region]').forEach((node) => {
-        delete node.dataset.bookingRegion;
-        delete node.dataset.bookingRegionLabel;
-        delete node.dataset.bookingRegionZero;
-        delete node.dataset.bookingRegionLabelSide;
-      });
-
-      const mainSelector = (() => {
-        if(stage === 2) return '.booking-step-2';
-        if(stage >= 3) return `#${cfg.infoId}`;
-        return '.booking-step-1';
-      })();
-
-      const structureMap = Object.freeze({
-        top: `#${cfg.stepsId}`,
-        chips: `#${cfg.summaryChipsId}`,
-        header: `#${cfg.titleId}`,
-        main: mainSelector,
-        bottom: '.booking-step-3'
-      });
-      const regionLabelSideMap = Object.freeze({
-        top: 'right',
-        chips: 'right',
-        header: 'left',
-        main: 'right',
-        bottom: 'left'
-      });
-
-      const resolveRegionLabel = (regionName, node) => {
-        if(!node) return regionName;
-        const rect = node.getBoundingClientRect();
-        const style = window.getComputedStyle(node);
-        const isZeroHeight = style.display === 'none' || style.visibility === 'hidden' || node.offsetHeight === 0 || rect.height < 1;
-        return (isZeroHeight && `${regionName} 0`) || regionName;
-      };
-
-      const isRegionZero = (node) => {
-        if(!node) return false;
-        const rect = node.getBoundingClientRect();
-        const style = window.getComputedStyle(node);
-        return style.display === 'none' || style.visibility === 'hidden' || node.offsetHeight === 0 || rect.height < 1;
-      };
-
-      Object.entries(structureMap).forEach(([regionName, selector]) => {
-        const node = card.querySelector(selector);
-        if(!node) return;
-        node.dataset.bookingRegion = regionName;
-        node.dataset.bookingRegionLabel = resolveRegionLabel(regionName, node);
-        node.dataset.bookingRegionZero = String(Number(isRegionZero(node)));
-        node.dataset.bookingRegionLabelSide = regionLabelSideMap[regionName] || 'left';
-      });
     }
 
     function ensureStage2TransferHost(stepThree){
