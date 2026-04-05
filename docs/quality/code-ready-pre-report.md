@@ -1,6 +1,6 @@
 # CODE_READY Pre-Report (No Rollout)
 
-Generated: 2026-04-05 05:51 MSK
+Generated: 2026-04-05 07:36 MSK
 
 ## Status
 
@@ -13,9 +13,10 @@ Generated: 2026-04-05 05:51 MSK
 
 - `css_duplicate_selectors = 8`
 - `js_if_count = 154`
-- `js_ternary_count = 19`
+- `js_ternary_count = 13`
 - `js_state_mutations = 0`
 - `dist_bytes = 56263`
+- `main_js_lines = 2861`
 
 ## Ideal Targets (Zero Legacy cycle)
 
@@ -33,6 +34,7 @@ Generated: 2026-04-05 05:51 MSK
 - `node ./tools/smoke-booking-ui-playwright.mjs https://dev.aidacamp.ru` — PASS (desktop/mobile)
 - `bash ./tools/build-astro-preview.sh` — PASS
 - Final acceptance loop (x3 consecutive runs, 2026-04-05 05:52–05:57 MSK) — PASS/PASS/PASS
+- Checkpoint after Batch 48/49 (2026-04-05 07:33–07:35 MSK) — PASS (`quality-check`, `architecture-check`, `runtime-api`, `booking-flow`, `booking-ui`, `astro-build`)
 
 ## Contract Lock (current)
 
@@ -59,6 +61,8 @@ Generated: 2026-04-05 05:51 MSK
 - Desktop-first architecture preserved; mobile remains presentation layer on shared state/actions.
 - `hero_v3_simple` runtime canonicalized to single-step stage path (`stage=1`) for dev simple flow.
 - Legacy booking stage CSS refs (`stage2/3/4`) reduced to zero in active `main.css` checks.
+- Embedded `shifts/mediaContent` payloads removed from `main.js`; data now resolved from `AIDACAMP_CONTENT` via build-loaded config content scripts.
+- Anti-regression gate now blocks any return of inline `const shifts=[...]` / `const mediaContent={...}` blobs in `main.js`.
 
 ## Known Non-Blocking Constraint
 
