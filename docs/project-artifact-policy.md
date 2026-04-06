@@ -34,7 +34,7 @@ Rule: all summaries must reuse these normalized numbers from CSV, not manual rec
 
 | Class | Canonical? | Source of truth | Notes |
 |---|---|---|---|
-| Product runtime source | Yes | `index.html`, `src/scripts/**`, `src/styles/**`, `assets/**`, `src/pages/**` | Core product source and behavior.
+| Product runtime source | Yes | `src/pages/index.html`, `src/scripts/**`, `src/styles/**`, `assets/**`, `src/pages/**` | Core product source and behavior.
 | Runtime/release docs | Yes | `docs/**` | Process/runtime contract docs are versioned.
 | Generated outputs | No (default) | `build/**`, `dist/**`, root `legal.html` | Generated artifacts, not canonical source.
 | Review/debug artifacts | No (default) | `screens/**`, `audit/playwright/artifacts/**`, `diff/**` | Keep minimal curated subset only if explicitly needed.
@@ -43,7 +43,7 @@ Rule: all summaries must reuse these normalized numbers from CSV, not manual rec
 ## 3. HTML Rules (explicit)
 
 ### 3.1 Source-of-truth HTML
-- `index.html`
+- `src/pages/index.html`
 - `src/pages/legal.html`
 
 ### 3.2 Generated / non-canonical HTML
@@ -97,7 +97,7 @@ archive/non-runtime/
 Never ignore:
 - `docs/**`
 - `src/pages/**`
-- core `src/**`, `assets/**`, `index.html`
+- core `src/**`, `assets/**`, `src/pages/index.html`
 
 ## 6. Safe Cleanup Plan (non-destructive)
 1. Freeze policy files first (`docs/project-artifact-policy.md`, inventory CSV, report).

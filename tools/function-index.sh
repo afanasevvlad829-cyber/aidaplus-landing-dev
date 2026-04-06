@@ -26,8 +26,8 @@ collect_functions() {
   echo "## src/scripts/main.js"
   collect_functions "$ROOT_DIR/src/scripts/main.js"
   echo
-  echo "## dist/index.html"
-  collect_functions "$ROOT_DIR/dist/index.html"
+  echo "## src/pages/index.html"
+  collect_functions "$ROOT_DIR/src/pages/index.html"
 } > "$OUT_FILE"
 
 echo "Function index updated: $OUT_FILE"

@@ -21,7 +21,9 @@
 ## Commit policy guard
 - Install local hooks once:
   - `./tools/install-git-hooks.sh`
-- Hook blocks commits where `dist` artifacts are staged without source-of-truth updates.
+- Hook blocks staging generated/runtime artifacts (`dist/build/cdn/.runtime/.tmp/test-results/legal.html`) by default.
+- Controlled release exception only with explicit override:
+  - `AC_ALLOW_GENERATED_STAGE=1 git commit ...`
 
 ## CI gates
 - Workflow `Quality Gate` runs on PR and push (`main`, `dev`, `codex/**`).

@@ -17,7 +17,7 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 root = Path(".")
-base_path = root / "dist" / "index.html"
+base_path = root / "src" / "pages" / "index.html"
 out_path = root / "dist" / "index.html"
 cdn_bundle_path = root / "dist" / "cdn" / "app.bundle.js"
 cdn_repo_bundle_path = root / "cdn" / "app.bundle.js"
@@ -30,6 +30,10 @@ script_paths = []
 config_dir = root / "src" / "scripts" / "config"
 if config_dir.exists():
     script_paths.extend(sorted(config_dir.rglob("*.js")))
+
+data_dir = root / "src" / "scripts" / "data"
+if data_dir.exists():
+    script_paths.extend(sorted(data_dir.glob("*.js")))
 
 script_paths.extend([
     root / "src" / "scripts" / "core" / "view-mode.js",
@@ -47,7 +51,7 @@ script_paths.append(root / "src" / "scripts" / "main.js")
 components_dir = root / "src" / "components"
 
 if not base_path.exists():
-    raise SystemExit("ERROR: dist/index.html is missing (canonical source file).")
+    raise SystemExit("ERROR: src/pages/index.html is missing (canonical source file).")
 base = base_path.read_text(encoding="utf-8")
 
 def extract_block(src: str, start_marker: str, end_marker: str) -> str:
@@ -314,7 +318,7 @@ def replace_or_insert(src: str, start_marker: str, end_marker: str, payload: str
 
 style_block = (
     "<!-- AC_BUILD_STYLE_START -->\n"
-    "<link id=\"ac-build-main-css\" rel=\"stylesheet\" href=\"/cdn/app.css\">\n"
+    "<link id=\"ac-build-main-css\" rel=\"stylesheet\" href=\"/src/styles/main.css\">\n"
     "<!-- AC_BUILD_STYLE_END -->"
 )
 
@@ -333,6 +337,9 @@ out = re.sub(r'<link[^>]+href=["\']/src/styles/main\.css["\'][^>]*>\s*', "", out
 out = re.sub(r'<script[^>]+src=["\']/src/scripts/[^"\']+["\'][^>]*>\s*</script>\s*', "", out, flags=re.I)
 out = replace_or_insert(out, "<!-- AC_BUILD_STYLE_START -->", "<!-- AC_BUILD_STYLE_END -->", style_block, "</head>")
 out = replace_or_insert(out, "<!-- AC_BUILD_SCRIPT_START -->", "<!-- AC_BUILD_SCRIPT_END -->", script_block, "</body>")
+generated_banner = "<!-- GENERATED FILE. DO NOT EDIT: dist/index.html | SOURCE: src/pages/index.html -->\n"
+if not out.startswith("<!-- GENERATED FILE. DO NOT EDIT"):
+    out = generated_banner + out
 allow_dist_rewrite = (os.getenv("AC_ALLOW_DIST_REWRITE", "1") == "1")
 if allow_dist_rewrite:
     out_path.write_text(out, encoding="utf-8")
@@ -346,10 +353,6 @@ cdn_bundle_path.write_text(bundle, encoding="utf-8")
 print(f"Built: {cdn_bundle_path}")
 cdn_repo_bundle_path.write_text(bundle, encoding="utf-8")
 print(f"Built: {cdn_repo_bundle_path}")
-cdn_css_path.write_text(css_for_cdn, encoding="utf-8")
-print(f"Built: {cdn_css_path}")
-cdn_repo_css_path.write_text(css_for_cdn, encoding="utf-8")
-print(f"Built: {cdn_repo_css_path}")
 
 body_match = re.search(r"<body[^>]*>(?P<body>.*)</body>", out, flags=re.I | re.S)
 body_html = body_match.group("body") if body_match else ""
@@ -405,11 +408,10 @@ if missing_assets:
         print(f"  - {item}")
 PY
 
-echo "Canonical runtime source: dist/index.html (not rewritten unless AC_ALLOW_DIST_REWRITE=1)"
+echo "Canonical runtime source: src/pages/index.html"
+echo "Generated runtime artifact: dist/index.html (not rewritten unless AC_ALLOW_DIST_REWRITE=1)"
 echo "CDN artifact: dist/cdn/app.bundle.js"
 echo "CDN artifact for GitHub/jsDelivr: cdn/app.bundle.js"
-echo "CDN css artifact: dist/cdn/app.css"
-echo "CDN css artifact for GitHub/jsDelivr: cdn/app.css"
 echo "Tilda single-script artifact: dist/cdn/app.tilda.js"
 echo "Tilda single-script artifact for GitHub/jsDelivr: cdn/app.tilda.js"
 

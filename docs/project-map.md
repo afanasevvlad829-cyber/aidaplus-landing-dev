@@ -1,14 +1,16 @@
 # Project Map (Canonical)
 
+Companion policy: `docs/development-rules.md`
+
 ## Source of truth
-- `/index.html`
+- `/src/pages/index.html`
 - `/src/scripts/**`
 - `/src/styles/**`
 - `/assets/**`
 - `/docs/**`
 
 ## Runtime entrypoints (dev)
-- HTML: `/index.html`
+- HTML: `/src/pages/index.html`
 - Styles: `/src/styles/main.css`
 - Scripts: `/src/scripts/main.js`
 
@@ -35,7 +37,7 @@
 - Не редактировать `dist/index.html` вручную
 - Не редактировать `dist/legal.html` / `legal.html` / `build/legal.html` вручную
 - Не добавлять новые deploy/build скрипты вне `build.sh`/`deploy.sh`
-- Весь runtime-код изменять только в `/index.html` и `/src/**`
+- Весь runtime-код изменять только в `/src/pages/index.html` и `/src/**`
 
 ## Runtime Architecture (Fixed)
 

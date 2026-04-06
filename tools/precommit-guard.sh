@@ -11,9 +11,57 @@ if [[ -z "$staged_files" ]]; then
   exit 0
 fi
 
-touches_dist=0
+check_forbidden_new_entities_in_main_entrypoints() {
+  local file="$1"
+  local mode="$2"
+  local diff
+  diff="$(git diff --cached --unified=0 -- "$file" || true)"
+  [[ -z "$diff" ]] && return 0
+
+  local added
+  added="$(printf '%s\n' "$diff" | rg '^\+[^+]' || true)"
+  [[ -z "$added" ]] && return 0
+
+  if [[ "$mode" == "js" ]]; then
+    local offenders
+    offenders="$(printf '%s\n' "$added" | rg -n '^\+\s*(function\s+[A-Za-z_$][A-Za-z0-9_$]*\s*\(|(const|let|var)\s+[A-Za-z_$][A-Za-z0-9_$]*\s*=|class\s+[A-Za-z_$][A-Za-z0-9_$]*\b)' || true)"
+    if [[ -n "$offenders" ]]; then
+      echo "[precommit-guard] FAIL: new JS entities are forbidden in $file (fast-track rule)."
+      echo "$offenders" | sed 's/^/[precommit-guard]   /'
+      blocked=1
+    fi
+    return 0
+  fi
+
+  if [[ "$mode" == "css" ]]; then
+    local selectors
+    selectors="$(printf '%s\n' "$added" | rg -n '^\+\s*[^@/{][^{]*\{' || true)"
+    if [[ -n "$selectors" ]]; then
+      echo "[precommit-guard] FAIL: new CSS selectors are forbidden in $file (fast-track rule)."
+      echo "$selectors" | sed 's/^/[precommit-guard]   /'
+      blocked=1
+    fi
+    return 0
+  fi
+}
+
 blocked=0
 max_bytes=$((10 * 1024 * 1024))
+
+# Non-source files are blocked in normal commits. Use explicit override only for controlled release jobs.
+allow_generated_stage="${AC_ALLOW_GENERATED_STAGE:-0}"
+generated_blocked_prefixes=(
+  "dist/"
+  "build/"
+  "cdn/"
+  ".runtime/"
+  ".tmp/"
+  "test-results/"
+)
+generated_blocked_files=(
+  "legal.html"
+)
+
 blocked_paths=(
   "assets/"
   "reports/"
@@ -35,8 +83,22 @@ while IFS= read -r file; do
     echo "[precommit-guard] FAIL: gpt.html artifacts are deprecated and forbidden: $file"
     blocked=1
   fi
-  if [[ "$file" == "dist/index.html" || "$file" == "dist/index.htm" ]]; then
-    touches_dist=1
+
+  if [[ "$allow_generated_stage" != "1" ]]; then
+    for prefix in "${generated_blocked_prefixes[@]}"; do
+      if [[ "$file" == "$prefix"* ]]; then
+        echo "[precommit-guard] FAIL: generated/runtime artifact is staged: $file"
+        echo "[precommit-guard]       Edit source-of-truth files (src/**, src/pages/**, docs/**, tools/**) and rebuild."
+        echo "[precommit-guard]       Temporary override (controlled only): AC_ALLOW_GENERATED_STAGE=1 git commit ..."
+        blocked=1
+      fi
+    done
+    for exact_file in "${generated_blocked_files[@]}"; do
+      if [[ "$file" == "$exact_file" ]]; then
+        echo "[precommit-guard] FAIL: generated runtime file is staged: $file"
+        blocked=1
+      fi
+    done
   fi
 
   for prefix in "${blocked_paths[@]}"; do
@@ -54,75 +116,9 @@ while IFS= read -r file; do
   done
 done <<< "$staged_files"
 
-get_effective_file_content() {
-  local file_path="$1"
-  if git diff --cached --name-only | rg -q "^${file_path}$"; then
-    git show ":${file_path}" 2>/dev/null || true
-  else
-    git show "HEAD:${file_path}" 2>/dev/null || true
-  fi
-}
-
-extract_build_version() {
-  local source_text="$1"
-  echo "$source_text" | sed -nE "s/.*BUILD_VERSION_LABEL = 'v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/p" | head -n 1
-}
-
-version_to_number() {
-  local v="$1"
-  local a b c
-  IFS='.' read -r a b c <<< "$v"
-  printf '%d\n' $((10#$a * 1000000 + 10#$b * 1000 + 10#$c))
-}
-
-if echo "$staged_files" | rg -q "^dist/index\\.html$"; then
-  staged_dist_content="$(git show :dist/index.html 2>/dev/null || true)"
-  head_dist_content="$(git show HEAD:dist/index.html 2>/dev/null || true)"
-
-  staged_version="$(extract_build_version "$staged_dist_content")"
-  head_version="$(extract_build_version "$head_dist_content")"
-
-  if [[ -z "$staged_version" ]]; then
-    echo "[precommit-guard] FAIL: BUILD_VERSION_LABEL not found in staged dist/index.html"
-    exit 1
-  fi
-
-  if [[ -n "$head_dist_content" ]]; then
-    if [[ -z "$head_version" ]]; then
-      echo "[precommit-guard] FAIL: BUILD_VERSION_LABEL not found in HEAD dist/index.html"
-      exit 1
-    fi
-
-    if [[ "$staged_dist_content" != "$head_dist_content" ]]; then
-      staged_num="$(version_to_number "$staged_version")"
-      head_num="$(version_to_number "$head_version")"
-      if (( staged_num <= head_num )); then
-        echo "[precommit-guard] FAIL: dist/index.html changed but BUILD_VERSION_LABEL did not increase."
-        echo "[precommit-guard] HEAD version: v$head_version"
-        echo "[precommit-guard] New  version: v$staged_version"
-        echo "[precommit-guard] Bump version before commit."
-        exit 1
-      fi
-    fi
-  fi
-fi
-
-if echo "$staged_files" | rg -q "^(dist/index\\.html|dist/index\\.htm)$"; then
-  effective_dist_index_html="$(get_effective_file_content "dist/index.html")"
-  effective_dist_index_htm="$(get_effective_file_content "dist/index.htm")"
-
-  if [[ -z "$effective_dist_index_html" ]]; then
-    echo "[precommit-guard] FAIL: cannot read canonical runtime artifact (dist/index.html)."
-    exit 1
-  fi
-
-  if [[ -n "$effective_dist_index_htm" && "$effective_dist_index_html" != "$effective_dist_index_htm" ]]; then
-    echo "[precommit-guard] FAIL: runtime artifacts are out of sync."
-    echo "[precommit-guard] Required: dist/index.html == dist/index.htm (if dist/index.htm is present)."
-    echo "[precommit-guard] Fix by syncing from dist/index.html or remove dist/index.htm."
-    exit 1
-  fi
-fi
+# Fast-track policy: no new entities/selectors in monolith entrypoints.
+check_forbidden_new_entities_in_main_entrypoints "src/scripts/main.js" "js"
+check_forbidden_new_entities_in_main_entrypoints "src/styles/main.css" "css"
 
 while IFS= read -r file; do
   [[ -z "$file" ]] && continue

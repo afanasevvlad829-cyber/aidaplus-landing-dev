@@ -1,6 +1,7 @@
 # Release Checklist
 
 - Run `./build.sh` (dist regenerated from canonical source).
+- Verify canonical source exists: `src/pages/index.html`.
 - Verify canonical target: `dist/index.html`.
 - Verify artifact sync: `dist/index.html` == `dist/index.htm`.
 - If legal page exists: `dist/legal.html` == `legal.html` == `build/legal.html`.

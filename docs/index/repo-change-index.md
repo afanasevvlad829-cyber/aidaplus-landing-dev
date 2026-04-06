@@ -4,7 +4,7 @@ Last update: 2026-03-25 (Europe/Moscow)
 Branch: `dev`
 
 ## 1) Canon runtime map
-- Runtime source: `index.html`, `src/**`, `assets/**`, `src/pages/legal.html`
+- Runtime source: `src/pages/index.html`, `src/**`, `assets/**`, `src/pages/legal.html`
 - Build output: `dist/index.html`, `dist/legal.html`
 - Published aliases: `legal.html`, `build/legal.html`
 
