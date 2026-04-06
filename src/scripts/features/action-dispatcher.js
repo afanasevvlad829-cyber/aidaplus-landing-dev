@@ -1,9 +1,10 @@
 (function registerActionDispatcher(windowObj){
   'use strict';
 
-  if(!windowObj || !windowObj.AC_FEATURES){
+  if(!windowObj){
     return;
   }
+  windowObj.AC_FEATURES = windowObj.AC_FEATURES || {};
 
   var DATA_MEDIA_FILTER_TAGS = (
     windowObj &&
@@ -692,20 +693,13 @@
           if(typeof ctx.setHeroPhoneDropdownOpen === 'function'){
             ctx.setHeroPhoneDropdownOpen(false);
           }
-          ctx.setHeroMenuOpen(!ctx.isHeroMenuOpen());
+          var actionEl = arguments[0] || null;
+          ctx.setHeroMenuOpen(!ctx.isHeroMenuOpen(actionEl), actionEl);
         }
         return true;
       },
       'toggle-hero-phone-dropdown': function onToggleHeroPhoneDropdown(){
-        if(
-          typeof ctx.setHeroPhoneDropdownOpen === 'function' &&
-          typeof ctx.isHeroPhoneDropdownOpen === 'function'
-        ){
-          if(typeof ctx.setHeroMenuOpen === 'function'){
-            ctx.setHeroMenuOpen(false);
-          }
-          ctx.setHeroPhoneDropdownOpen(!ctx.isHeroPhoneDropdownOpen());
-        }
+        // Handled in global-ui-bindings as the single source of truth.
         return true;
       }
     };

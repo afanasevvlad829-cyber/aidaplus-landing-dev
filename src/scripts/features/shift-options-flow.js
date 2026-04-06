@@ -47,8 +47,30 @@
       return String(value || '').replace(/\s+/g, ' ').trim();
     }
 
+    function resolveAgeSpecificShiftDescription(shift, ageKey){
+      if(!shift) return '';
+      const byAge = (
+        shift.descriptions_by_age && typeof shift.descriptions_by_age === 'object'
+          ? shift.descriptions_by_age
+          : (shift.descriptionsByAge && typeof shift.descriptionsByAge === 'object' ? shift.descriptionsByAge : null)
+      );
+      if(!byAge) return '';
+      const text = normalizeShiftText(byAge[ageKey]);
+      if(text) return text;
+      return normalizeShiftText(
+        byAge['7-9'] ||
+        byAge['10-12'] ||
+        byAge['13-14'] ||
+        ''
+      );
+    }
+
     function getShiftAgeFocusedDescription(shift, ageKey){
       if(!shift) return '';
+      const ageSpecific = resolveAgeSpecificShiftDescription(shift, ageKey);
+      if(ageSpecific){
+        return ageSpecific;
+      }
       const full = String(shift.fullDesc || '').replace(/\r/g, '').trim();
       if(!full) return shift.desc || '';
       const compact = normalizeShiftText(full);

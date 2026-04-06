@@ -55,6 +55,21 @@
   var data = window.AC_DATA || {};
   var ICON_MAP = data.ICON_MAP || {};
   var CONTENT_MAP = data.CONTENT_MAP || {};
+  CONTENT_MAP.ui = CONTENT_MAP.ui || {};
+  CONTENT_MAP.menu = CONTENT_MAP.menu || [];
+  CONTENT_MAP.sectionTitles = CONTENT_MAP.sectionTitles || {};
+  CONTENT_MAP.aiStats = CONTENT_MAP.aiStats || [];
+  CONTENT_MAP.aiCopy = CONTENT_MAP.aiCopy || [];
+  CONTENT_MAP.location = CONTENT_MAP.location || { where: [], nearby: [] };
+  CONTENT_MAP.photoCategories = CONTENT_MAP.photoCategories || [];
+  CONTENT_MAP.photos = CONTENT_MAP.photos || [];
+  CONTENT_MAP.videos = CONTENT_MAP.videos || [];
+  CONTENT_MAP.faqItems = CONTENT_MAP.faqItems || {};
+  CONTENT_MAP.faqTabs = CONTENT_MAP.faqTabs || [];
+  CONTENT_MAP.reviews = CONTENT_MAP.reviews || [];
+  CONTENT_MAP.team = CONTENT_MAP.team || [];
+  CONTENT_MAP.programCards = CONTENT_MAP.programCards || [];
+  CONTENT_MAP.formatCards = CONTENT_MAP.formatCards || [];
   var TABS = data.TABS || CONTENT_MAP.menu || [];
   var AGE_PROFILES = data.AGE_PROFILES || [];
   var SHIFTS = data.SHIFTS || [];
@@ -325,6 +340,9 @@
   }
 
   function isAgeGateLocked() {
+    if (document.body && document.body.classList.contains("hero-v3-simple-enabled")) {
+      return false;
+    }
     return !ageSelectionConfirmed;
   }
 
@@ -1907,7 +1925,7 @@
   function setPhotoPage(nextPage) {
     var items = getFilteredPhotos();
     var maxPage = Math.max(0, Math.ceil(items.length / getMediaPageSize("photo")) - 1);
-    var safePage = clamp(nextPage, 0, maxPage);
+    var safePage = wrapPageIndex(nextPage, maxPage + 1);
     if (safePage === state.photoPage) return;
 
     mediaSwapDir.photo = safePage > state.photoPage ? 1 : -1;
@@ -1917,32 +1935,20 @@
   }
 
   function setPhotoLightbox(index) {
-    if (index < 0) {
-      state.photoLightboxIndex = -1;
-      renderOverlays();
-      return;
-    }
-
     var items = getFilteredPhotos();
     if (!items.length) return;
 
-    var safeIndex = clamp(index, 0, items.length - 1);
+    var safeIndex = wrapPageIndex(index, items.length);
     if (state.photoLightboxIndex === safeIndex) return;
     state.photoLightboxIndex = safeIndex;
     renderOverlays();
   }
 
   function setVideoLightbox(index) {
-    if (index < 0) {
-      state.videoLightboxIndex = -1;
-      renderOverlays();
-      return;
-    }
-
     var items = CONTENT_MAP.videos || [];
     if (!items.length) return;
 
-    var safeIndex = clamp(index, 0, items.length - 1);
+    var safeIndex = wrapPageIndex(index, items.length);
     if (state.videoLightboxIndex === safeIndex) return;
     state.videoLightboxIndex = safeIndex;
     renderOverlays();
@@ -1980,7 +1986,7 @@
       ? getCompactVideoPageSize()
       : getMediaPageSize("video");
     var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.videos.length / perPage) - 1);
-    var safePage = clamp(nextPage, 0, maxPage);
+    var safePage = wrapPageIndex(nextPage, maxPage + 1);
     if (safePage === state.videoPage) return;
 
     mediaSwapDir.video = safePage > state.videoPage ? 1 : -1;
@@ -1995,7 +2001,7 @@
       ? getCompactReviewPageSize()
       : getMediaPageSize("review");
     var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.reviews.length / perPage) - 1);
-    var safePage = clamp(nextPage, 0, maxPage);
+    var safePage = wrapPageIndex(nextPage, maxPage + 1);
     if (safePage === state.reviewPage) return;
 
     mediaSwapDir.review = safePage > state.reviewPage ? 1 : -1;
@@ -2010,7 +2016,7 @@
       ? getCompactTeamPageSize()
       : getMediaPageSize("team");
     var maxPage = Math.max(0, Math.ceil(CONTENT_MAP.team.length / perPage) - 1);
-    var safePage = clamp(nextPage, 0, maxPage);
+    var safePage = wrapPageIndex(nextPage, maxPage + 1);
     if (safePage === state.teamPage) return;
 
     mediaSwapDir.team = safePage > state.teamPage ? 1 : -1;
@@ -2028,6 +2034,13 @@
       className += " ac-page-swap--reviews";
     }
     return className;
+  }
+
+  function wrapPageIndex(next, total) {
+    var totalItems = Math.max(0, Number(total) || 0);
+    if (!totalItems) return 0;
+    var raw = Math.round(Number(next) || 0);
+    return ((raw % totalItems) + totalItems) % totalItems;
   }
 
   function setFaqCategory(categoryId) {
@@ -2795,13 +2808,13 @@
       '<div class="ac-compact-video__grid' + mediaSwapClass("video") + '">' + cardsHtml + "</div>" +
       '<div class="ac-compact-video__nav">' +
       '<button class="ac-nav-btn" type="button" data-action="video-prev" ' +
-      (safePage <= 0 ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '">' +
       '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronLeft + '" alt="" aria-hidden="true"></button>' +
       '<button class="ac-nav-btn" type="button" data-action="video-next" ' +
-      (safePage >= maxPage ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '">' +
@@ -2895,13 +2908,13 @@
       '<div class="ac-compact-reviews__footer">' +
       '<div class="ac-compact-reviews__nav">' +
       '<button class="ac-nav-btn" type="button" data-action="reviews-prev" ' +
-      (safePage <= 0 ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '">' +
       '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronLeft + '" alt="" aria-hidden="true"></button>' +
       '<button class="ac-nav-btn" type="button" data-action="reviews-next" ' +
-      (safePage >= maxPage ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '">' +
@@ -2948,13 +2961,13 @@
       "</div>" +
       '<div class="ac-compact-team__nav">' +
       '<button class="ac-nav-btn" type="button" data-action="team-prev" ' +
-      (safePage <= 0 ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '">' +
       '<img class="ac-icon ac-icon--sm" src="' + ICON_MAP.chevronLeft + '" alt="" aria-hidden="true"></button>' +
       '<button class="ac-nav-btn" type="button" data-action="team-next" ' +
-      (safePage >= maxPage ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '">' +
@@ -3104,7 +3117,7 @@
       categories +
       '</div><div class="ac-media-row">' +
       '<button class="ac-nav-btn" type="button" data-action="photo-prev" ' +
-      (safePage <= 0 ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -3114,7 +3127,7 @@
       images +
       '</div>' +
       '<button class="ac-nav-btn" type="button" data-action="photo-next" ' +
-      (safePage >= maxPage ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -3182,7 +3195,7 @@
       CONTENT_MAP.sectionTitles.video +
       '</h2><div class="ac-media-row">' +
       '<button class="ac-nav-btn" type="button" data-action="video-prev" ' +
-      (safePage <= 0 ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -3190,7 +3203,7 @@
       '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--3 ac-video-grid' + mediaSwapClass("video") + '">' +
       cards +
       '</div><button class="ac-nav-btn" type="button" data-action="video-next" ' +
-      (safePage >= maxPage ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -3230,7 +3243,7 @@
       CONTENT_MAP.sectionTitles.reviews +
       '</h2><div class="ac-media-row ac-media-row--reviews">' +
       '<button class="ac-nav-btn" type="button" data-action="reviews-prev" ' +
-      (safePage <= 0 ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -3238,7 +3251,7 @@
       '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--4 ac-grid--reviews' + mediaSwapClass("review") + '">' +
       cards +
       '</div><button class="ac-nav-btn" type="button" data-action="reviews-next" ' +
-      (safePage >= maxPage ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -3283,7 +3296,7 @@
       CONTENT_MAP.sectionTitles.team +
       '</h2><div class="ac-media-row">' +
       '<button class="ac-nav-btn" type="button" data-action="team-prev" ' +
-      (safePage <= 0 ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.prev +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -3291,7 +3304,7 @@
       '" alt="" aria-hidden="true"></button><div class="ac-grid ac-grid--4 ac-team-grid' + mediaSwapClass("team") + '">' +
       cards +
       '</div><button class="ac-nav-btn" type="button" data-action="team-next" ' +
-      (safePage >= maxPage ? "disabled" : "") +
+      "" +
       ' aria-label="' +
       CONTENT_MAP.ui.next +
       '"><img class="ac-icon ac-icon--sm" src="' +
@@ -3455,6 +3468,7 @@
   }
 
   function renderStaticLabels() {
+    var uiMap = CONTENT_MAP && CONTENT_MAP.ui ? CONTENT_MAP.ui : {};
     var techBadge = document.getElementById("acTechBadge");
     if (techBadge) {
       var dismissed = techBadgeDismissedInSession;
@@ -3492,19 +3506,19 @@
     }
 
     var assignments = [
-      ["acBrandSub", CONTENT_MAP.ui.brandSub],
-      ["acAgeLabel", CONTENT_MAP.ui.ageLabel],
+      ["acBrandSub", uiMap.brandSub || ""],
+      ["acAgeLabel", uiMap.ageLabel || ""],
       ["acHeroContactLabel", "Связаться"],
-      ["acHeroCampaignLabel", CONTENT_MAP.ui.heroCampaignLabel],
-      ["acHeroOverlayTitle", CONTENT_MAP.ui.heroOverlayTitle],
-      ["acHeroSafetyMedTitle", CONTENT_MAP.ui.heroSafetyMedTitle],
-      ["acHeroSafetyMedDesc", CONTENT_MAP.ui.heroSafetyMedDesc],
-      ["acHeroSafetyLockTitle", CONTENT_MAP.ui.heroSafetyLockTitle],
-      ["acHeroSafetyLockDesc", CONTENT_MAP.ui.heroSafetyLockDesc],
-      ["acHeroSafetyFoodTitle", CONTENT_MAP.ui.heroSafetyFoodTitle],
-      ["acHeroSafetyFoodDesc", CONTENT_MAP.ui.heroSafetyFoodDesc],
-      ["acHeroSafetyPoolTitle", CONTENT_MAP.ui.heroSafetyPoolTitle],
-      ["acHeroSafetyPoolDesc", CONTENT_MAP.ui.heroSafetyPoolDesc]
+      ["acHeroCampaignLabel", uiMap.heroCampaignLabel || ""],
+      ["acHeroOverlayTitle", uiMap.heroOverlayTitle || ""],
+      ["acHeroSafetyMedTitle", uiMap.heroSafetyMedTitle || ""],
+      ["acHeroSafetyMedDesc", uiMap.heroSafetyMedDesc || ""],
+      ["acHeroSafetyLockTitle", uiMap.heroSafetyLockTitle || ""],
+      ["acHeroSafetyLockDesc", uiMap.heroSafetyLockDesc || ""],
+      ["acHeroSafetyFoodTitle", uiMap.heroSafetyFoodTitle || ""],
+      ["acHeroSafetyFoodDesc", uiMap.heroSafetyFoodDesc || ""],
+      ["acHeroSafetyPoolTitle", uiMap.heroSafetyPoolTitle || ""],
+      ["acHeroSafetyPoolDesc", uiMap.heroSafetyPoolDesc || ""]
     ];
 
     for (var i = 0; i < assignments.length; i += 1) {

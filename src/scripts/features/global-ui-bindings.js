@@ -78,6 +78,16 @@
         if(!modal || modal.classList.contains('hidden')) return;
         if(e.key === 'Escape') closeSectionModal();
       });
+
+      doc.addEventListener('keydown', function(e){
+        if(e.key !== 'Escape') return;
+        if(isHeroPhoneDropdownOpen()){
+          setHeroPhoneDropdownOpen(false);
+        }
+        if(isHeroMenuOpen()){
+          setHeroMenuOpen(false);
+        }
+      });
     }
 
     doc.addEventListener('click', function(e){
@@ -88,13 +98,34 @@
       var target = navEl.dataset.nav;
       if(!target) return;
 
-      if(navEl.closest('#serviceMenu')){
-        doc.querySelectorAll('#serviceMenu [data-nav]').forEach(function(x){ x.classList.remove('active'); });
+      var menuRoot = navEl.closest('.hero-menu');
+      if(menuRoot){
+        menuRoot.querySelectorAll('[data-nav]').forEach(function(x){ x.classList.remove('active'); });
         navEl.classList.add('active');
         setHeroMenuOpen(false);
       }
 
       navigateToSection(target);
+    });
+
+    // Single source handler for hero phone dropdown toggle.
+    doc.addEventListener('click', function(e){
+      var phoneToggle = e.target.closest('[data-action="toggle-hero-phone-dropdown"]');
+      if(!phoneToggle) return;
+      if(
+        phoneToggle.id === 'heroPhoneTrigger' &&
+        !e.target.closest('.hero-phone-trigger-caret')
+      ){
+        var primaryHref = String(phoneToggle.dataset.primaryHref || '').trim();
+        if(/^tel:/i.test(primaryHref)){
+          setHeroPhoneDropdownOpen(false, phoneToggle);
+          windowObj.location.href = primaryHref;
+          return;
+        }
+      }
+      e.preventDefault();
+      setHeroMenuOpen(false);
+      setHeroPhoneDropdownOpen(!isHeroPhoneDropdownOpen(phoneToggle), phoneToggle);
     });
 
     doc.addEventListener('click', function(e){
@@ -208,7 +239,7 @@
 
     doc.addEventListener('click', function(e){
       if(!isHeroMenuOpen()) return;
-      var withinMenu = e.target.closest('#heroMenuWrap');
+      var withinMenu = e.target.closest('[data-role="hero-menu-host"], #heroMenuWrap, .hero-menu');
       if(!withinMenu){
         setHeroMenuOpen(false);
       }
@@ -216,14 +247,18 @@
 
     doc.addEventListener('click', function(e){
       if(!isHeroPhoneDropdownOpen()) return;
-      var withinPhone = e.target.closest('#heroPhoneWrap');
+      var withinPhone = e.target.closest('[data-role="hero-phone-wrap"], #heroPhoneWrap');
       if(!withinPhone){
         setHeroPhoneDropdownOpen(false);
       }
     });
 
     windowObj.addEventListener('scroll', function(){
+      var menuLocked = doc.documentElement.classList.contains('hero-menu-open') || doc.body.classList.contains('hero-menu-open');
       if(isHeroMenuOpen()){
+        if(menuLocked){
+          return;
+        }
         setHeroMenuOpen(false);
       }
       if(isHeroPhoneDropdownOpen()){
@@ -232,7 +267,11 @@
     }, {passive:true});
 
     doc.addEventListener('scroll', function(){
+      var menuLocked = doc.documentElement.classList.contains('hero-menu-open') || doc.body.classList.contains('hero-menu-open');
       if(isHeroMenuOpen()){
+        if(menuLocked){
+          return;
+        }
         setHeroMenuOpen(false);
       }
       if(isHeroPhoneDropdownOpen()){

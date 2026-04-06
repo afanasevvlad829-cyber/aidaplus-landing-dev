@@ -2,22 +2,435 @@
     // SECTION 1: Config and runtime constants.
     const OFFER_DISCOUNT_FACTOR = 0.95;
 
-    const CONTENT_RUNTIME = (window.AIDACAMP_CONTENT && typeof window.AIDACAMP_CONTENT === 'object')
-      ? window.AIDACAMP_CONTENT
-      : {};
-    const shifts = (Array.isArray(CONTENT_RUNTIME.shifts) && CONTENT_RUNTIME.shifts) || [];
-    const mediaContent = (CONTENT_RUNTIME.mediaContent && typeof CONTENT_RUNTIME.mediaContent === 'object')
-      ? CONTENT_RUNTIME.mediaContent
-      : {
+    const normalizeArrayValue = (value) => (Array.isArray(value) ? value : []);
+    const normalizeRecordValue = (value) => (
+      value && typeof value === 'object' && !Array.isArray(value) ? value : {}
+    );
+    const readRuntimeJson = (scriptId) => {
+      if(!document || typeof document.getElementById !== 'function'){
+        return null;
+      }
+      const scriptNode = document.getElementById(scriptId);
+      if(!scriptNode){
+        return null;
+      }
+      const source = String(scriptNode.textContent || '').trim();
+      if(!source){
+        return null;
+      }
+      try {
+        const parsed = JSON.parse(source);
+        return parsed;
+      } catch (error){
+        console.warn(`[BOOTSTRAP] Failed to parse ${scriptId}`, error);
+        return null;
+      }
+    };
+    const buildMediaContentFromManifests = () => {
+      const rawManifestMedia = readRuntimeJson('ac-build-media-manifest');
+      const rawManifestTeam = readRuntimeJson('ac-build-team-manifest');
+      const manifestMedia = Array.isArray(rawManifestMedia) ? rawManifestMedia : normalizeArrayValue(rawManifestMedia?.media || rawManifestMedia?.photos);
+      const manifestTeam = normalizeRecordValue(rawManifestTeam && Array.isArray(rawManifestTeam.team) ? rawManifestTeam.team : Array.isArray(rawManifestTeam) ? rawManifestTeam : null);
+      const merged = {
         references: {},
         faq: [],
-        team: [],
+        team: normalizeArrayValue(manifestTeam),
         photos: [],
         videos: [],
         contacts: [],
         socials: [],
         reviews: []
       };
+      if(Array.isArray(manifestMedia)) {
+        manifestMedia.forEach((item) => {
+          if(!item || typeof item !== 'object'){
+            return;
+          }
+          const normalizedItem = normalizeRecordValue(item);
+          const mediaType = String(item.type || '').toLowerCase();
+          if(mediaType === 'photo'){
+            merged.photos.push(normalizedItem);
+            return;
+          }
+          if(mediaType === 'video'){
+            merged.videos.push(normalizedItem);
+            return;
+          }
+          if(mediaType === 'review'){
+            merged.reviews.push(normalizedItem);
+          }
+        });
+      }
+      return merged;
+    };
+    const DEFAULT_RUNTIME_REFERENCES = Object.freeze({
+      yandexReviewsLabel: 'Отзывы на Яндекс Картах',
+      yandexReviewsUrl: 'https://yandex.ru/maps/org/aydakemp/35558479035/reviews/',
+      locationMapUrl: 'https://yandex.ru/maps/-/CPR0vYMT',
+      locationMapEmbedUrl: 'https://yandex.ru/map-widget/v1/?ll=36.719422%2C55.261573&z=8&pt=36.719422,55.261573,pm2rdm',
+      programmingBookUrl: 'https://www.codims.ru/python-book'
+    });
+    const DEFAULT_RUNTIME_CONTACTS = Object.freeze([
+      Object.freeze({ label: 'city_phone', href: 'tel:+74951284429', text: '+7 (495) 128-44-29' }),
+      Object.freeze({ label: 'mobile_phone', href: 'tel:+79688086455', text: '+7 (968) 808-64-55' }),
+      Object.freeze({ label: 'telegram', href: 'https://t.me/Progaschool', text: '@Progaschool' }),
+      Object.freeze({ label: 'whatsapp', href: 'https://wa.me/79688086455', text: 'WhatsApp' })
+    ]);
+    const DEFAULT_RUNTIME_SOCIALS = Object.freeze([
+      Object.freeze({ key: 'VK', label: 'VK', href: 'https://vk.com/aidacamp' }),
+      Object.freeze({ key: 'Rutube', label: 'RT', href: 'https://rutube.ru/channel/53394996/' }),
+      Object.freeze({ key: 'Instagram', label: 'IG', href: 'https://www.instagram.com/aida_codit' }),
+      Object.freeze({ key: 'Одноклассники', label: 'OK', href: 'https://ok.ru/group/64689601773621' }),
+      Object.freeze({ key: 'YouTube', label: 'YT', href: 'https://www.youtube.com/@aidacamp' }),
+      Object.freeze({ key: 'LinkedIn', label: 'LI', href: 'https://www.linkedin.com/company/%D0%B8%D1%82-%D0%BB%D0%B0%D0%B3%D0%B5%D1%80%D1%8C-%D0%B4%D0%BB%D1%8F-%D0%B4%D0%B5%D1%82%D0%B5%D0%B9-%D0%B0%D0%B9%D0%B4%D0%B0%D0%BA%D0%B5%D0%BC%D0%BF/?viewAsMember=true' }),
+      Object.freeze({ key: 'TikTok', label: 'TT', href: 'https://www.tiktok.com/@aidacodit0' }),
+      Object.freeze({ key: 'Pinterest', label: 'PI', href: 'https://ru.pinterest.com/pbalgoritmika/' }),
+      Object.freeze({ key: 'Yappy', label: 'YA', href: 'https://yappy.media/n/acceptable.lizardxw?utm_source=url&utm_medium=share&utm_campaign=profile' })
+    ]);
+    const DEFAULT_RUNTIME_SHIFTS = Object.freeze([
+      Object.freeze({
+        id: 'shift-1', title: '1', label: 'Смена 1', dates: '30 мая — 8 июня', start: '2026-05-30', end: '2026-06-08',
+        price: 74900, left: 12, occupied: 63, badge: '', isShort: false,
+        desc: 'Стартовая смена с мягким входом в программирование и знакомством с ИИ.',
+        fullDesc: 'Стартовая смена с мягким входом в программирование и знакомством с ИИ.'
+      }),
+      Object.freeze({
+        id: 'shift-2', title: '2', label: 'Смена 2', dates: '10 июня — 23 июня', start: '2026-06-10', end: '2026-06-23',
+        price: 95000, left: 8, occupied: 74, badge: '', isShort: false,
+        desc: 'Полная смена на 13 дней: проекты, логика и первые шаги в нейросетях.',
+        fullDesc: 'Полная смена на 13 дней: проекты, логика и первые шаги в нейросетях.'
+      }),
+      Object.freeze({
+        id: 'shift-2-1', title: '2.1', label: 'Смена 2.1', dates: '10 июня — 16 июня', start: '2026-06-10', end: '2026-06-16',
+        price: 48000, left: 8, occupied: 68, badge: 'короткая смена', isShort: true,
+        desc: 'Короткая смена 7 дней: проекты, логика и быстрый вход в программу.',
+        fullDesc: 'Короткая смена 7 дней: проекты, логика и быстрый вход в программу.'
+      }),
+      Object.freeze({
+        id: 'shift-2-2', title: '2.2', label: 'Смена 2.2', dates: '16 июня — 23 июня', start: '2026-06-16', end: '2026-06-23',
+        price: 65000, left: 8, occupied: 70, badge: 'короткая смена', isShort: true,
+        desc: 'Короткая смена 8 дней: интенсив по проектам, логике и закреплению навыков.',
+        fullDesc: 'Короткая смена 8 дней: интенсив по проектам, логике и закреплению навыков.'
+      }),
+      Object.freeze({
+        id: 'shift-4', title: '4', label: 'Смена 4', dates: '3 августа — 15 августа', start: '2026-08-03', end: '2026-08-15',
+        price: 89400, left: 5, occupied: 79, badge: '', isShort: false,
+        desc: 'Летняя смена с акцентом на проекты, командную работу и уверенность.',
+        fullDesc: 'Летняя смена с акцентом на проекты, командную работу и уверенность.'
+      }),
+      Object.freeze({
+        id: 'shift-5', title: '5', label: 'Смена 5', dates: '17 августа — 26 августа', start: '2026-08-17', end: '2026-08-26',
+        price: 69600, left: 14, occupied: 57, badge: '', isShort: false,
+        desc: 'Финальная смена: закрепление навыков и защита мини-проектов.',
+        fullDesc: 'Финальная смена: закрепление навыков и защита мини-проектов.'
+      })
+    ]);
+    const resolveRuntimeContent = () => {
+      const acData = normalizeRecordValue(window.AC_DATA);
+      const acDataContentMap = normalizeRecordValue(acData.CONTENT_MAP);
+      const aidacampContent = normalizeRecordValue(window.AIDACAMP_CONTENT);
+      const acContent = normalizeRecordValue(window.AC_CONTENT);
+      const manifestContent = buildMediaContentFromManifests();
+      const normalizeMediaContent = (source) => {
+        const sourceContent = normalizeRecordValue(source);
+        const uiMap = normalizeRecordValue(acDataContentMap.ui);
+        const locationMap = normalizeRecordValue(acDataContentMap.location);
+        const fallback = {
+          references: normalizeRecordValue(sourceContent.references),
+          faq: normalizeArrayValue(sourceContent.faq),
+          team: normalizeArrayValue(sourceContent.team),
+          photos: normalizeArrayValue(sourceContent.photos),
+          videos: normalizeArrayValue(sourceContent.videos),
+          contacts: normalizeArrayValue(sourceContent.contacts),
+          socials: normalizeArrayValue(sourceContent.socials),
+          reviews: normalizeArrayValue(sourceContent.reviews)
+        };
+        const fallbackFaqFromData = normalizeArrayValue(acData.FAQ_DATA);
+        const faqTabs = normalizeArrayValue(acDataContentMap.faqTabs);
+        const faqItemsMap = normalizeRecordValue(acDataContentMap.faqItems);
+        const fallbackFaqFromMap = faqTabs.map((tab) => {
+          const safeTab = normalizeRecordValue(tab);
+          const groupName = String(safeTab.label || safeTab.id || '').trim();
+          const items = normalizeArrayValue(faqItemsMap[safeTab.id]).map((raw) => {
+            const safeRaw = normalizeRecordValue(raw);
+            if(typeof raw === 'string'){
+              return { q: raw, a: 'Уточним детали для вашей ситуации — менеджер подскажет перед сменой.' };
+            }
+            return {
+              q: String(safeRaw.q || '').trim(),
+              a: String(safeRaw.a || '').trim()
+            };
+          }).filter((item) => item.q);
+          return {
+            group: groupName,
+            icon: String(safeTab.icon || ''),
+            items
+          };
+        }).filter((group) => group.group && group.items.length > 0);
+        const normalizedFaq = normalizeArrayValue(
+          fallback.faq.length
+            ? fallback.faq
+            : (fallbackFaqFromData.length ? fallbackFaqFromData : fallbackFaqFromMap)
+        ).slice();
+        const normalizedVideos = normalizeArrayValue(fallback.videos.length ? fallback.videos : manifestContent.videos)
+          .map((item) => {
+            const safeItem = normalizeRecordValue(item);
+            return {
+              ...safeItem,
+              cover: safeItem.cover || safeItem.poster || safeItem.posterMobile || safeItem.thumb || safeItem.thumbnail || ''
+            };
+          });
+        const normalizedTeam = normalizeArrayValue(fallback.team.length ? fallback.team : manifestContent.team)
+          .map((item) => {
+            const safeItem = normalizeRecordValue(item);
+            return {
+              ...safeItem,
+              fio: safeItem.fio || safeItem.name || '',
+              avatarUrl: safeItem.avatarUrl || safeItem.avatar || ''
+            };
+          });
+        const mapEmbedCandidate = String(
+          fallback.references.locationMapEmbedUrl ||
+          uiMap.locationMapEmbedUrl ||
+          locationMap.mapEmbedUrl ||
+          ''
+        ).trim();
+        const mapUrlCandidate = String(
+          fallback.references.locationMapUrl ||
+          uiMap.locationMapUrl ||
+          locationMap.mapUrl ||
+          DEFAULT_RUNTIME_REFERENCES.locationMapUrl
+        ).trim();
+        const normalizedReferences = {
+          ...DEFAULT_RUNTIME_REFERENCES,
+          ...normalizeRecordValue(fallback.references),
+          yandexReviewsUrl: String(fallback.references.yandexReviewsUrl || uiMap.yandexReviewsUrl || DEFAULT_RUNTIME_REFERENCES.yandexReviewsUrl),
+          yandexReviewsLabel: String(fallback.references.yandexReviewsLabel || uiMap.yandexReviewsLabel || DEFAULT_RUNTIME_REFERENCES.yandexReviewsLabel),
+          locationMapUrl: mapUrlCandidate || DEFAULT_RUNTIME_REFERENCES.locationMapUrl,
+          locationMapEmbedUrl: String(
+            mapEmbedCandidate ||
+            (/map-widget\/v1/i.test(mapUrlCandidate) ? mapUrlCandidate : '') ||
+            DEFAULT_RUNTIME_REFERENCES.locationMapEmbedUrl
+          ),
+          programmingBookUrl: String(fallback.references.programmingBookUrl || uiMap.programmingBookUrl || DEFAULT_RUNTIME_REFERENCES.programmingBookUrl)
+        };
+        const orderContacts = (list = []) => {
+          const priority = Object.freeze({
+            city_phone: 1,
+            mobile_phone: 2,
+            telegram: 3,
+            whatsapp: 4
+          });
+          return normalizeArrayValue(list)
+            .map((item) => normalizeRecordValue(item))
+            .filter((item) => item.href || item.text || item.label)
+            .sort((a, b) => {
+              const aKey = String(a.label || '').trim().toLowerCase();
+              const bKey = String(b.label || '').trim().toLowerCase();
+              const aRank = priority[aKey] || 99;
+              const bRank = priority[bKey] || 99;
+              if(aRank !== bRank){
+                return aRank - bRank;
+              }
+              return String(a.text || '').localeCompare(String(b.text || ''), 'ru');
+            });
+        };
+        const normalizedContacts = normalizeArrayValue(fallback.contacts).length
+          ? orderContacts(fallback.contacts)
+          : orderContacts(DEFAULT_RUNTIME_CONTACTS);
+        const normalizedSocials = normalizeArrayValue(fallback.socials).length
+          ? normalizeArrayValue(fallback.socials).slice()
+          : DEFAULT_RUNTIME_SOCIALS.slice();
+        return {
+          ...fallback,
+          references: normalizedReferences,
+          team: normalizedTeam,
+          photos: normalizeArrayValue(fallback.photos.length ? fallback.photos : manifestContent.photos).slice(),
+          videos: normalizedVideos,
+          contacts: normalizedContacts,
+          socials: normalizedSocials,
+          reviews: normalizeArrayValue(fallback.reviews.length ? fallback.reviews : manifestContent.reviews).slice(),
+          faq: normalizedFaq
+        };
+      };
+      const normalizeShifts = (sourceShifts) => {
+        const safeList = normalizeArrayValue(sourceShifts);
+        if(!safeList.length){
+          return [];
+        }
+        const defaultsById = Object.freeze(
+          DEFAULT_RUNTIME_SHIFTS.reduce((acc, item) => {
+            const safeItem = normalizeRecordValue(item);
+            const key = String(safeItem.id || '').trim();
+            if(key) acc[key] = safeItem;
+            return acc;
+          }, {})
+        );
+        const toText = (value) => String(value || '').trim();
+        const coalesceShiftDescription = (safeItem, fallbackItem) => (
+          toText(
+            safeItem.desc ||
+            safeItem.description ||
+            safeItem.summary ||
+            safeItem.text ||
+            fallbackItem?.desc
+          )
+        );
+        const coalesceShiftFullDescription = (safeItem, fallbackItem) => {
+          const full = toText(safeItem.fullDesc || safeItem.fullDescription);
+          if(full){
+            return full;
+          }
+          const byAge = normalizeRecordValue(safeItem.descriptions_by_age || safeItem.descriptionsByAge);
+          const ageKeys = ['7-9', '10-12', '13-14'];
+          const ageRows = ageKeys
+            .map((key) => {
+              const text = toText(byAge[key]);
+              return text ? `Для ${key} лет: ${text}` : '';
+            })
+            .filter(Boolean);
+          if(ageRows.length){
+            return ageRows.join(' ');
+          }
+          return coalesceShiftDescription(safeItem, fallbackItem);
+        };
+        const hasExpandedShape = safeList.some((item) => {
+          const safeItem = normalizeRecordValue(item);
+          return !!safeItem.dates && Number.isFinite(Number(safeItem.price));
+        });
+        if(hasExpandedShape){
+          return safeList.map((item) => {
+            const safeItem = normalizeRecordValue(item);
+            const id = toText(safeItem.id);
+            const fallbackItem = normalizeRecordValue(defaultsById[id]);
+            const desc = coalesceShiftDescription(safeItem, fallbackItem);
+            const fullDesc = coalesceShiftFullDescription(safeItem, fallbackItem);
+            const descriptionsByAge = normalizeRecordValue(
+              safeItem.descriptions_by_age ||
+              safeItem.descriptionsByAge ||
+              fallbackItem.descriptions_by_age ||
+              fallbackItem.descriptionsByAge
+            );
+            return {
+              ...fallbackItem,
+              ...safeItem,
+              desc,
+              fullDesc,
+              descriptions_by_age: descriptionsByAge
+            };
+          });
+        }
+        return DEFAULT_RUNTIME_SHIFTS.map((fallbackRaw, index) => {
+          const fallbackItem = normalizeRecordValue(fallbackRaw);
+          const fallbackId = toText(fallbackItem.id);
+          const sourceById = fallbackId
+            ? safeList.find((item) => toText(normalizeRecordValue(item).id) === fallbackId)
+            : null;
+          const sourceByIndex = safeList[index] || null;
+          const safeItem = normalizeRecordValue(sourceById || sourceByIndex);
+          const desc = coalesceShiftDescription(safeItem, fallbackItem);
+          const fullDesc = coalesceShiftFullDescription(safeItem, fallbackItem);
+          const descriptionsByAge = normalizeRecordValue(
+            safeItem.descriptions_by_age ||
+            safeItem.descriptionsByAge ||
+            fallbackItem.descriptions_by_age ||
+            fallbackItem.descriptionsByAge
+          );
+          return {
+            ...fallbackItem,
+            ...safeItem,
+            desc,
+            fullDesc,
+            descriptions_by_age: descriptionsByAge
+          };
+        });
+      };
+      const mediaSource = normalizeRecordValue(
+        aidacampContent.mediaContent ||
+        acContent.mediaContent ||
+        acDataContentMap.mediaContent ||
+        acDataContentMap ||
+        manifestContent
+      );
+      const shiftCandidates = [
+        normalizeArrayValue(aidacampContent.shifts),
+        normalizeArrayValue(acData.SHIFTS),
+        normalizeArrayValue(acDataContentMap.shifts),
+        normalizeArrayValue(acContent.shifts)
+      ];
+      const rawShiftsSource = shiftCandidates.find((list) => list.length > 0) || [];
+      const shiftsSource = normalizeShifts(rawShiftsSource);
+      return {
+        contentMap: acDataContentMap,
+        source: normalizeRecordValue(aidacampContent),
+        shifts: shiftsSource,
+        mediaContent: normalizeMediaContent(mediaSource)
+      };
+    };
+    const RUNTIME_CONTENT = resolveRuntimeContent();
+    const CONTENT_RUNTIME = RUNTIME_CONTENT.source;
+    const shifts = RUNTIME_CONTENT.shifts;
+    const mediaContent = RUNTIME_CONTENT.mediaContent;
+
+    function syncHeroPhoneContacts(){
+      const contacts = normalizeArrayValue(mediaContent && mediaContent.contacts);
+      if(!contacts.length){
+        return;
+      }
+      const byLabel = new Map(
+        contacts.map((item) => {
+          const safeItem = normalizeRecordValue(item);
+          return [String(safeItem.label || '').trim().toLowerCase(), safeItem];
+        })
+      );
+      const ordered = ['city_phone', 'mobile_phone', 'telegram', 'whatsapp']
+        .map((key) => byLabel.get(key))
+        .filter(Boolean);
+      if(!ordered.length){
+        return;
+      }
+
+      // Keep Hero primary city phone stable and local.
+      // External runtime payloads (window.AIDACAMP_CONTENT / window.AC_CONTENT) may override contacts.
+      const defaultCity = normalizeRecordValue(
+        DEFAULT_RUNTIME_CONTACTS.find((item) => String(item.label || '').trim().toLowerCase() === 'city_phone') || {}
+      );
+      const city = defaultCity.label ? defaultCity : (byLabel.get('city_phone') || ordered[0]);
+      const desktopTrigger = document.getElementById('heroPhoneTrigger');
+      if(desktopTrigger){
+        const textNode = desktopTrigger.querySelector('span');
+        if(textNode){
+          textNode.textContent = String(city.text || '+7 (495) 128-44-29');
+        }
+        const cityHref = String(city.href || '').trim();
+        if(cityHref){
+          desktopTrigger.dataset.primaryHref = cityHref;
+        } else {
+          delete desktopTrigger.dataset.primaryHref;
+        }
+      }
+
+      const fillDropdown = (dropdownId) => {
+        const dropdown = document.getElementById(dropdownId);
+        if(!dropdown){
+          return;
+        }
+        const dropdownItems = ordered.filter((item) => {
+          const safeItem = normalizeRecordValue(item);
+          return String(safeItem.label || '').trim().toLowerCase() !== 'city_phone';
+        });
+        dropdown.innerHTML = dropdownItems.map((item) => {
+          const safeItem = normalizeRecordValue(item);
+          const href = String(safeItem.href || '#').trim();
+          const text = String(safeItem.text || '').trim();
+          const isExternal = /^https?:\/\//i.test(href);
+          return `<a class="hero-phone-item" href="${href}"${isExternal ? ' target="_blank" rel="noopener noreferrer"' : ''}>${text}</a>`;
+        }).join('');
+      };
+
+      fillDropdown('heroPhoneDropdown');
+      fillDropdown('heroPhoneDropdownMobile');
+    }
 
     const STORAGE_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.storage) || {};
     const storageStateKeyCfg = String(STORAGE_RUNTIME_CONFIG.stateKey || 'aidacamp_proto_state_v3');
@@ -40,8 +453,7 @@
       expiresAt:null,
       [OFFER_STAGE_KEY]:0,
       view:'desktop',
-      phone:'',
-      debugBookingBlocks:false
+      phone:''
     };
 
     const OBSERVABILITY_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.observability) || {};
@@ -53,7 +465,8 @@
     const HERO_VARIANT_BANNER_TIER = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.bannerTier || {});
     const HERO_VARIANT_COPY = Object.freeze(HERO_VARIANT_RUNTIME_CONFIG.copy || {});
     const HERO_VARIANT_DEFAULT_TIER = String(HERO_VARIANT_RUNTIME_CONFIG.defaultTier || 'broad');
-    const useDesktopBaseForMobileCfg = !!OBSERVABILITY_RUNTIME_CONFIG.useDesktopBaseForMobile;
+    // Mobile preview bridge is disabled: mobile must render via dedicated #mobileView only.
+    const useDesktopBaseForMobileCfg = false;
     const BUILD_VERSION_LABEL = String(RUNTIME_POLICY_CONFIG.buildVersionLabel || 'v0.0.288 (ab-analytics-endpoint)');
     const ARCHITECTURE_POLICY = Object.freeze(RUNTIME_POLICY_CONFIG.architecturePolicy || {
       id: 'desktop-source-mobile-presentation',
@@ -92,6 +505,12 @@
       ? window.__AIDACAMP_RUNTIME
       : {};
     window.__AIDACAMP_RUNTIME = AIDACAMP_RUNTIME;
+    AIDACAMP_RUNTIME.contentSource = AIDACAMP_RUNTIME.contentSource || {
+      source: 'runtime-normalizer',
+      hasAidacampContent: !!window.AIDACAMP_CONTENT,
+      hasACData: !!window.AC_DATA,
+      hasACContent: !!window.AC_CONTENT
+    };
     AIDACAMP_RUNTIME.quality = AIDACAMP_RUNTIME.quality || {};
     AIDACAMP_RUNTIME.quality.scoreModel = QUALITY_SCORE_MODEL;
     AIDACAMP_RUNTIME.architecture = ARCHITECTURE_POLICY;
@@ -137,6 +556,76 @@
       copyright: '',
       links: Object.freeze([])
     });
+    const BOOKING_TEXT_MAP = Object.freeze({
+      ...(CONTENT_RUNTIME.bookingText && typeof CONTENT_RUNTIME.bookingText === 'object' ? CONTENT_RUNTIME.bookingText : {}),
+      ...(window.AIDACAMP_CONTENT && typeof window.AIDACAMP_CONTENT === 'object' && window.AIDACAMP_CONTENT.bookingText && typeof window.AIDACAMP_CONTENT.bookingText === 'object'
+        ? window.AIDACAMP_CONTENT.bookingText
+        : {}
+      ),
+      ...(window.AC_CONTENT && typeof window.AC_CONTENT === 'object' && window.AC_CONTENT.bookingText && typeof window.AC_CONTENT.bookingText === 'object'
+        ? window.AC_CONTENT.bookingText
+        : {}
+      )
+    });
+    const bookingText = (key, fallback = '') => {
+      const textMapKey = String(key || '').trim();
+      if(!textMapKey){
+        return String(fallback || '');
+      }
+      const candidate = BOOKING_TEXT_MAP[textMapKey];
+      if(typeof candidate === 'string'){
+        return candidate;
+      }
+      if(typeof candidate === 'number'){
+        return String(candidate);
+      }
+      if(typeof candidate === 'function'){
+        return candidate();
+      }
+      return String(fallback || '');
+    };
+    function showHint(message, requiredStep = ''){
+      return safeInvoke(ensureBookingHintFlow(), 'showHint', [message, requiredStep], null);
+    }
+    function nudgeUserToNextStep(message = 'Сначала завершите предыдущий шаг.'){
+      return safeInvoke(ensureBookingHintFlow(), 'nudgeUserToNextStep', [message], null);
+    }
+    function formatVariantHint(template){
+      return safeInvoke(ensureHeroVariantFlow(), 'formatVariantHint', [template], () => {
+        const source = String(template || '').trim();
+        if(!source) return '';
+        return source.replace('{{age}}', ageLabel(state.age || '10-12'));
+      });
+    }
+    function startTimer(){
+      return safeInvoke(ensureSummaryFlow(), 'startTimer', [], null);
+    }
+    function splitPrimaryActionText(text){
+      const source = String(text || '').trim();
+      if(!source){
+        return { stacked: false, main: '', gainText: '' };
+      }
+      const splitByDelimiter = source.split(/\s*(?:[—\\-–]|\\n)\\s*/);
+      if(splitByDelimiter.length < 2){
+        return { stacked: false, main: source, gainText: '' };
+      }
+      const main = String(splitByDelimiter[0] || '').trim();
+      const gainText = String(splitByDelimiter.slice(1).join(' ') || '').trim();
+      if(!main || !gainText){
+        return { stacked: false, main: source, gainText: '' };
+      }
+      return { stacked: true, main, gainText };
+    }
+    function uiBookingHintTemplate(templateName, data = {}){
+      if(templateName === 'shiftSeatsLeftTemplate'){
+        const count = toPositiveIntegerOrZero(data && data.count);
+        if(count > 0){
+          return bookingText('shiftSeatsLeftHint', `${count} мест осталось`);
+        }
+        return bookingText('shiftSeatsLeftHintFallback', 'Свободных мест немного');
+      }
+      return '';
+    }
     const DOCS_DESKTOP_SECTION_TEMPLATES_FALLBACK = Object.freeze({});
     const versionBadgeHiddenKeyCfg = String(STORAGE_RUNTIME_CONFIG.versionBadgeHiddenKey || 'aidacamp_version_badge_hidden_v1');
     const videoMetaCacheKeyCfg = String(STORAGE_RUNTIME_CONFIG.videoMetaCacheKey || 'aidacamp_video_meta_cache_v2');
@@ -175,8 +664,7 @@
       mobileFaqOpenKey: state.mobileFaqOpenKey || '',
       mobileTeamIndex: toFiniteNumberOrZero(state.mobileTeamIndex),
       // Mobile docs block must stay compact by default: requisites visible, legal links collapsed.
-      mobileDocsExpanded: false,
-      debugBookingBlocks: !!state.debugBookingBlocks
+      mobileDocsExpanded: false
     });
     const metrikaSeen = new Set();
     const scrollMarks = {25:false,50:false,75:false,90:false};
@@ -219,6 +707,7 @@
     let videoMetaFlowApi = null;
     let mediaSectionsFlowApi = null;
     let modalMediaFlowApi = null;
+    let mediaFallbackRenderGuard = false;
     let guidedStateFlowApi = null;
     let bookingViewFlowApi = null;
     let bookingHintFlowApi = null;
@@ -239,9 +728,10 @@
     let mediaFlowApi = null;
     let runtimeQualityPipelineApi = null;
     let runtimeQualityOrchestratorApi = null;
-    let bookingRuntimeBridgeApi = null;
+    var bookingRuntimeBridgeApi = null;
     let bookingCalendarRuntimeFlowApi = null;
     let runtimeActionFlowApi = null;
+    let runtimeActionFallbackBound = false;
     let runtimeInitFlowApi = null;
     let leadNotifyFlowApi = null;
     let heroNavFlowApi = null;
@@ -336,7 +826,7 @@
         setShiftOptionPanels: (nextPanels) => {
           shiftOptionPanels = nextPanels;
         },
-        renderShiftOptions: runtimeInvoke.renderShiftOptions
+        renderShiftOptions: (...args) => safeInvoke(ensureShiftOptionsFlow(), 'renderShiftOptions', args, null)
       }))) || null;
     }
 
@@ -597,7 +1087,7 @@
       return heroBackgroundFlowApi || (typeof create === 'function' && (heroBackgroundFlowApi = create({
         getHeroAbVariant: () => heroAbVariant,
         getHeroAbAssets,
-        getHeroImages: () => HERO_IMAGES
+        getHeroImages: () => getHeroImagesCfg()
       }))) || null;
     }
 
@@ -611,7 +1101,7 @@
         getState: () => state,
         getSelectedShift,
         shiftDaysLabel,
-        clearShiftOptionPanels,
+        clearShiftOptionPanels: () => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'clearShiftOptionPanels', [], null),
         persist,
         renderAll,
         bookingText,
@@ -660,7 +1150,7 @@
             mobile:{aboutId:null, calendarId:null}
           };
         },
-        renderShiftOptions,
+        renderShiftOptions: (...args) => safeInvoke(ensureShiftOptionsFlow(), 'renderShiftOptions', args, null),
         getOfferTimeoutIds: () => offerTimeoutIds,
         setOfferTimeoutIds: (next = []) => {
           offerTimeoutIds = (Array.isArray(next) && next) || [];
@@ -936,6 +1426,14 @@
       return heroAbAssetsCfg[toHeroAbVariant(value)] || heroAbAssetsCfg.A;
     }
 
+    function getHeroImagesCfg(variant = heroAbVariant){
+      const assets = getHeroAbAssets(variant);
+      const normalized = (assets && Array.isArray(assets.images))
+        ? assets.images
+        : ((assets && typeof assets === 'object' && typeof assets.mobile === 'string') ? [assets.mobile] : []);
+      return normalized.slice();
+    }
+
     function buildAbMeta(extra = {}){
       const fallback = {
         ab_test_id: heroAbTestIdCfg,
@@ -960,6 +1458,13 @@
         }
       });
     }
+
+    const emitModularEvent = (...args) => (
+      safeInvoke(ensureTelemetryFlow(), 'emitModularEvent', args, null)
+    );
+    const syncModularState = (...args) => (
+      safeInvoke(ensureTelemetryFlow(), 'syncModularState', args, null)
+    );
 
     const getCurrentSearchParams = () => (
       safeInvoke(ensureTelemetryFlow(), 'getCurrentSearchParams', [], () => {
@@ -1018,14 +1523,6 @@
 
     const injectHeroSeasonOfferCta = () => (
       safeInvoke(ensureHeroVariantFlow(), 'injectHeroSeasonOfferCta')
-    );
-
-    const formatVariantHint = (template) => (
-      safeInvoke(ensureHeroVariantFlow(), 'formatVariantHint', [template], () => {
-        const source = String(template || '').trim();
-        if(!source) return '';
-        return source.replace('{{age}}', ageLabel(state.age || '10-12'));
-      })
     );
 
     const clearVariantCoachReminderTimer = () => (
@@ -1199,6 +1696,64 @@
       return typeof fallback === 'function' ? fallback(...list) : fallback;
     }
 
+    function resolveSectionNode(targetId){
+      var normalized = String(targetId || '').trim().replace(/^#/, '');
+      if(!normalized) return null;
+      var direct = document.getElementById(normalized);
+      if(direct) return direct;
+      var mobileFallback = normalized.indexOf('mobile-') === 0
+        ? normalized.replace(/^mobile-/, '')
+        : ('mobile-' + normalized);
+      return document.getElementById(mobileFallback);
+    }
+
+    function fallbackScrollToSection(targetId){
+      var node = resolveSectionNode(targetId);
+      if(!node || typeof node.scrollIntoView !== 'function') return false;
+      node.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return true;
+    }
+
+    function fallbackNavigateToSection(targetId){
+      return fallbackScrollToSection(targetId);
+    }
+
+    function localContactIconMarkup(label){
+      const key = String(label || '').trim().toLowerCase();
+      const iconByKey = {
+        city_phone: '/assets/icons/phone-city.svg',
+        mobile_phone: '/assets/icons/phone-mobile.svg',
+        whatsapp: '/assets/icons/whatsapp.svg',
+        telegram: '/assets/icons/telegram.svg'
+      };
+      const src = iconByKey[key];
+      if(!src){
+        return '•';
+      }
+      return `<img class="ac-icon" src="${src}" alt="" aria-hidden="true">`;
+    }
+
+    function localSocialBadgeMark(item){
+      const safeItem = normalizeRecordValue(item);
+      const raw = String(safeItem.label || safeItem.badge || safeItem.key || '').trim();
+      if(!raw){
+        return '•';
+      }
+      return raw.slice(0, 2).toUpperCase();
+    }
+
+    function localSocialDisplayName(item){
+      const safeItem = normalizeRecordValue(item);
+      return String(
+        safeItem.name ||
+        safeItem.title ||
+        safeItem.text ||
+        safeItem.key ||
+        safeItem.label ||
+        ''
+      ).trim();
+    }
+
     const runtimeInvoke = Object.freeze({
       openMedia: (type, index) => safeInvoke(ensureModalMediaFlow(), 'openMedia', [type, index], null),
       closeMedia: () => safeInvoke(ensureModalMediaFlow(), 'closeMedia', [], null),
@@ -1206,10 +1761,10 @@
       openVideo: (url) => safeInvoke(ensureModalMediaFlow(), 'openVideo', [url], null),
       closeVideo: () => safeInvoke(ensureModalMediaFlow(), 'closeVideo', [], null),
       closeSectionModal: () => safeInvoke(ensureModalMediaFlow(), 'closeSectionModal', [], null),
-      setHeroMenuOpen: (isOpen) => safeInvoke(ensureHeroNavFlow(), 'setHeroMenuOpen', [isOpen], null),
-      isHeroMenuOpen: () => safeInvoke(ensureHeroNavFlow(), 'isHeroMenuOpen', [], false),
-      setHeroPhoneDropdownOpen: (isOpen) => safeInvoke(ensureHeroNavFlow(), 'setHeroPhoneDropdownOpen', [isOpen], false),
-      isHeroPhoneDropdownOpen: () => safeInvoke(ensureHeroNavFlow(), 'isHeroPhoneDropdownOpen', [], false),
+      setHeroMenuOpen: (isOpen, trigger) => safeInvoke(ensureHeroNavFlow(), 'setHeroMenuOpen', [isOpen, trigger], null),
+      isHeroMenuOpen: (trigger) => safeInvoke(ensureHeroNavFlow(), 'isHeroMenuOpen', [trigger], false),
+      setHeroPhoneDropdownOpen: (isOpen, trigger) => safeInvoke(ensureHeroNavFlow(), 'setHeroPhoneDropdownOpen', [isOpen, trigger], false),
+      isHeroPhoneDropdownOpen: (trigger) => safeInvoke(ensureHeroNavFlow(), 'isHeroPhoneDropdownOpen', [trigger], false),
       scrollVideoCarousel: (direction = 1, scopeRoot = null) => safeInvoke(ensureHeroNavFlow(), 'scrollVideoCarousel', [direction, scopeRoot], null),
       scrollTeamCarousel: (direction = 1, scopeRoot = null) => safeInvoke(ensureHeroNavFlow(), 'scrollTeamCarousel', [direction, scopeRoot], null),
       applyCompactSectionModalLayout: () => safeInvoke(ensureModalMediaFlow(), 'applyCompactSectionModalLayout', [], null),
@@ -1225,8 +1780,8 @@
       openNoticeModal: (message, title = 'Проверьте данные') => safeInvoke(ensureOverlayFlow(), 'openNoticeModal', [message, title], null),
       closeNoticeModal: () => safeInvoke(ensureOverlayFlow(), 'closeNoticeModal', [], null),
       openResetBookingConfirmModal: () => safeInvoke(ensureOverlayFlow(), 'openResetBookingConfirmModal', [], null),
-      scrollToSection: (id) => safeInvoke(ensureNavigationFlow(), 'scrollToSection', [id], false),
-      navigateToSection: (id) => safeInvoke(ensureNavigationFlow(), 'navigateToSection', [id], null),
+      scrollToSection: (id) => safeInvoke(ensureNavigationFlow(), 'scrollToSection', [id], fallbackScrollToSection),
+      navigateToSection: (id) => safeInvoke(ensureNavigationFlow(), 'navigateToSection', [id], fallbackNavigateToSection),
       getResolvedPrimaryActionText: (actionState, shift) => safeInvoke(ensureBookingRuntimeBridge(), 'getResolvedPrimaryActionText', [{
         state,
         actionState,
@@ -1274,22 +1829,22 @@
       openShiftAboutModal: (shiftId) => safeInvoke(ensureBookingCalendarRuntimeFlow(), 'openShiftAboutModal', [shiftId], false),
       renderShiftOptions: (viewKey) => safeInvoke(ensureShiftOptionsFlow(), 'renderShiftOptions', [viewKey], null),
       renderShiftCards: () => safeInvoke(ensureShiftOptionsFlow(), 'renderShiftCards', [], null),
-      contactIconMarkup: (label) => safeInvoke(ensureMediaFlowApi(), 'contactIconMarkup', [label], '•'),
+      contactIconMarkup: (label) => safeInvoke(ensureMediaFlowApi(), 'contactIconMarkup', [label], localContactIconMarkup(label)),
       resolveFloatingContactLinks: () => safeInvoke(ensureMediaFlowApi(), 'resolveFloatingContactLinks', [mediaContent], {
         cityPhoneHref: 'tel:+74951284429',
         cityPhoneLabel: '+7 (495) 128-44-29',
         mobilePhoneHref: 'tel:+79688086455',
         mobilePhoneLabel: '+7 (968) 808-64-55',
-        whatsappHref: 'https://wa.me/79688086455',
-        telegramHref: 'https://t.me/Progaschool'
+        telegramHref: 'https://t.me/Progaschool',
+        whatsappHref: 'https://wa.me/79688086455'
       }),
       initFloatingContactsWidget: () => safeInvoke(ensureMediaFlowApi(), 'initFloatingContactsWidget', [{
         document,
         mediaContent,
         track
       }], null),
-      socialBadgeMark: (item) => safeInvoke(ensureMediaFlowApi(), 'socialBadgeMark', [item], '•'),
-      socialDisplayName: (item) => safeInvoke(ensureMediaFlowApi(), 'socialDisplayName', [item], ''),
+      socialBadgeMark: (item) => safeInvoke(ensureMediaFlowApi(), 'socialBadgeMark', [item], localSocialBadgeMark(item)),
+      socialDisplayName: (item) => safeInvoke(ensureMediaFlowApi(), 'socialDisplayName', [item], localSocialDisplayName(item)),
       faqGlyph: (iconPath, groupName) => safeInvoke(ensureMediaFlowApi(), 'faqGlyph', [iconPath, groupName], String(groupName || '').slice(0,3).toUpperCase()),
       renderStars: () => safeInvoke(ensureMediaFlowApi(), 'renderStars', [], '<div class="stars">★★★★★</div>'),
       renderDesktopMobileDocsBlock: () => safeInvoke(ensureDocsFlow(), 'renderDesktopMobileDocsBlock', [], null),
@@ -1310,12 +1865,12 @@
     const HERO_AB_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.heroAb) || {};
     const heroAbAssetsCfg = Object.freeze(HERO_AB_RUNTIME_CONFIG.assets || {
       A: Object.freeze({
-        images: Object.freeze(['/assets/images/hero-camp-sunset-20260328.png']),
-        mobile: '/assets/images/hero-camp-sunset-20260328.png'
+        images: Object.freeze(['/assets/images/hero-bg-custom.avif']),
+        mobile: '/assets/images/hero-bg-mobile-20260406.avif'
       }),
       B: Object.freeze({
-        images: Object.freeze(['/assets/images/hero-ab-pool-20260401.jpeg']),
-        mobile: '/assets/images/hero-ab-pool-20260401.jpeg'
+        images: Object.freeze(['/assets/images/hero-bg-custom.avif']),
+        mobile: '/assets/images/hero-bg-mobile-20260406.avif'
       })
     });
     const TELEMETRY_RUNTIME_CONFIG = (window.AC_RUNTIME_CONFIG && window.AC_RUNTIME_CONFIG.telemetry) || {};
@@ -1333,7 +1888,7 @@
     const HERO_AB_DESKTOP_BG_ONLY = !!HERO_AB_RUNTIME_CONFIG.desktopBgOnly;
     const HERO_AB_MOBILE_EFFECTS_ENABLED = !!HERO_AB_RUNTIME_CONFIG.mobileEffectsEnabled;
     const HERO_V3_SIMPLE_QUERY_KEY = 'hero_v3_simple';
-    const HERO_V3_SIMPLE_ENABLED = hasQueryFlag(HERO_V3_SIMPLE_QUERY_KEY);
+    const HERO_V3_SIMPLE_ENABLED = true;
     const abEventEndpointDefaultCfg = String(TELEMETRY_RUNTIME_CONFIG.abEventEndpointDefault || 'https://adacamp-ab-analytics.afanasevvlad829.workers.dev/api/ab-event');
     const abVisitorIdKeyCfg = String(TELEMETRY_RUNTIME_CONFIG.abVisitorIdKey || 'aidacamp_ab_visitor_id_v1');
     const abSessionIdKeyCfg = String(TELEMETRY_RUNTIME_CONFIG.abSessionIdKey || 'aidacamp_ab_session_id_v1');
@@ -1827,8 +2382,6 @@
 
     const renderGuidedState = runtimeInvoke.renderGuidedState;
     const pulseNode = runtimeInvoke.pulseNode;
-    const nudgeUserToNextStep = runtimeInvoke.nudgeUserToNextStep;
-    const showHint = runtimeInvoke.showHint;
     const syncBookingHints = runtimeInvoke.syncBookingHints;
 
     function formatRemainingClock(diff){
@@ -1989,6 +2542,42 @@
 
     // SECTION 7: Event bindings (single action pipeline, no direct business logic in handlers).
     safeInvoke(ensureRuntimeActionFlow(), 'bindDocumentClick', [], null);
+    const mobileSectionCollapsedState = Object.create(null);
+    let mobileSectionAccordionBound = false;
+
+    function isMobileCompactViewport(){
+      return window.matchMedia('(max-width: 900px)').matches;
+    }
+
+    function setMobileSectionCollapsed(sectionEl, collapsed){
+      if(!sectionEl) return;
+      sectionEl.classList.toggle('is-collapsed', !!collapsed);
+      const toggleBtn = sectionEl.querySelector('[data-action="toggle-mobile-section"]');
+      if(!toggleBtn) return;
+      const moreText = String(toggleBtn.dataset.moreText || 'Подробнее').trim() || 'Подробнее';
+      const lessText = String(toggleBtn.dataset.lessText || 'Свернуть').trim() || 'Свернуть';
+      toggleBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      toggleBtn.textContent = collapsed ? moreText : lessText;
+    }
+
+    function bindMobileSectionAccordion(){
+      if(mobileSectionAccordionBound) return;
+      mobileSectionAccordionBound = true;
+      document.addEventListener('click', (event) => {
+        const toggleBtn = event.target.closest('[data-action="toggle-mobile-section"]');
+        if(!toggleBtn) return;
+        const targetId = String(toggleBtn.dataset.target || '').trim();
+        if(!targetId) return;
+        const sectionEl = document.getElementById(targetId);
+        if(!sectionEl) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const nextCollapsed = !sectionEl.classList.contains('is-collapsed');
+        mobileSectionCollapsedState[targetId] = nextCollapsed;
+        setMobileSectionCollapsed(sectionEl, nextCollapsed);
+      }, { capture: true });
+    }
+    bindMobileSectionAccordion();
 
     function formatPrice(v){
       return new Intl.NumberFormat('ru-RU').format(v) + ' ₽';
@@ -2180,7 +2769,24 @@
     const applyMobileTemplatesToDesktopSections = runtimeInvoke.applyMobileTemplatesToDesktopSections;
 
     function applyMobileSectionAccordion(){
-      return;
+      if(useDesktopBaseForMobileCfg) return;
+      const shouldCollapse = isMobileCompactViewport();
+      const sectionNodes = Array.from(document.querySelectorAll('#mobileView .mobile-section-collapsible[data-mobile-collapsible]'));
+      sectionNodes.forEach((sectionEl) => {
+        const sectionId = String(sectionEl.id || '').trim();
+        if(!sectionId) return;
+        if(!shouldCollapse){
+          setMobileSectionCollapsed(sectionEl, false);
+          return;
+        }
+        const saved = Object.prototype.hasOwnProperty.call(mobileSectionCollapsedState, sectionId)
+          ? !!mobileSectionCollapsedState[sectionId]
+          : null;
+        const defaultCollapsed = String(sectionEl.dataset.collapsedDefault || '').toLowerCase() !== 'false';
+        const collapsed = saved === null ? defaultCollapsed : saved;
+        mobileSectionCollapsedState[sectionId] = collapsed;
+        setMobileSectionCollapsed(sectionEl, collapsed);
+      });
     }
 
     // SECTION 8: Global orchestrator.
@@ -2191,6 +2797,7 @@
       safeInvoke(ensureBookingHintFlow(), 'syncDesktopAgeTapHintVisibility', [], null);
       safeInvoke(ensureBookingHintFlow(), 'scheduleDesktopAgeTapHint', [], null);
       renderMediaSections();
+      syncHeroPhoneContacts();
       if(!useDesktopBaseForMobileCfg){
         applyMobileSectionAccordion();
       }
@@ -2329,8 +2936,6 @@
       })
     );
 
-    const startTimer = runtimeInvoke.startTimer;
-
     function isSummaryCompactMode(){
       if(state.previewView === 'mobile' && !useDesktopBaseForMobileCfg){
         return state.mobileMode === 'compact';
@@ -2423,6 +3028,7 @@
     renderShiftOptionsForRenderableViews();
     renderShiftCards();
     renderMediaSections();
+    syncHeroPhoneContacts();
     renderSummary();
     renderBookingPanels();
     resetOfferProgressUI();

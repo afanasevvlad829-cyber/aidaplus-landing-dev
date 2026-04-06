@@ -58,6 +58,12 @@
       var enabled = !!getEnabled();
       var desktopView = doc.getElementById('desktopView');
       var mobileView = doc.getElementById('mobileView');
+      var serviceMenu = doc.getElementById('serviceMenu');
+      var serviceMenuMobile = doc.getElementById('serviceMenuMobile');
+      var menuToggle = doc.getElementById('heroMenuToggle');
+      var menuToggleMobile = doc.querySelector('[aria-controls="serviceMenuMobile"]');
+      var phoneDropdown = doc.getElementById('heroPhoneDropdown');
+      var phoneTrigger = doc.getElementById('heroPhoneTrigger');
       doc.documentElement.classList.toggle('hero-v3-simple-enabled', enabled);
       doc.body.classList.toggle('hero-v3-simple-enabled', enabled);
       if(desktopView) desktopView.classList.toggle('hero-v3-simple', enabled);
@@ -67,6 +73,27 @@
         if(debugControls) debugControls.classList.add('hidden');
       }
       setHeroPhoneDropdownOpen(false);
+      if(phoneDropdown){
+        phoneDropdown.classList.remove('is-open');
+        phoneDropdown.setAttribute('hidden', '');
+      }
+      if(phoneTrigger){
+        phoneTrigger.setAttribute('aria-expanded', 'false');
+      }
+      if(serviceMenu){
+        serviceMenu.classList.remove('is-open');
+        serviceMenu.setAttribute('hidden', '');
+      }
+      if(serviceMenuMobile){
+        serviceMenuMobile.classList.remove('is-open');
+        serviceMenuMobile.setAttribute('hidden', '');
+      }
+      if(menuToggle){
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      if(menuToggleMobile){
+        menuToggleMobile.setAttribute('aria-expanded', 'false');
+      }
       bindReviewsAnchorForSimpleMode(enabled);
 
       var menuToggleText = doc.querySelector('.hero-menu-toggle-text');
@@ -90,6 +117,8 @@
       var heroTitle = doc.querySelector('#desktopView .hero-title');
       if(heroTitle && copy.heroTitleHtml){
         heroTitle.innerHTML = copy.heroTitleHtml;
+      } else if(heroTitle && enabled){
+        heroTitle.innerHTML = 'проект за смену<br><span class="hero-title-accent">игры, сайты, AI</span>';
       }
       if(Array.isArray(copy.stepLabels)){
         doc.querySelectorAll('#desktop-booking-card .booking-step').forEach(function(node, idx){
