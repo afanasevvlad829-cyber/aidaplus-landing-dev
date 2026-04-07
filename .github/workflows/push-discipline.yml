@@ -1,0 +1,31 @@
+name: Push Discipline
+
+on:
+  push:
+    branches:
+      - 'codex/**'
+      - dev
+      - main
+
+jobs:
+  commit-window:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate commit batch size
+        run: |
+          if [ ! -f "${GITHUB_EVENT_PATH}" ]; then
+            echo "No event payload file. Skip hard fail."
+            exit 0
+          fi
+
+          count="$(jq '.commits | length' "${GITHUB_EVENT_PATH}")"
+          limit=4
+
+          echo "Pushed commits in batch: ${count}"
+          if [ "${count}" -gt "${limit}" ]; then
+            echo "❌ Push discipline violated: pushed ${count} commits (limit: ${limit})."
+            echo "   Rule: push every 3-4 commits."
+            exit 1
+          fi
+
+          echo "✅ Push discipline OK."

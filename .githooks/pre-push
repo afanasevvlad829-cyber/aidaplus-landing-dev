@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+case "$branch" in
+  codex/*|dev|main)
+    ;;
+  *)
+    exit 0
+    ;;
+esac
+
+upstream="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null || true)"
+
+if [ -z "$upstream" ]; then
+  echo "❌ Push discipline: для ветки '$branch' не задан upstream."
+  echo "   Выполни: git push -u origin $branch"
+  exit 1
+fi
+
+ahead="$(git rev-list --count "${upstream}..HEAD")"
+limit=4
+
+if [ "$ahead" -gt "$limit" ]; then
+  echo "❌ Push discipline: найдено $ahead непушенных коммитов (лимит: $limit)."
+  echo "   Требование: пушить каждые 3-4 коммита."
+  echo "   Текущая ветка: $branch"
+  echo "   Upstream: $upstream"
+  exit 1
+fi
+
+echo "✅ Push discipline OK: ahead=$ahead (limit=$limit)"
